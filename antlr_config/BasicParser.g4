@@ -4,7 +4,7 @@ options {
   tokenVocab=BasicLexer;
 }
 
-program: BEGIN (func)* stat EOL ;
+program: BEGIN (func)* stat END (EOL)* EOF ;
 
 /** Functions */
 func: type IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat END ;
@@ -96,4 +96,7 @@ esc: ESCAPED_CHARACTER ;
 
 arrayLiter: OPEN_SQUARE_BRACKETS (expr (COMMA expr)*) CLOSE_SQUARE_BRACKETS ;
 
-comment: HASHTAG (~EOL)* EOL ;
+comment: COMMENT ;
+
+// For testing
+prog: (stat)* EOF ;

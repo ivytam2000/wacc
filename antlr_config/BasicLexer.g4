@@ -62,16 +62,15 @@ OR: '||' ;
 OPEN_PARENTHESES: '(' ;
 CLOSE_PARENTHESES: ')' ;
 
+/** Booleans */
+TRUE: 'true' ;
+FALSE: 'false' ;
+
 /** Numbers */
 fragment DIGIT: '0'..'9' ;
 fragment LOWERCASE: 'a'..'z';
 fragment UPPERCASE: 'A'..'Z';
 fragment UNDERSCORE: '_';
-
-/** Booleans */
-TRUE: 'true' ;
-FALSE: 'false' ;
-
 fragment SINGLE_QUOTE: '\'';
 fragment DOUBLE_QUOTE: '"';
 
@@ -85,7 +84,9 @@ ESCAPED_CHARACTER:
     | SINGLE_QUOTE
     | '\\');
 
-CHARACTER: ~( '\'' | '"' | '\\' ) | '\\' ESCAPED_CHARACTER ;
+INTEGER: DIGIT+ ;
+
+fragment CHARACTER: ~( '\'' | '"' | '\\' ) | '\\' ESCAPED_CHARACTER ;
 
 CHAR_LITER: SINGLE_QUOTE CHARACTER SINGLE_QUOTE;
 STR_LITER: DOUBLE_QUOTE CHARACTER* DOUBLE_QUOTE;
@@ -99,10 +100,13 @@ IDENT:
     | UNDERSCORE 
     | DIGIT)*;
 
-INTEGER: DIGIT+ ;
-
 NULL: 'null' ;
 
-HASHTAG: '#' ;
-
 EOL: '\n' ;
+
+/** Match and discard comments which start with '#', followed by a sequence of 
+0 or more of any characters (.*? is a wildcard which consumes everything) */
+COMMENT: '#' .*? EOL -> skip ;
+
+// Match and discard whitespace
+WS : (' '|'\t'|'\r'|'\n')+ -> skip ; 
