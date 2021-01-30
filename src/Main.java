@@ -1,7 +1,5 @@
-package main.java;
-
-import main.java.antlr.BasicLexer;
-import main.java.antlr.BasicParser;
+import antlr.BasicLexer;
+import antlr.BasicParser;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
