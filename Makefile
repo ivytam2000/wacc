@@ -18,7 +18,10 @@ JFLAGS	:= -sourcepath $(SOURCE_DIR) -d $(OUTPUT_DIR) -cp lib/antlr-4.9.1-complet
 
 # the make rules
 
-all: rules
+# all: rules
+all:
+	cd $(ANTLR_DIR) && ./$(ANTLR)
+	./gradlew compileJava
 
 # runs the antlr build script then attempts to compile all .java files within src
 rules:
@@ -28,8 +31,14 @@ rules:
 	$(JAVAC) $(JFLAGS) @$@
 	$(RM) rules
 
+test: all
+	./gradlew test
+
+# clean:
+# 	$(RM) rules $(OUTPUT_DIR) $(SOURCE_DIR)/doc/y2/antlr
 clean:
-	$(RM) rules $(OUTPUT_DIR) $(SOURCE_DIR)/antlr
+	$(RM) $(SOURCE_DIR)/antlr
+	./gradlew clean
 
 .PHONY: all rules clean
 

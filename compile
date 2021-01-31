@@ -1,3 +1,7 @@
 #!/bin/sh
 
-java -cp bin:lib/antlr-4.9.1-complete.jar Main
+if [ ! -d "build" ]; then
+	echo "Build directory not found, please run make first"
+else 
+	java -cp build/classes/java/main/:lib/antlr-4.9.1-complete.jar Main
+fi
