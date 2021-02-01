@@ -2,11 +2,14 @@ stages:
   - build
   - test
 
+before_script:
+  - apt-get install -y make
+
 build job:
   stage: build
   image: gradle:6.8.1-jdk11
   script:
-    - make clean && make test
+    - make clean && make
 
 test job:
   stage: test
