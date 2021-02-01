@@ -1,0 +1,15 @@
+stages:
+  - build
+  - test
+
+build job:
+  stage: build
+  image: gradle:6.8.1-jdk11
+  script:
+    - make clean && make test
+
+test job:
+  stage: test
+  image: gradle:6.8.1-jdk11
+  script:
+    - make clean && make test
