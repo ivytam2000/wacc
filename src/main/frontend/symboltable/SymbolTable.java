@@ -1,4 +1,4 @@
-package main.front_end.symbol_table;
+package frontend.symboltable;
 
 import java.util.HashMap;
 import java.util.Map;

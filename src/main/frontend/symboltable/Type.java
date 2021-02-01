@@ -1,4 +1,4 @@
-package main.front_end.symbol_table;
+package frontend.symboltable;
 
 public abstract class Type extends Identifier {
 
