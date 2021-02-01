@@ -7,6 +7,8 @@ src/antlr
 #ignore other junk files
 *~
 .project
+.idea
+wacc_18.iml
 
 # Ignore Gradle project-specific cache directory
 .gradle
