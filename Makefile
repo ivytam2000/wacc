@@ -37,7 +37,7 @@ test: all
 # clean:
 # 	$(RM) rules $(OUTPUT_DIR) $(SOURCE_DIR)/doc/y2/antlr
 clean:
-	$(RM) $(SOURCE_DIR)/antlr
+	$(RM) $(SOURCE_DIR)/main/antlr
 	gradle clean
 
 .PHONY: all rules clean
