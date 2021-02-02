@@ -4,9 +4,9 @@ lexer grammar BasicLexer;
 END: 'end' ;
 BEGIN: 'begin' ;
 
+/** General */
 IS: 'is' ; 
 COMMA: ',' ;
-
 ASSIGN: '=' ;
 SKIP_LITER: 'skip' ;
 READ: 'read' ;
@@ -66,7 +66,7 @@ CLOSE_PARENTHESES: ')' ;
 TRUE: 'true' ;
 FALSE: 'false' ;
 
-/** Numbers */
+/** Characters and numbers */
 fragment DIGIT: '0'..'9' ;
 fragment LOWERCASE: 'a'..'z';
 fragment UPPERCASE: 'A'..'Z';
@@ -74,7 +74,20 @@ fragment UNDERSCORE: '_';
 fragment SINGLE_QUOTE: '\'';
 fragment DOUBLE_QUOTE: '"';
 
-ESCAPED_CHARACTER:
+INTEGER: DIGIT+ ;
+
+/** TODO: If ESCAPED_CHARACTER defined before IDENT, ESCAPED_CHARACTERs will not
+be valid IDENTs */
+IDENT:
+    (UNDERSCORE
+    | LOWERCASE
+    | UPPERCASE)
+    (UNDERSCORE
+    | LOWERCASE
+    | UPPERCASE
+    | DIGIT)*;
+
+fragment ESCAPED_CHARACTER:
     ('0'
     | 'b'
     | 'n'
@@ -83,23 +96,12 @@ ESCAPED_CHARACTER:
     | DOUBLE_QUOTE
     | SINGLE_QUOTE
     | '\\');
-
-INTEGER: DIGIT+ ;
-
 fragment CHARACTER: ~( '\'' | '"' | '\\' ) | '\\' ESCAPED_CHARACTER ;
 
 CHAR_LITER: SINGLE_QUOTE CHARACTER SINGLE_QUOTE;
 STR_LITER: DOUBLE_QUOTE CHARACTER* DOUBLE_QUOTE;
 
-IDENT: 
-    (UNDERSCORE 
-    | LOWERCASE 
-    | UNDERSCORE) 
-    (UNDERSCORE 
-    | LOWERCASE 
-    | UNDERSCORE 
-    | DIGIT)*;
-
+/** TODO: pair (int, int) a = null doesn't use the rule pairLiter */
 NULL: 'null' ;
 
 EOL: '\n' ;
@@ -108,5 +110,5 @@ EOL: '\n' ;
 0 or more of any characters (.*? is a wildcard which consumes everything) */
 COMMENT: '#' .*? EOL -> skip ;
 
-// Match and discard whitespace
+/** Match and discard whitespace */
 WS : (' '|'\t'|'\r'|'\n')+ -> skip ; 

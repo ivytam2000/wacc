@@ -1,5 +1,5 @@
 #ignore auto-generated ANTLR code
-src/antlr
+src/main/antlr
 
 #ignore Java class files
 *.class

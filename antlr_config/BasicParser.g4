@@ -91,12 +91,11 @@ intLiter: intSign? INTEGER ;
 boolLiter: TRUE | FALSE ;
 charLiter: CHAR_LITER;
 strLiter: STR_LITER ;
-pairLiter: NULL ;
-esc: ESCAPED_CHARACTER ;
+pairLiter: NULL;
 
 arrayLiter: OPEN_SQUARE_BRACKETS (expr (COMMA expr)*) CLOSE_SQUARE_BRACKETS ;
 
 comment: COMMENT ;
 
 // For testing
-prog: (stat)* EOF ;
+prog: (stat)* EOL EOF ;
