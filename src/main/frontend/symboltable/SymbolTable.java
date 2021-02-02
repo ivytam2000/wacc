@@ -17,6 +17,11 @@ public class SymbolTable {
    */
   public SymbolTable() {
     this(null);
+    loadTopLevelSymbolTable(this);
+  }
+
+  public void add(Type astNode) {
+    dictionary.put(astNode.getTypeName(), astNode);
   }
 
   public void add(String name, Identifier astNode) {
@@ -38,5 +43,12 @@ public class SymbolTable {
       temp = temp.parent;
     }
     return null;
+  }
+
+  private void loadTopLevelSymbolTable(SymbolTable symbolTable) {
+    symbolTable.add(new Int());
+    symbolTable.add(new Bool());
+    symbolTable.add(new Char());
+    // TODO: Add strings, arrays and pairs
   }
 }
