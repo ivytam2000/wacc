@@ -1,10 +1,6 @@
-import antlr.WaccLexer;
-import antlr.WaccParser;
 import frontend.FrontEndAnalyser;
-import frontend.errorlistener.SyntaxErrorListener;
 import java.io.FileInputStream;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.*;
 
 public class Main {
 
