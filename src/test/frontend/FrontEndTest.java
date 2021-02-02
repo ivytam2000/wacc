@@ -10,6 +10,13 @@ import static org.junit.Assert.*;
 
 public class FrontEndTest {
 
+  String resourcesFolderPath = "src/test/resources/";
+  String[] advancedSourceFileNames = {
+      "binarySortTree.wacc",
+      "hashTable.wacc",
+      "ticTacToe.wacc"
+  };
+
   private FrontEndAnalyser buildFrontEndAnalyser(String sourceFilePath)
       throws IOException {
     CharStream source = CharStreams.fromStream(new FileInputStream(sourceFilePath));
@@ -17,20 +24,10 @@ public class FrontEndTest {
   }
 
   @Test
-  public void compilesBinarySortTreeSuccessfully() throws IOException {
-    String sourceFilePath = "src/test/resources/binarySortTree.wacc";
-    assertEquals(buildFrontEndAnalyser(sourceFilePath).run(), 0);
-  }
-
-  @Test
-  public void compilesHashTableSuccessfully() throws IOException {
-    String sourceFilePath = "src/test/resources/hashTable.wacc";
-    assertEquals(buildFrontEndAnalyser(sourceFilePath).run(), 0);
-  }
-
-  @Test
-  public void compilesTicTacToeSuccessfully() throws IOException {
-    String sourceFilePath = "src/test/resources/ticTacToe.wacc";
-    assertEquals(buildFrontEndAnalyser(sourceFilePath).run(), 0);
+  public void compilesAdvancedProgramsSuccessfully() throws IOException {
+    for (String name : advancedSourceFileNames) {
+      String sourceFilePath = resourcesFolderPath + name;
+      assertEquals(buildFrontEndAnalyser(sourceFilePath).run(), 0);
+    }
   }
 }
