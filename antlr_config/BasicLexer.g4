@@ -5,7 +5,7 @@ END: 'end' ;
 BEGIN: 'begin' ;
 
 /** General */
-IS: 'is' ; 
+IS: 'is' ;
 COMMA: ',' ;
 ASSIGN: '=' ;
 SKIP_LITER: 'skip' ;
@@ -14,7 +14,7 @@ FREE: 'free' ;
 RETURN: 'return' ;
 EXIT: 'exit' ;
 PRINT: 'print' ;
-PRINTLN: 'println' ; 
+PRINTLN: 'println' ;
 IF: 'if' ;
 THEN: 'then' ;
 ELSE: 'else' ;
@@ -37,13 +37,6 @@ BOOL: 'bool' ;
 CHAR: 'char' ;
 STRING: 'string' ;
 
-
-/** Unary operators */
-NOT: '!' ;
-LEN: 'len' ;
-ORD: 'ord' ;
-CHR: 'chr' ;
-
 /** Binary operators */
 PLUS: '+' ;
 MINUS: '-' ;
@@ -55,8 +48,15 @@ GTE: '>=' ;
 LT: '<' ;
 LTE: '<=' ;
 EQ: '==' ;
+NE: '!=' ;
 AND: '&&' ;
 OR: '||' ;
+
+/** Unary operators */
+NOT: '!' ;
+LEN: 'len' ;
+ORD: 'ord' ;
+CHR: 'chr' ;
 
 /** Brackets */
 OPEN_PARENTHESES: '(' ;
@@ -78,6 +78,21 @@ fragment DOUBLE_QUOTE: '"';
 
 INTEGER: DIGIT+ ;
 
+fragment ESCAPED_CHARACTER:
+    '\\'
+    ('0'
+    | 'b'
+    | 'n'
+    | 'f'
+    | 'r'
+    | DOUBLE_QUOTE
+    | SINGLE_QUOTE
+    | '\\');
+fragment CHARACTER: ~( '\'' | '"' | '\\' ) | ESCAPED_CHARACTER ;
+
+/** Match and discard whitespace */
+WS : (' '|'\t'|'\r'|'\n')+ -> channel(HIDDEN) ;
+
 IDENT:
     (UNDERSCORE
     | LOWERCASE
@@ -87,25 +102,9 @@ IDENT:
     | UPPERCASE
     | DIGIT)*;
 
-fragment ESCAPED_CHARACTER:
-    ('0'
-    | 'b'
-    | 'n'
-    | 'f'
-    | 'r'
-    | DOUBLE_QUOTE
-    | SINGLE_QUOTE
-    | '\\');
-fragment CHARACTER: ~( '\'' | '"' | '\\' ) | '\\' ESCAPED_CHARACTER ;
-
 CHAR_LITER: SINGLE_QUOTE CHARACTER SINGLE_QUOTE;
 STR_LITER: DOUBLE_QUOTE CHARACTER* DOUBLE_QUOTE;
 
-EOL: '\n' ;
-
-/** Match and discard comments which start with '#', followed by a sequence of 
+/** Match and discard comments which start with '#', followed by a sequence of
 0 or more of any characters (.*? is a wildcard which consumes everything) */
-COMMENT: '#' .*? EOL -> skip ;
-
-/** Match and discard whitespace */
-WS : (' '|'\t'|'\r'|'\n')+ -> skip ; 
+COMMENT: '#' .*? '\n' -> skip ;

@@ -9,6 +9,7 @@ src/main/antlr
 .project
 .idea
 wacc_18.iml
+gen
 
 # Ignore Gradle project-specific cache directory
 .gradle

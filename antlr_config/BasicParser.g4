@@ -27,8 +27,8 @@ stat: SKIP_LITER
 | PRINTLN expr
 | IF expr THEN stat ELSE stat FI
 | WHILE expr DO stat DONE
-| BEGIN stat END
 | stat SEMI_COLON stat
+| BEGIN stat END
 ;
 
 /** Assignments */
@@ -42,7 +42,7 @@ assignRHS: expr
 | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
 | pairElem
 | CALL IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES
-; 
+;
 
 argList: expr (COMMA expr)* ;
 
@@ -64,11 +64,10 @@ pairType: PAIR OPEN_PARENTHESES pairElemType COMMA pairElemType CLOSE_PARENTHESE
 
 pairElemType: baseType
 | type OPEN_SQUARE_BRACKETS CLOSE_SQUARE_BRACKETS
-| PAIR 
+| PAIR
 ;
 
-expr: expr binaryOper expr
-| intLiter
+expr: intLiter
 | boolLiter
 | charLiter
 | strLiter
@@ -82,7 +81,7 @@ expr: expr binaryOper expr
 
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;
 
-binaryOper: PLUS | MINUS | MULT | DIV | MOD | GT | GTE | LT | LTE EQ | AND | OR ;
+binaryOper: PLUS | MINUS | MULT | DIV | MOD | GT | GTE | LT | LTE | EQ | NE | AND | OR ;
 
 arrayElem: IDENT (OPEN_SQUARE_BRACKETS expr CLOSE_SQUARE_BRACKETS)+ ;
 
@@ -98,4 +97,4 @@ arrayLiter: OPEN_SQUARE_BRACKETS (expr (COMMA expr)*) CLOSE_SQUARE_BRACKETS ;
 comment: COMMENT ;
 
 // For testing
-prog: (stat)* EOL EOF ;
+prog: stat EOF ;
