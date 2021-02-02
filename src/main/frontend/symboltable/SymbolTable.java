@@ -5,25 +5,26 @@ import java.util.Map;
 
 public class SymbolTable {
 
-  private final Map<String, Identifier> currSymbolTable;
+  private final Map<String, Identifier> dictionary = new HashMap<>();
   private final SymbolTable parent;
 
   public SymbolTable(SymbolTable parent) {
     this.parent = parent;
-    currSymbolTable = new HashMap<>();
   }
 
-  // first symbol table
+  /**
+   * Top-level symbol table.
+   */
   public SymbolTable() {
     this(null);
   }
 
   public void add(String name, Identifier astNode) {
-    currSymbolTable.put(name, astNode);
+    dictionary.put(name, astNode);
   }
 
   public Identifier lookup(String name) {
-    return currSymbolTable.get(name);
+    return dictionary.get(name);
   }
 
   public Identifier lookupAll(String name) {
@@ -38,5 +39,4 @@ public class SymbolTable {
     }
     return null;
   }
-
 }

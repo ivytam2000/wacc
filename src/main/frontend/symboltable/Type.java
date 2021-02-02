@@ -11,5 +11,4 @@ public abstract class Type extends Identifier {
   public String getTypeName() {
     return this.typeName;
   }
-
 }
