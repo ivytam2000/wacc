@@ -4,7 +4,7 @@ options {
   tokenVocab=BasicLexer;
 }
 
-program: BEGIN (func)* stat END (EOL)* EOF ;
+program: BEGIN (func)* stat END EOF ;
 
 /** Functions */
 func: type IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat END ;

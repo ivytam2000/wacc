@@ -66,6 +66,8 @@ CLOSE_PARENTHESES: ')' ;
 TRUE: 'true' ;
 FALSE: 'false' ;
 
+NULL: 'null' ;
+
 /** Characters and numbers */
 fragment DIGIT: '0'..'9' ;
 fragment LOWERCASE: 'a'..'z';
@@ -76,8 +78,6 @@ fragment DOUBLE_QUOTE: '"';
 
 INTEGER: DIGIT+ ;
 
-/** TODO: If ESCAPED_CHARACTER defined before IDENT, ESCAPED_CHARACTERs will not
-be valid IDENTs */
 IDENT:
     (UNDERSCORE
     | LOWERCASE
@@ -100,9 +100,6 @@ fragment CHARACTER: ~( '\'' | '"' | '\\' ) | '\\' ESCAPED_CHARACTER ;
 
 CHAR_LITER: SINGLE_QUOTE CHARACTER SINGLE_QUOTE;
 STR_LITER: DOUBLE_QUOTE CHARACTER* DOUBLE_QUOTE;
-
-/** TODO: pair (int, int) a = null doesn't use the rule pairLiter */
-NULL: 'null' ;
 
 EOL: '\n' ;
 
