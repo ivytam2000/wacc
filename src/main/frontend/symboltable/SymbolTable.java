@@ -20,12 +20,12 @@ public class SymbolTable {
     loadTopLevelSymbolTable(this);
   }
 
-  public void add(Type astNode) {
-    dictionary.put(astNode.getTypeName(), astNode);
+  public void add(Type type) {
+    dictionary.put(type.getTypeName(), type);
   }
 
-  public void add(String name, Identifier astNode) {
-    dictionary.put(name, astNode);
+  public void add(String name, Identifier identifier) {
+    dictionary.put(name, identifier);
   }
 
   public Identifier lookup(String name) {
