@@ -10,6 +10,14 @@ src/main/antlr
 .idea
 wacc_18.iml
 gen
+src/project/
+src/target/
+target/
+.DS_Store
+out/
+src/.DS_Store
+src/.bsp/sbt.json
+
 
 # Ignore Gradle project-specific cache directory
 .gradle

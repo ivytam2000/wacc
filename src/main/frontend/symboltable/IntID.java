@@ -1,16 +1,16 @@
 package frontend.symboltable;
 
-public class IntST extends TypeST {
+public class IntID extends TypeID {
 
   public static final int MIN = Integer.MIN_VALUE;
   public static final int MAX = Integer.MAX_VALUE;
 
-  public IntST() {
+  public IntID() {
     super("int");
   }
 
   @Override
-  public TypeST getType() {
+  public TypeID getType() {
     return this;
   }
 }

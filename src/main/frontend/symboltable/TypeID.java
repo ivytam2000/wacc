@@ -1,10 +1,10 @@
 package frontend.symboltable;
 
-public abstract class TypeST extends IdentifierST {
+public abstract class TypeID extends Identifier {
 
   private final String typeName;
 
-  public TypeST(String typeName) {
+  public TypeID(String typeName) {
     this.typeName = typeName;
   }
 

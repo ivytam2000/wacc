@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class SymbolTable {
 
-  private final Map<String, IdentifierST> dictionary = new HashMap<>();
+  private final Map<String, Identifier> dictionary = new HashMap<>();
   private final SymbolTable parent;
 
   public SymbolTable(SymbolTable parent) {
@@ -20,21 +20,21 @@ public class SymbolTable {
     loadTopLevelSymbolTable(this);
   }
 
-  public void add(TypeST type) {
+  public void add(TypeID type) {
     dictionary.put(type.getTypeName(), type);
   }
 
-  public void add(String name, IdentifierST identifier) {
+  public void add(String name, Identifier identifier) {
     dictionary.put(name, identifier);
   }
 
-  public IdentifierST lookup(String name) {
+  public Identifier lookup(String name) {
     return dictionary.get(name);
   }
 
-  public IdentifierST lookupAll(String name) {
+  public Identifier lookupAll(String name) {
     SymbolTable temp = this;
-    IdentifierST node;
+    Identifier node;
     while (temp != null) {
       node = temp.lookup(name);
       if (node != null) {
@@ -46,9 +46,10 @@ public class SymbolTable {
   }
 
   private void loadTopLevelSymbolTable(SymbolTable symbolTable) {
-    symbolTable.add(new IntST());
-    symbolTable.add(new BoolST());
-    symbolTable.add(new CharST());
+    symbolTable.add(new IntID());
+    symbolTable.add(new BoolID());
+    symbolTable.add(new CharID());
+    symbolTable.add(new StringID());
     // TODO: Add strings, arrays and pairs
   }
 }

@@ -1,11 +1,11 @@
 package frontend.symboltable;
 
-public class VariableST extends IdentifierST {
+public class VariableID extends Identifier {
 
-  private final TypeST assignedType;
+  private final TypeID assignedType;
   private final String name;
 
-  public VariableST(TypeST assignedType, String name) {
+  public VariableID(TypeID assignedType, String name) {
     this.assignedType = assignedType;
     this.name = name;
   }
@@ -15,7 +15,7 @@ public class VariableST extends IdentifierST {
   }
 
   @Override
-  public TypeST getType() {
+  public TypeID getType() {
     return this.assignedType;
   }
 }
