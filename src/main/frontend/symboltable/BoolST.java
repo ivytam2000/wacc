@@ -1,16 +1,16 @@
 package frontend.symboltable;
 
-public class Bool extends Type {
+public class BoolST extends TypeST {
 
   public static final int MIN = 0;
   public static final int MAX = 1;
 
-  public Bool() {
+  public BoolST() {
     super("bool");
   }
 
   @Override
-  public Type getType() {
+  public TypeST getType() {
     return this;
   }
 }

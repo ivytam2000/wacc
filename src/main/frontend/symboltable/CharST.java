@@ -1,16 +1,16 @@
 package frontend.symboltable;
 
-public class Char extends Type {
+public class CharST extends TypeST {
 
   public static final int MIN = 0;
   public static final int MAX = 255;
 
-  public Char() {
+  public CharST() {
     super("char");
   }
 
   @Override
-  public Type getType() {
+  public TypeST getType() {
     return this;
   }
 }
