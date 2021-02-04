@@ -9,7 +9,6 @@ import antlr.WaccParser.BaseTypeContext;
 import antlr.WaccParser.BinaryOperContext;
 import antlr.WaccParser.BoolLiterContext;
 import antlr.WaccParser.CharLiterContext;
-import antlr.WaccParser.CommentContext;
 import antlr.WaccParser.ExprContext;
 import antlr.WaccParser.FuncContext;
 import antlr.WaccParser.IntLiterContext;
@@ -173,11 +172,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Void> {
   @Override
   public Void visitArrayLiter(ArrayLiterContext ctx) {
     return super.visitArrayLiter(ctx);
-  }
-
-  @Override
-  public Void visitComment(CommentContext ctx) {
-    return super.visitComment(ctx);
   }
 
   @Override
