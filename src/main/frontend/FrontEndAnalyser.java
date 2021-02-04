@@ -44,6 +44,9 @@ public class FrontEndAnalyser {
       return 100;
     }
 
+    TreeVisitor treeVisitor = new TreeVisitor();
+    treeVisitor.visit(tree);
+
     // Print a LISP-style parse tree
     System.out.println("--- Parsing finished... ---");
     System.out.println(tree.toStringTree(parser));
