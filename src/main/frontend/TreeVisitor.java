@@ -27,17 +27,40 @@ import antlr.WaccParser.StrLiterContext;
 import antlr.WaccParser.TypeContext;
 import antlr.WaccParser.UnaryOperContext;
 import antlr.WaccParserBaseVisitor;
+import frontend.symboltable.SymbolTable;
+import java.util.List;
 
 public class TreeVisitor extends WaccParserBaseVisitor<Void> {
 
+  private SymbolTable currSymTab;
+
+  public TreeVisitor() {
+    this.currSymTab = new SymbolTable(); //Initialised with top level symtab
+  }
+
   @Override
   public Void visitProgram(ProgramContext ctx) {
-    System.out.println("Starting semantic analysis");
+    assert (ctx.BEGIN() != null);
+    assert (ctx.END() != null);
+    assert (ctx.EOF() != null);
+
+    List<FuncContext> funcContexts = ctx.func();
+    for (FuncContext FC : funcContexts) {
+      visitFunc(FC); //Return func node
+      //Add to AST
+    }
+    visitStat(ctx.stat());
     return null;
   }
 
   @Override
   public Void visitFunc(FuncContext ctx) {
+    //create symbol table
+    SymbolTable encScope = currSymTab;
+    currSymTab = new SymbolTable(encScope);
+
+    //Swap back symbol table
+    currSymTab = encScope;
     return super.visitFunc(ctx);
   }
 
@@ -53,7 +76,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Void> {
 
   @Override
   public Void visitStat(StatContext ctx) {
-    return super.visitStat(ctx);
+    System.out.println(ctx.SKIP_LITER());
+    return null;
   }
 
   @Override

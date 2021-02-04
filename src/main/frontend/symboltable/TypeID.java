@@ -4,7 +4,7 @@ public abstract class TypeID extends Identifier {
 
   private final String typeName;
 
-  public TypeID(String typeName) {
+  protected TypeID(String typeName) {
     this.typeName = typeName;
   }
 
