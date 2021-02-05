@@ -50,8 +50,8 @@ pairElem: FST expr | SND expr ;
 
 /** Types */
 type: baseType
+| arrayType
 | pairType
-| type OPEN_SQUARE_BRACKETS CLOSE_SQUARE_BRACKETS
 ;
 
 baseType: INT
@@ -60,10 +60,12 @@ baseType: INT
 | STRING
 ;
 
+arrayType: (baseType | pairType) (OPEN_SQUARE_BRACKETS CLOSE_SQUARE_BRACKETS)+ ;
+
 pairType: PAIR OPEN_PARENTHESES pairElemType COMMA pairElemType CLOSE_PARENTHESES ;
 
 pairElemType: baseType
-| type OPEN_SQUARE_BRACKETS CLOSE_SQUARE_BRACKETS
+| arrayType
 | PAIR
 ;
 
@@ -92,7 +94,7 @@ charLiter: CHAR_LITER;
 strLiter: STR_LITER ;
 pairLiter: NULL ;
 
-arrayLiter: OPEN_SQUARE_BRACKETS (expr (COMMA expr)*) CLOSE_SQUARE_BRACKETS ;
+arrayLiter: OPEN_SQUARE_BRACKETS (expr (COMMA expr)*)? CLOSE_SQUARE_BRACKETS ;
 
 // For testing
 prog: stat EOF ;

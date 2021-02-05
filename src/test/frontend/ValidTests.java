@@ -98,15 +98,15 @@ public class ValidTests {
     return new FrontEndAnalyser(source);
   }
 
-  private void compileSuccessfully(String folderPath) throws IOException{
+  private void compileSuccessfully(String folderPath) throws IOException {
     List<String> names = getTestNames(resourcesFolderPath + folderPath);
-    for (String name : names){
+    for (String name : names) {
       String sourceFilePath = resourcesFolderPath + folderPath + name;
       OutputStream os = new ByteArrayOutputStream();
       System.setOut(new PrintStream(os));
       try {
         assertEquals(buildFrontEndAnalyser(sourceFilePath).run(), 0);
-      } catch(AssertionError e){
+      } catch (AssertionError e) {
         fail("Test " + name + " failed.");
       }
     }
@@ -117,14 +117,14 @@ public class ValidTests {
     List<String> files =
         Files.list(Paths.get(sourcesFolderPath))
             .filter(Files::isRegularFile)
-            .map(p->p.getFileName().toString())
+            .map(p -> p.getFileName().toString())
             .collect(Collectors.toList());
     return files;
   }
 
   public static void main(String[] args) throws IOException {
     List<String> files = getTestNames("src/test/wacc_examples/valid/advanced");
-    for(String s : files){
+    for (String s : files) {
       System.out.println(s + '\n');
     }
   }
@@ -134,9 +134,7 @@ public class ValidTests {
     compileSuccessfully("advanced/");
   }
 
-  @Ignore
   @Test
-  //arrayEmpty test failed
   public void validArrayTests() throws IOException {
     compileSuccessfully("array/");
   }
@@ -147,7 +145,7 @@ public class ValidTests {
   }
 
   @Test
-  public void validBasicSkipTests() throws IOException{
+  public void validBasicSkipTests() throws IOException {
     compileSuccessfully("basic/skip/");
   }
 
