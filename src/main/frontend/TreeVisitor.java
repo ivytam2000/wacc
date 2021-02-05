@@ -3,6 +3,7 @@ package frontend;
 import antlr.WaccParser.ArgListContext;
 import antlr.WaccParser.ArrayElemContext;
 import antlr.WaccParser.ArrayLiterContext;
+import antlr.WaccParser.ArrayTypeContext;
 import antlr.WaccParser.AssignLHSContext;
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.BaseTypeContext;
@@ -107,6 +108,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Void> {
   @Override
   public Void visitBaseType(BaseTypeContext ctx) {
     return super.visitBaseType(ctx);
+  }
+
+  @Override
+  public Void visitArrayType(ArrayTypeContext ctx) {
+    return super.visitArrayType(ctx);
   }
 
   @Override
