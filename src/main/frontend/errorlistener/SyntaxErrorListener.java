@@ -21,9 +21,11 @@ public class SyntaxErrorListener extends BaseErrorListener {
     errorMessages.add(line + ":" + charPositionInLine + " -- " + msg);
   }
 
+
+
   public void printErrors() {
     System.out
-        .println("Errors detected during compilation! Exit code 100 returned.");
+        .println("Errors  during compilation! Exit code 100 returned.");
     for (String s : errorMessages) {
       System.out.println("Syntactic error at line " + s);
     }

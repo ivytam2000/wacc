@@ -8,24 +8,23 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 public class FrontEndAnalyser {
-
-  private final CharStream stream;
-  private final WaccLexer lexer;
   private final WaccParser parser;
   private final SyntaxErrorListener syntaxErrorListener = new SyntaxErrorListener();
 
   public FrontEndAnalyser(CharStream stream) {
-    this.stream = stream;
-
     // Create a lexer that reads from the input stream
-    lexer = new WaccLexer(stream);
+    WaccLexer lexer = new WaccLexer(stream);
+    // Remove standard error listeners from lexer
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(syntaxErrorListener);
 
     // Create a buffer of tokens read from the lexer
     CommonTokenStream tokens = new CommonTokenStream(lexer);
 
     // Create a parser that reads from the tokens buffer
     parser = new WaccParser(tokens);
-    parser.removeErrorListeners(); // Remove standard error listener
+    // Remove standard error listener from parser
+    parser.removeErrorListeners();
     parser.addErrorListener(syntaxErrorListener);
   }
 
