@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class InvalidSyntaxTests {
-    String folderPath = "src/test/wacc_examples/invalid/syntaxErr"
+    String folderPath = "src/test/examples/invalid/syntaxErr"
         + "/basic/";
 
     private static FrontEndAnalyser buildFrontEndAnalyser(String sourceFilePath)

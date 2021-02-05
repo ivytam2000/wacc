@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 public class ValidTests {
 
-  String resourcesFolderPath = "src/test/wacc_examples/valid/";
+  String resourcesFolderPath = "src/test/examples/valid/";
  /* String[] advancedSourceFileNames = {
       "binarySortTree.wacc",
       "hashTable.wacc",
