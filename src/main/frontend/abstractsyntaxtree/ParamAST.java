@@ -6,8 +6,8 @@ import frontend.symboltable.SymbolTable;
 
 public class ParamAST extends Node {
 
-  private String typeName;
-  private String varName;
+  private final String typeName;
+  private final String varName;
   private ParamID paramObj;
 
   protected ParamAST(Identifier identifier, SymbolTable symtab, Node parent, String varName) {
