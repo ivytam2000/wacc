@@ -24,7 +24,10 @@ import antlr.WaccParser.ProgContext;
 import antlr.WaccParser.ProgramContext;
 import antlr.WaccParser.StatContext;
 import antlr.WaccParser.StrLiterContext;
+import antlr.WaccParser.TypeArrayTypeContext;
+import antlr.WaccParser.TypeBaseTypeContext;
 import antlr.WaccParser.TypeContext;
+import antlr.WaccParser.TypePairTypeContext;
 import antlr.WaccParser.UnaryOperContext;
 import antlr.WaccParserBaseVisitor;
 import frontend.symboltable.SymbolTable;
@@ -101,8 +104,18 @@ public class TreeVisitor extends WaccParserBaseVisitor<Void> {
   }
 
   @Override
-  public Void visitType(TypeContext ctx) {
-    return super.visitType(ctx);
+  public Void visitTypeBaseType(TypeBaseTypeContext ctx) {
+    return visitBaseType(ctx.baseType());
+  }
+
+  @Override
+  public Void visitTypeArrayType(TypeArrayTypeContext ctx) {
+    return visitArrayType(ctx.arrayType());
+  }
+
+  @Override
+  public Void visitTypePairType(TypePairTypeContext ctx) {
+    return visitPairType(ctx.pairType());
   }
 
   @Override

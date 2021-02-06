@@ -49,9 +49,9 @@ argList: expr (COMMA expr)* ;
 pairElem: FST expr | SND expr ;
 
 /** Types */
-type: baseType
-| arrayType
-| pairType
+type: baseType  # TypeBaseType
+| arrayType     # TypeArrayType
+| pairType      # TypePairType
 ;
 
 baseType: INT

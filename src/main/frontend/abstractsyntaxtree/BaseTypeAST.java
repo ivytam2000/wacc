@@ -9,7 +9,7 @@ public class BaseTypeAST extends Node {
   private final String typeName;
   private TypeID baseTypeObj;
 
-  protected BaseTypeAST(Identifier identifier, SymbolTable symtab, Node parent) {
+  public BaseTypeAST(Identifier identifier, SymbolTable symtab, Node parent) {
     super(identifier, symtab, parent);
     this.typeName = identifier.getType().getTypeName();
   }
