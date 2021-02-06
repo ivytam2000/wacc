@@ -4,8 +4,11 @@ import frontend.symboltable.SymbolTable;
 
 public class AST extends Node {
 
+  private SymbolTable symtab;
+
   public AST(SymbolTable topLevelSymTab) {
-    super(topLevelSymTab, null); //Parent is null
+    super(); //Parent is null
+    this.symtab =topLevelSymTab;
   }
 
   @Override

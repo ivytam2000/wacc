@@ -16,19 +16,19 @@ paramList: param (COMMA param)* ;
 param: type IDENT ;
 
 /** Statements */
-stat: SKIP_LITER
-| type IDENT ASSIGN assignRHS
-| assignLHS ASSIGN assignRHS
-| READ assignLHS
-| FREE expr
-| RETURN expr
-| EXIT expr
-| PRINT expr
-| PRINTLN expr
-| IF expr THEN stat ELSE stat FI
-| WHILE expr DO stat DONE
-| stat SEMI_COLON stat
-| BEGIN stat END
+stat: SKIP_LITER                                            #skip_stat
+| type IDENT ASSIGN assignRHS                               #var_decl_stat
+| assignLHS ASSIGN assignRHS                                #assign_stat
+| READ assignLHS                                            #read_stat
+| FREE expr                                                 #free_stat
+| RETURN expr                                               #return_stat
+| EXIT expr                                                 #exit_stat
+| PRINT expr                                                #print_stat
+| PRINTLN expr                                              #println_stat
+| IF expr THEN stat ELSE stat FI                            #if_stat
+| WHILE expr DO stat DONE                                   #while_stat
+| stat SEMI_COLON stat                                      #sequence_stat
+| BEGIN stat END                                            #new_scope_stat
 ;
 
 /** Assignments */

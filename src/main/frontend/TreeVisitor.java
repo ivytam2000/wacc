@@ -1,5 +1,6 @@
 package frontend;
 
+import antlr.WaccParser;
 import antlr.WaccParser.ArgListContext;
 import antlr.WaccParser.ArrayElemContext;
 import antlr.WaccParser.ArrayLiterContext;
@@ -30,171 +31,235 @@ import antlr.WaccParser.TypeContext;
 import antlr.WaccParser.TypePairTypeContext;
 import antlr.WaccParser.UnaryOperContext;
 import antlr.WaccParserBaseVisitor;
+import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
 import java.util.List;
 
-public class TreeVisitor extends WaccParserBaseVisitor<Void> {
+public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   private SymbolTable currSymTab;
 
   public TreeVisitor() {
-    this.currSymTab = new SymbolTable(); //Initialised with top level symtab
+    this.currSymTab = new SymbolTable(); // Initialised with top level symtab
   }
 
   @Override
-  public Void visitProgram(ProgramContext ctx) {
+  public Node visitProgram(ProgramContext ctx) {
     assert (ctx.BEGIN() != null);
     assert (ctx.END() != null);
     assert (ctx.EOF() != null);
 
     List<FuncContext> funcContexts = ctx.func();
     for (FuncContext FC : funcContexts) {
-      visitFunc(FC); //Return func node
-      //Add to AST
+      visitFunc(FC); // Return func node
+      // Add to AST
     }
-    visitStat(ctx.stat());
+    // visit stat
+    visit(ctx.stat());
+
     return null;
   }
 
   @Override
-  public Void visitFunc(FuncContext ctx) {
-    //create symbol table
+  public Node visitFunc(FuncContext ctx) {
+    // create symbol table
     SymbolTable encScope = currSymTab;
     currSymTab = new SymbolTable(encScope);
 
-    //Swap back symbol table
+    // Swap back symbol table
     currSymTab = encScope;
     return super.visitFunc(ctx);
   }
 
+  /* Visit Statement Functions */
   @Override
-  public Void visitParamList(ParamListContext ctx) {
+  public Node visitPrint_stat(WaccParser.Print_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitAssign_stat(WaccParser.Assign_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitPrintln_stat(WaccParser.Println_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitReturn_stat(WaccParser.Return_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitExit_stat(WaccParser.Exit_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitSkip_stat(WaccParser.Skip_statContext ctx) {
+    System.out.println("SKIP found");
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitFree_stat(WaccParser.Free_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitVar_decl_stat(WaccParser.Var_decl_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitWhile_stat(WaccParser.While_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitNew_scope_stat(WaccParser.New_scope_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitIf_stat(WaccParser.If_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitSequence_stat(WaccParser.Sequence_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitRead_stat(WaccParser.Read_statContext ctx) {
+    return visitChildren(ctx);
+  }
+
+  @Override
+  public Node visitParamList(ParamListContext ctx) {
     return super.visitParamList(ctx);
   }
 
   @Override
-  public Void visitParam(ParamContext ctx) {
+  public Node visitParam(ParamContext ctx) {
     return super.visitParam(ctx);
   }
 
   @Override
-  public Void visitStat(StatContext ctx) {
-    System.out.println(ctx.SKIP_LITER());
-    return null;
-  }
-
-  @Override
-  public Void visitAssignLHS(AssignLHSContext ctx) {
+  public Node visitAssignLHS(AssignLHSContext ctx) {
     return super.visitAssignLHS(ctx);
   }
 
   @Override
-  public Void visitAssignRHS(AssignRHSContext ctx) {
+  public Node visitAssignRHS(AssignRHSContext ctx) {
     return super.visitAssignRHS(ctx);
   }
 
   @Override
-  public Void visitArgList(ArgListContext ctx) {
+  public Node visitArgList(ArgListContext ctx) {
     return super.visitArgList(ctx);
   }
 
   @Override
-  public Void visitPairElem(PairElemContext ctx) {
+  public Node visitPairElem(PairElemContext ctx) {
     return super.visitPairElem(ctx);
   }
 
   @Override
-  public Void visitTypeBaseType(TypeBaseTypeContext ctx) {
+  public Node visitTypeBaseType(TypeBaseTypeContext ctx) {
     return visitBaseType(ctx.baseType());
   }
 
   @Override
-  public Void visitTypeArrayType(TypeArrayTypeContext ctx) {
+  public Node visitTypeArrayType(TypeArrayTypeContext ctx) {
     return visitArrayType(ctx.arrayType());
   }
 
   @Override
-  public Void visitTypePairType(TypePairTypeContext ctx) {
+  public Node visitTypePairType(TypePairTypeContext ctx) {
     return visitPairType(ctx.pairType());
   }
 
   @Override
-  public Void visitBaseType(BaseTypeContext ctx) {
+  public Node visitBaseType(BaseTypeContext ctx) {
     return super.visitBaseType(ctx);
   }
 
   @Override
-  public Void visitArrayType(ArrayTypeContext ctx) {
+  public Node visitArrayType(ArrayTypeContext ctx) {
     return super.visitArrayType(ctx);
   }
 
   @Override
-  public Void visitPairType(PairTypeContext ctx) {
+  public Node visitPairType(PairTypeContext ctx) {
     return super.visitPairType(ctx);
   }
 
   @Override
-  public Void visitPairElemType(PairElemTypeContext ctx) {
+  public Node visitPairElemType(PairElemTypeContext ctx) {
     return super.visitPairElemType(ctx);
   }
 
   @Override
-  public Void visitExpr(ExprContext ctx) {
+  public Node visitExpr(ExprContext ctx) {
     return super.visitExpr(ctx);
   }
 
   @Override
-  public Void visitUnaryOper(UnaryOperContext ctx) {
+  public Node visitUnaryOper(UnaryOperContext ctx) {
     return super.visitUnaryOper(ctx);
   }
 
   @Override
-  public Void visitBinaryOper(BinaryOperContext ctx) {
+  public Node visitBinaryOper(BinaryOperContext ctx) {
     return super.visitBinaryOper(ctx);
   }
 
   @Override
-  public Void visitArrayElem(ArrayElemContext ctx) {
+  public Node visitArrayElem(ArrayElemContext ctx) {
     return super.visitArrayElem(ctx);
   }
 
   @Override
-  public Void visitIntSign(IntSignContext ctx) {
+  public Node visitIntSign(IntSignContext ctx) {
     return super.visitIntSign(ctx);
   }
 
   @Override
-  public Void visitIntLiter(IntLiterContext ctx) {
+  public Node visitIntLiter(IntLiterContext ctx) {
     return super.visitIntLiter(ctx);
   }
 
   @Override
-  public Void visitBoolLiter(BoolLiterContext ctx) {
+  public Node visitBoolLiter(BoolLiterContext ctx) {
     return super.visitBoolLiter(ctx);
   }
 
   @Override
-  public Void visitCharLiter(CharLiterContext ctx) {
+  public Node visitCharLiter(CharLiterContext ctx) {
     return super.visitCharLiter(ctx);
   }
 
   @Override
-  public Void visitStrLiter(StrLiterContext ctx) {
+  public Node visitStrLiter(StrLiterContext ctx) {
     return super.visitStrLiter(ctx);
   }
 
   @Override
-  public Void visitPairLiter(PairLiterContext ctx) {
+  public Node visitPairLiter(PairLiterContext ctx) {
     return super.visitPairLiter(ctx);
   }
 
   @Override
-  public Void visitArrayLiter(ArrayLiterContext ctx) {
+  public Node visitArrayLiter(ArrayLiterContext ctx) {
     return super.visitArrayLiter(ctx);
   }
 
   @Override
-  public Void visitProg(ProgContext ctx) {
+  public Node visitProg(ProgContext ctx) {
     return super.visitProg(ctx);
   }
 }
