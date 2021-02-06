@@ -2,14 +2,13 @@ package frontend;
 
 import antlr.WaccParser.ArgListContext;
 import antlr.WaccParser.ArrayElemContext;
-import antlr.WaccParser.ArrayElemExprContext;
+import antlr.WaccParser.ArrElemExprContext;
 import antlr.WaccParser.ArrayLiterContext;
 import antlr.WaccParser.ArrayTypeContext;
 import antlr.WaccParser.AssignLHSContext;
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.BaseTypeContext;
 import antlr.WaccParser.BinOpExprContext;
-import antlr.WaccParser.BinaryOperContext;
 import antlr.WaccParser.BoolLiterContext;
 import antlr.WaccParser.CharLiterContext;
 import antlr.WaccParser.FuncContext;
@@ -21,7 +20,7 @@ import antlr.WaccParser.PairLiterContext;
 import antlr.WaccParser.PairTypeContext;
 import antlr.WaccParser.ParamContext;
 import antlr.WaccParser.ParamListContext;
-import antlr.WaccParser.ParanthesesExprContext;
+import antlr.WaccParser.ParanExprContext;
 import antlr.WaccParser.ProgContext;
 import antlr.WaccParser.ProgramContext;
 import antlr.WaccParser.StatContext;
@@ -30,7 +29,6 @@ import antlr.WaccParser.TypeArrayTypeContext;
 import antlr.WaccParser.TypeBaseTypeContext;
 import antlr.WaccParser.TypePairTypeContext;
 import antlr.WaccParser.UnOpExprContext;
-import antlr.WaccParser.UnaryOperContext;
 import antlr.WaccParserBaseVisitor;
 import frontend.symboltable.SymbolTable;
 import java.util.List;
@@ -176,8 +174,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Void> {
   }
 
   @Override
-  public Void visitArrayElemExpr(ArrayElemExprContext ctx) {
-    return super.visitArrayElemExpr(ctx);
+  public Void visitArrElemExpr(ArrElemExprContext ctx) {
+    return super.visitArrElemExpr(ctx);
   }
 
   @Override
@@ -191,8 +189,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Void> {
   }
 
   @Override
-  public Void visitParanthesesExpr(ParanthesesExprContext ctx) {
-    return super.visitParanthesesExpr(ctx);
+  public Void visitParanExpr(ParanExprContext ctx) {
+    return super.visitParanExpr(ctx);
   }
 
   @Override
