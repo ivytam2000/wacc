@@ -2,32 +2,34 @@ package frontend;
 
 import antlr.WaccParser.ArgListContext;
 import antlr.WaccParser.ArrayElemContext;
+import antlr.WaccParser.ArrayElemExprContext;
 import antlr.WaccParser.ArrayLiterContext;
 import antlr.WaccParser.ArrayTypeContext;
 import antlr.WaccParser.AssignLHSContext;
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.BaseTypeContext;
+import antlr.WaccParser.BinOpExprContext;
 import antlr.WaccParser.BinaryOperContext;
 import antlr.WaccParser.BoolLiterContext;
 import antlr.WaccParser.CharLiterContext;
-import antlr.WaccParser.ExprContext;
 import antlr.WaccParser.FuncContext;
+import antlr.WaccParser.IdentExprContext;
 import antlr.WaccParser.IntLiterContext;
-import antlr.WaccParser.IntSignContext;
 import antlr.WaccParser.PairElemContext;
 import antlr.WaccParser.PairElemTypeContext;
 import antlr.WaccParser.PairLiterContext;
 import antlr.WaccParser.PairTypeContext;
 import antlr.WaccParser.ParamContext;
 import antlr.WaccParser.ParamListContext;
+import antlr.WaccParser.ParanthesesExprContext;
 import antlr.WaccParser.ProgContext;
 import antlr.WaccParser.ProgramContext;
 import antlr.WaccParser.StatContext;
 import antlr.WaccParser.StrLiterContext;
 import antlr.WaccParser.TypeArrayTypeContext;
 import antlr.WaccParser.TypeBaseTypeContext;
-import antlr.WaccParser.TypeContext;
 import antlr.WaccParser.TypePairTypeContext;
+import antlr.WaccParser.UnOpExprContext;
 import antlr.WaccParser.UnaryOperContext;
 import antlr.WaccParserBaseVisitor;
 import frontend.symboltable.SymbolTable;
@@ -139,28 +141,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Void> {
   }
 
   @Override
-  public Void visitExpr(ExprContext ctx) {
-    return super.visitExpr(ctx);
-  }
-
-  @Override
-  public Void visitUnaryOper(UnaryOperContext ctx) {
-    return super.visitUnaryOper(ctx);
-  }
-
-  @Override
-  public Void visitBinaryOper(BinaryOperContext ctx) {
-    return super.visitBinaryOper(ctx);
-  }
-
-  @Override
   public Void visitArrayElem(ArrayElemContext ctx) {
     return super.visitArrayElem(ctx);
-  }
-
-  @Override
-  public Void visitIntSign(IntSignContext ctx) {
-    return super.visitIntSign(ctx);
   }
 
   @Override
@@ -186,6 +168,31 @@ public class TreeVisitor extends WaccParserBaseVisitor<Void> {
   @Override
   public Void visitPairLiter(PairLiterContext ctx) {
     return super.visitPairLiter(ctx);
+  }
+
+  @Override
+  public Void visitIdentExpr(IdentExprContext ctx) {
+    return super.visitIdentExpr(ctx);
+  }
+
+  @Override
+  public Void visitArrayElemExpr(ArrayElemExprContext ctx) {
+    return super.visitArrayElemExpr(ctx);
+  }
+
+  @Override
+  public Void visitUnOpExpr(UnOpExprContext ctx) {
+    return super.visitUnOpExpr(ctx);
+  }
+
+  @Override
+  public Void visitBinOpExpr(BinOpExprContext ctx) {
+    return super.visitBinOpExpr(ctx);
+  }
+
+  @Override
+  public Void visitParanthesesExpr(ParanthesesExprContext ctx) {
+    return super.visitParanthesesExpr(ctx);
   }
 
   @Override

@@ -69,30 +69,32 @@ pairElemType: baseType
 | PAIR
 ;
 
-expr: intLiter
-| boolLiter
-| charLiter
-| strLiter
-| pairLiter
-| IDENT
-| arrayElem
-| unaryOper expr
-| expr binaryOper expr
-| OPEN_PARENTHESES expr CLOSE_PARENTHESES
+expr: (PLUS | MINUS)? INTEGER                  #intLiter
+| (TRUE | FALSE)                               #boolLiter
+| CHAR_LITER                                   #charLiter
+| STR_LITER                                    #strLiter
+| NULL                                         #pairLiter
+| IDENT                                        #identExpr
+| arrayElem                                    #arrElemExpr
+| unaryOper expr                               #unOpExpr
+| expr binaryOper expr                         #binOpExpr
+| OPEN_PARENTHESES expr CLOSE_PARENTHESES      #paranExpr
 ;
 
+/*
+Cant treat unary and binary operators as lexer rules, causes errors when
+matching with expr
+*/
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;
-
 binaryOper: PLUS | MINUS | MULT | DIV | MOD | GT | GTE | LT | LTE | EQ | NE | AND | OR ;
 
 arrayElem: IDENT (OPEN_SQUARE_BRACKETS expr CLOSE_SQUARE_BRACKETS)+ ;
 
-intSign: PLUS | MINUS ;
-intLiter: intSign? INTEGER ;
-boolLiter: TRUE | FALSE ;
-charLiter: CHAR_LITER;
-strLiter: STR_LITER ;
-pairLiter: NULL ;
+//intLiter: (PLUS | MINUS)? INTEGER ;
+//boolLiter: TRUE | FALSE ;
+//charLiter: CHAR_LITER;
+//strLiter: STR_LITER ;
+//pairLiter: NULL ;
 
 arrayLiter: OPEN_SQUARE_BRACKETS (expr (COMMA expr)*)? CLOSE_SQUARE_BRACKETS ;
 
