@@ -41,8 +41,6 @@ public class AssignStatAST extends Node {
           System.out.println("Array elem is not the same type! Got type " +
               ((ArrayID) t2).getElemType().getTypeName() + "instead of " + ((ArrayID) t1).getElemType().getTypeName());
         }
-      } else {
-        System.out.println("Something went wrong in AssignAST!");
       }
     }
   }

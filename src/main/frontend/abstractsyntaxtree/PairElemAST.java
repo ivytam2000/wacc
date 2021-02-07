@@ -19,7 +19,6 @@ public class PairElemAST extends Node {
 
   @Override
   public void check() {
-    child.check();
   }
 
 }

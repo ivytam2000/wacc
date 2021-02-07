@@ -4,12 +4,8 @@ import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
 import frontend.abstractsyntaxtree.assignments.AssignStatAST;
-import frontend.abstractsyntaxtree.assignments.AssignArrayLiterAST;
 import frontend.abstractsyntaxtree.assignments.AssignCallAST;
-import frontend.abstractsyntaxtree.assignments.AssignExprAST;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
-import frontend.abstractsyntaxtree.assignments.AssignNewPairAST;
-import frontend.abstractsyntaxtree.assignments.AssignPairElemAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.expressions.*;
 import frontend.symboltable.*;
@@ -43,16 +39,27 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitFunc(FuncContext ctx) {
-    // create symbol table
+    assert (ctx.IDENT() != null);
+
+    // Create symbol table
     SymbolTable encScope = currSymTab;
     currSymTab = new SymbolTable(encScope);
 
+    ParamListAST params = (ParamListAST) visitParamList(ctx.paramList());
+
+    TypeID returnTypeID = currSymTab.lookupAll(ctx.type().toString()).getType();
+    FuncID funcID = new FuncID(returnTypeID, params.convertToParamIDs(), currSymTab);
+
+    FuncAST funcAST = new FuncAST(funcID, currSymTab, ctx.IDENT().toString(), params);
+    funcAST.check();
+
     // Swap back symbol table
     currSymTab = encScope;
-    return super.visitFunc(ctx);
+    return funcAST;
   }
 
-  /* Visit Statement Functions */
+  // Visit functions for statements
+
   @Override
   public Node visitPrint_stat(Print_statContext ctx) {
     return visitChildren(ctx);
@@ -154,7 +161,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node exprAST = visit(ctx.expr());
     children.add(exprAST);
     // don't need to check the since creating the exprAST will call check
-    return new AssignExprAST(exprAST.getIdentifier().getType(), currSymTab, children);
+    return new AssignRHSAST(exprAST.getIdentifier().getType(), currSymTab, children);
   }
 
   @Override
@@ -163,7 +170,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node arrayLiterAST = visitArrayLiter(ctx.arrayLiter());
     children.add(arrayLiterAST);
     // don't need to check the since creating the arrayLiterAST will call check
-    return new AssignArrayLiterAST(arrayLiterAST.getIdentifier().getType(), currSymTab, children);
+    return new AssignRHSAST(arrayLiterAST.getIdentifier().getType(), currSymTab, children);
   }
 
   @Override
@@ -174,8 +181,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     children.add(firstExprAST);
     children.add(secondExprAST);
     // don't need to check the since creating the exprASTs will call check
-    PairID pairID = new PairID(firstExprAST.getIdentifier().getType(), secondExprAST.getIdentifier().getType());
-    return new AssignNewPairAST(pairID, currSymTab, children);
+    PairID pairID = new PairID(firstExprAST.getIdentifier().getType(),
+        secondExprAST.getIdentifier().getType());
+    return new AssignRHSAST(pairID, currSymTab, children);
   }
 
   @Override
@@ -184,7 +192,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node pairElemAST = visitPairElem(ctx.pairElem());
     children.add(pairElemAST);
     // don't need to check the since creating the pairElem will call check
-    return new AssignPairElemAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
+    return new AssignRHSAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
   }
 
   @Override
@@ -237,7 +245,22 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitBaseType(BaseTypeContext ctx) {
-    return super.visitBaseType(ctx);
+    TypeID baseTypeID;
+
+    if (ctx.INT() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.INT().toString()).getType();
+    } else if (ctx.BOOL() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.BOOL().toString()).getType();
+    } else if (ctx.CHAR() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.CHAR().toString()).getType();
+    } else {
+      baseTypeID = currSymTab.lookupAll(ctx.STRING().toString()).getType();
+    }
+
+    BaseTypeAST baseTypeAST = new BaseTypeAST(baseTypeID, currSymTab);
+    baseTypeAST.check();
+
+    return baseTypeAST;
   }
 
   @Override
