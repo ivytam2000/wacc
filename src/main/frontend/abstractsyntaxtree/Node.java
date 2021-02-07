@@ -1,26 +1,17 @@
 package frontend.abstractsyntaxtree;
 
 import frontend.symboltable.Identifier;
-import frontend.symboltable.SymbolTable;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Node {
 
   protected Identifier identifier;
-  protected final SymbolTable symtab;
-  protected final Node parent;
-  protected final List<Node> children;
 
-  protected Node(Identifier identifier, SymbolTable symtab, Node parent) {
+  protected Node(Identifier identifier) {
     this.identifier = identifier;
-    this.symtab = symtab;
-    this.parent = parent;
-    this.children = new ArrayList<>();
   }
 
-  protected Node(SymbolTable symtab, Node parent) {
-    this(null, symtab, parent);
+  protected Node() {
+    this(null);
   }
 
   public Identifier getIdentifier() {

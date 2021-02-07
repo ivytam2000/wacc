@@ -8,9 +8,11 @@ public class BaseTypeAST extends Node {
 
   private final String typeName;
   private TypeID baseTypeObj;
+  private SymbolTable symtab;
 
-  public BaseTypeAST(Identifier identifier, SymbolTable symtab, Node parent) {
-    super(identifier, symtab, parent);
+  public BaseTypeAST(Identifier identifier, SymbolTable symtab) {
+    super(identifier);
+    this.symtab = symtab;
     this.typeName = identifier.getType().getTypeName();
   }
 

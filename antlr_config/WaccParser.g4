@@ -16,19 +16,19 @@ paramList: param (COMMA param)* ;
 param: type IDENT ;
 
 /** Statements */
-stat: SKIP_LITER
-| type IDENT ASSIGN assignRHS
-| assignLHS ASSIGN assignRHS
-| READ assignLHS
-| FREE expr
-| RETURN expr
-| EXIT expr
-| PRINT expr
-| PRINTLN expr
-| IF expr THEN stat ELSE stat FI
-| WHILE expr DO stat DONE
-| stat SEMI_COLON stat
-| BEGIN stat END
+stat: SKIP_LITER                                            #skip_stat
+| type IDENT ASSIGN assignRHS                               #var_decl_stat
+| assignLHS ASSIGN assignRHS                                #assign_stat
+| READ assignLHS                                            #read_stat
+| FREE expr                                                 #free_stat
+| RETURN expr                                               #return_stat
+| EXIT expr                                                 #exit_stat
+| PRINT expr                                                #print_stat
+| PRINTLN expr                                              #println_stat
+| IF expr THEN stat ELSE stat FI                            #if_stat
+| WHILE expr DO stat DONE                                   #while_stat
+| stat SEMI_COLON stat                                      #sequence_stat
+| BEGIN stat END                                            #new_scope_stat
 ;
 
 /** Assignments */
@@ -69,30 +69,36 @@ pairElemType: baseType
 | PAIR
 ;
 
-expr: intLiter
-| boolLiter
-| charLiter
-| strLiter
-| pairLiter
-| IDENT
-| arrayElem
-| unaryOper expr
-| expr binaryOper expr
-| OPEN_PARENTHESES expr CLOSE_PARENTHESES
+expr: (PLUS | MINUS)? INTEGER                  #intLiter
+| (TRUE | FALSE)                               #boolLiter
+| CHAR_LITER                                   #charLiter
+| STR_LITER                                    #strLiter
+| NULL                                         #pairLiter
+| IDENT                                        #identExpr
+| arrayElem                                    #arrElemExpr
+| OPEN_PARENTHESES expr CLOSE_PARENTHESES      #paranExpr
+| unaryOper expr                               #unOpExpr
+| expr arithmeticOper1 expr                    #arithOpExpr_1
+| expr arithmeticOper2 expr                    #arithOpExpr_2
+| expr binaryOper expr                         #binOpExpr
 ;
 
+/*
+Cant treat unary and binary operators as lexer rules, causes errors when
+matching with expr
+*/
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;
-
-binaryOper: PLUS | MINUS | MULT | DIV | MOD | GT | GTE | LT | LTE | EQ | NE | AND | OR ;
+arithmeticOper1: MULT | DIV | MOD;
+arithmeticOper2: PLUS | MINUS;
+binaryOper: GT | GTE | LT | LTE | EQ | NE | AND | OR ;
 
 arrayElem: IDENT (OPEN_SQUARE_BRACKETS expr CLOSE_SQUARE_BRACKETS)+ ;
 
-intSign: PLUS | MINUS ;
-intLiter: intSign? INTEGER ;
-boolLiter: TRUE | FALSE ;
-charLiter: CHAR_LITER;
-strLiter: STR_LITER ;
-pairLiter: NULL ;
+//intLiter: (PLUS | MINUS)? INTEGER ;
+//boolLiter: TRUE | FALSE ;
+//charLiter: CHAR_LITER;
+//strLiter: STR_LITER ;
+//pairLiter: NULL ;
 
 arrayLiter: OPEN_SQUARE_BRACKETS (expr (COMMA expr)*)? CLOSE_SQUARE_BRACKETS ;
 

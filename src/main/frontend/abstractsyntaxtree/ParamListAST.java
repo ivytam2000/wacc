@@ -4,13 +4,14 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import java.util.List;
 
-public class ParamListAST extends Node {
+public class ParamListAST extends Parent {
 
   protected List<ParamAST> paramASTs;
+  private SymbolTable symtab;
 
-  protected ParamListAST(Identifier identifier, SymbolTable symtab, Node parent,
-      List<ParamAST> paramASTs) {
-    super(identifier, symtab, parent);
+  protected ParamListAST(Identifier identifier, SymbolTable symtab, List<ParamAST> paramASTs) {
+    super(identifier);
+    this.symtab = symtab;
     this.paramASTs = paramASTs;
   }
 

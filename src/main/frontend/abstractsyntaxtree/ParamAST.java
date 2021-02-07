@@ -9,9 +9,11 @@ public class ParamAST extends Node {
   private final String typeName;
   private final String varName;
   private ParamID paramObj;
+  private SymbolTable symtab;
 
-  protected ParamAST(Identifier identifier, SymbolTable symtab, Node parent, String varName) {
-    super(identifier, symtab, parent);
+  protected ParamAST(Identifier identifier, SymbolTable symtab, String varName) {
+    super(identifier);
+    this.symtab = symtab;
     this.typeName = identifier.getType().getTypeName();
     this.varName = varName;
   }
