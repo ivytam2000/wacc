@@ -69,16 +69,26 @@ pairElemType: baseType
 | PAIR
 ;
 
-expr: (PLUS | MINUS)? INTEGER                  #intLiter
-| (TRUE | FALSE)                               #boolLiter
+expr: validForExpr                             #validExpr
 | CHAR_LITER                                   #charLiter
 | STR_LITER                                    #strLiter
 | NULL                                         #pairLiter
-| IDENT                                        #identExpr
-| arrayElem                                    #arrElemExpr
-| unaryOper expr                               #unOpExpr
-| expr binaryOper expr                         #binOpExpr
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES      #paranExpr
+| operationExpr                                #operExpr
+| expr binaryOper expr                         #binOpExpr
+;
+
+operationExpr: operationExpr binOp1 operationExpr         #arithmeticExpr1
+| operationExpr binOp2 operationExpr                      #arithmeticExpr2
+| unaryOper expr                                          #unOpExpr
+| validForExpr                                            #validForArithmetic
+| OPEN_PARENTHESES operationExpr CLOSE_PARENTHESES        #paranArithmetic
+;
+
+validForExpr: IDENT                                         #identExpr
+| (PLUS | MINUS)? INTEGER                                   #intLiter
+| (TRUE | FALSE)                                            #boolLiter
+| arrayElem                                                 #arrElemExpr
 ;
 
 /*
@@ -86,7 +96,9 @@ Cant treat unary and binary operators as lexer rules, causes errors when
 matching with expr
 */
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;
-binaryOper: PLUS | MINUS | MULT | DIV | MOD | GT | GTE | LT | LTE | EQ | NE | AND | OR ;
+binaryOper: GT | GTE | LT | LTE | EQ | NE | AND | OR ;
+binOp1: MULT | DIV | MOD ;
+binOp2: PLUS | MINUS ;
 
 arrayElem: IDENT (OPEN_SQUARE_BRACKETS expr CLOSE_SQUARE_BRACKETS)+ ;
 

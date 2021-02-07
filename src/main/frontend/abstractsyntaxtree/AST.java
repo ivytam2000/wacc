@@ -7,7 +7,7 @@ public class AST extends Node {
   private SymbolTable symtab;
 
   public AST(SymbolTable topLevelSymTab) {
-    super(); //Parent is null
+    super();
     this.symtab =topLevelSymTab;
   }
 
