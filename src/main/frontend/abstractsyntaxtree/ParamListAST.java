@@ -2,7 +2,9 @@ package frontend.abstractsyntaxtree;
 
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.TypeID;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ParamListAST extends Parent {
 
@@ -20,5 +22,10 @@ public class ParamListAST extends Parent {
     for (ParamAST paramAST : paramASTs) {
       paramAST.check();
     }
+  }
+
+  public List<TypeID> convertToParamIDs() {
+    return paramASTs.stream().map(paramAST -> paramAST.getIdentifier().getType())
+        .collect(Collectors.toList());
   }
 }

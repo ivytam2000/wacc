@@ -39,16 +39,27 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitFunc(FuncContext ctx) {
-    // create symbol table
+    assert (ctx.IDENT() != null);
+
+    // Create symbol table
     SymbolTable encScope = currSymTab;
     currSymTab = new SymbolTable(encScope);
 
+    ParamListAST params = (ParamListAST) visitParamList(ctx.paramList());
+
+    TypeID returnTypeID = currSymTab.lookupAll(ctx.type().toString()).getType();
+    FuncID funcID = new FuncID(returnTypeID, params.convertToParamIDs(), currSymTab);
+
+    FuncAST funcAST = new FuncAST(funcID, currSymTab, ctx.IDENT().toString(), params);
+    funcAST.check();
+
     // Swap back symbol table
     currSymTab = encScope;
-    return super.visitFunc(ctx);
+    return funcAST;
   }
 
-  /* Visit Statement Functions */
+  // Visit functions for statements
+
   @Override
   public Node visitPrint_stat(Print_statContext ctx) {
     return visitChildren(ctx);
@@ -170,7 +181,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     children.add(firstExprAST);
     children.add(secondExprAST);
     // don't need to check the since creating the exprASTs will call check
-    PairID pairID = new PairID(firstExprAST.getIdentifier().getType(), secondExprAST.getIdentifier().getType());
+    PairID pairID = new PairID(firstExprAST.getIdentifier().getType(),
+        secondExprAST.getIdentifier().getType());
     return new AssignRHSAST(pairID, currSymTab, children);
   }
 
