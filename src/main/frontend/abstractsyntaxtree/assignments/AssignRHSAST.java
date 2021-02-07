@@ -5,7 +5,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import java.util.List;
 
-public abstract class AssignRHSAST extends Node {
+public class AssignRHSAST extends Node {
 
   protected SymbolTable symtab;
   protected List<Node> children;
@@ -20,4 +20,8 @@ public abstract class AssignRHSAST extends Node {
     return children;
   }
 
+  @Override
+  public void check() {
+
+  }
 }
