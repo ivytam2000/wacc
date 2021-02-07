@@ -196,7 +196,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitCharLiter(CharLiterContext ctx) {
-    return super.visitCharLiter(ctx);
+    String s = ctx.CHAR_LITER().toString();
+    assert (s.length() == 1);
+    char val = s.charAt(0);
+    return new CharLiterAST(currSymTab, val);
   }
 
   @Override
