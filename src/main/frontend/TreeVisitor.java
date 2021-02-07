@@ -245,7 +245,22 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitBaseType(BaseTypeContext ctx) {
-    return super.visitBaseType(ctx);
+    TypeID baseTypeID;
+
+    if (ctx.INT() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.INT().toString()).getType();
+    } else if (ctx.BOOL() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.BOOL().toString()).getType();
+    } else if (ctx.CHAR() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.CHAR().toString()).getType();
+    } else {
+      baseTypeID = currSymTab.lookupAll(ctx.STRING().toString()).getType();
+    }
+
+    BaseTypeAST baseTypeAST = new BaseTypeAST(baseTypeID, currSymTab);
+    baseTypeAST.check();
+
+    return baseTypeAST;
   }
 
   @Override
