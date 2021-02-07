@@ -43,6 +43,7 @@ public class VarDecAST extends Node {
         VariableID varID = new VariableID((TypeID) typeID, varName);
         // add to symbol table
         symtab.add(varName, varID);
+        setIdentifier(varID);
       }
     }
   }

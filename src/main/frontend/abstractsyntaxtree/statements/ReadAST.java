@@ -25,6 +25,8 @@ public class ReadAST extends Node {
       System.out.println(lhs.getIdentifier().getType() + "is not a type");
     } else if (!(lhsType instanceof IntID) && !(lhsType instanceof CharID)) {
       System.out.println("Read can only take int or char types");
+    } else {
+      setIdentifier(lhsType);
     }
   }
 }
