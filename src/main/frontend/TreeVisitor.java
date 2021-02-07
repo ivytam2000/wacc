@@ -191,7 +191,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitBoolLiter(BoolLiterContext ctx) {
-    return super.visitBoolLiter(ctx);
+    return new BoolLiterAST(currSymTab, ctx.FALSE() == null);
   }
 
   @Override
