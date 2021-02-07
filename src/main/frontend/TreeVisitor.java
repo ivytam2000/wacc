@@ -204,7 +204,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitStrLiter(StrLiterContext ctx) {
-    return super.visitStrLiter(ctx);
+    String val = ctx.STR_LITER().toString();
+    assert (val != null);
+    return new StrLiterAST(currSymTab, val);
   }
 
   @Override
