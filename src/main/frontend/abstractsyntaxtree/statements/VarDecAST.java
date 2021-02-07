@@ -1,10 +1,13 @@
 package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.VariableID;
+
+import static frontend.abstractsyntaxtree.statements.AssignStatAST.typeCompat;
 
 public class VarDecAST extends Node {
 
@@ -34,12 +37,13 @@ public class VarDecAST extends Node {
     } else if (variable != null) {
       System.out.println(varName + "is already declared");
     } else {
-      // create variable identifier
-      VariableID varID = new VariableID((TypeID) typeID, varName);
-      // add to symbol table
-      symtab.add(varName,varID);
+      TypeID rhsType = assignRHS.getIdentifier().getType();
+      if (typeCompat((TypeID) typeID, rhsType)) {
+        // create variable identifier
+        VariableID varID = new VariableID((TypeID) typeID, varName);
+        // add to symbol table
+        symtab.add(varName, varID);
+      }
     }
-
-    // TODO: Check that the types of the assignment is compatible
   }
 }

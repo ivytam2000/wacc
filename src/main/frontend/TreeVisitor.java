@@ -3,11 +3,13 @@ package frontend;
 import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
-import frontend.abstractsyntaxtree.assignments.AssignStatAST;
+import frontend.abstractsyntaxtree.statements.AssignStatAST;
 import frontend.abstractsyntaxtree.assignments.AssignCallAST;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.expressions.*;
+import frontend.abstractsyntaxtree.statements.ReadAST;
+import frontend.abstractsyntaxtree.statements.VarDecAST;
 import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,7 +105,14 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitVar_decl_stat(Var_decl_statContext ctx) {
-    return visitChildren(ctx);
+    // Might need to check if it is the instance before downcasting?
+    // TODO : need to create a typeAST node?
+    // TypeAST typeAST = visit(ctx.type());
+    AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
+    VarDecAST varDec = new VarDecAST(currSymTab, ctx.type().toString(),
+        ctx.IDENT().getText(), assignRHS);
+    varDec.check();
+    return varDec;
   }
 
   @Override
@@ -128,7 +137,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitRead_stat(Read_statContext ctx) {
-    return visitChildren(ctx);
+    AssignLHSAST assignLHSAST = (AssignLHSAST) visit(ctx.assignLHS());
+    ReadAST readAST = new ReadAST(currSymTab,assignLHSAST);
+    readAST.check();
+    return assignLHSAST;
   }
 
   @Override
