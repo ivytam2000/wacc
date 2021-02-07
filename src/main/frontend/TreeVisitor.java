@@ -280,13 +280,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitPairLiter(PairLiterContext ctx) {
-    return super.visitPairLiter(ctx);
+  public Node visitIdentExpr(IdentExprContext ctx) {
+    return super.visitIdentExpr(ctx);
   }
 
   @Override
-  public Node visitIdentExpr(IdentExprContext ctx) {
-    return super.visitIdentExpr(ctx);
+  public Node visitPairLiter(PairLiterContext ctx) {
+    return super.visitPairLiter(ctx);
   }
 
   @Override
@@ -295,8 +295,23 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
+  public Node visitParanExpr(ParanExprContext ctx) {
+    return super.visitParanExpr(ctx);
+  }
+
+  @Override
   public Node visitUnOpExpr(UnOpExprContext ctx) {
     return super.visitUnOpExpr(ctx);
+  }
+
+  @Override
+  public Node visitArithOpExpr_1(ArithOpExpr_1Context ctx) {
+    return super.visitArithOpExpr_1(ctx);
+  }
+
+  @Override
+  public Node visitArithOpExpr_2(ArithOpExpr_2Context ctx) {
+    return super.visitArithOpExpr_2(ctx);
   }
 
   @Override
@@ -305,8 +320,23 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitParanExpr(ParanExprContext ctx) {
-    return super.visitParanExpr(ctx);
+  public Node visitUnaryOper(UnaryOperContext ctx) {
+    return super.visitUnaryOper(ctx);
+  }
+
+  @Override
+  public Node visitArithmeticOper1(ArithmeticOper1Context ctx) {
+    return super.visitArithmeticOper1(ctx);
+  }
+
+  @Override
+  public Node visitArithmeticOper2(ArithmeticOper2Context ctx) {
+    return super.visitArithmeticOper2(ctx);
+  }
+
+  @Override
+  public Node visitBinaryOper(BinaryOperContext ctx) {
+    return super.visitBinaryOper(ctx);
   }
 
   @Override
