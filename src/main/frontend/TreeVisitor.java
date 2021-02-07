@@ -1,38 +1,11 @@
 package frontend;
 
-import antlr.WaccParser;
-import antlr.WaccParser.ArgListContext;
-import antlr.WaccParser.ArrayElemContext;
-import antlr.WaccParser.ArrElemExprContext;
-import antlr.WaccParser.ArrayLiterContext;
-import antlr.WaccParser.ArrayTypeContext;
-import antlr.WaccParser.AssignLHSContext;
-import antlr.WaccParser.AssignRHSContext;
-import antlr.WaccParser.BaseTypeContext;
-import antlr.WaccParser.BinOpExprContext;
-import antlr.WaccParser.BoolLiterContext;
-import antlr.WaccParser.CharLiterContext;
-import antlr.WaccParser.FuncContext;
-import antlr.WaccParser.IdentExprContext;
-import antlr.WaccParser.IntLiterContext;
-import antlr.WaccParser.PairElemContext;
-import antlr.WaccParser.PairElemTypeContext;
-import antlr.WaccParser.PairLiterContext;
-import antlr.WaccParser.PairTypeContext;
-import antlr.WaccParser.ParamContext;
-import antlr.WaccParser.ParamListContext;
-import antlr.WaccParser.ParanExprContext;
-import antlr.WaccParser.ProgContext;
-import antlr.WaccParser.ProgramContext;
-import antlr.WaccParser.StatContext;
-import antlr.WaccParser.StrLiterContext;
-import antlr.WaccParser.TypeArrayTypeContext;
-import antlr.WaccParser.TypeBaseTypeContext;
-import antlr.WaccParser.TypePairTypeContext;
-import antlr.WaccParser.UnOpExprContext;
+import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
-import frontend.abstractsyntaxtree.Node;
-import frontend.symboltable.SymbolTable;
+import frontend.abstractsyntaxtree.*;
+import frontend.abstractsyntaxtree.expressions.*;
+import frontend.abstractsyntaxtree.statements.*;
+import frontend.symboltable.*;
 import java.util.List;
 
 public class TreeVisitor extends WaccParserBaseVisitor<Node> {
@@ -73,68 +46,68 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   /* Visit Statement Functions */
   @Override
-  public Node visitPrint_stat(WaccParser.Print_statContext ctx) {
+  public Node visitPrint_stat(Print_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitAssign_stat(WaccParser.Assign_statContext ctx) {
+  public Node visitAssign_stat(Assign_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitPrintln_stat(WaccParser.Println_statContext ctx) {
+  public Node visitPrintln_stat(Println_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitReturn_stat(WaccParser.Return_statContext ctx) {
+  public Node visitReturn_stat(Return_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitExit_stat(WaccParser.Exit_statContext ctx) {
+  public Node visitExit_stat(Exit_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitSkip_stat(WaccParser.Skip_statContext ctx) {
+  public Node visitSkip_stat(Skip_statContext ctx) {
     System.out.println("SKIP found");
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitFree_stat(WaccParser.Free_statContext ctx) {
+  public Node visitFree_stat(Free_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitVar_decl_stat(WaccParser.Var_decl_statContext ctx) {
+  public Node visitVar_decl_stat(Var_decl_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitWhile_stat(WaccParser.While_statContext ctx) {
+  public Node visitWhile_stat(While_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitNew_scope_stat(WaccParser.New_scope_statContext ctx) {
+  public Node visitNew_scope_stat(New_scope_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitIf_stat(WaccParser.If_statContext ctx) {
+  public Node visitIf_stat(If_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitSequence_stat(WaccParser.Sequence_statContext ctx) {
+  public Node visitSequence_stat(Sequence_statContext ctx) {
     return visitChildren(ctx);
   }
 
   @Override
-  public Node visitRead_stat(WaccParser.Read_statContext ctx) {
+  public Node visitRead_stat(Read_statContext ctx) {
     return visitChildren(ctx);
   }
 
@@ -210,6 +183,14 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitIntLiter(IntLiterContext ctx) {
+    Identifier identifier = currSymTab.lookupAll("int");
+    IntLiterAST intLiterAST;
+    long val = Long.parseLong(ctx.INTEGER().toString());
+    if (ctx.MINUS() != null) {
+      val = -val;
+    }
+    intLiterAST = new IntLiterAST(identifier, val);
+    intLiterAST.check();
     return super.visitIntLiter(ctx);
   }
 

@@ -1,7 +1,6 @@
-package frontend.abstractsyntaxtree.StatASTs;
+package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
-import frontend.symboltable.Identifier;
 
 public class BeginAST extends Node {
 
