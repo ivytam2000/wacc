@@ -3,9 +3,17 @@ package frontend;
 import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
+import frontend.abstractsyntaxtree.assignments.AssignStatAST;
+import frontend.abstractsyntaxtree.assignments.AssignArrayLiterAST;
+import frontend.abstractsyntaxtree.assignments.AssignCallAST;
+import frontend.abstractsyntaxtree.assignments.AssignExprAST;
+import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
+import frontend.abstractsyntaxtree.assignments.AssignNewPairAST;
+import frontend.abstractsyntaxtree.assignments.AssignPairElemAST;
+import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.expressions.*;
-import frontend.abstractsyntaxtree.statements.*;
 import frontend.symboltable.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TreeVisitor extends WaccParserBaseVisitor<Node> {
@@ -52,7 +60,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitAssign_stat(Assign_statContext ctx) {
-    return visitChildren(ctx);
+    AssignLHSAST lhs = (AssignLHSAST) visitAssignLHS(ctx.assignLHS());
+    AssignRHSAST rhs = (AssignRHSAST) visit(ctx.assignRHS());
+
+    AssignStatAST assignStatAST = new AssignStatAST(lhs, rhs, currSymTab);
+    assignStatAST.check();
+    return assignStatAST;
   }
 
   @Override
@@ -127,18 +140,75 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitAssignRHS(AssignRHSContext ctx) {
-    return super.visitAssignRHS(ctx);
+  public Node visitExpr_assignRHS(Expr_assignRHSContext ctx) {
+    List<Node> children = new ArrayList<>();
+    Node exprAST = visit(ctx.expr());
+    children.add(exprAST);
+    // don't need to check the since creating the exprAST will call check
+    return new AssignExprAST(exprAST.getIdentifier().getType(), currSymTab, children);
+  }
+
+  @Override
+  public Node visitArrayLiter_assignRHS(ArrayLiter_assignRHSContext ctx) {
+    List<Node> children = new ArrayList<>();
+    Node arrayLiterAST = visitArrayLiter(ctx.arrayLiter());
+    children.add(arrayLiterAST);
+    // don't need to check the since creating the arrayLiterAST will call check
+    return new AssignArrayLiterAST(arrayLiterAST.getIdentifier().getType(), currSymTab, children);
+  }
+
+  @Override
+  public Node visitNewPair_assignRHS(NewPair_assignRHSContext ctx) {
+    Node firstExprAST = visit(ctx.expr(0));
+    Node secondExprAST = visit(ctx.expr(1));
+    List<Node> children = new ArrayList<>();
+    children.add(firstExprAST);
+    children.add(secondExprAST);
+    // don't need to check the since creating the exprASTs will call check
+    PairID pairID = new PairID(firstExprAST.getIdentifier().getType(), secondExprAST.getIdentifier().getType());
+    return new AssignNewPairAST(pairID, currSymTab, children);
+  }
+
+  @Override
+  public Node visitPairElem_assignRHS(PairElem_assignRHSContext ctx) {
+    List<Node> children = new ArrayList<>();
+    Node pairElemAST = visitPairElem(ctx.pairElem());
+    children.add(pairElemAST);
+    // don't need to check the since creating the pairElem will call check
+    return new AssignPairElemAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
+  }
+
+  @Override
+  public Node visitCall_assignRHS(Call_assignRHSContext ctx) {
+    List<Node> params = new ArrayList<>();
+    String funcName = ctx.IDENT().toString();
+    Node argListAST = visitArgList(ctx.argList());
+    params.add(argListAST);
+    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, params);
+    assignCallAST.check();
+    return assignCallAST;
   }
 
   @Override
   public Node visitArgList(ArgListContext ctx) {
-    return super.visitArgList(ctx);
+    List<Node> expressions = new ArrayList<>();
+    for (ExprContext exprContext : ctx.expr()) {
+      expressions.add(visitChildren(exprContext));
+    }
+    // don't need to check the since creating the exprASTs will call check
+    return new ArgListAST(currSymTab, expressions);
   }
 
   @Override
   public Node visitPairElem(PairElemContext ctx) {
-    return super.visitPairElem(ctx);
+    Node exprAST = visit(ctx.expr());
+    Identifier ident = exprAST.getIdentifier();
+    // don't need to check the since creating the exprAST will call check
+    if (ctx.FST() != null) {
+      return new PairElemAST(ident, currSymTab, true, exprAST);
+    } else {
+      return new PairElemAST(ident, currSymTab, false, exprAST);
+    }
   }
 
   @Override
@@ -241,7 +311,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitArrayLiter(ArrayLiterContext ctx) {
-    return super.visitArrayLiter(ctx);
+    List<Node> children = new ArrayList<>();
+
+    for (ExprContext expr : ctx.expr()) {
+      Node exprAST = visit(expr);
+      children.add(exprAST);
+    }
+
+    ArrayLiterAST arrayLiterAST = new ArrayLiterAST(currSymTab, children);
+    arrayLiterAST.check();
+    return arrayLiterAST;
   }
 
   @Override
