@@ -11,9 +11,11 @@ public class FuncAST extends Node {
   private String funcName;
   private ParamListAST params;
   private FuncID funcObj;
+  private SymbolTable symtab;
 
-  public FuncAST(Identifier identifier, SymbolTable currSymTab, Node parentNode, String funcName) {
-    super(identifier, currSymTab, parentNode);
+  public FuncAST(Identifier identifier, SymbolTable currSymTab, String funcName) {
+    super(identifier);
+    this.symtab = currSymTab;
     this.returnTypeName = identifier.getType().getTypeName();
     this.funcName = funcName;
 
