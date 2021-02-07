@@ -183,19 +183,20 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitIntLiter(IntLiterContext ctx) {
+    Identifier identifier = currSymTab.lookupAll("int");
+    IntLiterAST intLiterAST;
     long val = Long.parseLong(ctx.INTEGER().toString());
     if (ctx.MINUS() != null) {
       val = -val;
     }
-    IntLiterAST intLiterAST =
-        new IntLiterAST(currSymTab.lookupAll("int"), val);
+    intLiterAST = new IntLiterAST(identifier, val);
     intLiterAST.check();
-    return intLiterAST;
+    return super.visitIntLiter(ctx);
   }
 
   @Override
   public Node visitBoolLiter(BoolLiterContext ctx) {
-    return new BoolLiterAST(currSymTab.lookupAll("bool"));
+    return super.visitBoolLiter(ctx);
   }
 
   @Override
@@ -226,6 +227,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitUnOpExpr(UnOpExprContext ctx) {
     return super.visitUnOpExpr(ctx);
+  }
+
+  @Override
+  public Node visitBinOpExpr(BinOpExprContext ctx) {
+    return super.visitBinOpExpr(ctx);
   }
 
   @Override
