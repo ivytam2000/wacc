@@ -286,8 +286,18 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitPairElemType(PairElemTypeContext ctx) {
-    return super.visitPairElemType(ctx);
+  public Node visitPairElemTypeBaseType(PairElemTypeBaseTypeContext ctx) {
+    return visitBaseType(ctx.baseType());
+  }
+
+  @Override
+  public Node visitPairElemTypeArrayType(PairElemTypeArrayTypeContext ctx) {
+    return visitArrayType(ctx.arrayType());
+  }
+
+  @Override
+  public Node visitPairElemTypePairToken(PairElemTypePairTokenContext ctx) {
+    return super.visitPairElemTypePairToken(ctx);
   }
 
   @Override

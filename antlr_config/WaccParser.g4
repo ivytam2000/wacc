@@ -64,9 +64,9 @@ arrayType: (baseType | pairType) (OPEN_SQUARE_BRACKETS CLOSE_SQUARE_BRACKETS)+ ;
 
 pairType: PAIR OPEN_PARENTHESES pairElemType COMMA pairElemType CLOSE_PARENTHESES ;
 
-pairElemType: baseType
-| arrayType
-| PAIR
+pairElemType: baseType  #PairElemTypeBaseType
+| arrayType             #PairElemTypeArrayType
+| PAIR                  #PairElemTypePairToken
 ;
 
 expr: (PLUS | MINUS)? INTEGER                  #intLiter
