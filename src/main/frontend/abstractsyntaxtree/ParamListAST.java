@@ -4,7 +4,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import java.util.List;
 
-public class ParamListAST extends Node {
+public class ParamListAST extends Parent {
 
   protected List<ParamAST> paramASTs;
   private SymbolTable symtab;

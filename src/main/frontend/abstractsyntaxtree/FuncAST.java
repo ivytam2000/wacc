@@ -5,7 +5,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
 
-public class FuncAST extends Node {
+public class FuncAST extends Parent {
 
   private String returnTypeName;
   private String funcName;

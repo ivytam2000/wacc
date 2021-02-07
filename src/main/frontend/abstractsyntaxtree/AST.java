@@ -2,7 +2,7 @@ package frontend.abstractsyntaxtree;
 
 import frontend.symboltable.SymbolTable;
 
-public class AST extends Node {
+public class AST extends Parent {
 
   private SymbolTable symtab;
 
