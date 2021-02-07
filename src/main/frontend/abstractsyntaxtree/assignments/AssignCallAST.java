@@ -12,7 +12,7 @@ public class AssignCallAST extends AssignRHSAST {
   private String funcName;
 
   public AssignCallAST(String funcName, SymbolTable symtab, List<Node> params) {
-    super(symtab, params);
+    super(symtab.lookupAll(funcName), symtab, params);
     this.funcName = funcName;
   }
 
