@@ -61,6 +61,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     AssignStatAST assignStatAST = new AssignStatAST(lhs, rhs, currSymTab);
     assignStatAST.check();
+    currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
     return assignStatAST;
   }
 
