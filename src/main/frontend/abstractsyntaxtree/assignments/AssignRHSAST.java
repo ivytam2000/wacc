@@ -16,8 +16,8 @@ public abstract class AssignRHSAST extends Node {
     this.children = children;
   }
 
-  public AssignRHSAST(SymbolTable symtab, List<Node> children) {
-    this.symtab = symtab;
-    this.children = children;
+  public List<Node> getChildren() {
+    return children;
   }
+
 }
