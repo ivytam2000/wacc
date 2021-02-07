@@ -26,4 +26,8 @@ public class FuncID extends Identifier {
   public void appendParam(TypeID param) {
     params.add(param);
   }
+
+  public List<TypeID> getParams() {
+    return params;
+  }
 }
