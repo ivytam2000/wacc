@@ -136,7 +136,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitAssignLHS(AssignLHSContext ctx) {
-    return super.visitAssignLHS(ctx);
+    if (ctx.IDENT() != null) {
+      String assignName = ctx.IDENT().toString();
+      return new AssignLHSAST(currSymTab.lookupAll(assignName), currSymTab, assignName);
+    } else if (ctx.pairElem() != null) {
+      Node pairElem = visitPairElem((ctx.pairElem()));
+      return new AssignLHSAST(pairElem.getIdentifier().getType(), currSymTab);
+    } else {  // array elem
+      Node arrayElem = visitArrayElem((ctx.arrayElem()));
+      return new AssignLHSAST(arrayElem.getIdentifier().getType(), currSymTab);
+    }
   }
 
   @Override
