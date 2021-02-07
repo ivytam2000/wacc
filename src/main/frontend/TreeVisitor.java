@@ -219,6 +219,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitArrElemExpr(ArrElemExprContext ctx) {
+    //TODO: The ast needs a getname method for the ident
     return super.visitArrElemExpr(ctx);
   }
 
