@@ -4,12 +4,8 @@ import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
 import frontend.abstractsyntaxtree.assignments.AssignStatAST;
-import frontend.abstractsyntaxtree.assignments.AssignArrayLiterAST;
 import frontend.abstractsyntaxtree.assignments.AssignCallAST;
-import frontend.abstractsyntaxtree.assignments.AssignExprAST;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
-import frontend.abstractsyntaxtree.assignments.AssignNewPairAST;
-import frontend.abstractsyntaxtree.assignments.AssignPairElemAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.expressions.*;
 import frontend.symboltable.*;
@@ -154,7 +150,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node exprAST = visit(ctx.expr());
     children.add(exprAST);
     // don't need to check the since creating the exprAST will call check
-    return new AssignExprAST(exprAST.getIdentifier().getType(), currSymTab, children);
+    return new AssignRHSAST(exprAST.getIdentifier().getType(), currSymTab, children);
   }
 
   @Override
@@ -163,7 +159,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node arrayLiterAST = visitArrayLiter(ctx.arrayLiter());
     children.add(arrayLiterAST);
     // don't need to check the since creating the arrayLiterAST will call check
-    return new AssignArrayLiterAST(arrayLiterAST.getIdentifier().getType(), currSymTab, children);
+    return new AssignRHSAST(arrayLiterAST.getIdentifier().getType(), currSymTab, children);
   }
 
   @Override
@@ -175,7 +171,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     children.add(secondExprAST);
     // don't need to check the since creating the exprASTs will call check
     PairID pairID = new PairID(firstExprAST.getIdentifier().getType(), secondExprAST.getIdentifier().getType());
-    return new AssignNewPairAST(pairID, currSymTab, children);
+    return new AssignRHSAST(pairID, currSymTab, children);
   }
 
   @Override
@@ -184,7 +180,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node pairElemAST = visitPairElem(ctx.pairElem());
     children.add(pairElemAST);
     // don't need to check the since creating the pairElem will call check
-    return new AssignPairElemAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
+    return new AssignRHSAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
   }
 
   @Override
