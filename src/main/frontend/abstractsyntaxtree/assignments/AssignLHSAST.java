@@ -9,8 +9,8 @@ public class AssignLHSAST extends Node {
   private SymbolTable symtab;
   private String assignName;
 
-  public AssignLHSAST(Identifier identifier, SymbolTable symtab, String assignName) {
-    super(identifier);
+  public AssignLHSAST(SymbolTable symtab, String assignName) {
+    super(symtab.lookupAll(assignName));
     this.symtab = symtab;
     this.assignName = assignName;
   }
