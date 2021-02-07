@@ -7,14 +7,14 @@ import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 
-public class AssignAST extends Node {
+public class AssignStatAST extends Node {
 
   private AssignRHSAST rhs;
   private AssignLHSAST lhs;
   private SymbolTable symtab;
   private Identifier assignObj;
 
-  public AssignAST(AssignLHSAST lhs, AssignRHSAST rhs, SymbolTable symtab) {
+  public AssignStatAST(AssignLHSAST lhs, AssignRHSAST rhs, SymbolTable symtab) {
     this.rhs = rhs;
     this.lhs = lhs;
     this.symtab = symtab;

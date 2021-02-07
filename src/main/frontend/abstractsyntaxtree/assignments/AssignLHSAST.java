@@ -1,5 +1,6 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.assignments;
 
+import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 
