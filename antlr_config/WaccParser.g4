@@ -76,9 +76,11 @@ expr: (PLUS | MINUS)? INTEGER                  #intLiter
 | NULL                                         #pairLiter
 | IDENT                                        #identExpr
 | arrayElem                                    #arrElemExpr
-| unaryOper expr                               #unOpExpr
-| expr binaryOper expr                         #binOpExpr
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES      #paranExpr
+| unaryOper expr                               #unOpExpr
+| expr arithmeticOper1 expr                    #arithOpExpr_1
+| expr arithmeticOper2 expr                    #arithOpExpr_2
+| expr binaryOper expr                         #binOpExpr
 ;
 
 /*
@@ -86,7 +88,9 @@ Cant treat unary and binary operators as lexer rules, causes errors when
 matching with expr
 */
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;
-binaryOper: PLUS | MINUS | MULT | DIV | MOD | GT | GTE | LT | LTE | EQ | NE | AND | OR ;
+arithmeticOper1: MULT | DIV | MOD;
+arithmeticOper2: PLUS | MINUS;
+binaryOper: GT | GTE | LT | LTE | EQ | NE | AND | OR ;
 
 arrayElem: IDENT (OPEN_SQUARE_BRACKETS expr CLOSE_SQUARE_BRACKETS)+ ;
 
