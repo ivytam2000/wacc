@@ -1,5 +1,7 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
+import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
@@ -25,8 +27,8 @@ public class PairElemAST extends Node {
 
   @Override
   public void check() {
-    if (child instanceof IdentAST) {
-      identName = IdentAST.getname();
+    if (child instanceof IdentExprAST) {
+      identName = ((IdentExprAST) child).getName();
       if (!(symtab.lookupAll(identName) instanceof PairID)) {
         System.out.println(identName + " does not have type Pair.");
       }

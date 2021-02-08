@@ -15,6 +15,10 @@ public class IdentExprAST extends Node {
     this.val = val;
   }
 
+  public String getName() {
+    return val;
+  }
+
   @Override
   public void check() {
     //TODO: Check that this is correct after variables are added to symtab
