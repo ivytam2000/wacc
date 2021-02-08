@@ -197,8 +197,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitCharLiter(CharLiterContext ctx) {
     String s = ctx.CHAR_LITER().toString();
-    //    TODO: why does this fail?
-//    assert (s.length() == 1);
+    //Length will be 3 accounting for quotes or 4 if it's an escape char
+    assert ((s.charAt(1) == '\\' && s.length() == 4) || s.length() == 3);
     char val = s.charAt(0);
     return new CharLiterAST(currSymTab, val);
   }
@@ -211,17 +211,17 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
+  public Node visitPairLiter(PairLiterContext ctx) {
+    return super.visitPairLiter(ctx);
+  }
+
+  @Override
   public Node visitIdentExpr(IdentExprContext ctx) {
     String val = ctx.IDENT().toString();
     assert (val != null);
     Node identExprAST = new IdentExprAST(currSymTab, val);
     identExprAST.check();
     return identExprAST;
-  }
-
-  @Override
-  public Node visitPairLiter(PairLiterContext ctx) {
-    return super.visitPairLiter(ctx);
   }
 
   @Override
