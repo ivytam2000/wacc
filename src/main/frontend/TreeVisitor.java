@@ -231,12 +231,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitParanExpr(ParanExprContext ctx) {
-    return super.visitParanExpr(ctx);
+    return visit(ctx.expr());
   }
 
   @Override
   public Node visitUnOpExpr(UnOpExprContext ctx) {
-    return super.visitUnOpExpr(ctx);
+    Node exprAST = visit(ctx.expr());
+    exprAST.check();
+    Node unOpAST = new UnOpExprAST(currSymTab, ctx.unaryOper(), exprAST);
+    unOpAST.check();
+    return unOpAST;
   }
 
   @Override
@@ -254,6 +258,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return super.visitBinOpExpr(ctx);
   }
 
+  //----------------------------------------------------------------------------
+  //TODO: Do we need these visit rules?
   @Override
   public Node visitUnaryOper(UnaryOperContext ctx) {
     return super.visitUnaryOper(ctx);
@@ -273,6 +279,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitBinaryOper(BinaryOperContext ctx) {
     return super.visitBinaryOper(ctx);
   }
+  //END TODO
+  //----------------------------------------------------------------------------
 
   @Override
   public Node visitArrayElem(ArrayElemContext ctx) {
