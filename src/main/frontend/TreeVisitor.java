@@ -9,6 +9,7 @@ import frontend.abstractsyntaxtree.assignments.AssignCallAST;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.expressions.*;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -550,16 +551,14 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     //Check that the IDENT is an array. If not, no point moving forward.
     Identifier identifier = currSymTab.lookupAll(arrayName);
     if (!(identifier instanceof ArrayID)) {
-      // TODO: Fail?
-      System.err.println(arrayName + " is not an array");
+      SemanticErrorCollector.addError(arrayName + " is not an array");
     }
     List<Node> indexes = new ArrayList<>();
     List<ExprContext> expressions = ctx.expr();
     for (ExprContext e : expressions) {
       Node exprAST = visit(e);
       if (!(exprAST.getIdentifier().getType() instanceof IntID)) {
-        // TODO: Fail?
-        System.err.println("Array index not of type int");
+        SemanticErrorCollector.addError("Array index not of type int");
       } else {
         indexes.add(exprAST);
       }
