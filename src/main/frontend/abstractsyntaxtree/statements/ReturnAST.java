@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.SymbolTable;
 
 public class ReturnAST extends Node {
@@ -20,7 +21,7 @@ public class ReturnAST extends Node {
   @Override
   public void check() {
     if (symtab.isTopLevel()) {
-      System.err.println("Cannot return in main program!");
+      SemanticErrorCollector.addError("Cannot return in main program!");
     }
   }
 }

@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.TypeID;
 
@@ -20,7 +21,7 @@ public class IfAST extends Node {
   public void check() {
     TypeID exprType = expr.getIdentifier().getType();
     if (!(exprType instanceof BoolID)) {
-      System.out.println("Condition is not of type bool ");
+      SemanticErrorCollector.addError("Condition is not of type bool ");
     }
   }
 }
