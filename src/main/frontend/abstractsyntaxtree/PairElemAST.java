@@ -39,9 +39,8 @@ public class PairElemAST extends Node {
             "Expected type pair but got " + child.getIdentifier().getType().getTypeName());
       }
     } else {
-      SemanticErrorCollector.addError("");
+      SemanticErrorCollector.addError("Unexpected Type : does not have type "
+          + "pair");
     }
-
   }
-
 }

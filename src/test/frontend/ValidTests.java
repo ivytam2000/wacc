@@ -15,7 +15,7 @@ public class ValidTests {
   public void validAdvancedTests() throws IOException {
     exitsWith(validFolderPath + "advanced/", 0);
   }
-  @Ignore
+ @Ignore
   @Test
   public void validArrayTests() throws IOException {
     exitsWith(validFolderPath + "array/", 0);

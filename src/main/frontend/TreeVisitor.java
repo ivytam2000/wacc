@@ -348,7 +348,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       return visitArrayType(ctx.arrayType());
     }
 
-    TypeID pairElemTypeID = currSymTab.lookupAll(ctx.PAIR().toString()).getType();
+    Identifier pairElemTypeID = currSymTab.lookupAll(ctx.PAIR().getText());
     PairElemTypeAST pairElemTypeAST = new PairElemTypeAST(pairElemTypeID, currSymTab);
     pairElemTypeAST.check();
 
