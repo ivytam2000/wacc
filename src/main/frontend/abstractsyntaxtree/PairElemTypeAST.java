@@ -1,7 +1,6 @@
 package frontend.abstractsyntaxtree;
 
 import frontend.symboltable.Identifier;
-import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 
@@ -22,8 +21,7 @@ public class PairElemTypeAST extends Node {
     Identifier t = symtab.lookupAll(typeName);
 
     if (t == null) {
-      System.out.println("Unknown type " + typeName);
-      return;
+      symtab.add(typeName, identifier);
     }
 
     pairElemTypeObj = (TypeID) identifier;

@@ -138,7 +138,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitRead_stat(Read_statContext ctx) {
     AssignLHSAST assignLHSAST = (AssignLHSAST) visit(ctx.assignLHS());
-    ReadAST readAST = new ReadAST(currSymTab,assignLHSAST);
+    ReadAST readAST = new ReadAST(currSymTab, assignLHSAST);
     readAST.check();
     return assignLHSAST;
   }
@@ -286,7 +286,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     PairElemTypeAST first = (PairElemTypeAST) visitPairElemType(ctx.pairElemType(0));
     PairElemTypeAST second = (PairElemTypeAST) visitPairElemType(ctx.pairElemType(1));
-    TypeID pairID = currSymTab.lookupAll(ctx.PAIR().toString()).getType();
+    TypeID pairID = new PairID(first.getIdentifier().getType(), second.getIdentifier().getType());
 
     PairTypeAST pairTypeAST = new PairTypeAST(pairID, currSymTab, first, second);
 

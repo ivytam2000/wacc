@@ -24,16 +24,9 @@ public class PairTypeAST extends Node {
 
   @Override
   public void check() {
-    Identifier t = symtab.lookupAll(typeName);
-
-    if (t == null) {
-      System.out.println("Unknown type " + typeName);
-      return;
-    }
-
     first.check();
     second.check();
 
-    pairTypeObj = (PairID) identifier;
+    pairTypeObj = (TypeID) identifier;
   }
 }

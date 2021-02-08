@@ -50,6 +50,5 @@ public class SymbolTable {
     symbolTable.add(new BoolID());
     symbolTable.add(new CharID());
     symbolTable.add(new StringID());
-    // TODO: Add strings, arrays and pairs
   }
 }
