@@ -6,6 +6,7 @@ import frontend.abstractsyntaxtree.*;
 import frontend.abstractsyntaxtree.expressions.*;
 import frontend.abstractsyntaxtree.statements.*;
 import frontend.symboltable.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TreeVisitor extends WaccParserBaseVisitor<Node> {
@@ -177,14 +178,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitArrayElem(ArrayElemContext ctx) {
-    return super.visitArrayElem(ctx);
-  }
-
-  @Override
   public Node visitIntLiter(IntLiterContext ctx) {
     Node intLiterAST =
-        new IntLiterAST(currSymTab, ctx.MINUS() == null, ctx.INTEGER().toString());
+        new IntLiterAST(currSymTab, ctx.MINUS() == null,
+            ctx.INTEGER().toString());
     intLiterAST.check();
     return intLiterAST;
   }
@@ -229,7 +226,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitArrElemExpr(ArrElemExprContext ctx) {
     //TODO: The ast needs a getname method for the ident
-    return super.visitArrElemExpr(ctx);
+    return visit(ctx.arrayElem());
   }
 
   @Override
@@ -275,6 +272,36 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitBinaryOper(BinaryOperContext ctx) {
     return super.visitBinaryOper(ctx);
+  }
+
+  @Override
+  public Node visitArrayElem(ArrayElemContext ctx) {
+    //TODO: Does the implementation handle nested arrays?
+    // int[][] a = [[1, 2], [3,4]];
+    // int y = a[0][1];
+    String arrayName = ctx.IDENT().toString();
+    //Check that the IDENT is an array. If not, no point moving forward.
+    Identifier identifier = currSymTab.lookupAll(arrayName);
+    if (!(identifier instanceof ArrayID)) {
+      // TODO: Fail?
+      System.err.println(arrayName + " is not an array");
+    }
+    List<Node> indexes = new ArrayList<>();
+    List<ExprContext> expressions = ctx.expr();
+    for (ExprContext e : expressions) {
+      Node exprAST = visit(e);
+      if (!(exprAST.getIdentifier().getType() instanceof IntID)) {
+        // TODO: Fail?
+        System.err.println("Array index not of type int");
+      } else {
+        indexes.add(exprAST);
+      }
+    }
+    ArrayElemAST arrayElemAST =
+        new ArrayElemAST(identifier, arrayName, indexes);
+    arrayElemAST.check();
+    return arrayElemAST;
+
   }
 
   @Override

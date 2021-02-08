@@ -3,7 +3,6 @@ package frontend.abstractsyntaxtree.expressions;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
-import frontend.symboltable.VariableID;
 
 public class IdentExprAST extends Node {
 
@@ -23,8 +22,6 @@ public class IdentExprAST extends Node {
     if (identifier == null) {
       //Unknown variable
       System.err.println("Unknown variable");
-    } else if (identifier instanceof VariableID) {
-      System.err.println(val + " is not a variable");
     } else {
       setIdentifier(identifier);
     }
