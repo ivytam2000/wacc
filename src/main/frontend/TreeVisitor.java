@@ -225,7 +225,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitArrElemExpr(ArrElemExprContext ctx) {
-    //TODO: The ast needs a getname method for the ident
     return visit(ctx.arrayElem());
   }
 
@@ -252,7 +251,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       operation = "MULT";
     } else if (arithCtx.DIV() != null) {
       operation = "DIV";
-    } else if (arithCtx.MOD() != null){
+    } else if (arithCtx.MOD() != null) {
       operation = "MOD";
     }
     assert (operation != null);
@@ -279,11 +278,64 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitBinOpExpr(BinOpExprContext ctx) {
-    return super.visitBinOpExpr(ctx);
+  public Node visitBinOpExpr_1(BinOpExpr_1Context ctx) {
+    //Int or char only
+    Node eL = visit(ctx.expr(0));
+    Node eR = visit(ctx.expr(1));
+    BinaryOper1Context binOp1Ctx = ctx.binaryOper1();
+    String operation = null;
+    if (binOp1Ctx.GT() != null) {
+      operation = "GT";
+    } else if (binOp1Ctx.GTE() != null) {
+      operation = "GTE";
+    } else if (binOp1Ctx.LT() != null) {
+      operation = "LT";
+    } else if (binOp1Ctx.LTE() != null) {
+      operation = "LTE";
+    }
+    assert(operation != null);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, 2,operation, eL, eR);
+    binOpExprAST.check();
+    return binOpExprAST;
   }
 
+  @Override
+  public Node visitBinOpExpr_2(BinOpExpr_2Context ctx) {
+    //Defined for all types
+    Node eL = visit(ctx.expr(0));
+    Node eR = visit(ctx.expr(1));
+    BinaryOper2Context binOp2Ctx = ctx.binaryOper2();
+    String operation = null;
+    if (binOp2Ctx.EQ() != null) {
+      operation = "EQ";
+    } else if (binOp2Ctx.NE() != null) {
+      operation = "NE";
+    }
+    assert(operation != null);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, 3,operation, eL, eR);
+    binOpExprAST.check();
+    return binOpExprAST;
+  }
+
+  @Override
+  public Node visitAndExpr(AndExprContext ctx) {
+    Node eL = visit(ctx.expr(0));
+    Node eR = visit(ctx.expr(1));
+    Node binOpExprAST = new BinOpExprAST(currSymTab, 1,"AND", eL, eR);
+    binOpExprAST.check();
+    return binOpExprAST;
+  }
+
+  @Override
+  public Node visitOrExpr(OrExprContext ctx) {
+    Node eL = visit(ctx.expr(0));
+    Node eR = visit(ctx.expr(1));
+    Node binOpExprAST = new BinOpExprAST(currSymTab, 1,"OR", eL, eR);
+    binOpExprAST.check();
+    return binOpExprAST;
+  }
   //----------------------------------------------------------------------------
+
   //TODO: Do we need these visit rules?
   @Override
   public Node visitUnaryOper(UnaryOperContext ctx) {
@@ -301,8 +353,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitBinaryOper(BinaryOperContext ctx) {
-    return super.visitBinaryOper(ctx);
+  public Node visitBinaryOper1(BinaryOper1Context ctx) {
+    return super.visitBinaryOper1(ctx);
+  }
+
+  @Override
+  public Node visitBinaryOper2(BinaryOper2Context ctx) {
+    return super.visitBinaryOper2(ctx);
   }
   //END TODO
   //----------------------------------------------------------------------------

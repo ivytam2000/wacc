@@ -80,7 +80,10 @@ expr: (PLUS | MINUS)? INTEGER                  #intLiter
 | unaryOper expr                               #unOpExpr
 | expr arithmeticOper1 expr                    #arithOpExpr_1
 | expr arithmeticOper2 expr                    #arithOpExpr_2
-| expr binaryOper expr                         #binOpExpr
+| expr binaryOper1 expr                        #binOpExpr_1
+| expr binaryOper2 expr                        #binOpExpr_2
+| expr AND expr                                #andExpr
+| expr OR expr                                 #orExpr
 ;
 
 /*
@@ -90,7 +93,8 @@ matching with expr
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;
 arithmeticOper1: MULT | DIV | MOD;
 arithmeticOper2: PLUS | MINUS;
-binaryOper: GT | GTE | LT | LTE | EQ | NE | AND | OR ;
+binaryOper1: GT | GTE | LT | LTE;
+binaryOper2: EQ | NE;
 
 arrayElem: IDENT (OPEN_SQUARE_BRACKETS expr CLOSE_SQUARE_BRACKETS)+ ;
 
