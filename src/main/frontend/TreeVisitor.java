@@ -212,7 +212,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitPairLiter(PairLiterContext ctx) {
-    return super.visitPairLiter(ctx);
+    /* TODO: Check how check for assignment of pairLiter is implemented
+    Eg are we checking that pairLiterAST.getIdentifier().getType() is null? */
+    return new PairLiterAST();
   }
 
   @Override
