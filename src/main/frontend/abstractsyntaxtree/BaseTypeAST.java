@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
@@ -21,7 +22,7 @@ public class BaseTypeAST extends Node {
     Identifier t = symtab.lookupAll(typeName);
 
     if (t == null) {
-      System.out.println("Unknown type " + typeName);
+      SemanticErrorCollector.addError("Unknown type " + typeName);
       return;
     }
 

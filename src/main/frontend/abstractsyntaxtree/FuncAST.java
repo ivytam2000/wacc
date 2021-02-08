@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.ParamID;
@@ -39,17 +40,17 @@ public class FuncAST extends Parent {
     Identifier f = symtab.lookup(funcName);
 
     if (t == null) {
-      System.out.println("Unknown type " + returnTypeName);
+      SemanticErrorCollector.addError("Unknown type " + returnTypeName);
       return;
     }
 
     if (!(identifier instanceof FuncID)) {
-      System.out.println(returnTypeName + " is not a type");
+      SemanticErrorCollector.addError(returnTypeName + " is not a type");
       return;
     }
 
     if (f != null) {
-      System.out.println(funcName + " is already declared");
+      SemanticErrorCollector.addError(funcName + " is already declared");
       return;
     }
 
