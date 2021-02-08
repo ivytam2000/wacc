@@ -237,7 +237,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitUnOpExpr(UnOpExprContext ctx) {
     Node exprAST = visit(ctx.expr());
-    exprAST.check();
     Node unOpAST = new UnOpExprAST(currSymTab, ctx.unaryOper(), exprAST);
     unOpAST.check();
     return unOpAST;
@@ -245,12 +244,38 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitArithOpExpr_1(ArithOpExpr_1Context ctx) {
-    return super.visitArithOpExpr_1(ctx);
+    Node eL = visit(ctx.expr(0));
+    Node eR = visit(ctx.expr(1));
+    ArithmeticOper1Context arithCtx = ctx.arithmeticOper1();
+    String operation = null;
+    if (arithCtx.MULT() != null) {
+      operation = "MULT";
+    } else if (arithCtx.DIV() != null) {
+      operation = "DIV";
+    } else if (arithCtx.MOD() != null){
+      operation = "MOD";
+    }
+    assert (operation != null);
+    Node arithOpExprAST = new ArithOpExprAST(currSymTab, operation, eL, eR);
+    arithOpExprAST.check();
+    return arithOpExprAST;
   }
 
   @Override
   public Node visitArithOpExpr_2(ArithOpExpr_2Context ctx) {
-    return super.visitArithOpExpr_2(ctx);
+    Node eL = visit(ctx.expr(0));
+    Node eR = visit(ctx.expr(1));
+    ArithmeticOper2Context arithCtx = ctx.arithmeticOper2();
+    String operation = null;
+    if (arithCtx.PLUS() != null) {
+      operation = "PLUS";
+    } else if (arithCtx.MINUS() != null) {
+      operation = "MINUS";
+    }
+    assert (operation != null);
+    Node arithOpExprAST = new ArithOpExprAST(currSymTab, operation, eL, eR);
+    arithOpExprAST.check();
+    return arithOpExprAST;
   }
 
   @Override
