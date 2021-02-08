@@ -2,11 +2,14 @@ package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
 
-public class SkipAST extends Node {
+public class BeginStatAST extends Node {
 
-  public SkipAST() {}
+  private final Node stat;
 
-  /* No need to check as it is a terminal node */
+  public BeginStatAST(Node stat) {
+    this.stat = stat;
+  }
+
   @Override
   public void check() {}
 }

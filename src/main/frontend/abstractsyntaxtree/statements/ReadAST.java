@@ -6,18 +6,16 @@ import frontend.symboltable.*;
 
 public class ReadAST extends Node {
 
-  private AssignLHSAST lhs;
-  private SymbolTable symtab;
+  private final AssignLHSAST lhs;
 
-  public ReadAST(SymbolTable symtab, AssignLHSAST assignLHS) {
+  public ReadAST(AssignLHSAST assignLHS) {
     this.lhs = assignLHS;
-    this.symtab = symtab;
   }
 
   @Override
   public void check() {
-    // Find the 'basic type'
-    Identifier lhsType = symtab.lookupAll(lhs.getIdentName());
+    Identifier lhsType = lhs.getIdentifier();
+
     if (lhsType == null) {
       System.out.println("Unknown type ");
     } else if (!(lhsType instanceof TypeID)) {

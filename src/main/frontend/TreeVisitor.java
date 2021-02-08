@@ -1,15 +1,14 @@
 package frontend;
 
+import antlr.WaccParser;
 import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
-import frontend.abstractsyntaxtree.statements.AssignStatAST;
+import frontend.abstractsyntaxtree.statements.*;
 import frontend.abstractsyntaxtree.assignments.AssignCallAST;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.expressions.*;
-import frontend.abstractsyntaxtree.statements.ReadAST;
-import frontend.abstractsyntaxtree.statements.VarDecAST;
 import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +63,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitPrint_stat(Print_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    return new PrintAST(expr);
   }
 
   @Override
@@ -79,66 +79,102 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitPrintln_stat(Println_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    return new PrintlnAST(expr);
   }
 
   @Override
   public Node visitReturn_stat(Return_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    return new ReturnAST(expr);
   }
 
   @Override
   public Node visitExit_stat(Exit_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    ExitAST exitAST = new ExitAST(expr);
+    exitAST.check();
+    return exitAST;
   }
 
   @Override
   public Node visitSkip_stat(Skip_statContext ctx) {
-    System.out.println("SKIP found");
-    return visitChildren(ctx);
+    return new SkipAST();
   }
 
   @Override
   public Node visitFree_stat(Free_statContext ctx) {
-    return visitChildren(ctx);
+    // TODO: do we need a ExprAST class?
+    Node expr = visit(ctx.expr());
+    FreeAST freeAST = new FreeAST(expr);
+    freeAST.check();
+    return freeAST;
   }
 
   @Override
   public Node visitVar_decl_stat(Var_decl_statContext ctx) {
-    // Might need to check if it is the instance before downcasting?
-    // TODO : need to create a typeAST node?
-    // TypeAST typeAST = visit(ctx.type());
     AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
-    VarDecAST varDec = new VarDecAST(currSymTab, ctx.type().toString(),
-        ctx.IDENT().getText(), assignRHS);
+    VarDecAST varDec =
+        new VarDecAST(currSymTab, ctx.type().toString(), ctx.IDENT().getText(), assignRHS);
     varDec.check();
     return varDec;
   }
 
   @Override
   public Node visitWhile_stat(While_statContext ctx) {
-    return visitChildren(ctx);
-  }
+    // new scope
+    SymbolTable encScope = currSymTab;
+    currSymTab = new SymbolTable(encScope);
 
-  @Override
-  public Node visitNew_scope_stat(New_scope_statContext ctx) {
+    Node expr = visit(ctx.expr());
+    Node stat = visit(ctx.stat());
+
     return visitChildren(ctx);
   }
 
   @Override
   public Node visitIf_stat(If_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    SymbolTable encScope = currSymTab;
+    // Each branch is executed in its own scope
+    currSymTab = new SymbolTable(encScope);
+    Node thenStat = visit(ctx.stat(0));
+    currSymTab = new SymbolTable(encScope);
+    Node elseStat = visit(ctx.stat(1));
+    // Swap back to parent scope
+    currSymTab = encScope;
+    IfAST ifAST = new IfAST(expr, thenStat, elseStat);
+    ifAST.check();
+    return ifAST;
+  }
+
+  @Override
+  public Node visitBegin_stat(WaccParser.Begin_statContext ctx) {
+    SymbolTable encScope = currSymTab;
+    // Create new scope
+    currSymTab = new SymbolTable(encScope);
+    Node stat = visit(ctx.stat());
+    BeginStatAST beginAST = new BeginStatAST(stat);
+    // Swap back to parent scope
+    currSymTab = encScope;
+    return beginAST;
   }
 
   @Override
   public Node visitSequence_stat(Sequence_statContext ctx) {
-    return visitChildren(ctx);
+    List<StatContext> statCtxs = ctx.stat();
+    // TODO: Should I create an abstract statement node class?
+    List<Node> statASTs = new ArrayList<>();
+    for(StatContext s : statCtxs){
+      statASTs.add(visit(s));
+    }
+    return new SequenceAST(statASTs);
   }
 
   @Override
   public Node visitRead_stat(Read_statContext ctx) {
     AssignLHSAST assignLHSAST = (AssignLHSAST) visit(ctx.assignLHS());
-    ReadAST readAST = new ReadAST(currSymTab, assignLHSAST);
+    ReadAST readAST = new ReadAST(assignLHSAST);
     readAST.check();
     return assignLHSAST;
   }
@@ -161,7 +197,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     } else if (ctx.pairElem() != null) {
       Node pairElem = visitPairElem((ctx.pairElem()));
       return new AssignLHSAST(pairElem.getIdentifier().getType(), currSymTab);
-    } else {  // array elem
+    } else { // array elem
       Node arrayElem = visitArrayElem((ctx.arrayElem()));
       return new AssignLHSAST(arrayElem.getIdentifier().getType(), currSymTab);
     }
@@ -193,8 +229,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     children.add(firstExprAST);
     children.add(secondExprAST);
     // don't need to check the since creating the exprASTs will call check
-    PairID pairID = new PairID(firstExprAST.getIdentifier().getType(),
-        secondExprAST.getIdentifier().getType());
+    PairID pairID =
+        new PairID(firstExprAST.getIdentifier().getType(), secondExprAST.getIdentifier().getType());
     return new AssignRHSAST(pairID, currSymTab, children);
   }
 

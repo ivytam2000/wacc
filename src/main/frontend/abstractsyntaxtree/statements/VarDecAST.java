@@ -11,10 +11,10 @@ import static frontend.abstractsyntaxtree.statements.AssignStatAST.typeCompat;
 
 public class VarDecAST extends Node {
 
-  private SymbolTable symtab;
-  private String typeName;
-  private String varName;
-  private AssignRHSAST assignRHS;
+  private final SymbolTable symtab;
+  private final String typeName;
+  private final String varName;
+  private final AssignRHSAST assignRHS;
 
   public VarDecAST(SymbolTable symtab, String typeName, String varName, AssignRHSAST assignRHS) {
     super();

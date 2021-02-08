@@ -28,7 +28,7 @@ stat: SKIP_LITER                                            #skip_stat
 | IF expr THEN stat ELSE stat FI                            #if_stat
 | WHILE expr DO stat DONE                                   #while_stat
 | stat SEMI_COLON stat                                      #sequence_stat
-| BEGIN stat END                                            #new_scope_stat
+| BEGIN stat END                                            #begin_stat
 ;
 
 /** Assignments */
