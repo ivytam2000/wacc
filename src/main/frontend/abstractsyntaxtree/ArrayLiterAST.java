@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
@@ -10,7 +11,7 @@ public class ArrayLiterAST extends Node {
   private SymbolTable symtab;
   private List<Node> children;
 
-  public ArrayLiterAST (SymbolTable symtab, List<Node> children) {
+  public ArrayLiterAST(SymbolTable symtab, List<Node> children) {
     this.symtab = symtab;
     this.children = children;
   }
@@ -22,7 +23,7 @@ public class ArrayLiterAST extends Node {
       Node child = children.get(i);
       String childType = child.getIdentifier().getType().getTypeName();
       if (!childType.equals(type)) {
-        System.out.println("Array doesn't have consistent types, index " + i +
+        SemanticErrorCollector.addError("Array doesn't have consistent types, index " + i +
             " has type " + childType + " but expected " + type);
       }
     }
