@@ -282,22 +282,31 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitPairType(PairTypeContext ctx) {
-    return super.visitPairType(ctx);
+    assert (ctx.PAIR() != null);
+
+    PairElemTypeAST first = (PairElemTypeAST) visitPairElemType(ctx.pairElemType(0));
+    PairElemTypeAST second = (PairElemTypeAST) visitPairElemType(ctx.pairElemType(1));
+    TypeID pairID = currSymTab.lookupAll(ctx.PAIR().toString()).getType();
+
+    PairTypeAST pairTypeAST = new PairTypeAST(pairID, currSymTab, first, second);
+
+    return pairTypeAST;
   }
 
   @Override
-  public Node visitPairElemTypeBaseType(PairElemTypeBaseTypeContext ctx) {
-    return visitBaseType(ctx.baseType());
-  }
+  public Node visitPairElemType(PairElemTypeContext ctx) {
+    if (ctx.baseType() != null) {
+      return visitBaseType(ctx.baseType());
+    }
+    if (ctx.arrayType() != null) {
+      return visitArrayType(ctx.arrayType());
+    }
 
-  @Override
-  public Node visitPairElemTypeArrayType(PairElemTypeArrayTypeContext ctx) {
-    return visitArrayType(ctx.arrayType());
-  }
+    TypeID pairElemTypeID = currSymTab.lookupAll(ctx.PAIR().toString()).getType();
+    PairElemTypeAST pairElemTypeAST = new PairElemTypeAST(pairElemTypeID, currSymTab);
+    pairElemTypeAST.check();
 
-  @Override
-  public Node visitPairElemTypePairToken(PairElemTypePairTokenContext ctx) {
-    return super.visitPairElemTypePairToken(ctx);
+    return pairElemTypeAST;
   }
 
   @Override
