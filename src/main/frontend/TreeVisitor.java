@@ -330,8 +330,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitPairType(PairTypeContext ctx) {
     assert (ctx.PAIR() != null);
 
-    PairElemTypeAST first = (PairElemTypeAST) visitPairElemType(ctx.pairElemType(0));
-    PairElemTypeAST second = (PairElemTypeAST) visitPairElemType(ctx.pairElemType(1));
+    Node first = visitPairElemType(ctx.pairElemType(0));
+    Node second = visitPairElemType(ctx.pairElemType(1));
     TypeID pairID = new PairID(first.getIdentifier().getType(), second.getIdentifier().getType());
 
     PairTypeAST pairTypeAST = new PairTypeAST(pairID, currSymTab, first, second);

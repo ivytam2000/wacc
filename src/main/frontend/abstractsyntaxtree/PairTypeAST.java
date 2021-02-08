@@ -8,13 +8,12 @@ import frontend.symboltable.TypeID;
 public class PairTypeAST extends Node {
 
   private final String typeName;
-  private final PairElemTypeAST first;
-  private final PairElemTypeAST second;
+  private final Node first;
+  private final Node second;
   private TypeID pairTypeObj;
   private SymbolTable symtab;
 
-  public PairTypeAST(Identifier identifier, SymbolTable symtab, PairElemTypeAST first,
-      PairElemTypeAST second) {
+  public PairTypeAST(Identifier identifier, SymbolTable symtab, Node first, Node second) {
     super(identifier);
     this.symtab = symtab;
     this.typeName = identifier.getType().getTypeName();
