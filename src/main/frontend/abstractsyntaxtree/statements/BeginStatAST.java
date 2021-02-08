@@ -7,6 +7,7 @@ public class BeginStatAST extends Node {
   private final Node stat;
 
   public BeginStatAST(Node stat) {
+    super(stat.getIdentifier());
     this.stat = stat;
   }
 

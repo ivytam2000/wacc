@@ -10,6 +10,7 @@ public class ExitAST extends Node {
   private final Node expr;
 
   public ExitAST(Node expr) {
+    super(expr.getIdentifier());
     this.expr = expr;
   }
 

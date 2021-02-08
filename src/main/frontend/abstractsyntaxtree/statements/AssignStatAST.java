@@ -27,7 +27,9 @@ public class AssignStatAST extends Node {
   public void check() {
     TypeID t1 = lhs.getIdentifier().getType();
     TypeID t2 = rhs.getIdentifier().getType();
-    typeCompat(t1, t2);
+    if (typeCompat(t1, t2)) {
+      setIdentifier(t1);
+    }
   }
 
   static boolean typeCompat(TypeID t1, TypeID t2) {
@@ -39,11 +41,12 @@ public class AssignStatAST extends Node {
     if (t1 instanceof PairID) {
       if (((PairID) t1).getFirstType() == ((PairID) t2).getFirstType()) {
         if (((PairID) t1).getSecondType() != ((PairID) t2).getSecondType()) {
-          SemanticErrorCollector.addError("Second pair parameter is not the same "
-            + "type! Got type "
-              + ((PairID) t2).getSecondType().getTypeName()
-              + "instead of "
-              + ((PairID) t1).getSecondType().getTypeName());
+          SemanticErrorCollector.addError(
+              "Second pair parameter is not the same "
+                  + "type! Got type "
+                  + ((PairID) t2).getSecondType().getTypeName()
+                  + "instead of "
+                  + ((PairID) t1).getSecondType().getTypeName());
           return false;
         }
         return true;

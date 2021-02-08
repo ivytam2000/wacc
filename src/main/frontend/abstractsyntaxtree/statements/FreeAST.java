@@ -12,6 +12,7 @@ public class FreeAST extends Node {
 
   // TODO: do we need an ExprAST class?
   public FreeAST(Node expr) {
+    super(expr.getIdentifier());
     this.expr = expr;
   }
 

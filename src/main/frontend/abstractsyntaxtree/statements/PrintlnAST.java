@@ -6,6 +6,7 @@ public class PrintlnAST extends Node {
   private final Node expr;
 
   public PrintlnAST(Node expr) {
+    super(expr.getIdentifier());
     this.expr = expr;
   }
 

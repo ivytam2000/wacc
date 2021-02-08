@@ -12,6 +12,8 @@ public class IfAST extends Node {
   private final Node elseStat;
 
   public IfAST(Node expr, Node thenStat, Node elseStat) {
+    // set identifier to be same as expressions but not sure if its correct?
+    super(expr.getIdentifier());
     this.expr = expr;
     this.thenStat = thenStat;
     this.elseStat = elseStat;

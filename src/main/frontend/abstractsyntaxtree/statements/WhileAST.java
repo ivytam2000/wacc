@@ -10,16 +10,21 @@ public class WhileAST extends Node {
   private final Node stat;
 
   public WhileAST(Node expr, Node stat) {
-    super();
+    super(expr.getIdentifier());
     this.expr = expr;
     this.stat = stat;
   }
 
   @Override
   public void check() {
-    TypeID exprType = expr.getIdentifier().getType();
-    if (!(exprType instanceof BoolID)) {
-      SemanticErrorCollector.addError("Condition is not of type bool ");
+    // TODO: Check if all expr have a identifier?
+    if (expr == null || expr.getIdentifier() == null) {
+      SemanticErrorCollector.addError("Invalid condition expression");
+    } else {
+      TypeID exprType = expr.getIdentifier().getType();
+      if (!(exprType instanceof BoolID)) {
+        SemanticErrorCollector.addError("Condition is not of type bool ");
+      }
     }
   }
 }

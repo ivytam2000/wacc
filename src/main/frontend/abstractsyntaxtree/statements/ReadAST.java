@@ -10,6 +10,7 @@ public class ReadAST extends Node {
   private final AssignLHSAST lhs;
 
   public ReadAST(AssignLHSAST assignLHS) {
+    super(assignLHS.getIdentifier());
     this.lhs = assignLHS;
   }
 
