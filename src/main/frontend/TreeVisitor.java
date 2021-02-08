@@ -1,10 +1,14 @@
 package frontend;
 
+import antlr.WaccParser;
 import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
-import frontend.abstractsyntaxtree.expressions.*;
 import frontend.abstractsyntaxtree.statements.*;
+import frontend.abstractsyntaxtree.assignments.AssignCallAST;
+import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
+import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
+import frontend.abstractsyntaxtree.expressions.*;
 import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,80 +40,143 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitFunc(FuncContext ctx) {
-    // create symbol table
+    assert (ctx.IDENT() != null);
+
+    // Create symbol table
     SymbolTable encScope = currSymTab;
     currSymTab = new SymbolTable(encScope);
 
+    ParamListAST params = (ParamListAST) visitParamList(ctx.paramList());
+
+    TypeID returnTypeID = currSymTab.lookupAll(ctx.type().toString()).getType();
+    FuncID funcID = new FuncID(returnTypeID, params.convertToParamIDs(), currSymTab);
+
+    FuncAST funcAST = new FuncAST(funcID, currSymTab, ctx.IDENT().toString(), params);
+    funcAST.check();
+
     // Swap back symbol table
     currSymTab = encScope;
-    return super.visitFunc(ctx);
+    return funcAST;
   }
 
-  /* Visit Statement Functions */
+  // Visit functions for statements
+
   @Override
   public Node visitPrint_stat(Print_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    return new PrintAST(expr);
   }
 
   @Override
   public Node visitAssign_stat(Assign_statContext ctx) {
-    return visitChildren(ctx);
+    AssignLHSAST lhs = (AssignLHSAST) visitAssignLHS(ctx.assignLHS());
+    AssignRHSAST rhs = (AssignRHSAST) visit(ctx.assignRHS());
+
+    AssignStatAST assignStatAST = new AssignStatAST(lhs, rhs, currSymTab);
+    assignStatAST.check();
+    return assignStatAST;
   }
 
   @Override
   public Node visitPrintln_stat(Println_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    return new PrintlnAST(expr);
   }
 
   @Override
   public Node visitReturn_stat(Return_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    return new ReturnAST(expr);
   }
 
   @Override
   public Node visitExit_stat(Exit_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    ExitAST exitAST = new ExitAST(expr);
+    exitAST.check();
+    return exitAST;
   }
 
   @Override
   public Node visitSkip_stat(Skip_statContext ctx) {
-    System.out.println("SKIP found");
-    return visitChildren(ctx);
+    return new SkipAST();
   }
 
   @Override
   public Node visitFree_stat(Free_statContext ctx) {
-    return visitChildren(ctx);
+    // TODO: do we need a ExprAST class?
+    Node expr = visit(ctx.expr());
+    FreeAST freeAST = new FreeAST(expr);
+    freeAST.check();
+    return freeAST;
   }
 
   @Override
   public Node visitVar_decl_stat(Var_decl_statContext ctx) {
-    return visitChildren(ctx);
+    AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
+    VarDecAST varDec =
+        new VarDecAST(currSymTab, ctx.type().toString(), ctx.IDENT().getText(), assignRHS);
+    varDec.check();
+    return varDec;
   }
 
   @Override
   public Node visitWhile_stat(While_statContext ctx) {
-    return visitChildren(ctx);
-  }
+    // new scope
+    SymbolTable encScope = currSymTab;
+    currSymTab = new SymbolTable(encScope);
 
-  @Override
-  public Node visitNew_scope_stat(New_scope_statContext ctx) {
+    Node expr = visit(ctx.expr());
+    Node stat = visit(ctx.stat());
+
     return visitChildren(ctx);
   }
 
   @Override
   public Node visitIf_stat(If_statContext ctx) {
-    return visitChildren(ctx);
+    Node expr = visit(ctx.expr());
+    SymbolTable encScope = currSymTab;
+    // Each branch is executed in its own scope
+    currSymTab = new SymbolTable(encScope);
+    Node thenStat = visit(ctx.stat(0));
+    currSymTab = new SymbolTable(encScope);
+    Node elseStat = visit(ctx.stat(1));
+    // Swap back to parent scope
+    currSymTab = encScope;
+    IfAST ifAST = new IfAST(expr, thenStat, elseStat);
+    ifAST.check();
+    return ifAST;
+  }
+
+  @Override
+  public Node visitBegin_stat(WaccParser.Begin_statContext ctx) {
+    SymbolTable encScope = currSymTab;
+    // Create new scope
+    currSymTab = new SymbolTable(encScope);
+    Node stat = visit(ctx.stat());
+    BeginStatAST beginAST = new BeginStatAST(stat);
+    // Swap back to parent scope
+    currSymTab = encScope;
+    return beginAST;
   }
 
   @Override
   public Node visitSequence_stat(Sequence_statContext ctx) {
-    return visitChildren(ctx);
+    List<StatContext> statCtxs = ctx.stat();
+    // TODO: Should I create an abstract statement node class?
+    List<Node> statASTs = new ArrayList<>();
+    for(StatContext s : statCtxs){
+      statASTs.add(visit(s));
+    }
+    return new SequenceAST(statASTs);
   }
 
   @Override
   public Node visitRead_stat(Read_statContext ctx) {
-    return visitChildren(ctx);
+    AssignLHSAST assignLHSAST = (AssignLHSAST) visit(ctx.assignLHS());
+    ReadAST readAST = new ReadAST(assignLHSAST);
+    readAST.check();
+    return assignLHSAST;
   }
 
   @Override
@@ -124,22 +191,89 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitAssignLHS(AssignLHSContext ctx) {
-    return super.visitAssignLHS(ctx);
+    if (ctx.IDENT() != null) {
+      String assignName = ctx.IDENT().toString();
+      return new AssignLHSAST(currSymTab.lookupAll(assignName), currSymTab, assignName);
+    } else if (ctx.pairElem() != null) {
+      Node pairElem = visitPairElem((ctx.pairElem()));
+      return new AssignLHSAST(pairElem.getIdentifier().getType(), currSymTab);
+    } else { // array elem
+      Node arrayElem = visitArrayElem((ctx.arrayElem()));
+      return new AssignLHSAST(arrayElem.getIdentifier().getType(), currSymTab);
+    }
   }
 
   @Override
-  public Node visitAssignRHS(AssignRHSContext ctx) {
-    return super.visitAssignRHS(ctx);
+  public Node visitExpr_assignRHS(Expr_assignRHSContext ctx) {
+    List<Node> children = new ArrayList<>();
+    Node exprAST = visit(ctx.expr());
+    children.add(exprAST);
+    // don't need to check the since creating the exprAST will call check
+    return new AssignRHSAST(exprAST.getIdentifier().getType(), currSymTab, children);
+  }
+
+  @Override
+  public Node visitArrayLiter_assignRHS(ArrayLiter_assignRHSContext ctx) {
+    List<Node> children = new ArrayList<>();
+    Node arrayLiterAST = visitArrayLiter(ctx.arrayLiter());
+    children.add(arrayLiterAST);
+    // don't need to check the since creating the arrayLiterAST will call check
+    return new AssignRHSAST(arrayLiterAST.getIdentifier().getType(), currSymTab, children);
+  }
+
+  @Override
+  public Node visitNewPair_assignRHS(NewPair_assignRHSContext ctx) {
+    Node firstExprAST = visit(ctx.expr(0));
+    Node secondExprAST = visit(ctx.expr(1));
+    List<Node> children = new ArrayList<>();
+    children.add(firstExprAST);
+    children.add(secondExprAST);
+    // don't need to check the since creating the exprASTs will call check
+    PairID pairID =
+        new PairID(firstExprAST.getIdentifier().getType(), secondExprAST.getIdentifier().getType());
+    return new AssignRHSAST(pairID, currSymTab, children);
+  }
+
+  @Override
+  public Node visitPairElem_assignRHS(PairElem_assignRHSContext ctx) {
+    List<Node> children = new ArrayList<>();
+    Node pairElemAST = visitPairElem(ctx.pairElem());
+    children.add(pairElemAST);
+    // don't need to check the since creating the pairElem will call check
+    return new AssignRHSAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
+  }
+
+  @Override
+  public Node visitCall_assignRHS(Call_assignRHSContext ctx) {
+    List<Node> params = new ArrayList<>();
+    String funcName = ctx.IDENT().toString();
+    Node argListAST = visitArgList(ctx.argList());
+    params.add(argListAST);
+    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, params);
+    assignCallAST.check();
+    return assignCallAST;
   }
 
   @Override
   public Node visitArgList(ArgListContext ctx) {
-    return super.visitArgList(ctx);
+    List<Node> expressions = new ArrayList<>();
+    for (ExprContext exprContext : ctx.expr()) {
+      expressions.add(visitChildren(exprContext));
+    }
+    // don't need to check the since creating the exprASTs will call check
+    return new ArgListAST(currSymTab, expressions);
   }
 
   @Override
   public Node visitPairElem(PairElemContext ctx) {
-    return super.visitPairElem(ctx);
+    Node exprAST = visit(ctx.expr());
+    Identifier ident = exprAST.getIdentifier();
+    // don't need to check the since creating the exprAST will call check
+    if (ctx.FST() != null) {
+      return new PairElemAST(ident, currSymTab, true, exprAST);
+    } else {
+      return new PairElemAST(ident, currSymTab, false, exprAST);
+    }
   }
 
   @Override
@@ -159,7 +293,22 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitBaseType(BaseTypeContext ctx) {
-    return super.visitBaseType(ctx);
+    TypeID baseTypeID;
+
+    if (ctx.INT() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.INT().toString()).getType();
+    } else if (ctx.BOOL() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.BOOL().toString()).getType();
+    } else if (ctx.CHAR() != null) {
+      baseTypeID = currSymTab.lookupAll(ctx.CHAR().toString()).getType();
+    } else {
+      baseTypeID = currSymTab.lookupAll(ctx.STRING().toString()).getType();
+    }
+
+    BaseTypeAST baseTypeAST = new BaseTypeAST(baseTypeID, currSymTab);
+    baseTypeAST.check();
+
+    return baseTypeAST;
   }
 
   @Override
@@ -169,12 +318,31 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitPairType(PairTypeContext ctx) {
-    return super.visitPairType(ctx);
+    assert (ctx.PAIR() != null);
+
+    PairElemTypeAST first = (PairElemTypeAST) visitPairElemType(ctx.pairElemType(0));
+    PairElemTypeAST second = (PairElemTypeAST) visitPairElemType(ctx.pairElemType(1));
+    TypeID pairID = new PairID(first.getIdentifier().getType(), second.getIdentifier().getType());
+
+    PairTypeAST pairTypeAST = new PairTypeAST(pairID, currSymTab, first, second);
+
+    return pairTypeAST;
   }
 
   @Override
   public Node visitPairElemType(PairElemTypeContext ctx) {
-    return super.visitPairElemType(ctx);
+    if (ctx.baseType() != null) {
+      return visitBaseType(ctx.baseType());
+    }
+    if (ctx.arrayType() != null) {
+      return visitArrayType(ctx.arrayType());
+    }
+
+    TypeID pairElemTypeID = currSymTab.lookupAll(ctx.PAIR().toString()).getType();
+    PairElemTypeAST pairElemTypeAST = new PairElemTypeAST(pairElemTypeID, currSymTab);
+    pairElemTypeAST.check();
+
+    return pairElemTypeAST;
   }
 
   @Override
@@ -396,7 +564,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitArrayLiter(ArrayLiterContext ctx) {
-    return super.visitArrayLiter(ctx);
+    List<Node> children = new ArrayList<>();
+
+    for (ExprContext expr : ctx.expr()) {
+      Node exprAST = visit(expr);
+      children.add(exprAST);
+    }
+
+    ArrayLiterAST arrayLiterAST = new ArrayLiterAST(currSymTab, children);
+    arrayLiterAST.check();
+    return arrayLiterAST;
   }
 
   @Override

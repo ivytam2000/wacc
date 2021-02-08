@@ -13,20 +13,20 @@ public class FuncAST extends Parent {
   private FuncID funcObj;
   private SymbolTable symtab;
 
-  public FuncAST(Identifier identifier, SymbolTable currSymTab, String funcName) {
+  public FuncAST(Identifier identifier, SymbolTable currSymTab, String funcName,
+      ParamListAST params) {
     super(identifier);
     this.symtab = currSymTab;
     this.returnTypeName = identifier.getType().getTypeName();
     this.funcName = funcName;
-
+    this.params = params;
   }
 
   @Override
   public void check() {
     checkFunctionNameAndReturnType();
 
-    SymbolTable funcSymTab = new SymbolTable();
-    funcObj.setSymtab(funcSymTab);
+    funcObj.setSymtab(symtab);
 
     for (ParamAST paramAST : params.paramASTs) {
       paramAST.check();
