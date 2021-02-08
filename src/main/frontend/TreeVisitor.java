@@ -133,6 +133,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node expr = visit(ctx.expr());
     Node stat = visit(ctx.stat());
 
+    WhileAST whileAST = new WhileAST(expr,stat);
+    whileAST.check();
+    // swap back to parent scope
+    currSymTab = encScope;
     return visitChildren(ctx);
   }
 

@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
@@ -20,7 +21,7 @@ public class ExitAST extends Node {
   public void check() {
     TypeID exprType = expr.getIdentifier().getType();
     if (!(exprType instanceof IntID)) {
-      System.out.println("Expression is not an int");
+      SemanticErrorCollector.addError("Expression is not an int");
     }
   }
 }

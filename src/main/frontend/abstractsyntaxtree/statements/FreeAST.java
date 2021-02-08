@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.TypeID;
@@ -19,7 +20,9 @@ public class FreeAST extends Node {
     // Expression must be of type pair or array
     TypeID exprType = expr.getIdentifier().getType();
     if ((!(exprType instanceof PairID)) && (!(exprType instanceof ArrayID))) {
-      System.out.println("Error cannot free expression which is not of type " + "pair or array");
+      SemanticErrorCollector.addError("Error cannot free expression which is not "
+          + "of type " + "pair or "
+          + "array");
     }
   }
 }

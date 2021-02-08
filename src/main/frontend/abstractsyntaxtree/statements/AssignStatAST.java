@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.statements;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.PairID;
@@ -31,23 +32,23 @@ public class AssignStatAST extends Node {
 
   static boolean typeCompat(TypeID t1, TypeID t2) {
     if (!(t1.getTypeName().equals((t2.getTypeName())))) {
-      System.out.println("LHS and RHS types are not compatible");
+      SemanticErrorCollector.addError("LHS and RHS type are not compatible");
       return false;
     }
 
     if (t1 instanceof PairID) {
       if (((PairID) t1).getFirstType() == ((PairID) t2).getFirstType()) {
         if (((PairID) t1).getSecondType() != ((PairID) t2).getSecondType()) {
-          System.out.println(
-              "Second pair parameter is not the same type! Got type "
-                  + ((PairID) t2).getSecondType().getTypeName()
-                  + "instead of "
-                  + ((PairID) t1).getSecondType().getTypeName());
+          SemanticErrorCollector.addError("Second pair parameter is not the same "
+            + "type! Got type "
+              + ((PairID) t2).getSecondType().getTypeName()
+              + "instead of "
+              + ((PairID) t1).getSecondType().getTypeName());
           return false;
         }
         return true;
       }
-      System.out.println(
+      SemanticErrorCollector.addError(
           "First pair parameter is not the same type! Got type "
               + ((PairID) t2).getSecondType().getTypeName()
               + "instead of "
@@ -57,7 +58,7 @@ public class AssignStatAST extends Node {
 
     if (t1 instanceof ArrayID) {
       if (((ArrayID) t1).getElemType() != ((ArrayID) t2).getElemType()) {
-        System.out.println(
+        SemanticErrorCollector.addError(
             "Array elem is not the same type! Got type "
                 + ((ArrayID) t2).getElemType().getTypeName()
                 + "instead of "

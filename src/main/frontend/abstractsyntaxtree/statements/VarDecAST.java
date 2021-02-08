@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
@@ -30,12 +31,12 @@ public class VarDecAST extends Node {
     Identifier variable = symtab.lookup(varName);
     // check if the identifier returned is a known type
     if (typeID == null) {
-      System.out.println("Unknown type " + typeName);
+      SemanticErrorCollector.addError("Unknown type " + typeName);
     } else if (!(typeID instanceof TypeID)) {
       // check if the type is an identifier
-      System.out.println(typeName + "is not a type");
+      SemanticErrorCollector.addError(typeName + "is not a type");
     } else if (variable != null) {
-      System.out.println(varName + "is already declared");
+      SemanticErrorCollector.addError(varName + "is already declared");
     } else {
       TypeID rhsType = assignRHS.getIdentifier().getType();
       if (typeCompat((TypeID) typeID, rhsType)) {

@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
@@ -23,12 +24,12 @@ public class ParamAST extends Node {
     Identifier t = symtab.lookupAll(typeName);
 
     if (t == null) {
-      System.out.println("Unknown type " + typeName);
+      SemanticErrorCollector.addError("Unknown type " + typeName);
       return;
     }
 
     if (!(identifier instanceof ParamID)) {
-      System.out.println(typeName + " is not a type");
+      SemanticErrorCollector.addError(typeName + " is not a type");
       return;
     }
 
