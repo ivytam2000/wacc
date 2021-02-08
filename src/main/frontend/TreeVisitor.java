@@ -74,6 +74,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     AssignStatAST assignStatAST = new AssignStatAST(lhs, rhs, currSymTab);
     assignStatAST.check();
+    currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
     return assignStatAST;
   }
 
@@ -193,13 +194,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitAssignLHS(AssignLHSContext ctx) {
     if (ctx.IDENT() != null) {
       String assignName = ctx.IDENT().toString();
-      return new AssignLHSAST(currSymTab.lookupAll(assignName), currSymTab, assignName);
+      return new AssignLHSAST(currSymTab, assignName);
     } else if (ctx.pairElem() != null) {
-      Node pairElem = visitPairElem((ctx.pairElem()));
-      return new AssignLHSAST(pairElem.getIdentifier().getType(), currSymTab);
-    } else { // array elem
-      Node arrayElem = visitArrayElem((ctx.arrayElem()));
-      return new AssignLHSAST(arrayElem.getIdentifier().getType(), currSymTab);
+      PairElemAST pairElem = (PairElemAST) visitPairElem((ctx.pairElem()));
+      return new AssignLHSAST(currSymTab, pairElem.getName());
+    } else {  // array elem
+      ArrayElemAST arrayElem = (ArrayElemAST) visitArrayElem((ctx.arrayElem()));
+      return new AssignLHSAST(currSymTab, arrayElem.getName());
     }
   }
 
@@ -268,6 +269,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitPairElem(PairElemContext ctx) {
     Node exprAST = visit(ctx.expr());
     Identifier ident = exprAST.getIdentifier();
+
     // don't need to check the since creating the exprAST will call check
     if (ctx.FST() != null) {
       return new PairElemAST(ident, currSymTab, true, exprAST);
