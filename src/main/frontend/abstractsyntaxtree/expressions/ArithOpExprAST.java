@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.expressions;
 import antlr.WaccParser;
 import antlr.WaccParser.ArithmeticOper1Context;
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 
@@ -21,10 +22,11 @@ public class ArithOpExprAST extends Node {
 
   @Override
   public void check() {
-    if (!(eL.getIdentifier().getType() instanceof IntID &&
-        eR.getIdentifier().getType() instanceof IntID)) {
-      //TODO: Fail
-      System.err.println("ArithOp : Incompatible types");
+    boolean eLIsInt = eL.getIdentifier().getType() instanceof IntID;
+    boolean eRIsInt = eR.getIdentifier().getType() instanceof IntID;
+
+    if (!(eLIsInt && eRIsInt)) {
+      SemanticErrorCollector.addError("Arithmetic operator : Incompatible types. Expected INT.");
     }
   }
 }

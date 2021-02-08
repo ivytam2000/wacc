@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.expressions;
 import antlr.WaccParser;
 import antlr.WaccParser.UnaryOperContext;
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.CharID;
 import frontend.symboltable.Identifier;
@@ -48,8 +49,7 @@ public class UnOpExprAST extends Node {
       }
     }
     if (identifier == null) {
-      //TODO: Fail?
-      System.err.println("Unary Op : Incompatible type");
+      SemanticErrorCollector.addError("Unary Operator : Incompatible type");
     } else {
       setIdentifier(unOpExprType);
     }

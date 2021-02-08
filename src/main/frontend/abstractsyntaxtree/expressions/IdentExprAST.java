@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 
@@ -25,7 +26,7 @@ public class IdentExprAST extends Node {
     Identifier identifier = currsymtab.lookupAll(val);
     if (identifier == null) {
       //Unknown variable
-      System.err.println("Unknown variable");
+      SemanticErrorCollector.addError(val + " is unknown");
     } else {
       setIdentifier(identifier);
     }

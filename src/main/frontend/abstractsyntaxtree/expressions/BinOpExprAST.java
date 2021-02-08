@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.CharID;
 import frontend.symboltable.IntID;
@@ -45,7 +46,7 @@ public class BinOpExprAST extends Node {
     }
     if (error) {
       //TODO: Exit
-      System.err.println("BinOp: Incompatible types");
+      SemanticErrorCollector.addError("Binary Operator : Incompatible types.");
     }
   }
 }

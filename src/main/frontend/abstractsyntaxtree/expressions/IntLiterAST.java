@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 
@@ -18,10 +19,10 @@ public class IntLiterAST extends Node {
 
   @Override
   public void check() {
+    //TODO: SHOULD BE SYNTAX ERROR! LOOK AT SECITON 4.4 OF ANTLR REFERENCE
     long valTemp = Long.parseLong(val);
     if ((positive && IntID.MAX < valTemp) || IntID.MIN > valTemp) {
-      System.err.println("Int assignment overflow!");
-      System.exit(200);
+      SemanticErrorCollector.addError("Int assignment overflow!");
     }
   }
 }

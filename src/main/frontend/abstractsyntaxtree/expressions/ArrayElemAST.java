@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.IntID;
@@ -28,8 +29,7 @@ public class ArrayElemAST extends Node {
     for (Node e : exprs) {
       assert (e.getIdentifier().getType() instanceof IntID);
       if (!(currIdentifier instanceof ArrayID)) {
-//        TODO: Fail?
-        System.err.println("Tried to index a non-array");
+        SemanticErrorCollector.addError("Tried to index a non-array");
       } else {
         currIdentifier = ((ArrayID) currIdentifier).getElemType();
       }
