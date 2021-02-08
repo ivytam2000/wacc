@@ -17,10 +17,7 @@ public class WhileAST extends Node {
 
   @Override
   public void check() {
-    // TODO: Check if all expr have a identifier?
-    if (expr == null || expr.getIdentifier() == null) {
-      SemanticErrorCollector.addError("Invalid condition expression");
-    } else {
+    if (expr.getIdentifier() != null) {
       TypeID exprType = expr.getIdentifier().getType();
       if (!(exprType instanceof BoolID)) {
         SemanticErrorCollector.addError("Condition is not of type bool ");
