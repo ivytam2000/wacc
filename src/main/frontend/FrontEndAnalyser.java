@@ -2,6 +2,7 @@ package frontend;
 
 import antlr.WaccLexer;
 import antlr.WaccParser;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.errorlistener.SyntaxErrorListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -45,6 +46,11 @@ public class FrontEndAnalyser {
 
     TreeVisitor treeVisitor = new TreeVisitor();
     treeVisitor.visit(tree);
+
+    if (SemanticErrorCollector.getNumberOfSemanticErrors() > 0) {
+      SemanticErrorCollector.printErrors();
+      return 200;
+    }
 
     // Print a LISP-style parse tree
     System.out.println("--- Parsing finished... ---");

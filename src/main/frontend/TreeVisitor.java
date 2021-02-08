@@ -87,7 +87,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitReturn_stat(Return_statContext ctx) {
     Node expr = visit(ctx.expr());
-    return new ReturnAST(expr);
+    Node returnAST = new ReturnAST(currSymTab, expr);
+    returnAST.check();
+    return returnAST;
   }
 
   @Override
@@ -115,8 +117,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitVar_decl_stat(Var_decl_statContext ctx) {
     AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
+    Node typeAST = visit(ctx.type());
     VarDecAST varDec =
-        new VarDecAST(currSymTab, ctx.type().toString(), ctx.IDENT().getText(), assignRHS);
+        new VarDecAST(currSymTab, typeAST.getIdentifier().getType().getTypeName(), ctx.IDENT().getText(), assignRHS);
     varDec.check();
     return varDec;
   }
