@@ -1,14 +1,15 @@
 package frontend.symboltable;
 
+import frontend.abstractsyntaxtree.Node;
 import java.util.List;
 
 public class FuncID extends Identifier {
 
-  private final TypeID returnType;
+  private final Node returnType;
   private final List<TypeID> params;
   private SymbolTable symtab;
 
-  public FuncID(TypeID returnType, List<TypeID> params, SymbolTable symtab) {
+  public FuncID(Node returnType, List<TypeID> params, SymbolTable symtab) {
     this.returnType = returnType;
     this.params = params;
     this.symtab = symtab;
@@ -16,7 +17,7 @@ public class FuncID extends Identifier {
 
   @Override
   public TypeID getType() {
-    return returnType;
+    return returnType.getIdentifier().getType();
   }
 
   public void setSymtab(SymbolTable symtab) {

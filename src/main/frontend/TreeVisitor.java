@@ -12,7 +12,9 @@ import frontend.abstractsyntaxtree.expressions.*;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
@@ -47,12 +49,14 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     SymbolTable encScope = currSymTab;
     currSymTab = new SymbolTable(encScope);
 
-    ParamListAST params = (ParamListAST) visitParamList(ctx.paramList());
+    ParamListContext s = ctx.paramList();
+    ParamListAST params = ctx.paramList() == null ? new ParamListAST()
+        : (ParamListAST) visitParamList(ctx.paramList());
 
-    TypeID returnTypeID = currSymTab.lookupAll(ctx.type().toString()).getType();
-    FuncID funcID = new FuncID(returnTypeID, params.convertToParamIDs(), currSymTab);
+    Node returnType = visitType(ctx.type());
+    FuncID funcID = new FuncID(returnType, params.convertToParamIDs(), currSymTab);
 
-    FuncAST funcAST = new FuncAST(funcID, currSymTab, ctx.IDENT().toString(), params);
+    FuncAST funcAST = new FuncAST(funcID, currSymTab, ctx.IDENT().getText(), params);
     funcAST.check();
 
     // Swap back symbol table
@@ -128,7 +132,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitWhile_stat(While_statContext ctx) {
-    // new scope
+    // New scope
     SymbolTable encScope = currSymTab;
     currSymTab = new SymbolTable(encScope);
 
@@ -137,7 +141,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     WhileAST whileAST = new WhileAST(expr, stat);
     whileAST.check();
-    // swap back to parent scope
+    // Swap back to parent scope
     currSymTab = encScope;
     return visitChildren(ctx);
   }
@@ -191,18 +195,28 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitParamList(ParamListContext ctx) {
-    return super.visitParamList(ctx);
+    List<ParamAST> paramASTs = new ArrayList<>();
+    for (ParamContext paramCtx : ctx.param()) {
+      paramASTs.add((ParamAST) visitParam(paramCtx));
+    }
+
+    ParamListAST paramListAST = new ParamListAST(paramASTs);
+    paramListAST.check();
+
+    return paramListAST;
   }
 
   @Override
   public Node visitParam(ParamContext ctx) {
-    return super.visitParam(ctx);
+    Identifier paramID = new ParamID(visitType(ctx.type()).getIdentifier().getType());
+    String varName = ctx.IDENT().getText();
+    return new ParamAST(paramID, currSymTab, varName);
   }
 
   @Override
   public Node visitAssignLHS(AssignLHSContext ctx) {
     if (ctx.IDENT() != null) {
-      String assignName = ctx.IDENT().toString();
+      String assignName = ctx.IDENT().getText();
       return new AssignLHSAST(currSymTab, assignName);
     } else if (ctx.pairElem() != null) {
       PairElemAST pairElem = (PairElemAST) visitPairElem((ctx.pairElem()));
@@ -256,7 +270,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitCall_assignRHS(Call_assignRHSContext ctx) {
     List<Node> params = new ArrayList<>();
-    String funcName = ctx.IDENT().toString();
+    String funcName = ctx.IDENT().getText();
     Node argListAST = visitArgList(ctx.argList());
     params.add(argListAST);
     AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, params);
@@ -292,13 +306,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     TypeID baseTypeID;
 
     if (ctx.INT() != null) {
-      baseTypeID = currSymTab.lookupAll(ctx.INT().toString()).getType();
+      baseTypeID = currSymTab.lookupAll(ctx.INT().getText()).getType();
     } else if (ctx.BOOL() != null) {
-      baseTypeID = currSymTab.lookupAll(ctx.BOOL().toString()).getType();
+      baseTypeID = currSymTab.lookupAll(ctx.BOOL().getText()).getType();
     } else if (ctx.CHAR() != null) {
-      baseTypeID = currSymTab.lookupAll(ctx.CHAR().toString()).getType();
+      baseTypeID = currSymTab.lookupAll(ctx.CHAR().getText()).getType();
     } else {
-      baseTypeID = currSymTab.lookupAll(ctx.STRING().toString()).getType();
+      baseTypeID = currSymTab.lookupAll(ctx.STRING().getText()).getType();
     }
 
     BaseTypeAST baseTypeAST = new BaseTypeAST(baseTypeID, currSymTab);
@@ -345,7 +359,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitIntLiter(IntLiterContext ctx) {
     Node intLiterAST =
         new IntLiterAST(currSymTab, ctx.MINUS() == null,
-            ctx.INTEGER().toString());
+            ctx.INTEGER().getText());
     intLiterAST.check();
     return intLiterAST;
   }
@@ -357,7 +371,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitCharLiter(CharLiterContext ctx) {
-    String s = ctx.CHAR_LITER().toString();
+    String s = ctx.CHAR_LITER().getText();
     // Length will be 3 accounting for quotes or 4 if it's an escape char
     assert ((s.charAt(1) == '\\' && s.length() == 4) || s.length() == 3);
     char val = s.charAt(0);
@@ -366,23 +380,19 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitStrLiter(StrLiterContext ctx) {
-    String val = ctx.STR_LITER().toString();
+    String val = ctx.STR_LITER().getText();
     assert (val != null);
     return new StrLiterAST(currSymTab, val);
   }
 
   @Override
-  public Node visitBaseType_type(BaseType_typeContext ctx) {
-    return visitBaseType(ctx.baseType());
-  }
-
-  @Override
-  public Node visitArrayType_type(ArrayType_typeContext ctx) {
-    return visitArrayType(ctx.arrayType());
-  }
-
-  @Override
-  public Node visitPairType_type(PairType_typeContext ctx) {
+  public Node visitType(TypeContext ctx) {
+    if (ctx.baseType() != null) {
+      return visitBaseType(ctx.baseType());
+    }
+    if (ctx.arrayType() != null) {
+      return visitArrayType(ctx.arrayType());
+    }
     return visitPairType(ctx.pairType());
   }
 
@@ -393,7 +403,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitIdentExpr(IdentExprContext ctx) {
-    String val = ctx.IDENT().toString();
+    String val = ctx.IDENT().getText();
     assert (val != null);
     Node identExprAST = new IdentExprAST(currSymTab, val);
     identExprAST.check();
@@ -513,7 +523,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
   //----------------------------------------------------------------------------
 
-  //TODO: Do we need these visit rules?
+  // TODO: Do we need these visit rules?
   @Override
   public Node visitUnaryOper(UnaryOperContext ctx) {
     return super.visitUnaryOper(ctx);
@@ -546,7 +556,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     //TODO: Does the implementation handle nested arrays?
     // int[][] a = [[1, 2], [3,4]];
     // int y = a[0][1];
-    String arrayName = ctx.IDENT().toString();
+    String arrayName = ctx.IDENT().getText();
     //Check that the IDENT is an array. If not, no point moving forward.
     Identifier identifier = currSymTab.lookupAll(arrayName);
     if (!(identifier instanceof ArrayID)) {
@@ -583,6 +593,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return arrayLiterAST;
   }
 
+  // TODO: Delete debugger
   @Override
   public Node visitProg(ProgContext ctx) {
     return super.visitProg(ctx);

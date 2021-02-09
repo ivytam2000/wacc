@@ -36,18 +36,7 @@ public class FuncAST extends Parent {
   }
 
   public void checkFunctionNameAndReturnType() {
-    Identifier t = symtab.lookupAll(returnTypeName);
     Identifier f = symtab.lookup(funcName);
-
-    if (t == null) {
-      SemanticErrorCollector.addError("Unknown type " + returnTypeName);
-      return;
-    }
-
-    if (!(identifier instanceof FuncID)) {
-      SemanticErrorCollector.addError(returnTypeName + " is not a type");
-      return;
-    }
 
     if (f != null) {
       SemanticErrorCollector.addError(funcName + " is already declared");

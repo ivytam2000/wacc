@@ -1,19 +1,19 @@
 package frontend.abstractsyntaxtree;
 
-import frontend.symboltable.Identifier;
-import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ParamListAST extends Parent {
 
   protected List<ParamAST> paramASTs;
-  private SymbolTable symtab;
 
-  protected ParamListAST(Identifier identifier, SymbolTable symtab, List<ParamAST> paramASTs) {
-    super(identifier);
-    this.symtab = symtab;
+  public ParamListAST() {
+    this.paramASTs = Collections.emptyList();
+  }
+
+  public ParamListAST(List<ParamAST> paramASTs) {
     this.paramASTs = paramASTs;
   }
 

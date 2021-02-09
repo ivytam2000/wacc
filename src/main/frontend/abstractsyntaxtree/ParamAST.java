@@ -12,7 +12,7 @@ public class ParamAST extends Node {
   private ParamID paramObj;
   private SymbolTable symtab;
 
-  protected ParamAST(Identifier identifier, SymbolTable symtab, String varName) {
+  public ParamAST(Identifier identifier, SymbolTable symtab, String varName) {
     super(identifier);
     this.symtab = symtab;
     this.typeName = identifier.getType().getTypeName();
@@ -21,15 +21,10 @@ public class ParamAST extends Node {
 
   @Override
   public void check() {
-    Identifier t = symtab.lookupAll(typeName);
+    Identifier v = symtab.lookup(varName);
 
-    if (t == null) {
-      SemanticErrorCollector.addError("Unknown type " + typeName);
-      return;
-    }
-
-    if (!(identifier instanceof ParamID)) {
-      SemanticErrorCollector.addError(typeName + " is not a type");
+    if (v != null) {
+      SemanticErrorCollector.addError(varName + " is already declared");
       return;
     }
 
