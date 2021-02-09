@@ -15,4 +15,9 @@ public class SequenceAST extends Node {
 
   @Override
   public void check() {}
+
+  //FOR DEBUGGING
+  public List<Node> getStatements() {
+    return statements;
+  }
 }

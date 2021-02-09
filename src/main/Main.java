@@ -1,5 +1,4 @@
 import frontend.FrontEndAnalyser;
-import frontend.errorlistener.SemanticErrorCollector;
 import java.io.FileInputStream;
 
 import org.antlr.v4.runtime.*;
