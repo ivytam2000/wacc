@@ -126,7 +126,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
     Node typeAST = visit(ctx.type());
     VarDecAST varDec =
-        new VarDecAST(currSymTab, typeAST.getIdentifier().getType().getTypeName(),
+        new VarDecAST(currSymTab, typeAST,
             ctx.IDENT().getText(), assignRHS);
     varDec.check();
     return varDec;

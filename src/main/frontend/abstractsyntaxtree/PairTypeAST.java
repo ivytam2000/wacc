@@ -20,6 +20,14 @@ public class PairTypeAST extends Node {
     this.snd = snd;
   }
 
+  public Node getFst() {
+    return fst;
+  }
+
+  public Node getSnd() {
+    return snd;
+  }
+
   @Override
   public void check() {
     fst.check();
