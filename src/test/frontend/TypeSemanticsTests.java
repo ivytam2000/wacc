@@ -13,6 +13,7 @@ import frontend.symboltable.PairID;
 import frontend.symboltable.StringID;
 import frontend.symboltable.TypeID;
 import java.io.IOException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TypeSemanticsTests {
@@ -37,8 +38,9 @@ public class TypeSemanticsTests {
     assert (pairID.getSndType() instanceof BoolID);
   }
 
+	@Ignore
   //Creates a simple pair of type int and bool
-  @Test
+	@Test
   public void validNestedPair() throws IOException {
     AST ast =
         TestUtilities.buildAST("nestedPair.wacc");
