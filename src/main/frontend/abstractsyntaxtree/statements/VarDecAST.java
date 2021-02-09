@@ -1,12 +1,14 @@
 package frontend.abstractsyntaxtree.statements;
 
+import frontend.abstractsyntaxtree.ArrayLiterAST;
+import frontend.abstractsyntaxtree.ArrayTypeAST;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.PairTypeAST;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
-
-import static frontend.abstractsyntaxtree.statements.AssignStatAST.typeCompat;
+import java.lang.reflect.Array;
 
 public class VarDecAST extends Node {
 
@@ -38,10 +40,10 @@ public class VarDecAST extends Node {
         PairID assignPair = (PairID) assignType;
         boolean correctArr = true;
         if (fstType instanceof ArrayID) {
-          correctArr = compareArrayTypes(fstType, assignPair.getFstType());
+          correctArr = Utils.compareArrayTypes(fstType, assignPair.getFstType());
         }
         if (sndType instanceof ArrayID) {
-          correctArr = correctArr && compareArrayTypes(sndType,
+          correctArr = correctArr && Utils.compareArrayTypes(sndType,
               assignPair.getSndType());
         }
         if (!correctArr) {
@@ -62,6 +64,15 @@ public class VarDecAST extends Node {
       }
       PairID pairType = new PairID(fstType, sndType);
       symtab.add(varName, pairType);
+    } else if (typeAST instanceof ArrayTypeAST) {
+      TypeID assignType = assignRHS.getIdentifier().getType();
+      if (assignType instanceof ArrayID) {
+        if (!Utils.compareArrayTypes(typeAST.getIdentifier().getType(), assignType)) {
+          SemanticErrorCollector.addError("Not same array type");
+        }
+      }
+      symtab.add(varName, typeAST.getIdentifier().getType());
+
     } else {
       String typeName = typeAST.getIdentifier().getType().getTypeName();
       Identifier typeID = symtab.lookupAll(typeName);
@@ -77,41 +88,13 @@ public class VarDecAST extends Node {
         SemanticErrorCollector.addError(varName + "is already declared");
       } else {
         TypeID rhsType = assignRHS.getIdentifier().getType();
-        if (typeCompat((TypeID) typeID, rhsType)) {
+        if (Utils.typeCompat((TypeID) typeID, rhsType)) {
           // create variable identifier
           VariableID varID = new VariableID((TypeID) typeID, varName);
           // add to symbol table
           symtab.add(varName, varID);
           setIdentifier(varID);
         }
-      }
-    }
-  }
-
-  private boolean comparePairTypes(TypeID eLType, TypeID eRType) {
-    if (eLType instanceof PairID && eRType instanceof PairID) {
-      return comparePairTypes(((PairID) eLType).getFstType(),
-          ((PairID) eRType).getFstType())
-          && comparePairTypes(((PairID) eLType).getSndType(),
-          ((PairID) eRType).getSndType());
-    } else {
-      if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-        return compareArrayTypes(eLType, eRType);
-      } else {
-        return (eLType == eRType);
-      }
-    }
-  }
-
-  private boolean compareArrayTypes(TypeID eLType, TypeID eRType) {
-    if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-      return compareArrayTypes(((ArrayID) eLType).getElemType(),
-          ((ArrayID) eRType).getElemType());
-    } else {
-      if (eLType instanceof PairID && eRType instanceof PairID) {
-        return comparePairTypes(eLType, eRType);
-      } else {
-        return (eLType == eRType);
       }
     }
   }

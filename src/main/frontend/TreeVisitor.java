@@ -325,8 +325,25 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitArrayType(ArrayTypeContext ctx) {
-    return super.visitArrayType(ctx);
+    int dimensions = ctx.OPEN_SQUARE_BRACKETS().size();
+
+    if (ctx.baseType() != null) {
+      Node baseTypeAST = visit(ctx.baseType());
+      ArrayID nestedID = new ArrayID(baseTypeAST.getIdentifier().getType());
+      for (int i = 1; i < dimensions; i++) {
+        nestedID = new ArrayID(nestedID);
+      }
+      currSymTab.add(nestedID);
+      return new ArrayTypeAST(nestedID, currSymTab, dimensions);
+    } else { // is pairType
+      Node pairTypeAST = visit(ctx.pairType());
+      ArrayID pairArrayID = new ArrayID(pairTypeAST.getIdentifier().getType());
+      currSymTab.add(pairArrayID);
+      return new ArrayTypeAST(pairArrayID, currSymTab, dimensions);
+    }
   }
+
+  int[][] x = {{1, 2}, {1,2,3}};
 
   @Override
   public Node visitPairType(PairTypeContext ctx) {
@@ -590,7 +607,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       children.add(exprAST);
     }
 
-    ArrayLiterAST arrayLiterAST = new ArrayLiterAST(currSymTab, children);
+    ArrayID arrayID = new ArrayID(children.get(0).getIdentifier().getType());
+
+    ArrayLiterAST arrayLiterAST = new ArrayLiterAST(arrayID, currSymTab, children);
     arrayLiterAST.check();
     return arrayLiterAST;
   }

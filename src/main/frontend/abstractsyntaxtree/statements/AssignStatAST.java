@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -27,48 +28,8 @@ public class AssignStatAST extends Node {
   public void check() {
     TypeID t1 = lhs.getIdentifier().getType();
     TypeID t2 = rhs.getIdentifier().getType();
-    if (typeCompat(t1, t2)) {
+    if (Utils.typeCompat(t1, t2)) {
       setIdentifier(t1);
     }
-  }
-
-  static boolean typeCompat(TypeID t1, TypeID t2) {
-    if (!(t1.getTypeName().equals((t2.getTypeName())))) {
-      SemanticErrorCollector.addError("LHS and RHS type are not compatible");
-      return false;
-    }
-
-    if (t1 instanceof PairID) {
-      if (((PairID) t1).getFstType() == ((PairID) t2).getFstType()) {
-        if (((PairID) t1).getSndType() != ((PairID) t2).getSndType()) {
-          SemanticErrorCollector.addError(
-              "Second pair parameter is not the same "
-                  + "type! Got type "
-                  + ((PairID) t2).getSndType().getTypeName()
-                  + "instead of "
-                  + ((PairID) t1).getSndType().getTypeName());
-          return false;
-        }
-        return true;
-      }
-      SemanticErrorCollector.addError(
-          "First pair parameter is not the same type! Got type "
-              + ((PairID) t2).getSndType().getTypeName()
-              + "instead of "
-              + ((PairID) t1).getSndType().getTypeName());
-      return false;
-    }
-
-    if (t1 instanceof ArrayID) {
-      if (((ArrayID) t1).getElemType() != ((ArrayID) t2).getElemType()) {
-        SemanticErrorCollector.addError(
-            "Array elem is not the same type! Got type "
-                + ((ArrayID) t2).getElemType().getTypeName()
-                + "instead of "
-                + ((ArrayID) t1).getElemType().getTypeName());
-        return false;
-      }
-    }
-    return true;
   }
 }
