@@ -32,17 +32,7 @@ public class TestUtilities {
         .filter(f->f.endsWith(".wacc"))
         .collect(Collectors.toList());
   }
-
-  public static void main(String[] args) throws IOException {
-    List<String> names = getTestNames("src/test/examples/invalid/syntaxErr"
-        + "/array");
-    for(String s:names){
-      System.out.println(s);
-
-    }
-    System.out.println("HELLO");
-  }
-
+  
   // Function that checks that the example compiles with a certain exit code
   public static void exitsWith(String folderPath, int exitCode) throws IOException {
     List<String> names = getTestNames(folderPath);
