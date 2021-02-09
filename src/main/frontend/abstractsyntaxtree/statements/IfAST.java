@@ -23,7 +23,11 @@ public class IfAST extends Node {
   public void check() {
     TypeID exprType = expr.getIdentifier().getType();
     if (!(exprType instanceof BoolID)) {
-      SemanticErrorCollector.addError("Condition is not of type bool ");
+      SemanticErrorCollector.addError(
+          "Condition type is not of expected "
+              + "type: bool, actual "
+              + "type: "
+              + exprType.getTypeName());
     }
   }
 }

@@ -102,7 +102,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitExit_stat(Exit_statContext ctx) {
     Node expr = visit(ctx.expr());
-    ExitAST exitAST = new ExitAST(expr);
+    ExitAST exitAST = new ExitAST(ctx, expr);
     exitAST.check();
     return exitAST;
   }

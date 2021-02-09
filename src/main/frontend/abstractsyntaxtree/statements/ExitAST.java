@@ -1,16 +1,20 @@
 package frontend.abstractsyntaxtree.statements;
 
+import antlr.WaccParser;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ExitAST extends Node {
+  WaccParser.Exit_statContext ctx;
   private final Node expr;
 
-  public ExitAST(Node expr) {
+  public ExitAST(WaccParser.Exit_statContext ctx, Node expr) {
     super(expr.getIdentifier());
+    this.ctx = ctx;
     this.expr = expr;
   }
 
@@ -21,8 +25,12 @@ public class ExitAST extends Node {
   @Override
   public void check() {
     TypeID exprType = expr.getIdentifier().getType();
+    ParserRuleContext exprCtx = ctx.expr();
     if (!(exprType instanceof IntID)) {
-      SemanticErrorCollector.addError("Expression is not an int");
+      int line = exprCtx.getStart().getLine();
+      int pos = exprCtx.getStart().getCharPositionInLine();
+      SemanticErrorCollector.addError(
+          "line " + line + ":" + pos + " " + "Expression is " + "not an " + "int");
     }
   }
 }

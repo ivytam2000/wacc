@@ -27,13 +27,14 @@ public class VarDecAST extends Node {
 
   @Override
   public void check() {
-    Identifier typeID = symtab.lookup(typeName);
+    Identifier typeID = symtab.lookupAll(typeName);
     Identifier variable = symtab.lookup(varName);
-    // check if the identifier returned is a known type
+
     if (typeID == null) {
+      // check if the identifier returned is a known type/identifier
       SemanticErrorCollector.addError("Unknown type " + typeName);
     } else if (!(typeID instanceof TypeID)) {
-      // check if the type is an identifier
+      // check if the identifier is a type
       SemanticErrorCollector.addError(typeName + "is not a type");
     } else if (variable != null) {
       SemanticErrorCollector.addError(varName + "is already declared");
