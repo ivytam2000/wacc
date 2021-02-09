@@ -39,23 +39,23 @@ public class AssignStatAST extends Node {
     }
 
     if (t1 instanceof PairID) {
-      if (((PairID) t1).getFirstType() == ((PairID) t2).getFirstType()) {
-        if (((PairID) t1).getSecondType() != ((PairID) t2).getSecondType()) {
+      if (((PairID) t1).getFstType() == ((PairID) t2).getFstType()) {
+        if (((PairID) t1).getSndType() != ((PairID) t2).getSndType()) {
           SemanticErrorCollector.addError(
               "Second pair parameter is not the same "
                   + "type! Got type "
-                  + ((PairID) t2).getSecondType().getTypeName()
+                  + ((PairID) t2).getSndType().getTypeName()
                   + "instead of "
-                  + ((PairID) t1).getSecondType().getTypeName());
+                  + ((PairID) t1).getSndType().getTypeName());
           return false;
         }
         return true;
       }
       SemanticErrorCollector.addError(
           "First pair parameter is not the same type! Got type "
-              + ((PairID) t2).getSecondType().getTypeName()
+              + ((PairID) t2).getSndType().getTypeName()
               + "instead of "
-              + ((PairID) t1).getSecondType().getTypeName());
+              + ((PairID) t1).getSndType().getTypeName());
       return false;
     }
 

@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree;
 
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
+import frontend.abstractsyntaxtree.expressions.PairLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.PairID;
@@ -38,6 +39,8 @@ public class PairElemAST extends Node {
         SemanticErrorCollector.addError(
             "Expected type pair but got " + child.getIdentifier().getType().getTypeName());
       }
+    } else if (child instanceof PairLiterAST) {
+      SemanticErrorCollector.addError("Null");
     } else {
       SemanticErrorCollector.addError("Unexpected Type : does not have type "
           + "pair");

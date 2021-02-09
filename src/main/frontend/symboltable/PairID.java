@@ -2,21 +2,25 @@ package frontend.symboltable;
 
 public class PairID extends TypeID {
 
-  private TypeID first;
-  private TypeID second;
+  private TypeID fst;
+  private TypeID snd;
 
-  public TypeID getFirstType() {
-    return first;
+  public TypeID getFstType() {
+    return fst;
   }
 
-  public TypeID getSecondType() {
-    return second;
+  public TypeID getSndType() {
+    return snd;
   }
 
-  public PairID(TypeID first, TypeID second) {
-    super("pair (" + first.getTypeName() + ") (" + second.getTypeName() + ")");
-    this.first = first;
-    this.second = second;
+  public PairID() {
+    super("pair");
+  }
+
+  public PairID(TypeID fst, TypeID snd) {
+    super("pair (" + fst.getTypeName() + ") (" + snd.getTypeName() + ")");
+    this.fst = fst;
+    this.snd = snd;
   }
 
   @Override

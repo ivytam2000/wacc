@@ -120,7 +120,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
     Node typeAST = visit(ctx.type());
     VarDecAST varDec =
-        new VarDecAST(currSymTab, typeAST.getIdentifier().getType().getTypeName(), ctx.IDENT().getText(), assignRHS);
+        new VarDecAST(currSymTab, typeAST.getIdentifier().getType().getTypeName(),
+            ctx.IDENT().getText(), assignRHS);
     varDec.check();
     return varDec;
   }
@@ -134,7 +135,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node expr = visit(ctx.expr());
     Node stat = visit(ctx.stat());
 
-    WhileAST whileAST = new WhileAST(expr,stat);
+    WhileAST whileAST = new WhileAST(expr, stat);
     whileAST.check();
     // swap back to parent scope
     currSymTab = encScope;
@@ -174,7 +175,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     List<StatContext> statCtxs = ctx.stat();
     // TODO: Should I create an abstract statement node class?
     List<Node> statASTs = new ArrayList<>();
-    for(StatContext s : statCtxs){
+    for (StatContext s : statCtxs) {
       statASTs.add(visit(s));
     }
     return new SequenceAST(statASTs);
@@ -248,7 +249,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     List<Node> children = new ArrayList<>();
     Node pairElemAST = visitPairElem(ctx.pairElem());
     children.add(pairElemAST);
-    // don't need to check the since creating the pairElem will call check
+    // Don't need to check the since creating the pairElem will call check
     return new AssignRHSAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
   }
 
@@ -269,7 +270,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     for (ExprContext exprContext : ctx.expr()) {
       expressions.add(visitChildren(exprContext));
     }
-    // don't need to check the since creating the exprASTs will call check
+    // Don't need to check the since creating the exprASTs will call check
     return new ArgListAST(currSymTab, expressions);
   }
 
@@ -278,27 +279,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node exprAST = visit(ctx.expr());
     Identifier ident = exprAST.getIdentifier();
 
-    // don't need to check the since creating the exprAST will call check
+    // Don't need to check the since creating the exprAST will call check
     if (ctx.FST() != null) {
       return new PairElemAST(ident, currSymTab, true, exprAST);
     } else {
       return new PairElemAST(ident, currSymTab, false, exprAST);
     }
-  }
-
-  @Override
-  public Node visitTypeBaseType(TypeBaseTypeContext ctx) {
-    return visitBaseType(ctx.baseType());
-  }
-
-  @Override
-  public Node visitTypeArrayType(TypeArrayTypeContext ctx) {
-    return visitArrayType(ctx.arrayType());
-  }
-
-  @Override
-  public Node visitTypePairType(TypePairTypeContext ctx) {
-    return visitPairType(ctx.pairType());
   }
 
   @Override
@@ -330,11 +316,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitPairType(PairTypeContext ctx) {
     assert (ctx.PAIR() != null);
 
-    Node first = visitPairElemType(ctx.pairElemType(0));
-    Node second = visitPairElemType(ctx.pairElemType(1));
-    TypeID pairID = new PairID(first.getIdentifier().getType(), second.getIdentifier().getType());
+    Node fst = visitPairElemType(ctx.pairElemType(0));
+    Node snd = visitPairElemType(ctx.pairElemType(1));
+    TypeID pairID = new PairID(fst.getIdentifier().getType(), snd.getIdentifier().getType());
 
-    PairTypeAST pairTypeAST = new PairTypeAST(pairID, currSymTab, first, second);
+    PairTypeAST pairTypeAST = new PairTypeAST(pairID, currSymTab, fst, snd);
+    pairTypeAST.check();
 
     return pairTypeAST;
   }
@@ -348,9 +335,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       return visitArrayType(ctx.arrayType());
     }
 
-    Identifier pairElemTypeID = currSymTab.lookupAll(ctx.PAIR().getText());
-    PairElemTypeAST pairElemTypeAST = new PairElemTypeAST(pairElemTypeID, currSymTab);
-    pairElemTypeAST.check();
+    Identifier pairGenericID = new PairID();
+    PairElemTypeAST pairElemTypeAST = new PairElemTypeAST(pairGenericID, currSymTab);
 
     return pairElemTypeAST;
   }
@@ -372,7 +358,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitCharLiter(CharLiterContext ctx) {
     String s = ctx.CHAR_LITER().toString();
-    //Length will be 3 accounting for quotes or 4 if it's an escape char
+    // Length will be 3 accounting for quotes or 4 if it's an escape char
     assert ((s.charAt(1) == '\\' && s.length() == 4) || s.length() == 3);
     char val = s.charAt(0);
     return new CharLiterAST(currSymTab, val);
@@ -386,9 +372,22 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
+  public Node visitBaseType_type(BaseType_typeContext ctx) {
+    return visitBaseType(ctx.baseType());
+  }
+
+  @Override
+  public Node visitArrayType_type(ArrayType_typeContext ctx) {
+    return visitArrayType(ctx.arrayType());
+  }
+
+  @Override
+  public Node visitPairType_type(PairType_typeContext ctx) {
+    return visitPairType(ctx.pairType());
+  }
+
+  @Override
   public Node visitPairLiter(PairLiterContext ctx) {
-    /* TODO: Check how check for assignment of pairLiter is implemented
-    Eg are we checking that pairLiterAST.getIdentifier().getType() is null? */
     return new PairLiterAST();
   }
 
@@ -471,8 +470,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     } else if (binOp1Ctx.LTE() != null) {
       operation = "LTE";
     }
-    assert(operation != null);
-    Node binOpExprAST = new BinOpExprAST(currSymTab, 2,operation, eL, eR);
+    assert (operation != null);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, 2, operation, eL, eR);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -489,8 +488,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     } else if (binOp2Ctx.NE() != null) {
       operation = "NE";
     }
-    assert(operation != null);
-    Node binOpExprAST = new BinOpExprAST(currSymTab, 3,operation, eL, eR);
+    assert (operation != null);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, 3, operation, eL, eR);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -499,7 +498,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitAndExpr(AndExprContext ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
-    Node binOpExprAST = new BinOpExprAST(currSymTab, 1,"AND", eL, eR);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, 1, "AND", eL, eR);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -508,7 +507,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitOrExpr(OrExprContext ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
-    Node binOpExprAST = new BinOpExprAST(currSymTab, 1,"OR", eL, eR);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, 1, "OR", eL, eR);
     binOpExprAST.check();
     return binOpExprAST;
   }

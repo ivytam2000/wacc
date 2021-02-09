@@ -10,6 +10,7 @@ import static frontend.TestUtilities.exitsWith;
 import static org.junit.Assert.*;
 
 public class InvalidSyntaxTests {
+
   String invalidSyntaxFolderPath = "src/test/examples/invalid/syntaxErr/";
 
   // Checks that the syntax error printed is correct.
