@@ -15,7 +15,8 @@ public class VarDecAST extends Node {
   private final String varName;
   private final AssignRHSAST assignRHS;
 
-  public VarDecAST(SymbolTable symtab, Node typeAST, String varName, AssignRHSAST assignRHS) {
+  public VarDecAST(SymbolTable symtab, Node typeAST, String varName,
+      AssignRHSAST assignRHS) {
     super();
     this.symtab = symtab;
     this.typeAST = typeAST;
@@ -27,8 +28,10 @@ public class VarDecAST extends Node {
   public void check() {
 
     if (typeAST instanceof PairTypeAST) {
-      TypeID fstType = ((PairTypeAST) typeAST).getFst().getIdentifier().getType();
-      TypeID sndType = ((PairTypeAST) typeAST).getSnd().getIdentifier().getType();
+      TypeID fstType = ((PairTypeAST) typeAST).getFst().getIdentifier()
+          .getType();
+      TypeID sndType = ((PairTypeAST) typeAST).getSnd().getIdentifier()
+          .getType();
 
       TypeID assignType = assignRHS.getIdentifier().getType();
       if (assignType instanceof PairID) {
@@ -44,48 +47,53 @@ public class VarDecAST extends Node {
         if (!correctArr) {
           SemanticErrorCollector.addError("Expected array");
         } else {
-          if (!(fstType.getTypeName().equals(assignPair.getFstType().getTypeName())
-              && sndType.getTypeName().equals(assignPair.getSndType().getTypeName()))) {
+          if (!(fstType.getTypeName()
+              .equals(assignPair.getFstType().getTypeName())
+              && sndType.getTypeName()
+              .equals(assignPair.getSndType().getTypeName()))) {
             SemanticErrorCollector.addError("Pair types do not match with rhs");
           }
         }
 
       } else {
         SemanticErrorCollector.addError(
-            "Incompatible types: expected pair, " + "but actual:" + assignType.getTypeName());
+            "Incompatible types: expected pair, " + "but actual:" + assignType
+                .getTypeName());
       }
-      PairID pairType = new PairID(fstType,sndType);
+      PairID pairType = new PairID(fstType, sndType);
       symtab.add(varName, pairType);
-    }
-
-    String typeName = typeAST.getIdentifier().getType().getTypeName();
-    Identifier typeID = symtab.lookupAll(typeName);
-    Identifier variable = symtab.lookup(varName);
-
-    if (typeID == null) {
-      // check if the identifier returned is a known type/identifier
-      SemanticErrorCollector.addError("Unknown type " + typeName);
-    } else if (!(typeID instanceof TypeID)) {
-      // check if the identifier is a type
-      SemanticErrorCollector.addError(typeName + "is not a type");
-    } else if (variable != null) {
-      SemanticErrorCollector.addError(varName + "is already declared");
     } else {
-      TypeID rhsType = assignRHS.getIdentifier().getType();
-      if (typeCompat((TypeID) typeID, rhsType)) {
-        // create variable identifier
-        VariableID varID = new VariableID((TypeID) typeID, varName);
-        // add to symbol table
-        symtab.add(varName, varID);
-        setIdentifier(varID);
+      String typeName = typeAST.getIdentifier().getType().getTypeName();
+      Identifier typeID = symtab.lookupAll(typeName);
+      Identifier variable = symtab.lookup(varName);
+
+      if (typeID == null) {
+        // check if the identifier returned is a known type/identifier
+        SemanticErrorCollector.addError("Unknown type " + typeName);
+      } else if (!(typeID instanceof TypeID)) {
+        // check if the identifier is a type
+        SemanticErrorCollector.addError(typeName + "is not a type");
+      } else if (variable != null) {
+        SemanticErrorCollector.addError(varName + "is already declared");
+      } else {
+        TypeID rhsType = assignRHS.getIdentifier().getType();
+        if (typeCompat((TypeID) typeID, rhsType)) {
+          // create variable identifier
+          VariableID varID = new VariableID((TypeID) typeID, varName);
+          // add to symbol table
+          symtab.add(varName, varID);
+          setIdentifier(varID);
+        }
       }
     }
   }
 
   private boolean comparePairTypes(TypeID eLType, TypeID eRType) {
     if (eLType instanceof PairID && eRType instanceof PairID) {
-      return comparePairTypes(((PairID) eLType).getFstType(), ((PairID) eRType).getFstType())
-          && comparePairTypes(((PairID) eLType).getSndType(), ((PairID) eRType).getSndType());
+      return comparePairTypes(((PairID) eLType).getFstType(),
+          ((PairID) eRType).getFstType())
+          && comparePairTypes(((PairID) eLType).getSndType(),
+          ((PairID) eRType).getSndType());
     } else {
       if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
         return compareArrayTypes(eLType, eRType);
@@ -97,7 +105,8 @@ public class VarDecAST extends Node {
 
   private boolean compareArrayTypes(TypeID eLType, TypeID eRType) {
     if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-      return compareArrayTypes(((ArrayID) eLType).getElemType(), ((ArrayID) eRType).getElemType());
+      return compareArrayTypes(((ArrayID) eLType).getElemType(),
+          ((ArrayID) eRType).getElemType());
     } else {
       if (eLType instanceof PairID && eRType instanceof PairID) {
         return comparePairTypes(eLType, eRType);
