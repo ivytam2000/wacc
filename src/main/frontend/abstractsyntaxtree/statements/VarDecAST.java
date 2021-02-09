@@ -98,4 +98,13 @@ public class VarDecAST extends Node {
       }
     }
   }
+
+  //  FOR DEBUGGING
+  public Node getTypeAST() {
+    return typeAST;
+  }
+
+  public AssignRHSAST getAssignRHS() {
+    return assignRHS;
+  }
 }

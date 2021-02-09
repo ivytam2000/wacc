@@ -2,6 +2,7 @@ package frontend;
 
 import antlr.WaccLexer;
 import antlr.WaccParser;
+import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.errorlistener.SyntaxErrorListener;
 import org.antlr.v4.runtime.CharStream;
@@ -45,7 +46,7 @@ public class FrontEndAnalyser {
     }
 
     TreeVisitor treeVisitor = new TreeVisitor();
-    treeVisitor.visit(tree);
+    Node ast = treeVisitor.visit(tree);
 
     if (SemanticErrorCollector.getNumberOfSemanticErrors() > 0) {
       SemanticErrorCollector.printErrors();

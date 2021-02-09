@@ -32,15 +32,17 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     assert (ctx.END() != null);
     assert (ctx.EOF() != null);
 
+    List<Node> fs = new ArrayList<>();
     List<FuncContext> funcContexts = ctx.func();
     for (FuncContext FC : funcContexts) {
-      visitFunc(FC); // Return func node
-      // Add to AST
+      Node funcAST = visitFunc(FC); // Return func node
+      fs.add(funcAST);
     }
-    // visit stat
-    visit(ctx.stat());
 
-    return null;
+    // visit stat
+    Node statAST = visit(ctx.stat());
+
+    return new AST(fs, statAST);
   }
 
   @Override
