@@ -16,11 +16,13 @@ public class InvalidSemanticTests {
     exitsWith(invalidSemanticFolderPath + "exit/", 200);
   }
 
+  @Ignore
   @Test
   public void invalidSemanticExprTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "expressions/", 200);
   }
 
+  @Ignore
   @Test
   public void invalidSemanticFunctionTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "function/", 200);
@@ -36,6 +38,7 @@ public class InvalidSemanticTests {
     exitsWith(invalidSemanticFolderPath + "IO/", 200);
   }
 
+  @Ignore
   @Test
   public void invalidSemanticMultipleTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "multiple/", 200);
@@ -61,6 +64,7 @@ public class InvalidSemanticTests {
     exitsWith(invalidSemanticFolderPath + "scope/", 200);
   }
 
+  @Ignore
   @Test
   public void invalidSemanticVariablesTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "variables/", 200);
