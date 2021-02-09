@@ -2,10 +2,15 @@ package frontend.abstractsyntaxtree.expressions;
 
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
+import frontend.symboltable.ArrayID;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.CharID;
+import frontend.symboltable.Identifier;
 import frontend.symboltable.IntID;
+import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.TypeID;
+import java.lang.reflect.Type;
 
 public class BinOpExprAST extends Node {
 
@@ -40,13 +45,45 @@ public class BinOpExprAST extends Node {
           eR.getIdentifier().getType() instanceof CharID;
       error = !(isInt || isChar);
     } else if (expectedExprTypes == ALL_TYPES) {
-      //Compare type names to support nested pairs and arrays
-      error = !(eL.getIdentifier().getType().getTypeName().equals
-          (eR.getIdentifier().getType().getTypeName()));
+      TypeID eLType = eL.getIdentifier().getType();
+      TypeID eRType = eR.getIdentifier().getType();
+      if (eLType instanceof PairID && eRType instanceof PairID) {
+        error = !comparePairTypes(eLType, eRType);
+      } else if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
+        error = !compareArrayTypes(eLType, eRType);
+      } else {
+        error = !(eLType == eRType);
+      }
     }
     if (error) {
-      //TODO: Exit
       SemanticErrorCollector.addError("Binary Operator : Incompatible types.");
     }
   }
+
+  private boolean comparePairTypes(TypeID eLType, TypeID eRType) {
+    if (eLType instanceof PairID && eRType instanceof PairID) {
+      return comparePairTypes(((PairID) eLType).getFstType(),
+          ((PairID) eRType).getFstType()) && comparePairTypes(((PairID) eLType).getSndType(),
+          ((PairID) eRType).getSndType());
+    } else {
+      if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
+        return compareArrayTypes(eLType, eRType);
+      } else {
+        return (eLType == eRType);
+      }
+    }
+  }
+
+  private boolean compareArrayTypes(TypeID eLType, TypeID eRType) {
+    if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
+      return compareArrayTypes(((ArrayID) eLType).getElemType(), ((ArrayID) eRType).getElemType());
+    } else {
+      if (eLType instanceof PairID && eRType instanceof PairID) {
+        return comparePairTypes(eLType, eRType);
+      } else {
+        return (eLType == eRType);
+      }
+    }
+  }
+
 }

@@ -6,7 +6,7 @@ public class ArrayID extends TypeID {
     private final int size;
 
     public ArrayID(TypeID type, int size) {
-        super("array (" + type.getTypeName() + ")");
+        super("array");
         this.type = type;
         this.size = size;
     }

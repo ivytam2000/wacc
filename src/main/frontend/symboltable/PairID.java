@@ -18,7 +18,7 @@ public class PairID extends TypeID {
   }
 
   public PairID(TypeID fst, TypeID snd) {
-    super("pair (" + fst.getTypeName() + ") (" + snd.getTypeName() + ")");
+    super("pair");
     this.fst = fst;
     this.snd = snd;
   }
