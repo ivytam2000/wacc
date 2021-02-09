@@ -16,7 +16,7 @@ public class InvalidSemanticTests {
     exitsWith(invalidSemanticFolderPath + "exit/", 200);
   }
 
-
+  @Ignore
   @Test
   public void invalidSemanticExprTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "expressions/", 200);
