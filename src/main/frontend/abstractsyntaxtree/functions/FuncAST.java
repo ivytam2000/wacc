@@ -1,9 +1,9 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.functions;
 
+import frontend.abstractsyntaxtree.Parent;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
-import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
 
 public class FuncAST extends Parent {

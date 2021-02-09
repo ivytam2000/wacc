@@ -4,6 +4,10 @@ import antlr.WaccParser;
 import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
+import frontend.abstractsyntaxtree.functions.ArgListAST;
+import frontend.abstractsyntaxtree.functions.FuncAST;
+import frontend.abstractsyntaxtree.functions.ParamAST;
+import frontend.abstractsyntaxtree.functions.ParamListAST;
 import frontend.abstractsyntaxtree.statements.*;
 import frontend.abstractsyntaxtree.assignments.AssignCallAST;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
@@ -12,9 +16,7 @@ import frontend.abstractsyntaxtree.expressions.*;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 

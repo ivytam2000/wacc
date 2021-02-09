@@ -1,5 +1,6 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.functions;
 
+import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.ParamID;

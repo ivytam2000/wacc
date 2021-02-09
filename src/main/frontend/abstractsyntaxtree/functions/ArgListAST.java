@@ -1,6 +1,6 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.functions;
 
-import frontend.symboltable.Identifier;
+import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
 import java.util.List;
 
