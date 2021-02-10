@@ -3,7 +3,6 @@ package frontend;
 import frontend.abstractsyntaxtree.AST;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.PairTypeAST;
-import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.statements.SequenceAST;
 import frontend.abstractsyntaxtree.statements.VarDecAST;
 import frontend.symboltable.BoolID;
@@ -13,7 +12,6 @@ import frontend.symboltable.PairID;
 import frontend.symboltable.StringID;
 import frontend.symboltable.TypeID;
 import java.io.IOException;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TypeSemanticsTests {
@@ -38,7 +36,6 @@ public class TypeSemanticsTests {
     assert (pairID.getSndType() instanceof BoolID);
   }
 
-	@Ignore
   //Creates a simple pair of type int and bool
 	@Test
   public void validNestedPair() throws IOException {
@@ -61,10 +58,6 @@ public class TypeSemanticsTests {
     //LHS : Check inner pair
     PairID fstPairLHS = (PairID) fstTypeLHS.getType();
     PairID sndPairLHS = (PairID) sndTypeLHS.getType();
-    assert (fstPairLHS.getFstType() instanceof IntID);
-    assert (fstPairLHS.getSndType() instanceof BoolID);
-    assert (sndPairLHS.getFstType() instanceof CharID);
-    assert (sndPairLHS.getSndType() instanceof StringID);
 
     //RHS : Check outer pair
     TypeID rhsType = varDecAST.getAssignRHS().getIdentifier().getType();
