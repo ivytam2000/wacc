@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import antlr.WaccParser.PairElemContext;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.abstractsyntaxtree.expressions.PairLiterAST;
@@ -13,19 +14,21 @@ import frontend.symboltable.SymbolTable;
 public class PairElemAST extends Node {
 
   private SymbolTable symtab;
-//  private String pairName;
   private final Identifier childIdentifier;
   private boolean first;
   private Node child;
   private String identName;
+  private PairElemContext ctx;
 
-  public PairElemAST(Identifier childIdentifier, SymbolTable symtab, boolean first, Node child) {
+  public PairElemAST(Identifier childIdentifier, SymbolTable symtab, boolean first, Node child,
+      PairElemContext ctx) {
     super();
     this.childIdentifier = childIdentifier;
     this.symtab = symtab;
     this.first = first;
     this.child = child;
-    this.identName = "";
+    this.identName = ctx.getStart().getText();
+    this.ctx = ctx;
   }
 
   public String getName() {
@@ -34,37 +37,41 @@ public class PairElemAST extends Node {
 
   @Override
   public void check() {
-    //Checking expr has compatible type
+    // Checking expr has compatible type
     if (child instanceof IdentExprAST) {
       identName = ((IdentExprAST) child).getName();
       if (!(symtab.lookupAll(identName) instanceof PairID)) {
-        SemanticErrorCollector.addError(identName + " does not have type Pair.");
+        addIncompatibleTypeSemanticError();
       }
     } else if (child instanceof ArrayElemAST) {
       if (!(child.getIdentifier().getType() instanceof PairID)) {
-        SemanticErrorCollector.addError(
-            "Expected type pair but got " + child.getIdentifier().getType().getTypeName());
+        addIncompatibleTypeSemanticError();
       }
     } else if (child instanceof PairLiterAST) {
-      SemanticErrorCollector.addError("Null");
+      SemanticErrorCollector
+          .addIncompatibleType("pair",
+              "null", identName,
+              ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
     } else {
-      SemanticErrorCollector.addError("Unexpected Type : does not have type "
-          + "pair");
+      addIncompatibleTypeSemanticError();
     }
+
     if (childIdentifier instanceof NullID) {
       setIdentifier(childIdentifier);
-    } else if (first) {
-      if (childIdentifier instanceof ParamID) {
-        setIdentifier(((PairID) ((ParamID) childIdentifier).getType()).getFstType());
-      } else {
-        setIdentifier(((PairID) childIdentifier).getFstType());
-      }
     } else {
-      if (childIdentifier instanceof ParamID) {
-        setIdentifier(((PairID) ((ParamID) childIdentifier).getType()).getSndType());
-      } else {
-        setIdentifier(((PairID) childIdentifier).getSndType());
-      }
+      PairID childIDAsPair =
+          childIdentifier instanceof ParamID ? ((PairID) (childIdentifier).getType())
+              : ((PairID) childIdentifier);
+      Identifier childIDPairElem = first ? childIDAsPair.getFstType()
+          : childIDAsPair.getSndType();
+      setIdentifier(childIDPairElem);
     }
+  }
+
+  private void addIncompatibleTypeSemanticError() {
+    SemanticErrorCollector
+        .addIncompatibleType("pair",
+            child.getIdentifier().getType().getTypeName(), identName,
+            ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
   }
 }

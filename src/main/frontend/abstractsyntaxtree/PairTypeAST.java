@@ -9,7 +9,6 @@ public class PairTypeAST extends Node {
   private final String typeName;
   private final Node fst;
   private final Node snd;
-  private TypeID pairTypeObj;
   private SymbolTable symtab;
 
   public PairTypeAST(Identifier identifier, SymbolTable symtab, Node fst, Node snd) {
@@ -32,7 +31,5 @@ public class PairTypeAST extends Node {
   public void check() {
     fst.check();
     snd.check();
-
-    pairTypeObj = (TypeID) identifier;
   }
 }

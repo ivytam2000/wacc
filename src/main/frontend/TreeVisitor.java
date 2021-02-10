@@ -329,9 +329,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     PairElemAST pairElemAST;
     // Don't need to check the since creating the exprAST will call check
     if (ctx.FST() != null) {
-      pairElemAST = new PairElemAST(ident, currSymTab, true, exprAST);
+      pairElemAST = new PairElemAST(ident, currSymTab, true, exprAST, ctx);
     } else {
-      pairElemAST = new PairElemAST(ident, currSymTab, false, exprAST);
+      pairElemAST = new PairElemAST(ident, currSymTab, false, exprAST, ctx);
     }
     pairElemAST.check();
     return pairElemAST;
@@ -351,7 +351,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       baseTypeID = currSymTab.lookupAll(ctx.STRING().getText()).getType();
     }
 
-    BaseTypeAST baseTypeAST = new BaseTypeAST(baseTypeID, currSymTab);
+    BaseTypeAST baseTypeAST = new BaseTypeAST(baseTypeID, currSymTab, ctx);
     baseTypeAST.check();
 
     return baseTypeAST;
@@ -369,7 +369,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       }
       currSymTab.add(nestedID);
       return new ArrayTypeAST(nestedID, currSymTab, dimensions);
-    } else { // is pairType
+    } else {
+      // Pair-type array
       Node pairTypeAST = visit(ctx.pairType());
       ArrayID pairArrayID = new ArrayID(pairTypeAST.getIdentifier().getType());
       currSymTab.add(pairArrayID);
@@ -404,6 +405,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     Identifier pairGenericID = new PairID();
     PairElemTypeAST pairElemTypeAST = new PairElemTypeAST(pairGenericID, currSymTab);
+    currSymTab.add(pairGenericID.getType().getTypeName(), pairGenericID);
 
     return pairElemTypeAST;
   }
