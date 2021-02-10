@@ -231,7 +231,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       return identLHS;
     } else if (ctx.pairElem() != null) {
       PairElemAST pairElem = (PairElemAST) visitPairElem((ctx.pairElem()));
-      return new AssignLHSAST(currSymTab, pairElem.getName());
+      return new AssignLHSAST(currSymTab, pairElem);
     } else {  // array elem
       ArrayElemAST arrayElem = (ArrayElemAST) visitArrayElem((ctx.arrayElem()));
       return new AssignLHSAST(currSymTab, arrayElem.getName());

@@ -9,9 +9,11 @@ import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
+import java.lang.reflect.Type;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.lang.reflect.Array;
+import org.antlr.v4.runtime.misc.Pair;
 
 public class VarDecAST extends Node {
 
@@ -57,7 +59,7 @@ public class VarDecAST extends Node {
           }
         }
 
-      } else {
+      } else if (!(assignType instanceof NullID)) {
         SemanticErrorCollector.addError(
             "Incompatible types: expected pair, " + "but actual:" + assignType.getTypeName());
       }
