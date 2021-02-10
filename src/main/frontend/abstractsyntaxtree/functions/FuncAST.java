@@ -1,7 +1,6 @@
 package frontend.abstractsyntaxtree.functions;
 
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.Parent;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
@@ -36,7 +35,7 @@ public class FuncAST extends Node {
 
     ((FuncID) identifier).setSymtab(symtab);
 
-    TypeID returnType = Utils.getReturnType(statements);
+    TypeID returnType = Utils.inferFinalReturnType(statements);
 
     if (returnType != null) {
       if (!returnType.getTypeName().equals(returnTypeName)) {

@@ -118,30 +118,33 @@ public class Utils {
     }
   }
 
-  public static TypeID getReturnType(Node statements) {
+  public static TypeID inferFinalReturnType(Node statements) {
     if (statements instanceof ReturnAST) {
       return ((ReturnAST) statements).getExpr().getIdentifier().getType();
     } else if (statements instanceof ExitAST) {
       return statements.getIdentifier().getType();
     } else if (statements instanceof SequenceAST) {
+      // Assume the final type of a sequence is found in the last statement
       List<Node> statsList = ((SequenceAST) statements).getStatements();
-      return getReturnType(statsList.get(1));
+      return inferFinalReturnType(statsList.get(1));
     } else if (statements instanceof IfAST) {
       Node thenStat = ((IfAST) statements).getThenStat();
       Node elseStat = ((IfAST) statements).getElseStat();
-      TypeID thenID = getReturnType(thenStat);
-      TypeID elseID = getReturnType(elseStat);
+      TypeID thenID = inferFinalReturnType(thenStat);
+      TypeID elseID = inferFinalReturnType(elseStat);
       if (thenID == elseID) {
+        // Type of an if-statement should be same regardless which statement
         return thenID;
       } else {
         SemanticErrorCollector
-            .addError("Then return type and else return type is not the same!");
+            .addError("Return types of if-statement do not match up");
         return null;
       }
     } else if (statements instanceof WhileAST) {
-      return getReturnType(((WhileAST) statements).getStat());
+      // Assume the final type of a while-block is found within the block
+      return inferFinalReturnType(((WhileAST) statements).getStat());
     } else {
-      SemanticErrorCollector.addError("Missing return statement!");
+      SemanticErrorCollector.addError("Missing return statement");
       return null;
     }
   }
