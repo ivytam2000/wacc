@@ -8,6 +8,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.PairTypes;
+import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
 
 public class PairElemAST extends Node {
@@ -54,9 +55,17 @@ public class PairElemAST extends Node {
     if (childIdentifier instanceof NullID) {
       setIdentifier(childIdentifier);
     } else if (first) {
-      setIdentifier(((PairID) childIdentifier).getFstType());
+      if (childIdentifier instanceof ParamID) {
+        setIdentifier(((PairID) ((ParamID) childIdentifier).getType()).getFstType());
+      } else {
+        setIdentifier(((PairID) childIdentifier).getFstType());
+      }
     } else {
-      setIdentifier(((PairID) childIdentifier).getSndType());
+      if (childIdentifier instanceof ParamID) {
+        setIdentifier(((PairID) ((ParamID) childIdentifier).getType()).getSndType());
+      } else {
+        setIdentifier(((PairID) childIdentifier).getSndType());
+      }
     }
   }
 }

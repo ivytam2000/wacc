@@ -13,10 +13,13 @@ public class SemanticErrorCollector {
 
   public static void printErrors() {
     System.out.println("Errors detected during compilation! Exit code 200 returned.");
-    while (!errors.isEmpty()) {
-      String s = errors.remove(0);
+    for (String s : errors) {
       System.out.println("Semantic Error at " + s);
     }
+  }
+
+  public static void init() {
+    errors.clear();
   }
 
   public static int getNumberOfSemanticErrors() {

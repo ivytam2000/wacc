@@ -54,6 +54,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     currSymTab = funcID.getSymtab();
     Node stat = visit(ctx.stat());
     funcAST.setStatements(stat);
+    funcAST.check();
     currSymTab = globalScope;
   }
 
