@@ -73,7 +73,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     FuncID funcID = new FuncID(returnType, params.convertToParamIDs(), currSymTab);
     String funcName = ctx.IDENT().getText();
 
-    FuncAST funcAST = new FuncAST(funcID, globalScope, funcName, params);
+    FuncAST funcAST = new FuncAST(funcID, globalScope, funcName, params, ctx);
     funcAST.checkFunctionNameAndReturnType();
 
     // Swap back symbol table
@@ -222,12 +222,15 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return paramListAST;
   }
 
+  /**
+   * Pre-condition: currSymTab already set to be the inner-scope symbol table
+   */
   @Override
   public Node visitParam(ParamContext ctx) {
     Identifier paramID = new ParamID(visitType(ctx.type()).getIdentifier().getType());
     String varName = ctx.IDENT().getText();
-    // assume function switches currSymTab to be the inner symbol table
-    return new ParamAST(paramID, currSymTab, varName);
+    // Assume function sets currSymTab to be the inner-scope symbol table
+    return new ParamAST(paramID, currSymTab, varName, ctx);
   }
 
   @Override
@@ -238,32 +241,41 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       identLHS.check();
       return identLHS;
     } else if (ctx.pairElem() != null) {
+      // LHS is of pair type
       PairElemAST pairElem = (PairElemAST) visitPairElem((ctx.pairElem()));
       return new AssignLHSAST(currSymTab, pairElem);
-    } else {  // array elem
+    } else {
+      // LHS is of array type
       ArrayElemAST arrayElem = (ArrayElemAST) visitArrayElem((ctx.arrayElem()));
       return new AssignLHSAST(currSymTab, arrayElem.getName());
     }
   }
 
+  /**
+   * Pre-condition: ExprAST calls check()
+   */
   @Override
   public Node visitExpr_assignRHS(Expr_assignRHSContext ctx) {
     List<Node> children = new ArrayList<>();
     Node exprAST = visit(ctx.expr());
     children.add(exprAST);
-    // don't need to check the since creating the exprAST will call check
     return new AssignRHSAST(exprAST.getIdentifier().getType(), currSymTab, children);
   }
 
+  /**
+   * Pre-condition: ExprAST calls check()
+   */
   @Override
   public Node visitArrayLiter_assignRHS(ArrayLiter_assignRHSContext ctx) {
     List<Node> children = new ArrayList<>();
     Node arrayLiterAST = visitArrayLiter(ctx.arrayLiter());
     children.add(arrayLiterAST);
-    // don't need to check the since creating the arrayLiterAST will call check
     return new AssignRHSAST(arrayLiterAST.getIdentifier().getType(), currSymTab, children);
   }
 
+  /**
+   * Pre-condition: ExprAST calls check()
+   */
   @Override
   public Node visitNewPair_assignRHS(NewPair_assignRHSContext ctx) {
     Node firstExprAST = visit(ctx.expr(0));
@@ -271,18 +283,19 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     List<Node> children = new ArrayList<>();
     children.add(firstExprAST);
     children.add(secondExprAST);
-    // don't need to check the since creating the exprASTs will call check
     PairID pairID =
         new PairID(firstExprAST.getIdentifier().getType(), secondExprAST.getIdentifier().getType());
     return new AssignRHSAST(pairID, currSymTab, children);
   }
 
+  /**
+   * Pre-condition: ExprAST calls check()
+   */
   @Override
   public Node visitPairElem_assignRHS(PairElem_assignRHSContext ctx) {
     List<Node> children = new ArrayList<>();
     Node pairElemAST = visitPairElem(ctx.pairElem());
     children.add(pairElemAST);
-    // Don't need to check the since creating the pairElem will call check
     return new AssignRHSAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
   }
 

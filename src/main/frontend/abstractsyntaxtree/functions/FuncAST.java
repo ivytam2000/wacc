@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.functions;
 
+import antlr.WaccParser.FuncContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -17,13 +18,16 @@ public class FuncAST extends Node {
   private SymbolTable symtab;
   private Node statements;
 
+  private FuncContext ctx;
+
   public FuncAST(Identifier identifier, SymbolTable currSymTab, String funcName,
-      ParamListAST params) {
+      ParamListAST params, FuncContext ctx) {
     super(identifier);
     this.funcName = funcName;
     this.params = params;
     this.symtab = currSymTab;
     this.returnTypeName = identifier.getType().getTypeName();
+    this.ctx = ctx;
   }
 
   public void setStatements(Node statements) {
@@ -39,7 +43,9 @@ public class FuncAST extends Node {
 
     if (returnType != null) {
       if (!returnType.getTypeName().equals(returnTypeName)) {
-        SemanticErrorCollector.addError(funcName + " expected return type " + returnTypeName + " but got " + returnType.getTypeName());
+        SemanticErrorCollector
+            .addIncompatibleType(returnTypeName, returnType.getTypeName(), funcName,
+                ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
       }
     }
 
@@ -49,7 +55,8 @@ public class FuncAST extends Node {
     Identifier f = symtab.lookupAll(funcName);
 
     if (f != null) {
-      SemanticErrorCollector.addError(funcName + " is already declared");
+      SemanticErrorCollector.addSymbolAlreadyDefined(funcName, ctx.getStart().getLine(),
+          ctx.getStart().getCharPositionInLine());
       return;
     }
 

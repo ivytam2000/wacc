@@ -20,6 +20,5 @@ public class ArgListAST extends Node {
 
   @Override
   public void check() {
-
   }
 }
