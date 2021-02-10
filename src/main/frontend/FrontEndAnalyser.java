@@ -45,6 +45,7 @@ public class FrontEndAnalyser {
       return 100;
     }
 
+    SemanticErrorCollector.init();
     TreeVisitor treeVisitor = new TreeVisitor();
     Node ast = treeVisitor.visit(tree);
 

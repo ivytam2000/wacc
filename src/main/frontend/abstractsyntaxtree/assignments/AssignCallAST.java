@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.assignments;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
@@ -11,10 +12,12 @@ import java.util.List;
 public class AssignCallAST extends AssignRHSAST {
 
   private String funcName;
+  private ArgListAST args;
 
-  public AssignCallAST(String funcName, SymbolTable symtab, List<Node> params) {
-    super(symtab.lookupAll(funcName), symtab, params);
+  public AssignCallAST(String funcName, SymbolTable symtab, ArgListAST args) {
+    super(symtab.lookupAll(funcName), symtab);
     this.funcName = funcName;
+    this.args = args;
   }
 
   @Override
@@ -26,21 +29,22 @@ public class AssignCallAST extends AssignRHSAST {
     } else {
       if (funcID instanceof FuncID) {
         List<TypeID> params = ((FuncID) funcID).getParams();
+        List<Node> argsAST = args.getArguments();
         int paramSize = params.size();
-        int childrenSize = children.size();
-        if (paramSize != childrenSize) {
+        int argsSize = argsAST.size();
+        if (paramSize != argsSize) {
           SemanticErrorCollector
-              .addError(funcName + " expected " + paramSize + " arguments but got " + childrenSize);
+              .addError(funcName + " expected " + paramSize + " arguments but got " + argsSize);
         } else {
           for (int i = 0; i < paramSize; i++) {
             TypeID currParam = params.get(i);
-            Node currChild = children.get(i);
+            Node currArg = argsAST.get(i);
             String paramType = currParam.getTypeName();
-            String childType = currChild.getIdentifier().getType().getTypeName();
-            if (!paramType.equals(childType)) {
+            String argType = currArg.getIdentifier().getType().getTypeName();
+            if (!paramType.equals(argType)) {
               SemanticErrorCollector.addError(
                   funcName + " argument " + i + " expected type " + paramType + " but got "
-                      + childType);
+                      + argType);
             }
           }
         }

@@ -16,3 +16,5 @@ test job:
   image: gradle:6.8.1-jdk11
   script:
     - make clean && make test
+  only:
+    - master

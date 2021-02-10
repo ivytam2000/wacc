@@ -1,5 +1,5 @@
 package frontend.symboltable;
-
+//TODO: DELETE if not using (currently not in use)
 public class VariableID extends Identifier {
 
   private final TypeID assignedType;

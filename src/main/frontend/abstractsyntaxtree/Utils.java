@@ -1,5 +1,10 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.abstractsyntaxtree.statements.ExitAST;
+import frontend.abstractsyntaxtree.statements.IfAST;
+import frontend.abstractsyntaxtree.statements.ReturnAST;
+import frontend.abstractsyntaxtree.statements.SequenceAST;
+import frontend.abstractsyntaxtree.statements.WhileAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.Identifier;
@@ -7,23 +12,35 @@ import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.PairTypes;
 import frontend.symboltable.TypeID;
+import java.util.List;
+import org.antlr.v4.runtime.ParserRuleContext;
+
 import java.lang.reflect.Type;
 
 public class Utils {
 
-  public static boolean typeCompat(Node n1, Node n2) {
+  public static boolean typeCompat(ParserRuleContext n1Ctx,
+      ParserRuleContext n2Ctx, Node n1, Node n2) {
     assert (n1 != null);
     assert (n2 != null);
+    int n1Line = n1Ctx.getStart().getLine();
+    int n1Pos = n1Ctx.getStart().getCharPositionInLine();
+    int n2Line = n2Ctx.getStart().getLine();
+    int n2Pos = n2Ctx.getStart().getCharPositionInLine();
 
     boolean nodeIsNull = false;
     if (n1.getIdentifier() == null) {
+
       //TODO: Fix error message
-      SemanticErrorCollector.addError("typeCompat : LHS type unknown");
+      SemanticErrorCollector.addError(n1Line + ":" + n1Pos + " typeCompat : "
+          + "LHS "
+          + "type unknown");
       nodeIsNull = true;
     }
     if (n2.getIdentifier() == null) {
       //TODO: Fix error message
-      SemanticErrorCollector.addError("typeCompat : RHS type unknown");
+      SemanticErrorCollector.addError(n2Line + ":" + n2Pos + "typeCompat : "
+          + "RHS type unknown");
       nodeIsNull = true;
     }
     if (nodeIsNull) {
@@ -41,7 +58,8 @@ public class Utils {
           return true;
         }
       }
-      SemanticErrorCollector.addError("LHS and RHS type are not compatible");
+      SemanticErrorCollector.addError(n1Line + " LHS and RHS type are not "
+          + "compatible");
       return false;
     }
 
@@ -50,12 +68,13 @@ public class Utils {
         if (compareArrayTypes(t1, t2)) {
           return true;
         }
-        SemanticErrorCollector.addError("LHS and RHS type are not compatible");
+        SemanticErrorCollector.addError(n1Line + " LHS and RHS type are not "
+            + "compatible");
         return false;
       } else {
         if (((ArrayID) t1).getElemType().getType() != t2.getType()) {
           SemanticErrorCollector
-              .addError("LHS and RHS type are not compatible");
+              .addError(n1Line + " LHS and RHS type are not compatible");
           return false;
         }
         return true;
@@ -63,7 +82,8 @@ public class Utils {
     }
 
     if (!(t1.getTypeName().equals((t2.getTypeName())))) {
-      SemanticErrorCollector.addError("LHS and RHS type are not compatible");
+      SemanticErrorCollector.addError(n1Line + " LHS and RHS type are not "
+          + "compatible");
       return false;
     }
     return true;
@@ -100,6 +120,34 @@ public class Utils {
         }
         return (eLType == eRType);
       }
+    }
+  }
+
+  public static TypeID getReturnType(Node statements) {
+    if (statements instanceof ReturnAST) {
+      return ((ReturnAST) statements).getExpr().getIdentifier().getType();
+    } else if (statements instanceof ExitAST) {
+      return statements.getIdentifier().getType();
+    } else if (statements instanceof SequenceAST) {
+      List<Node> statsList = ((SequenceAST) statements).getStatements();
+      return getReturnType(statsList.get(1));
+    } else if (statements instanceof IfAST) {
+      Node thenStat = ((IfAST) statements).getThenStat();
+      Node elseStat = ((IfAST) statements).getElseStat();
+      TypeID thenID = getReturnType(thenStat);
+      TypeID elseID = getReturnType(elseStat);
+      if (thenID == elseID) {
+        return thenID;
+      } else {
+        SemanticErrorCollector
+            .addError("Then return type and else return type is not the same!");
+        return null;
+      }
+    } else if (statements instanceof WhileAST) {
+      return getReturnType(((WhileAST) statements).getStat());
+    } else {
+      SemanticErrorCollector.addError("Missing return statement!");
+      return null;
     }
   }
 }

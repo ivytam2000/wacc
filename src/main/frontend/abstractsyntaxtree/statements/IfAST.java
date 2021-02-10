@@ -19,6 +19,14 @@ public class IfAST extends Node {
     this.elseStat = elseStat;
   }
 
+  public Node getThenStat() {
+    return thenStat;
+  }
+
+  public Node getElseStat() {
+    return elseStat;
+  }
+
   @Override
   public void check() {
     TypeID exprType = expr.getIdentifier().getType();

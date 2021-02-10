@@ -15,6 +15,10 @@ public class WhileAST extends Node {
     this.stat = stat;
   }
 
+  public Node getStat() {
+    return stat;
+  }
+
   @Override
   public void check() {
     if (expr.getIdentifier() != null) {

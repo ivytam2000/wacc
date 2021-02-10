@@ -16,6 +16,11 @@ public class AssignRHSAST extends Node {
     this.children = children;
   }
 
+  public AssignRHSAST(Identifier identifier, SymbolTable symtab) {
+    super(identifier);
+    this.symtab = symtab;
+  }
+
   public List<Node> getChildren() {
     return children;
   }
