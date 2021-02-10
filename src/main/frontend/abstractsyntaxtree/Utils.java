@@ -29,11 +29,11 @@ public class Utils {
 
     boolean nodeIsNull = false;
     if (n1.getIdentifier() == null) {
-      SemanticErrorCollector.addIncompatibleType("unknown", "unknown", n1Token, n1Line, n1Pos);
+      SemanticErrorCollector.addUnknownType(n1Token, n1Line, n1Pos);
       nodeIsNull = true;
     }
     if (n2.getIdentifier() == null) {
-      SemanticErrorCollector.addIncompatibleType("unknown", "unknown", n2Token, n2Line, n2Pos);
+      SemanticErrorCollector.addUnknownType(n2Token, n2Line, n2Pos);
       nodeIsNull = true;
     }
     if (nodeIsNull) {

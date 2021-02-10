@@ -26,13 +26,27 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addUnknownType(String typeName, int line, int position) {
+    String errorMsg = String
+        .format("line %d:%d -- Type %s is not defined", line, position, typeName);
+    addError(errorMsg);
+  }
+
   public static void addVariableUndefined(String varName, int line, int position) {
-    String errorMsg = String.format("line %d:%d -- Variable %s is not defined", line, position, varName);
+    String errorMsg = String
+        .format("line %d:%d -- Variable %s is not defined", line, position, varName);
+    addError(errorMsg);
+  }
+
+  public static void addSymbolAlreadyDefined(String symbol, int line, int position) {
+    String errorMsg = String
+        .format("line %d:%d -- \"%s\" is already defined in this scope", line, position, symbol);
     addError(errorMsg);
   }
 
   public static void addFunctionUndefined(String funcName, int line, int position) {
-    String errorMsg = String.format("line %d:%d -- Function %s is not defined", line, position, funcName);
+    String errorMsg = String
+        .format("line %d:%d -- Function %s is not defined", line, position, funcName);
     addError(errorMsg);
   }
 
