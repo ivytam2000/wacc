@@ -53,7 +53,6 @@ public class Utils {
         SemanticErrorCollector.addError("LHS and RHS type are not compatible");
         return false;
       } else {
-        System.exit(9);
         if (((ArrayID) t1).getElemType().getType() != t2.getType()) {
           SemanticErrorCollector
               .addError("LHS and RHS type are not compatible");
