@@ -301,12 +301,15 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node exprAST = visit(ctx.expr());
     Identifier ident = exprAST.getIdentifier();
 
+    PairElemAST pairElemAST;
     // Don't need to check the since creating the exprAST will call check
     if (ctx.FST() != null) {
-      return new PairElemAST(ident, currSymTab, true, exprAST);
+      pairElemAST = new PairElemAST(ident, currSymTab, true, exprAST);
     } else {
-      return new PairElemAST(ident, currSymTab, false, exprAST);
+      pairElemAST = new PairElemAST(ident, currSymTab, false, exprAST);
     }
+    pairElemAST.check();
+    return pairElemAST;
   }
 
   @Override
