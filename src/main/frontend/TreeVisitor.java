@@ -120,7 +120,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitExit_stat(Exit_statContext ctx) {
     Node expr = visit(ctx.expr());
-    ExitAST exitAST = new ExitAST(ctx, expr);
+    ExitAST exitAST = new ExitAST(expr, ctx);
     exitAST.check();
     return exitAST;
   }
@@ -134,7 +134,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitFree_stat(Free_statContext ctx) {
     // TODO: do we need a ExprAST class?
     Node expr = visit(ctx.expr());
-    FreeAST freeAST = new FreeAST(expr);
+    FreeAST freeAST = new FreeAST(expr,ctx.expr());
     freeAST.check();
     return freeAST;
   }
@@ -177,7 +177,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node elseStat = visit(ctx.stat(1));
     // Swap back to parent scope
     currSymTab = encScope;
-    IfAST ifAST = new IfAST(expr, thenStat, elseStat);
+    IfAST ifAST = new IfAST(expr, thenStat, elseStat, ctx);
     ifAST.check();
     return ifAST;
   }

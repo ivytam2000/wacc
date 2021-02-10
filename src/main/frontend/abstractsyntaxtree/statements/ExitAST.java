@@ -12,7 +12,7 @@ public class ExitAST extends Node {
   WaccParser.Exit_statContext ctx;
   private final Node expr;
 
-  public ExitAST(WaccParser.Exit_statContext ctx, Node expr) {
+  public ExitAST(Node expr, WaccParser.Exit_statContext ctx) {
     super(expr.getIdentifier());
     this.ctx = ctx;
     this.expr = expr;
@@ -25,12 +25,12 @@ public class ExitAST extends Node {
   @Override
   public void check() {
     TypeID exprType = expr.getIdentifier().getType();
-    ParserRuleContext exprCtx = ctx.expr();
+    WaccParser.ExprContext exprCtx = ctx.expr();
     if (!(exprType instanceof IntID)) {
       int line = exprCtx.getStart().getLine();
       int pos = exprCtx.getStart().getCharPositionInLine();
-      SemanticErrorCollector.addError(
-          "line " + line + ":" + pos + " " + "Expression is " + "not an " + "int");
+      SemanticErrorCollector.addIncompatibleType("int",
+          exprType.getTypeName(), exprCtx.getText(), line, pos);
     }
   }
 }
