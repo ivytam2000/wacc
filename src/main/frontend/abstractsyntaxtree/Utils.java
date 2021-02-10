@@ -1,5 +1,9 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.abstractsyntaxtree.statements.IfAST;
+import frontend.abstractsyntaxtree.statements.ReturnAST;
+import frontend.abstractsyntaxtree.statements.SequenceAST;
+import frontend.abstractsyntaxtree.statements.WhileAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.Identifier;
@@ -7,6 +11,7 @@ import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.PairTypes;
 import frontend.symboltable.TypeID;
+import java.util.List;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.lang.reflect.Type;
@@ -114,6 +119,31 @@ public class Utils {
         }
         return (eLType == eRType);
       }
+    }
+  }
+
+  public static TypeID getReturnType(Node statements) {
+    if (statements instanceof ReturnAST) {
+      return ((ReturnAST) statements).getExpr().getIdentifier().getType();
+    } else if (statements instanceof SequenceAST) {
+      List<Node> statsList = ((SequenceAST) statements).getStatements();
+      return getReturnType(statsList.get(statsList.size() - 1));
+    } else if (statements instanceof IfAST) {
+      Node thenStat = ((IfAST) statements).getThenStat();
+      Node elseStat = ((IfAST) statements).getElseStat();
+      TypeID thenID = getReturnType(thenStat);
+      TypeID elseID = getReturnType(elseStat);
+      if (thenID == elseID) {
+        return thenID;
+      } else {
+        SemanticErrorCollector.addError("Then return type and else return type is not the same!");
+        return null;
+      }
+    } else if (statements instanceof WhileAST) {
+      return getReturnType(((WhileAST) statements).getStat());
+    } else {
+      SemanticErrorCollector.addError("Missing return statement!");
+      return null;
     }
   }
 }

@@ -80,11 +80,11 @@ public class VarDecAST extends Node {
       if (typeID == null) {
         // check if the identifier returned is a known type/identifier
         SemanticErrorCollector.addError("Unknown type " + typeName);
-      } else if (!(typeID instanceof TypeID)) {
+      } else if (variable != null && !(variable instanceof FuncID)) {
+        SemanticErrorCollector.addError(varName + " is already declared");
+      }else if (!(typeID instanceof TypeID)) {
         // check if the identifier is a type
-        SemanticErrorCollector.addError(typeName + "is not a type");
-      } else if (variable != null) {
-        SemanticErrorCollector.addError(varName + "is already declared");
+        SemanticErrorCollector.addError(typeName + " is not a type");
       } else {
         if (Utils.typeCompat(ctx.type(),ctx.assignRHS(),typeAST, assignRHS)) {
           symtab.add(varName, typeID);

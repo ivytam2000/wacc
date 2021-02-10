@@ -50,21 +50,23 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     assert (ctx.IDENT() != null);
 
     // Create symbol table
-    SymbolTable encScope = currSymTab;
-    currSymTab = new SymbolTable(encScope);
+    SymbolTable encScope = new SymbolTable(currSymTab);
+    currSymTab = encScope;
 
-    ParamListContext s = ctx.paramList();
     ParamListAST params = ctx.paramList() == null ? new ParamListAST()
         : (ParamListAST) visitParamList(ctx.paramList());
 
     Node returnType = visitType(ctx.type());
     FuncID funcID = new FuncID(returnType, params.convertToParamIDs(), currSymTab);
+    String funcName = ctx.IDENT().getText();
 
-    FuncAST funcAST = new FuncAST(funcID, currSymTab, ctx.IDENT().getText(), params);
-    funcAST.check();
+    Node stat = visit(ctx.stat());
 
     // Swap back symbol table
-    currSymTab = encScope;
+    currSymTab = encScope.getParent();
+    FuncAST funcAST = new FuncAST(funcID, currSymTab, funcName, params, stat);
+    funcAST.check();
+
     return funcAST;
   }
 
@@ -216,6 +218,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitParam(ParamContext ctx) {
     Identifier paramID = new ParamID(visitType(ctx.type()).getIdentifier().getType());
     String varName = ctx.IDENT().getText();
+    // assume function switches currSymTab to be the inner symbol table
     return new ParamAST(paramID, currSymTab, varName);
   }
 
@@ -277,11 +280,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitCall_assignRHS(Call_assignRHSContext ctx) {
-    List<Node> params = new ArrayList<>();
     String funcName = ctx.IDENT().getText();
     Node argListAST = visitArgList(ctx.argList());
-    params.add(argListAST);
-    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, params);
+    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, (ArgListAST) argListAST);
     assignCallAST.check();
     return assignCallAST;
   }
@@ -290,7 +291,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitArgList(ArgListContext ctx) {
     List<Node> expressions = new ArrayList<>();
     for (ExprContext exprContext : ctx.expr()) {
-      expressions.add(visitChildren(exprContext));
+      expressions.add(visit(exprContext));
     }
     // Don't need to check the since creating the exprASTs will call check
     return new ArgListAST(currSymTab, expressions);

@@ -49,6 +49,10 @@ public class SymbolTable {
     return parent == null;
   }
 
+  public SymbolTable getParent() {
+    return parent;
+  }
+
   private void loadTopLevelSymbolTable(SymbolTable symbolTable) {
     symbolTable.add(new IntID());
     symbolTable.add(new BoolID());
