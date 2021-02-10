@@ -14,6 +14,10 @@ public class ArgListAST extends Node {
     this.expressions = expressions;
   }
 
+  public List<Node> getExpressions() {
+    return expressions;
+  }
+
   @Override
   public void check() {
 

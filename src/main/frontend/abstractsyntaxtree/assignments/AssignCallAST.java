@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.assignments;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
@@ -10,10 +11,10 @@ import java.util.List;
 
 public class AssignCallAST extends AssignRHSAST {
 
-  private String funcName;
+  private final String funcName;
 
-  public AssignCallAST(String funcName, SymbolTable symtab, List<Node> params) {
-    super(symtab.lookupAll(funcName), symtab, params);
+  public AssignCallAST(String funcName, SymbolTable symtab, ArgListAST argListAST) {
+    super(symtab.lookupAll(funcName), symtab, argListAST.getExpressions());
     this.funcName = funcName;
   }
 

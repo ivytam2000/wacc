@@ -37,7 +37,6 @@ public class InvalidSemanticTests {
     exitsWith(invalidSemanticFolderPath + "IO/", 200);
   }
 
-  @Ignore
   @Test
   public void invalidSemanticMultipleTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "multiple/", 200);

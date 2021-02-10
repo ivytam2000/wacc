@@ -21,9 +21,11 @@ import java.util.List;
 public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   private SymbolTable currSymTab;
+  private boolean funcCheck;
 
   public TreeVisitor() {
     this.currSymTab = new SymbolTable(); // Initialised with top level symtab
+    this.funcCheck = true;
   }
 
   @Override
@@ -38,6 +40,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       Node funcAST = visitFunc(FC); // Return func node
       fs.add(funcAST);
     }
+    this.funcCheck = false;
 
     // visit stat
     Node statAST = visit(ctx.stat());
@@ -54,13 +57,15 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     currSymTab = new SymbolTable(encScope);
 
     ParamListContext s = ctx.paramList();
-    ParamListAST params = ctx.paramList() == null ? new ParamListAST()
-        : (ParamListAST) visitParamList(ctx.paramList());
+    ParamListAST params = s == null ? new ParamListAST()
+        : (ParamListAST) visitParamList(s);
 
     Node returnType = visitType(ctx.type());
     FuncID funcID = new FuncID(returnType, params.convertToParamIDs(), currSymTab);
 
-    FuncAST funcAST = new FuncAST(funcID, currSymTab, ctx.IDENT().getText(), params);
+    Node statAST = visit(ctx.stat());
+
+    FuncAST funcAST = new FuncAST(funcID, encScope, ctx.IDENT().getText(), params, statAST);
     funcAST.check();
 
     // Swap back symbol table
@@ -83,7 +88,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     AssignStatAST assignStatAST = new AssignStatAST(ctx.assignLHS(),
         ctx.assignRHS(), lhs, rhs,
-        currSymTab);
+        currSymTab, funcCheck);
     assignStatAST.check();
 //    currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
     return assignStatAST;
@@ -277,11 +282,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitCall_assignRHS(Call_assignRHSContext ctx) {
-    List<Node> params = new ArrayList<>();
     String funcName = ctx.IDENT().getText();
-    Node argListAST = visitArgList(ctx.argList());
-    params.add(argListAST);
-    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, params);
+    ArgListAST argListAST = (ArgListAST) visitArgList(ctx.argList());
+    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, argListAST);
     assignCallAST.check();
     return assignCallAST;
   }
@@ -289,8 +292,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitArgList(ArgListContext ctx) {
     List<Node> expressions = new ArrayList<>();
-    for (ExprContext exprContext : ctx.expr()) {
-      expressions.add(visitChildren(exprContext));
+    if (ctx != null) {
+      for (ExprContext exprContext : ctx.expr()) {
+        expressions.add(visit(exprContext));
+      }
     }
     // Don't need to check the since creating the exprASTs will call check
     return new ArgListAST(currSymTab, expressions);

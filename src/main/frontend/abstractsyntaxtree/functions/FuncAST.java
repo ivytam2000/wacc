@@ -1,33 +1,34 @@
 package frontend.abstractsyntaxtree.functions;
 
+import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Parent;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 
-public class FuncAST extends Parent {
+public class FuncAST extends Node {
 
-  private String returnTypeName;
-  private String funcName;
-  private ParamListAST params;
+  private final String funcName;
+  private final ParamListAST params;
+  private final SymbolTable globalScope;
+  private final Node statAST;
+
   private FuncID funcObj;
-  private SymbolTable symtab;
 
-  public FuncAST(Identifier identifier, SymbolTable currSymTab, String funcName,
-      ParamListAST params) {
+  public FuncAST(Identifier identifier, SymbolTable globalScope,
+      String funcName,
+      ParamListAST params, Node statAST) {
     super(identifier);
-    this.symtab = currSymTab;
-    this.returnTypeName = identifier.getType().getTypeName();
+    this.globalScope = globalScope;
     this.funcName = funcName;
     this.params = params;
+    this.statAST = statAST;
   }
 
   @Override
   public void check() {
     checkFunctionNameAndReturnType();
-
-    funcObj.setSymtab(symtab);
 
     for (ParamAST paramAST : params.paramASTs) {
       paramAST.check();
@@ -36,7 +37,7 @@ public class FuncAST extends Parent {
   }
 
   public void checkFunctionNameAndReturnType() {
-    Identifier f = symtab.lookup(funcName);
+    Identifier f = globalScope.lookup(funcName);
 
     if (f != null) {
       SemanticErrorCollector.addError(funcName + " is already declared");
@@ -44,6 +45,6 @@ public class FuncAST extends Parent {
     }
 
     funcObj = (FuncID) identifier;
-    symtab.add(funcName, funcObj);
+    globalScope.add(funcName, funcObj);
   }
 }

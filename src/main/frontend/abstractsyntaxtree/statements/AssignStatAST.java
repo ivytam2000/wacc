@@ -20,21 +20,37 @@ public class AssignStatAST extends Node {
   private Identifier assignObj;
   private final WaccParser.AssignRHSContext rhsCtx;
   private final WaccParser.AssignLHSContext lhsCtx;
+  private final boolean funcCheck;
 
   public AssignStatAST(WaccParser.AssignLHSContext lhsCtx,
       WaccParser.AssignRHSContext rhsCtx, AssignLHSAST lhs,
-      AssignRHSAST rhs, SymbolTable symtab) {
+      AssignRHSAST rhs, SymbolTable symtab, boolean funcCheck) {
     this.rhs = rhs;
     this.lhs = lhs;
     this.lhsCtx = lhsCtx;
     this.rhsCtx = rhsCtx;
     this.symtab = symtab;
+    this.funcCheck = funcCheck;
   }
 
   @Override
   public void check() {
-    if (Utils.typeCompat(lhsCtx, rhsCtx, lhs, rhs)) {
+    String varName = lhs.getIdentName();
+    Identifier var;
+    String errmsg = "Variable " + varName + " is undefined";
+    if (funcCheck) {
+      var = symtab.lookup(varName);
+      errmsg += " in this scope";
+    } else {
+      var = symtab.lookupAll(varName);
+    }
+    if (var == null) {
+      SemanticErrorCollector.addError(errmsg);
+    } else if (Utils.typeCompat(lhsCtx, rhsCtx, lhs, rhs)) {
       setIdentifier(lhs.getIdentifier().getType());
     }
   }
 }
+
+//int x = 1;
+// x = 2
