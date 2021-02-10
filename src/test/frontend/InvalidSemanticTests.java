@@ -21,7 +21,7 @@ public class InvalidSemanticTests {
     exitsWith(invalidSemanticFolderPath + "expressions/", 200);
   }
 
-  @Ignore
+
   @Test
   public void invalidSemanticFunctionTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "function/", 200);
@@ -62,7 +62,6 @@ public class InvalidSemanticTests {
   public void invalidSemanticScopeTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "scope/", 200);
   }
-
 
   @Test
   public void invalidSemanticVariablesTests() throws IOException {

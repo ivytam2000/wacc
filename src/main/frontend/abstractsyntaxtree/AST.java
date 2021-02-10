@@ -14,8 +14,6 @@ public class AST extends Node {
     this.statAST = statAST;
   }
 
-
-
   @Override
   public void check() {
 

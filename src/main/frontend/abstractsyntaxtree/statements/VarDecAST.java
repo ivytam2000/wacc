@@ -17,8 +17,7 @@ public class VarDecAST extends Node {
   private final String varName;
   private final AssignRHSAST assignRHS;
 
-  public VarDecAST(SymbolTable symtab, Node typeAST, String varName,
-      AssignRHSAST assignRHS) {
+  public VarDecAST(SymbolTable symtab, Node typeAST, String varName, AssignRHSAST assignRHS) {
     super();
     this.symtab = symtab;
     this.typeAST = typeAST;
@@ -30,10 +29,8 @@ public class VarDecAST extends Node {
   public void check() {
 
     if (typeAST instanceof PairTypeAST) {
-      TypeID fstType = ((PairTypeAST) typeAST).getFst().getIdentifier()
-          .getType();
-      TypeID sndType = ((PairTypeAST) typeAST).getSnd().getIdentifier()
-          .getType();
+      TypeID fstType = ((PairTypeAST) typeAST).getFst().getIdentifier().getType();
+      TypeID sndType = ((PairTypeAST) typeAST).getSnd().getIdentifier().getType();
 
       TypeID assignType = assignRHS.getIdentifier().getType();
       if (assignType instanceof PairID) {
@@ -43,24 +40,20 @@ public class VarDecAST extends Node {
           correctArr = Utils.compareArrayTypes(fstType, assignPair.getFstType());
         }
         if (sndType instanceof ArrayID) {
-          correctArr = correctArr && Utils.compareArrayTypes(sndType,
-              assignPair.getSndType());
+          correctArr = correctArr && Utils.compareArrayTypes(sndType, assignPair.getSndType());
         }
         if (!correctArr) {
           SemanticErrorCollector.addError("Expected array");
         } else {
-          if (!(fstType.getTypeName()
-              .equals(assignPair.getFstType().getTypeName())
-              && sndType.getTypeName()
-              .equals(assignPair.getSndType().getTypeName()))) {
+          if (!(fstType.getTypeName().equals(assignPair.getFstType().getTypeName())
+              && sndType.getTypeName().equals(assignPair.getSndType().getTypeName()))) {
             SemanticErrorCollector.addError("Pair types do not match with rhs");
           }
         }
 
       } else {
         SemanticErrorCollector.addError(
-            "Incompatible types: expected pair, " + "but actual:" + assignType
-                .getTypeName());
+            "Incompatible types: expected pair, " + "but actual:" + assignType.getTypeName());
       }
       PairID pairType = new PairID(fstType, sndType);
       symtab.add(varName, pairType);
@@ -87,13 +80,9 @@ public class VarDecAST extends Node {
       } else if (variable != null) {
         SemanticErrorCollector.addError(varName + "is already declared");
       } else {
-        TypeID rhsType = assignRHS.getIdentifier().getType();
         if (Utils.typeCompat(typeAST, assignRHS)) {
-          // create variable identifier
-          VariableID varID = new VariableID((TypeID) typeID, varName);
-          // add to symbol table
-          symtab.add(varName, varID);
-          setIdentifier(varID);
+          symtab.add(varName, typeID);
+          setIdentifier(typeID);
         }
       }
     }
