@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
+import antlr.WaccParser;
 import frontend.abstractsyntaxtree.ArrayLiterAST;
 import frontend.abstractsyntaxtree.ArrayTypeAST;
 import frontend.abstractsyntaxtree.Node;
@@ -8,6 +9,8 @@ import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
+import org.antlr.v4.runtime.ParserRuleContext;
+
 import java.lang.reflect.Array;
 
 public class VarDecAST extends Node {
@@ -16,12 +19,15 @@ public class VarDecAST extends Node {
   private final Node typeAST;
   private final String varName;
   private final AssignRHSAST assignRHS;
+  private final WaccParser.Var_decl_statContext ctx;
 
-  public VarDecAST(SymbolTable symtab, Node typeAST, String varName, AssignRHSAST assignRHS) {
+  public VarDecAST(SymbolTable symtab, Node typeAST,
+      WaccParser.Var_decl_statContext ctx, AssignRHSAST assignRHS) {
     super();
     this.symtab = symtab;
     this.typeAST = typeAST;
-    this.varName = varName;
+    this.varName = ctx.IDENT().getText();
+    this.ctx = ctx;
     this.assignRHS = assignRHS;
   }
 
@@ -80,7 +86,7 @@ public class VarDecAST extends Node {
       } else if (variable != null) {
         SemanticErrorCollector.addError(varName + "is already declared");
       } else {
-        if (Utils.typeCompat(typeAST, assignRHS)) {
+        if (Utils.typeCompat(ctx.type(),ctx.assignRHS(),typeAST, assignRHS)) {
           symtab.add(varName, typeID);
           setIdentifier(typeID);
         }

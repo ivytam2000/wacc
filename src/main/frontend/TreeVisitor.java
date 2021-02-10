@@ -81,7 +81,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     AssignLHSAST lhs = (AssignLHSAST) visit(ctx.assignLHS());
     AssignRHSAST rhs = (AssignRHSAST) visit(ctx.assignRHS());
 
-    AssignStatAST assignStatAST = new AssignStatAST(lhs, rhs, currSymTab);
+    AssignStatAST assignStatAST = new AssignStatAST(ctx.assignLHS(),
+        ctx.assignRHS(), lhs, rhs,
+        currSymTab);
     assignStatAST.check();
     currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
     return assignStatAST;
@@ -129,7 +131,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node typeAST = visit(ctx.type());
     VarDecAST varDec =
         new VarDecAST(currSymTab, typeAST,
-            ctx.IDENT().getText(), assignRHS);
+            ctx, assignRHS);
     varDec.check();
     return varDec;
   }
