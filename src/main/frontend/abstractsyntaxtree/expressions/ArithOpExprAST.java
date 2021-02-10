@@ -13,8 +13,7 @@ public class ArithOpExprAST extends Node {
   private final Node eL;
   private final Node eR;
 
-  public ArithOpExprAST(SymbolTable symtab, String operation,
-      Node eL, Node eR) {
+  public ArithOpExprAST(SymbolTable symtab, String operation, Node eL, Node eR) {
     super(symtab.lookupAll("int"));
     this.eL = eL;
     this.eR = eR;
@@ -22,11 +21,13 @@ public class ArithOpExprAST extends Node {
 
   @Override
   public void check() {
-    boolean eLIsInt = eL.getIdentifier().getType() instanceof IntID;
-    boolean eRIsInt = eR.getIdentifier().getType() instanceof IntID;
+    if (eL.getIdentifier() != null && eR.getIdentifier() != null) {
+      boolean eLIsInt = eL.getIdentifier().getType() instanceof IntID;
+      boolean eRIsInt = eR.getIdentifier().getType() instanceof IntID;
 
-    if (!(eLIsInt && eRIsInt)) {
-      SemanticErrorCollector.addError("Arithmetic operator : Incompatible types. Expected INT.");
+      if (!(eLIsInt && eRIsInt)) {
+        SemanticErrorCollector.addError("Arithmetic operator : Incompatible types. Expected INT.");
+      }
     }
   }
 }

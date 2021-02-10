@@ -26,10 +26,12 @@ public class AssignStatAST extends Node {
 
   @Override
   public void check() {
-    TypeID t1 = lhs.getIdentifier().getType();
-    TypeID t2 = rhs.getIdentifier().getType();
-    if (Utils.typeCompat(t1, t2)) {
-      setIdentifier(t1);
+    if (lhs.getIdentifier() != null) {
+      TypeID t1 = lhs.getIdentifier().getType();
+      TypeID t2 = rhs.getIdentifier().getType();
+      if (Utils.typeCompat(t1, t2)) {
+        setIdentifier(t1);
+      }
     }
   }
 }

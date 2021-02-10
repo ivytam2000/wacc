@@ -29,6 +29,7 @@ public class TestUtilities {
     return Files.list(Paths.get(sourcesFolderPath))
         .filter(Files::isRegularFile)
         .map(p -> p.getFileName().toString())
+        .filter(f -> f.endsWith(".wacc"))
         .collect(Collectors.toList());
   }
 
@@ -48,13 +49,11 @@ public class TestUtilities {
     }
   }
 
-  //Only call on syntactically programs. Used to test semantics.
+  // Only call on syntactically programs. Used to test semantics.
   private static final String baseDir = "src/test/examples/custom/";
 
-  public static AST buildAST(String filename)
-      throws IOException {
-    CharStream input =
-        CharStreams.fromStream(new FileInputStream(baseDir + filename));
+  public static AST buildAST(String filename) throws IOException {
+    CharStream input = CharStreams.fromStream(new FileInputStream(baseDir + filename));
 
     // Create a lexer that reads from the input stream
     WaccLexer lexer = new WaccLexer(input);
@@ -66,7 +65,7 @@ public class TestUtilities {
     // Parse tokens with the program rule
     ParseTree tree = parser.program();
 
-    //Semantic checking
+    // Semantic checking
     TreeVisitor treeVisitor = new TreeVisitor();
     return (AST) treeVisitor.visit(tree);
   }
