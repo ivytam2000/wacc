@@ -294,7 +294,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitCall_assignRHS(Call_assignRHSContext ctx) {
     String funcName = ctx.IDENT().getText();
     Node argListAST = visitArgList(ctx.argList());
-    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, (ArgListAST) argListAST);
+    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, (ArgListAST) argListAST, ctx);
     assignCallAST.check();
     return assignCallAST;
   }
@@ -616,7 +616,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       }
     }
     ArrayElemAST arrayElemAST =
-        new ArrayElemAST(identifier, arrayName, indexes);
+        new ArrayElemAST(identifier, arrayName, indexes, ctx);
     arrayElemAST.check();
     return arrayElemAST;
   }
@@ -636,7 +636,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       arrayID = new ArrayID(children.get(0).getIdentifier().getType());
     }
 
-    ArrayLiterAST arrayLiterAST = new ArrayLiterAST(arrayID, currSymTab, children);
+    ArrayLiterAST arrayLiterAST = new ArrayLiterAST(arrayID, currSymTab, children, ctx);
     arrayLiterAST.check();
     return arrayLiterAST;
   }

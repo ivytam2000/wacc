@@ -28,8 +28,8 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
-  public static void addFunctionUndefined(String varName, int line, int position) {
-    String errorMsg = String.format("line %d:%d -- Function %s is not defined", line, position, varName);
+  public static void addFunctionUndefined(String funcName, int line, int position) {
+    String errorMsg = String.format("line %d:%d -- Function %s is not defined", line, position, funcName);
     addError(errorMsg);
   }
 

@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.expressions;
 
+import antlr.WaccParser.ArrayElemContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
@@ -12,12 +13,14 @@ public class ArrayElemAST extends Node {
   private Identifier currIdentifier;
   private final String val;
   private final List<Node> exprs;
+  private final ArrayElemContext ctx;
 
-  public ArrayElemAST(Identifier currIdentifier, String val, List<Node> exprs) {
+  public ArrayElemAST(Identifier currIdentifier, String val, List<Node> exprs, ArrayElemContext ctx) {
     super();
     this.currIdentifier = currIdentifier;
     this.val = val;
     this.exprs = exprs;
+    this.ctx = ctx;
   }
 
   public String getName() {
@@ -29,7 +32,9 @@ public class ArrayElemAST extends Node {
     for (Node e : exprs) {
       assert (e.getIdentifier().getType() instanceof IntID);
       if (!(currIdentifier instanceof ArrayID)) {
-        SemanticErrorCollector.addError("Tried to index a non-array");
+        String errorMsg = String.format("line %d:%d -- %s is not an array and cannot be indexed",
+            ctx.getStart().getLine(), ctx.IDENT().getSymbol().getStartIndex(), val);
+        SemanticErrorCollector.addError(errorMsg);
       } else {
         currIdentifier = ((ArrayID) currIdentifier).getElemType();
       }
