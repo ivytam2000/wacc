@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import antlr.WaccParser.ArrayLiterContext;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
@@ -8,13 +9,15 @@ import java.util.List;
 
 public class ArrayLiterAST extends Node {
 
-  private SymbolTable symtab;
-  private List<Node> children;
+  private final SymbolTable symtab;
+  private final List<Node> children;
+  private final ArrayLiterContext ctx;
 
-  public ArrayLiterAST(Identifier identifier, SymbolTable symtab, List<Node> children) {
+  public ArrayLiterAST(Identifier identifier, SymbolTable symtab, List<Node> children, ArrayLiterContext ctx) {
     super(identifier);
     this.symtab = symtab;
     this.children = children;
+    this.ctx = ctx;
   }
 
   @Override
@@ -25,8 +28,10 @@ public class ArrayLiterAST extends Node {
         Node child = children.get(i);
         String childType = child.getIdentifier().getType().getTypeName();
         if (!childType.equals(type)) {
-          SemanticErrorCollector.addError("Array doesn't have consistent types, index " + i +
-              " has type " + childType + " but expected " + type);
+          String errorMsg = String.format("line %d:%d -- Array doesn't have consistent types, "
+              + "index %d has expected type: %s but got actual type: %s", ctx.getStart().getLine(),
+              ctx.expr(i).getStart().getCharPositionInLine(), i, type, childType);
+          SemanticErrorCollector.addError(errorMsg);
         }
       }
     }

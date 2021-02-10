@@ -35,9 +35,11 @@ public class AssignStatAST extends Node {
     Identifier var;
     var = symtab.lookupAll(varName);
     if (var == null) {
-      SemanticErrorCollector.addError("Variable " + varName + " is undefined");
+      SemanticErrorCollector.addVariableUndefined(varName, lhsCtx.getStart().getLine(), lhsCtx.IDENT().getSymbol().getStartIndex());
     } else if (var instanceof FuncID) {
-      SemanticErrorCollector.addError("Can't assign to func " + varName);
+      String errorMsg = String.format("line %d:%d -- Function %s cannot be assigned.",
+          lhsCtx.getStart().getLine(), lhsCtx.IDENT().getSymbol().getStartIndex(), varName);
+      SemanticErrorCollector.addError(errorMsg);
     } else if (Utils.typeCompat(lhsCtx, rhsCtx, lhs, rhs)) {
       setIdentifier(lhs.getIdentifier().getType());
     }

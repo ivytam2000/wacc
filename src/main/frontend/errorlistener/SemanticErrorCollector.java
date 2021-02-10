@@ -26,6 +26,16 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addVariableUndefined(String varName, int line, int position) {
+    String errorMsg = String.format("line %d:%d -- Variable %s is not defined", line, position, varName);
+    addError(errorMsg);
+  }
+
+  public static void addFunctionUndefined(String funcName, int line, int position) {
+    String errorMsg = String.format("line %d:%d -- Function %s is not defined", line, position, funcName);
+    addError(errorMsg);
+  }
+
   public static void init() {
     errors.clear();
   }
