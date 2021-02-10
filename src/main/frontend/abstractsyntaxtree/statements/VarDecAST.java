@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser;
+import antlr.WaccParser.Var_decl_statContext;
 import frontend.abstractsyntaxtree.ArrayTypeAST;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.PairTypeAST;
@@ -15,14 +16,14 @@ public class VarDecAST extends Node {
   private final Node typeAST;
   private final String varName;
   private final AssignRHSAST assignRHS;
-  private final WaccParser.Var_decl_statContext ctx;
+  private final Var_decl_statContext ctx;
 
   public VarDecAST(SymbolTable symtab, Node typeAST,
-      WaccParser.Var_decl_statContext ctx, AssignRHSAST assignRHS) {
+      String varName, AssignRHSAST assignRHS, Var_decl_statContext ctx) {
     super();
     this.symtab = symtab;
     this.typeAST = typeAST;
-    this.varName = ctx.IDENT().getText();
+    this.varName = varName;
     this.ctx = ctx;
     this.assignRHS = assignRHS;
   }
