@@ -7,15 +7,12 @@ import frontend.abstractsyntaxtree.statements.SequenceAST;
 import frontend.abstractsyntaxtree.statements.WhileAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
-import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
-import frontend.symboltable.PairTypes;
+import frontend.symboltable.OptionalPairID;
 import frontend.symboltable.TypeID;
 import java.util.List;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.lang.reflect.Type;
 
 public class Utils {
 
@@ -25,22 +22,18 @@ public class Utils {
     assert (n2 != null);
     int n1Line = n1Ctx.getStart().getLine();
     int n1Pos = n1Ctx.getStart().getCharPositionInLine();
+    String n1Token = n1Ctx.getStart().getText();
     int n2Line = n2Ctx.getStart().getLine();
     int n2Pos = n2Ctx.getStart().getCharPositionInLine();
+    String n2Token = n2Ctx.getStart().getText();
 
     boolean nodeIsNull = false;
     if (n1.getIdentifier() == null) {
-
-      //TODO: Fix error message
-      SemanticErrorCollector.addError(n1Line + ":" + n1Pos + " typeCompat : "
-          + "LHS "
-          + "type unknown");
+      SemanticErrorCollector.addIncompatibleType("unknown", "unknown", n1Token, n1Line, n1Pos);
       nodeIsNull = true;
     }
     if (n2.getIdentifier() == null) {
-      //TODO: Fix error message
-      SemanticErrorCollector.addError(n2Line + ":" + n2Pos + "typeCompat : "
-          + "RHS type unknown");
+      SemanticErrorCollector.addIncompatibleType("unknown", "unknown", n2Token, n2Line, n2Pos);
       nodeIsNull = true;
     }
     if (nodeIsNull) {
@@ -53,13 +46,13 @@ public class Utils {
     assert (t2 != null);
 
     if (t1 instanceof PairID) {
-      if (t2 instanceof PairTypes) {
+      if (t2 instanceof OptionalPairID) {
         if (comparePairTypes(t1, t2)) {
           return true;
         }
       }
-      SemanticErrorCollector.addError(n1Line + " LHS and RHS type are not "
-          + "compatible");
+      SemanticErrorCollector
+          .addIncompatibleType(t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
       return false;
     }
 
@@ -68,13 +61,15 @@ public class Utils {
         if (compareArrayTypes(t1, t2)) {
           return true;
         }
-        SemanticErrorCollector.addError(n1Line + " LHS and RHS type are not "
-            + "compatible");
+        SemanticErrorCollector
+            .addIncompatibleType(t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
         return false;
       } else {
-        if (((ArrayID) t1).getElemType().getType() != t2.getType()) {
+        TypeID t1AsArrayElemType = ((ArrayID) t1).getElemType().getType();
+        if (t1AsArrayElemType != t2.getType()) {
           SemanticErrorCollector
-              .addError(n1Line + " LHS and RHS type are not compatible");
+              .addIncompatibleType(t1AsArrayElemType.getTypeName(), n2Token, t2.getTypeName(),
+                  n2Line, n2Pos);
           return false;
         }
         return true;
@@ -82,8 +77,8 @@ public class Utils {
     }
 
     if (!(t1.getTypeName().equals((t2.getTypeName())))) {
-      SemanticErrorCollector.addError(n1Line + " LHS and RHS type are not "
-          + "compatible");
+      SemanticErrorCollector
+          .addIncompatibleType(t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
       return false;
     }
     return true;

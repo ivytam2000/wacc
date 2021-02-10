@@ -1,6 +1,6 @@
 package frontend.symboltable;
 
-public class NullID extends PairTypes {
+public class NullID extends OptionalPairID {
 
   public NullID() {
     super("null");

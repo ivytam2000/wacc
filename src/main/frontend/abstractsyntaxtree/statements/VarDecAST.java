@@ -1,6 +1,5 @@
 package frontend.abstractsyntaxtree.statements;
 
-import antlr.WaccParser;
 import antlr.WaccParser.Var_decl_statContext;
 import frontend.abstractsyntaxtree.ArrayTypeAST;
 import frontend.abstractsyntaxtree.Node;
@@ -79,7 +78,7 @@ public class VarDecAST extends Node {
 
   private boolean verifyPairElemTypeOfRHS(TypeID elemType, TypeID elemRHS) {
     if (elemType instanceof PairID) {
-      if (!(elemRHS instanceof PairTypes)) {
+      if (!(elemRHS instanceof OptionalPairID)) {
         SemanticErrorCollector.addError("First of pair : Expected pair");
         return false;
       }

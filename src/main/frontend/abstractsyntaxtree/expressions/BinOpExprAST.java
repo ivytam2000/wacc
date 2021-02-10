@@ -6,13 +6,11 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.CharID;
-import frontend.symboltable.Identifier;
 import frontend.symboltable.IntID;
 import frontend.symboltable.PairID;
-import frontend.symboltable.PairTypes;
+import frontend.symboltable.OptionalPairID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
-import java.lang.reflect.Type;
 
 public class BinOpExprAST extends Node {
 
@@ -49,7 +47,7 @@ public class BinOpExprAST extends Node {
     } else if (expectedExprTypes == ALL_TYPES) {
       TypeID eLType = eL.getIdentifier().getType();
       TypeID eRType = eR.getIdentifier().getType();
-      if (eLType instanceof PairID && eRType instanceof PairTypes) {
+      if (eLType instanceof PairID && eRType instanceof OptionalPairID) {
         error = !Utils.comparePairTypes(eLType, eRType);
       } else if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
         error = !Utils.compareArrayTypes(eLType, eRType);

@@ -7,7 +7,6 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
-import frontend.symboltable.PairTypes;
 import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
 
