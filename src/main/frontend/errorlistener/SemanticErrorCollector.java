@@ -18,6 +18,11 @@ public class SemanticErrorCollector {
     }
   }
 
+  public static void addIncompatibleType(String expected, String actual, int line, int position) {
+    String errorMsg = String.format("line %d:%d -- Expected type %s, Actual type %s", line, position, expected, actual);
+    addError(errorMsg);
+  }
+
   public static void init() {
     errors.clear();
   }
