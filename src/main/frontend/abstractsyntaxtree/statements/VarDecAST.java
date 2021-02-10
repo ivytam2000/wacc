@@ -88,7 +88,7 @@ public class VarDecAST extends Node {
         SemanticErrorCollector.addError(varName + "is already declared");
       } else {
         TypeID rhsType = assignRHS.getIdentifier().getType();
-        if (Utils.typeCompat((TypeID) typeID, rhsType)) {
+        if (Utils.typeCompat(typeAST, assignRHS)) {
           // create variable identifier
           VariableID varID = new VariableID((TypeID) typeID, varName);
           // add to symbol table

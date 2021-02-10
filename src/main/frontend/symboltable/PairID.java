@@ -1,6 +1,6 @@
 package frontend.symboltable;
 
-public class PairID extends TypeID {
+public class PairID extends PairTypes {
 
   private TypeID fst;
   private TypeID snd;

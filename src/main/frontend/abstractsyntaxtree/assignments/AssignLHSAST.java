@@ -29,8 +29,5 @@ public class AssignLHSAST extends Node {
 
   @Override
   public void check() {
-    if (getIdentifier() == null) {
-      SemanticErrorCollector.addError("Unknown type of variable: " + assignName);
-    }
   }
 }

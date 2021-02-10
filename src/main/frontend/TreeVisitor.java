@@ -599,7 +599,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
         new ArrayElemAST(identifier, arrayName, indexes);
     arrayElemAST.check();
     return arrayElemAST;
-
   }
 
   @Override
