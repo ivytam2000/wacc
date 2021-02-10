@@ -61,8 +61,6 @@ public class VarDecAST extends Node {
         SemanticErrorCollector.addError(
             "Incompatible types: expected pair, " + "but actual:" + assignType.getTypeName());
       }
-      PairID pairType = new PairID(fstType, sndType);
-      symtab.add(varName, pairType);
     } else if (typeAST instanceof ArrayTypeAST) {
       TypeID assignType = assignRHS.getIdentifier().getType();
       if (assignType instanceof ArrayID) {
@@ -70,8 +68,6 @@ public class VarDecAST extends Node {
           SemanticErrorCollector.addError("Not same array type");
         }
       }
-      symtab.add(varName, typeAST.getIdentifier().getType());
-
     } else {
       String typeName = typeAST.getIdentifier().getType().getTypeName();
       Identifier typeID = symtab.lookupAll(typeName);
@@ -84,14 +80,14 @@ public class VarDecAST extends Node {
         SemanticErrorCollector.addError(varName + " is already declared");
       }else if (!(typeID instanceof TypeID)) {
         // check if the identifier is a type
-        SemanticErrorCollector.addError(typeName + " is not a type");
-      } else {
-        if (Utils.typeCompat(ctx.type(),ctx.assignRHS(),typeAST, assignRHS)) {
-          symtab.add(varName, typeID);
-          setIdentifier(typeID);
-        }
+        SemanticErrorCollector.addError(typeName + "is not a type");
       }
+      //Boolean return not used
+      Utils.typeCompat(ctx.type(),ctx.assignRHS(),typeAST, assignRHS);
     }
+
+    symtab.add(varName, typeAST.getIdentifier().getType());
+    setIdentifier(typeAST.getIdentifier().getType());
   }
 
   //  FOR DEBUGGING

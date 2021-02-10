@@ -10,7 +10,7 @@
 begin
   int f() is
     return 2;
-    println "How on Earth did we get here?" 
+    println "How on Earth did we get here?"
   end
 
   int x = call f();

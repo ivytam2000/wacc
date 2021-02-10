@@ -9,21 +9,22 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 
-public class FuncAST extends Parent {
+public class FuncAST extends Node {
+
+  private final String funcName;
+  private final ParamListAST params;
 
   private String returnTypeName;
-  private String funcName;
-  private ParamListAST params;
   private SymbolTable symtab;
   private Node statements;
 
   public FuncAST(Identifier identifier, SymbolTable currSymTab, String funcName,
       ParamListAST params, Node statements) {
     super(identifier);
-    this.symtab = currSymTab;
-    this.returnTypeName = identifier.getType().getTypeName();
     this.funcName = funcName;
     this.params = params;
+    this.symtab = currSymTab;
+    this.returnTypeName = identifier.getType().getTypeName();
     this.statements = statements;
   }
 

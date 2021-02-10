@@ -21,9 +21,11 @@ import java.util.List;
 public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   private SymbolTable currSymTab;
+  private boolean funcCheck;
 
   public TreeVisitor() {
     this.currSymTab = new SymbolTable(); // Initialised with top level symtab
+    this.funcCheck = true;
   }
 
   @Override
@@ -38,6 +40,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       Node funcAST = visitFunc(FC); // Return func node
       fs.add(funcAST);
     }
+    this.funcCheck = false;
 
     // visit stat
     Node statAST = visit(ctx.stat());
@@ -85,7 +88,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     AssignStatAST assignStatAST = new AssignStatAST(ctx.assignLHS(),
         ctx.assignRHS(), lhs, rhs,
-        currSymTab);
+        currSymTab, funcCheck);
     assignStatAST.check();
 //    currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
     return assignStatAST;
@@ -290,8 +293,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitArgList(ArgListContext ctx) {
     List<Node> expressions = new ArrayList<>();
-    for (ExprContext exprContext : ctx.expr()) {
-      expressions.add(visit(exprContext));
+    if (ctx != null) {
+      for (ExprContext exprContext : ctx.expr()) {
+        expressions.add(visit(exprContext));
+      }
     }
     // Don't need to check the since creating the exprASTs will call check
     return new ArgListAST(currSymTab, expressions);
