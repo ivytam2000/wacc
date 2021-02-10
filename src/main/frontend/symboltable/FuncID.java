@@ -31,4 +31,8 @@ public class FuncID extends Identifier {
   public List<TypeID> getParams() {
     return params;
   }
+
+  public SymbolTable getSymtab() {
+    return symtab;
+  }
 }

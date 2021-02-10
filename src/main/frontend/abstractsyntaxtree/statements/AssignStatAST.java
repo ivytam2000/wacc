@@ -6,11 +6,9 @@ import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
-import frontend.symboltable.ArrayID;
+import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
-import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
-import frontend.symboltable.TypeID;
 
 public class AssignStatAST extends Node {
 
@@ -35,10 +33,11 @@ public class AssignStatAST extends Node {
   public void check() {
     String varName = lhs.getIdentName();
     Identifier var;
-    String errmsg = "Variable " + varName + " is undefined";
     var = symtab.lookupAll(varName);
     if (var == null) {
-      SemanticErrorCollector.addError(errmsg);
+      SemanticErrorCollector.addError("Variable " + varName + " is undefined");
+    } else if (var instanceof FuncID) {
+      SemanticErrorCollector.addError("Can't assign to func " + varName);
     } else if (Utils.typeCompat(lhsCtx, rhsCtx, lhs, rhs)) {
       setIdentifier(lhs.getIdentifier().getType());
     }

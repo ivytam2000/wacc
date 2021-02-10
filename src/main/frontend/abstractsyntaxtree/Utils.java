@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.abstractsyntaxtree.statements.ExitAST;
 import frontend.abstractsyntaxtree.statements.IfAST;
 import frontend.abstractsyntaxtree.statements.ReturnAST;
 import frontend.abstractsyntaxtree.statements.SequenceAST;
@@ -125,9 +126,11 @@ public class Utils {
   public static TypeID getReturnType(Node statements) {
     if (statements instanceof ReturnAST) {
       return ((ReturnAST) statements).getExpr().getIdentifier().getType();
+    } else if (statements instanceof ExitAST) {
+      return statements.getIdentifier().getType();
     } else if (statements instanceof SequenceAST) {
       List<Node> statsList = ((SequenceAST) statements).getStatements();
-      return getReturnType(statsList.get(statsList.size() - 1));
+      return getReturnType(statsList.get(1));
     } else if (statements instanceof IfAST) {
       Node thenStat = ((IfAST) statements).getThenStat();
       Node elseStat = ((IfAST) statements).getElseStat();
@@ -136,7 +139,8 @@ public class Utils {
       if (thenID == elseID) {
         return thenID;
       } else {
-        SemanticErrorCollector.addError("Then return type and else return type is not the same!");
+        SemanticErrorCollector
+            .addError("Then return type and else return type is not the same!");
         return null;
       }
     } else if (statements instanceof WhileAST) {

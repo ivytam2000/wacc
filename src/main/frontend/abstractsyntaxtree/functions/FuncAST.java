@@ -19,18 +19,20 @@ public class FuncAST extends Node {
   private Node statements;
 
   public FuncAST(Identifier identifier, SymbolTable currSymTab, String funcName,
-      ParamListAST params, Node statements) {
+      ParamListAST params) {
     super(identifier);
     this.funcName = funcName;
     this.params = params;
     this.symtab = currSymTab;
     this.returnTypeName = identifier.getType().getTypeName();
+  }
+
+  public void setStatements(Node statements) {
     this.statements = statements;
   }
 
   @Override
   public void check() {
-    checkFunctionNameAndReturnType();
 
     ((FuncID) identifier).setSymtab(symtab);
 
