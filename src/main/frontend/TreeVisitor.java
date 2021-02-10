@@ -78,7 +78,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitAssign_stat(Assign_statContext ctx) {
-    AssignLHSAST lhs = (AssignLHSAST) visitAssignLHS(ctx.assignLHS());
+    AssignLHSAST lhs = (AssignLHSAST) visit(ctx.assignLHS());
     AssignRHSAST rhs = (AssignRHSAST) visit(ctx.assignRHS());
 
     AssignStatAST assignStatAST = new AssignStatAST(lhs, rhs, currSymTab);
@@ -221,7 +221,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitAssignLHS(AssignLHSContext ctx) {
     if (ctx.IDENT() != null) {
       String assignName = ctx.IDENT().getText();
-      return new AssignLHSAST(currSymTab, assignName);
+      AssignLHSAST identLHS = new AssignLHSAST(currSymTab,assignName);
+      identLHS.check();
+      return identLHS;
     } else if (ctx.pairElem() != null) {
       PairElemAST pairElem = (PairElemAST) visitPairElem((ctx.pairElem()));
       return new AssignLHSAST(currSymTab, pairElem.getName());

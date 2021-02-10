@@ -1,8 +1,10 @@
 package frontend.abstractsyntaxtree.assignments;
 
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.TypeID;
 
 public class AssignLHSAST extends Node {
 
@@ -27,6 +29,8 @@ public class AssignLHSAST extends Node {
 
   @Override
   public void check() {
-
+    if (getIdentifier() == null) {
+      SemanticErrorCollector.addError("Unknown type of variable: " + assignName);
+    }
   }
 }

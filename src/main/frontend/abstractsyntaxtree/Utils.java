@@ -19,24 +19,6 @@ public class Utils {
       }
       SemanticErrorCollector.addError("LHS and RHS type are not compatible");
       return false;
-//      if (((PairID) t1).getFstType() == ((PairID) t2).getFstType()) {
-//        if (((PairID) t1).getSndType() != ((PairID) t2).getSndType()) {
-//          SemanticErrorCollector.addError(
-//              "Second pair parameter is not the same "
-//                  + "type! Got type "
-//                  + ((PairID) t2).getSndType().getTypeName()
-//                  + "instead of "
-//                  + ((PairID) t1).getSndType().getTypeName());
-//          return false;
-//        }
-//        return true;
-//      }
-//      SemanticErrorCollector.addError(
-//          "First pair parameter is not the same type! Got type "
-//              + ((PairID) t2).getSndType().getTypeName()
-//              + "instead of "
-//              + ((PairID) t1).getSndType().getTypeName());
-//      return false;
     }
 
     if (t1 instanceof ArrayID) {
@@ -64,10 +46,8 @@ public class Utils {
 
   public static boolean comparePairTypes(TypeID eLType, TypeID eRType) {
     if (eLType instanceof PairID && eRType instanceof PairID) {
-      return comparePairTypes(((PairID) eLType).getFstType(),
-          ((PairID) eRType).getFstType())
-          && comparePairTypes(((PairID) eLType).getSndType(),
-          ((PairID) eRType).getSndType());
+      return comparePairTypes(((PairID) eLType).getFstType(), ((PairID) eRType).getFstType())
+          && comparePairTypes(((PairID) eLType).getSndType(), ((PairID) eRType).getSndType());
     } else {
       if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
         return compareArrayTypes(eLType, eRType);
@@ -79,8 +59,7 @@ public class Utils {
 
   public static boolean compareArrayTypes(TypeID eLType, TypeID eRType) {
     if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-      return compareArrayTypes(((ArrayID) eLType).getElemType(),
-          ((ArrayID) eRType).getElemType());
+      return compareArrayTypes(((ArrayID) eLType).getElemType(), ((ArrayID) eRType).getElemType());
     } else {
       if (eLType instanceof PairID && eRType instanceof PairID) {
         return comparePairTypes(eLType, eRType);
@@ -89,5 +68,4 @@ public class Utils {
       }
     }
   }
-
 }
