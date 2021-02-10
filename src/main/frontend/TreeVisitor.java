@@ -21,11 +21,9 @@ import java.util.List;
 public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   private SymbolTable currSymTab;
-  private boolean funcCheck;
 
   public TreeVisitor() {
     this.currSymTab = new SymbolTable(); // Initialised with top level symtab
-    this.funcCheck = true;
   }
 
   @Override
@@ -40,7 +38,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       Node funcAST = visitFunc(FC); // Return func node
       fs.add(funcAST);
     }
-    this.funcCheck = false;
 
     // visit stat
     Node statAST = visit(ctx.stat());
@@ -88,7 +85,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     AssignStatAST assignStatAST = new AssignStatAST(ctx.assignLHS(),
         ctx.assignRHS(), lhs, rhs,
-        currSymTab, funcCheck);
+        currSymTab);
     assignStatAST.check();
 //    currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
     return assignStatAST;
