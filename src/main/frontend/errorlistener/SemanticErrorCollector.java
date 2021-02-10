@@ -23,6 +23,11 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addVariableUndefined(String varName, int line, int position) {
+    String errorMsg = String.format("line %d:%d -- %s is not defined", line, position, varName);
+    addError(errorMsg);
+  }
+
   public static void init() {
     errors.clear();
   }
