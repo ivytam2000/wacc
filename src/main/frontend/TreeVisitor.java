@@ -85,7 +85,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
         ctx.assignRHS(), lhs, rhs,
         currSymTab);
     assignStatAST.check();
-    currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
+//    currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
     return assignStatAST;
   }
 
