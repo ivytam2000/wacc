@@ -10,6 +10,7 @@ import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
 import java.lang.reflect.Type;
+import jdk.jshell.execution.Util;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.lang.reflect.Array;
@@ -39,26 +40,44 @@ public class VarDecAST extends Node {
     if (typeAST instanceof PairTypeAST) {
       TypeID fstType = ((PairTypeAST) typeAST).getFst().getIdentifier().getType();
       TypeID sndType = ((PairTypeAST) typeAST).getSnd().getIdentifier().getType();
-
       TypeID assignType = assignRHS.getIdentifier().getType();
       if (assignType instanceof PairID) {
         PairID assignPair = (PairID) assignType;
-        boolean correctArr = true;
-        if (fstType instanceof ArrayID) {
-          correctArr = Utils.compareArrayTypes(fstType, assignPair.getFstType());
-        }
-        if (sndType instanceof ArrayID) {
-          correctArr = correctArr && Utils.compareArrayTypes(sndType, assignPair.getSndType());
-        }
-        if (!correctArr) {
-          SemanticErrorCollector.addError("Expected array");
+
+        if (fstType instanceof PairID) {
+          //Grab the first identifier of assignPair
+          if (!(assignPair.getFstType() instanceof PairTypes)) {
+            SemanticErrorCollector.addError("First of pair : Expected pair");
+          }
+        } else if (fstType instanceof ArrayID) {
+          if (!Utils.compareArrayTypes(fstType, assignPair.getFstType())) {
+            SemanticErrorCollector.addError("First of pair : Expected array");
+          }
         } else {
-          if (!(fstType.getTypeName().equals(assignPair.getFstType().getTypeName())
-              && sndType.getTypeName().equals(assignPair.getSndType().getTypeName()))) {
-            SemanticErrorCollector.addError("Pair types do not match with rhs");
+          if (fstType != assignPair.getFstType()) {
+            SemanticErrorCollector.addError("First of pair : Types mismatch");
           }
         }
+        TypeID temp1 = assignPair.getFstType();
 
+        if (sndType instanceof PairID) {
+          //Grab the first identifier of assignPair
+          if (!(assignPair.getSndType() instanceof PairTypes)) {
+            SemanticErrorCollector.addError("Second of pair : Expected pair");
+          }
+        } else if (sndType instanceof ArrayID) {
+          if (!Utils.compareArrayTypes(sndType, assignPair.getSndType())) {
+            SemanticErrorCollector.addError("Second of pair : Expected array");
+          }
+        } else {
+          if (sndType != assignPair.getSndType()) {
+            SemanticErrorCollector.addError("Second of pair : Types mismatch");
+          }
+        }
+        TypeID temp2 = assignPair.getSndType();
+
+        PairID lhsType = new PairID(temp1, temp2);
+        typeAST.setIdentifier(lhsType);
       } else if (!(assignType instanceof NullID)) {
         SemanticErrorCollector.addError(
             "Incompatible types: expected pair, " + "but actual:" + assignType.getTypeName());

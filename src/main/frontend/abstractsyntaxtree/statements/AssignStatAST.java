@@ -44,6 +44,3 @@ public class AssignStatAST extends Node {
     }
   }
 }
-
-//int x = 1;
-// x = 2
