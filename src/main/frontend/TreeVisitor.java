@@ -82,8 +82,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return funcAST;
   }
 
-  // Visit functions for statements
-
   @Override
   public Node visitPrint_stat(Print_statContext ctx) {
     Node expr = visit(ctx.expr());
@@ -99,7 +97,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
         ctx.assignRHS(), lhs, rhs,
         currSymTab);
     assignStatAST.check();
-//    currSymTab.add(lhs.getIdentName(), lhs.getIdentifier());
     return assignStatAST;
   }
 
@@ -134,7 +131,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitFree_stat(Free_statContext ctx) {
     // TODO: do we need a ExprAST class?
     Node expr = visit(ctx.expr());
-    FreeAST freeAST = new FreeAST(expr,ctx.expr());
+    FreeAST freeAST = new FreeAST(expr, ctx.expr());
     freeAST.check();
     return freeAST;
   }
@@ -293,7 +290,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitCall_assignRHS(Call_assignRHSContext ctx) {
     String funcName = ctx.IDENT().getText();
     Node argListAST = visitArgList(ctx.argList());
-    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, (ArgListAST) argListAST, ctx);
+    AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, (ArgListAST) argListAST,
+        ctx);
     assignCallAST.check();
     return assignCallAST;
   }
@@ -563,35 +561,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     binOpExprAST.check();
     return binOpExprAST;
   }
-  //----------------------------------------------------------------------------
-
-  // TODO: Do we need these visit rules?
-  @Override
-  public Node visitUnaryOper(UnaryOperContext ctx) {
-    return super.visitUnaryOper(ctx);
-  }
-
-  @Override
-  public Node visitArithmeticOper1(ArithmeticOper1Context ctx) {
-    return super.visitArithmeticOper1(ctx);
-  }
-
-  @Override
-  public Node visitArithmeticOper2(ArithmeticOper2Context ctx) {
-    return super.visitArithmeticOper2(ctx);
-  }
-
-  @Override
-  public Node visitBinaryOper1(BinaryOper1Context ctx) {
-    return super.visitBinaryOper1(ctx);
-  }
-
-  @Override
-  public Node visitBinaryOper2(BinaryOper2Context ctx) {
-    return super.visitBinaryOper2(ctx);
-  }
-  //END TODO
-  //----------------------------------------------------------------------------
 
   @Override
   public Node visitArrayElem(ArrayElemContext ctx) {
@@ -638,11 +607,5 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     ArrayLiterAST arrayLiterAST = new ArrayLiterAST(arrayID, currSymTab, children, ctx);
     arrayLiterAST.check();
     return arrayLiterAST;
-  }
-
-  // TODO: Delete debugger
-  @Override
-  public Node visitProg(ProgContext ctx) {
-    return super.visitProg(ctx);
   }
 }
