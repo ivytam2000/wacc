@@ -1,7 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser;
-import frontend.abstractsyntaxtree.ArrayLiterAST;
 import frontend.abstractsyntaxtree.ArrayTypeAST;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.PairTypeAST;
@@ -9,12 +8,6 @@ import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
-import java.lang.reflect.Type;
-import jdk.jshell.execution.Util;
-import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.lang.reflect.Array;
-import org.antlr.v4.runtime.misc.Pair;
 
 public class VarDecAST extends Node {
 
@@ -36,47 +29,20 @@ public class VarDecAST extends Node {
 
   @Override
   public void check() {
-
     if (typeAST instanceof PairTypeAST) {
       TypeID fstType = ((PairTypeAST) typeAST).getFst().getIdentifier().getType();
       TypeID sndType = ((PairTypeAST) typeAST).getSnd().getIdentifier().getType();
       TypeID assignType = assignRHS.getIdentifier().getType();
+
       if (assignType instanceof PairID) {
-        PairID assignPair = (PairID) assignType;
+        PairID assignRHSAsPair = (PairID) assignType;
 
-        if (fstType instanceof PairID) {
-          //Grab the first identifier of assignPair
-          if (!(assignPair.getFstType() instanceof PairTypes)) {
-            SemanticErrorCollector.addError("First of pair : Expected pair");
-          }
-        } else if (fstType instanceof ArrayID) {
-          if (!Utils.compareArrayTypes(fstType, assignPair.getFstType())) {
-            SemanticErrorCollector.addError("First of pair : Expected array");
-          }
-        } else {
-          if (fstType != assignPair.getFstType()) {
-            SemanticErrorCollector.addError("First of pair : Types mismatch");
-          }
-        }
-        TypeID temp1 = assignPair.getFstType();
+        verifyPairElemTypeOfRHS(fstType, assignRHSAsPair.getFstType());
+        verifyPairElemTypeOfRHS(sndType, assignRHSAsPair.getSndType());
 
-        if (sndType instanceof PairID) {
-          //Grab the first identifier of assignPair
-          if (!(assignPair.getSndType() instanceof PairTypes)) {
-            SemanticErrorCollector.addError("Second of pair : Expected pair");
-          }
-        } else if (sndType instanceof ArrayID) {
-          if (!Utils.compareArrayTypes(sndType, assignPair.getSndType())) {
-            SemanticErrorCollector.addError("Second of pair : Expected array");
-          }
-        } else {
-          if (sndType != assignPair.getSndType()) {
-            SemanticErrorCollector.addError("Second of pair : Types mismatch");
-          }
-        }
-        TypeID temp2 = assignPair.getSndType();
-
-        PairID lhsType = new PairID(temp1, temp2);
+        TypeID assignRHSFstType = assignRHSAsPair.getFstType();
+        TypeID assignRHSSndType = assignRHSAsPair.getSndType();
+        PairID lhsType = new PairID(assignRHSFstType, assignRHSSndType);
         typeAST.setIdentifier(lhsType);
       } else if (!(assignType instanceof NullID)) {
         SemanticErrorCollector.addError(
@@ -95,23 +61,42 @@ public class VarDecAST extends Node {
       Identifier variable = symtab.lookup(varName);
 
       if (typeID == null) {
-        // check if the identifier returned is a known type/identifier
+        // Check if the identifier returned has a known type
         SemanticErrorCollector.addError("Unknown type " + typeName);
       } else if (variable != null && !(variable instanceof FuncID)) {
         SemanticErrorCollector.addError(varName + " is already declared");
-      }else if (!(typeID instanceof TypeID)) {
-        // check if the identifier is a type
+      } else if (!(typeID instanceof TypeID)) {
+        // Check if the identifier is a type identifier
         SemanticErrorCollector.addError(typeName + "is not a type");
       }
-      //Boolean return not used
-      Utils.typeCompat(ctx.type(),ctx.assignRHS(),typeAST, assignRHS);
+      Utils.typeCompat(ctx.type(), ctx.assignRHS(), typeAST, assignRHS);
     }
 
     symtab.add(varName, typeAST.getIdentifier().getType());
     setIdentifier(typeAST.getIdentifier().getType());
   }
 
-  //  FOR DEBUGGING
+  private boolean verifyPairElemTypeOfRHS(TypeID elemType, TypeID elemRHS) {
+    if (elemType instanceof PairID) {
+      if (!(elemRHS instanceof PairTypes)) {
+        SemanticErrorCollector.addError("First of pair : Expected pair");
+        return false;
+      }
+    } else if (elemType instanceof ArrayID) {
+      if (!Utils.compareArrayTypes(elemType, elemRHS)) {
+        SemanticErrorCollector.addError("First of pair : Expected array");
+        return false;
+      }
+    } else {
+      if (elemType != elemRHS) {
+        SemanticErrorCollector.addError("First of pair : Types mismatch");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // TODO: FOR DEBUGGING.
   public Node getTypeAST() {
     return typeAST;
   }
