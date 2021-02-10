@@ -143,9 +143,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitVar_decl_stat(Var_decl_statContext ctx) {
     AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
     Node typeAST = visit(ctx.type());
-    VarDecAST varDec =
-        new VarDecAST(currSymTab, typeAST,
-            ctx, assignRHS);
+    String varName = ctx.IDENT().getText();
+    VarDecAST varDec = new VarDecAST(currSymTab, typeAST, varName, assignRHS, ctx);
     varDec.check();
     return varDec;
   }
@@ -238,7 +237,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitAssignLHS(AssignLHSContext ctx) {
     if (ctx.IDENT() != null) {
       String assignName = ctx.IDENT().getText();
-      AssignLHSAST identLHS = new AssignLHSAST(currSymTab,assignName);
+      AssignLHSAST identLHS = new AssignLHSAST(currSymTab, assignName);
       identLHS.check();
       return identLHS;
     } else if (ctx.pairElem() != null) {
@@ -367,7 +366,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     }
   }
 
-  int[][] x = {{1, 2}, {1,2,3}};
+  int[][] x = {{1, 2}, {1, 2, 3}};
 
   @Override
   public Node visitPairType(PairTypeContext ctx) {
