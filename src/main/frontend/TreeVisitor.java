@@ -610,8 +610,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       Node exprAST = visit(expr);
       children.add(exprAST);
     }
-
-    ArrayID arrayID = new ArrayID(children.get(0).getIdentifier().getType());
+    ArrayID arrayID;
+    if (children.isEmpty()) {
+      arrayID = new ArrayID(null);
+    } else {
+      arrayID = new ArrayID(children.get(0).getIdentifier().getType());
+    }
 
     ArrayLiterAST arrayLiterAST = new ArrayLiterAST(arrayID, currSymTab, children);
     arrayLiterAST.check();

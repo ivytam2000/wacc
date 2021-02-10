@@ -64,6 +64,9 @@ public class Utils {
       if (eLType instanceof PairID && eRType instanceof PairID) {
         return comparePairTypes(eLType, eRType);
       } else {
+        if (eRType == null) {
+          return true;
+        }
         return (eLType == eRType);
       }
     }
