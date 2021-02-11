@@ -38,7 +38,7 @@ public class VarDecAST extends Node {
       Identifier typeID = symtab.lookupAll(typeName);
       Identifier variable = symtab.lookup(varName);
 
-      if (typeID == null || !(typeID instanceof TypeID)) {
+      if (!(typeID instanceof TypeID)) {
         // Check if the identifier returned has a known type
         SemanticErrorCollector.addUnknownType(typeName, ctx.getStart().getLine(),
             ctx.getStart().getCharPositionInLine());
@@ -91,7 +91,7 @@ public class VarDecAST extends Node {
   }
 
   private void verifyPairElemTypeOfRHS(TypeID elemType, TypeID elemRHS) {
-    if (elemType instanceof PairID) {
+    if (elemType instanceof OptionalPairID) {
       if (!(elemRHS instanceof OptionalPairID)) {
         SemanticErrorCollector.addError("First of pair : Expected pair");
       }

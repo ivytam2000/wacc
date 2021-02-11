@@ -15,12 +15,23 @@ public class PairID extends OptionalPairID {
 
   public PairID() {
     super("pair");
+    this.fst = new NullID();
+    this.snd = new NullID();
   }
 
   public PairID(TypeID fst, TypeID snd) {
     super("pair");
-    this.fst = fst;
-    this.snd = snd;
+    if (fst == null) {
+      this.fst = new NullID();
+    } else {
+      this.fst = fst;
+    }
+
+    if (snd == null) {
+      this.snd = new NullID();
+    } else {
+      this.snd = snd;
+    }
   }
 
   @Override
@@ -30,7 +41,7 @@ public class PairID extends OptionalPairID {
 
   @Override
   public String getTypeName() {
-    if (fst != null && snd != null) {
+    if (!(fst instanceof NullID) && !(snd instanceof NullID)) {
       return String.format("pair(%s,%s)", fst.getTypeName(),
           snd.getTypeName());
     }

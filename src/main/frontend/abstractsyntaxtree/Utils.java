@@ -13,6 +13,7 @@ import frontend.symboltable.OptionalPairID;
 import frontend.symboltable.TypeID;
 import java.util.List;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.misc.Pair;
 
 public class Utils {
 
@@ -45,6 +46,15 @@ public class Utils {
     assert (t1 != null);
     assert (t2 != null);
 
+    if (t1 instanceof NullID) {
+      if (!(t2 instanceof OptionalPairID)) {
+        SemanticErrorCollector.addIncompatibleType(
+            t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
+        return false;
+      }
+      return true;
+    }
+
     if (t1 instanceof PairID) {
       if (t2 instanceof OptionalPairID) {
         if (comparePairTypes(t1, t2)) {
@@ -68,7 +78,7 @@ public class Utils {
         TypeID t1AsArrayElemType = ((ArrayID) t1).getElemType().getType();
         if (t1AsArrayElemType != t2.getType()) {
           SemanticErrorCollector.addIncompatibleType(
-              t1AsArrayElemType.getTypeName(), n2Token, t2.getTypeName(), n2Line, n2Pos);
+              t1AsArrayElemType.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
           return false;
         }
         return true;
@@ -88,8 +98,26 @@ public class Utils {
       return true;
     }
     if (eLType instanceof PairID && eRType instanceof PairID) {
-      return comparePairTypes(((PairID) eLType).getFstType(), ((PairID) eRType).getFstType())
-          && comparePairTypes(((PairID) eLType).getSndType(), ((PairID) eRType).getSndType());
+      TypeID fstLType = ((PairID) eLType).getFstType();
+      TypeID sndLType = ((PairID) eLType).getSndType();
+      TypeID fstRType = ((PairID) eRType).getFstType();
+      TypeID sndRType = ((PairID) eRType).getSndType();
+
+      if (!(fstLType instanceof NullID) && !(sndLType instanceof NullID) && !(fstRType instanceof NullID) && !(sndRType instanceof NullID)) {
+        return (fstLType.getClass() == fstRType.getClass())
+            && (sndLType.getClass() == sndRType.getClass());
+      }
+
+      if (!(fstLType instanceof NullID) && !(fstRType instanceof NullID)) {
+        return (fstLType.getClass() == fstRType.getClass());
+      }
+
+      if (!(sndRType instanceof NullID) && !(sndLType instanceof NullID)) {
+        return (sndLType.getClass() == sndRType.getClass());
+      }
+
+      return true;
+
     } else {
       if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
         return compareArrayTypes(eLType, eRType);
@@ -106,7 +134,7 @@ public class Utils {
       if (eLType instanceof PairID && eRType instanceof PairID) {
         return comparePairTypes(eLType, eRType);
       } else {
-        if (eRType == null) {
+        if (eRType instanceof NullID) {
           return true;
         }
         return (eLType == eRType);
