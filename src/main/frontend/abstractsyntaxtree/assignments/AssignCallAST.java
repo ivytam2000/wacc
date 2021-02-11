@@ -49,6 +49,7 @@ public class AssignCallAST extends AssignRHSAST {
             Node currArg = argsAST.get(i);
             String paramType = currParam.getTypeName();
             String argType = currArg.getIdentifier().getType().getTypeName();
+
             if (!paramType.equals(argType)) {
               String errorMsg = String.format(
                   "line %d:%d -- Function %s argument %d expected type: %s but got actual type: %s",

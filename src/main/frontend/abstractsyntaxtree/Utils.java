@@ -16,8 +16,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class Utils {
 
-  public static boolean typeCompat(ParserRuleContext n1Ctx,
-      ParserRuleContext n2Ctx, Node n1, Node n2) {
+  public static boolean typeCompat(
+      ParserRuleContext n1Ctx, ParserRuleContext n2Ctx, Node n1, Node n2) {
     assert (n1 != null);
     assert (n2 != null);
     int n1Line = n1Ctx.getStart().getLine();
@@ -51,8 +51,8 @@ public class Utils {
           return true;
         }
       }
-      SemanticErrorCollector
-          .addIncompatibleType(t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
+      SemanticErrorCollector.addIncompatibleType(
+          t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
       return false;
     }
 
@@ -61,15 +61,14 @@ public class Utils {
         if (compareArrayTypes(t1, t2)) {
           return true;
         }
-        SemanticErrorCollector
-            .addIncompatibleType(t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
+        SemanticErrorCollector.addIncompatibleType(
+            t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
         return false;
       } else {
         TypeID t1AsArrayElemType = ((ArrayID) t1).getElemType().getType();
         if (t1AsArrayElemType != t2.getType()) {
-          SemanticErrorCollector
-              .addIncompatibleType(t1AsArrayElemType.getTypeName(), n2Token, t2.getTypeName(),
-                  n2Line, n2Pos);
+          SemanticErrorCollector.addIncompatibleType(
+              t1AsArrayElemType.getTypeName(), n2Token, t2.getTypeName(), n2Line, n2Pos);
           return false;
         }
         return true;
@@ -77,8 +76,8 @@ public class Utils {
     }
 
     if (!(t1.getTypeName().equals((t2.getTypeName())))) {
-      SemanticErrorCollector
-          .addIncompatibleType(t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
+      SemanticErrorCollector.addIncompatibleType(
+          t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
       return false;
     }
     return true;
@@ -89,10 +88,8 @@ public class Utils {
       return true;
     }
     if (eLType instanceof PairID && eRType instanceof PairID) {
-      return comparePairTypes(((PairID) eLType).getFstType(),
-          ((PairID) eRType).getFstType())
-          && comparePairTypes(((PairID) eLType).getSndType(),
-          ((PairID) eRType).getSndType());
+      return comparePairTypes(((PairID) eLType).getFstType(), ((PairID) eRType).getFstType())
+          && comparePairTypes(((PairID) eLType).getSndType(), ((PairID) eRType).getSndType());
     } else {
       if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
         return compareArrayTypes(eLType, eRType);
@@ -104,8 +101,7 @@ public class Utils {
 
   public static boolean compareArrayTypes(TypeID eLType, TypeID eRType) {
     if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-      return compareArrayTypes(((ArrayID) eLType).getElemType(),
-          ((ArrayID) eRType).getElemType());
+      return compareArrayTypes(((ArrayID) eLType).getElemType(), ((ArrayID) eRType).getElemType());
     } else {
       if (eLType instanceof PairID && eRType instanceof PairID) {
         return comparePairTypes(eLType, eRType);
@@ -136,8 +132,7 @@ public class Utils {
         // Type of an if-statement should be same regardless which statement
         return thenID;
       } else {
-        SemanticErrorCollector
-            .addError("Return types of if-statement do not match up");
+        SemanticErrorCollector.addError("Return types of if-statement do not match up");
         return null;
       }
     } else if (statements instanceof WhileAST) {
