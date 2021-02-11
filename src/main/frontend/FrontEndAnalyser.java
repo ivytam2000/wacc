@@ -57,7 +57,9 @@ public class FrontEndAnalyser {
 
     // Print a LISP-style parse tree
     System.out.println("--- Parsing finished... ---");
-    System.out.println(tree.toStringTree(parser));
+
+    //For debugging
+    //System.out.println(tree.toStringTree(parser));
 
     return 0;
   }

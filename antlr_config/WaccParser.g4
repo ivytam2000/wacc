@@ -89,7 +89,8 @@ expr:
           if (((IntLiterContext) this._ctx).MINUS() != null &&
             -temp < Integer.MIN_VALUE) {
             syntaxErr.intError(this._ctx.start.getLine(), false);
-          } else if (temp > Integer.MAX_VALUE) {
+          } else if (((IntLiterContext) this._ctx).MINUS() == null &&
+            temp > Integer.MAX_VALUE) {
             syntaxErr.intError(this._ctx.start.getLine(), true);
           }
          })                                                           #intLiter
