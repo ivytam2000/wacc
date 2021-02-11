@@ -614,7 +614,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     }
     ArrayID arrayID;
     if (children.isEmpty()) {
-      arrayID = new ArrayID(null);
+      arrayID = new ArrayID(new EmptyID());
     } else {
       arrayID = new ArrayID(children.get(0).getIdentifier().getType());
     }

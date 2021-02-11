@@ -48,7 +48,7 @@ public class BinOpExprAST extends Node {
       TypeID eLType = eL.getIdentifier().getType();
       TypeID eRType = eR.getIdentifier().getType();
       if (eLType instanceof PairID && eRType instanceof OptionalPairID) {
-        error = !Utils.comparePairTypes(eLType, eRType);
+        error = !Utils.comparePairTypes((PairID) eLType, (OptionalPairID) eRType);
       } else if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
         error = !Utils.compareArrayTypes(eLType, eRType);
       } else {

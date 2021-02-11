@@ -5,7 +5,6 @@ import frontend.symboltable.SymbolTable;
 
 public class ArrayTypeAST extends Node {
 
-  private Identifier identifier;
   private SymbolTable symtab;
   private int dimensions;
 

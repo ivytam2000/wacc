@@ -34,41 +34,28 @@ public class FuncAST extends Node {
 
     ((FuncID) identifier).setSymtab(symtab);
 
-    TypeID returnType = Utils.inferFinalReturnType(statements);
+    //Return type of body
+    TypeID bodyReturnType = Utils
+        .inferFinalReturnType(statements, ctx.getStart().getLine());
+    //Declared return type
     TypeID funcReturnType = identifier.getType();
 
-    if (funcReturnType != null) {
-      if(funcReturnType instanceof PairID){
-        if(returnType instanceof OptionalPairID){
-          boolean isEqual = Utils.comparePairTypes(funcReturnType, returnType);
-          if(!isEqual){
-            System.out.println(((PairID) funcReturnType).getSndType());
-            System.out.println(((PairID) returnType).getSndType());
-            SemanticErrorCollector.addError("HELLO");
-          }
-        }else{
-          SemanticErrorCollector.addError("BYE");
-        }
-      }else{
-        if(returnType == null){
-          SemanticErrorCollector.addError("Got null return type");
-        } else {
-          //TODO: USE TYPE COMPAT
-          if (!(funcReturnType.getType() == returnType.getType() || returnType instanceof ExitID)) {
-            SemanticErrorCollector.addError("Incompatible types");
-          }
-        }
-      }
+    //Body can just exit and match any return type
+    if (!(bodyReturnType instanceof ExitID ||
+        Utils.typeCompat(funcReturnType, bodyReturnType))) {
+      SemanticErrorCollector.addIncompatibleType(funcReturnType.getTypeName(),
+          bodyReturnType.getTypeName(), funcName, ctx.getStart().getLine(),
+          ctx.getStart().getCharPositionInLine());
     }
-
   }
 
   public void checkFunctionNameAndReturnType() {
     Identifier f = symtab.lookupAll(funcName);
 
     if (f != null) {
-      SemanticErrorCollector.addSymbolAlreadyDefined(funcName, ctx.getStart().getLine(),
-          ctx.getStart().getCharPositionInLine());
+      SemanticErrorCollector
+          .addSymbolAlreadyDefined(funcName, ctx.getStart().getLine(),
+              ctx.getStart().getCharPositionInLine());
       return;
     }
 

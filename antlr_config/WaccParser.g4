@@ -86,10 +86,11 @@ expr:
 (PLUS | MINUS)?
 (INTEGER {
           long temp = Long.valueOf($INTEGER.text);
-          if (temp > Integer.MAX_VALUE) {
-            syntaxErr.intError(this._ctx.start.getLine(), true);
-          } else if (temp < Integer.MIN_VALUE) {
+          if (((IntLiterContext) this._ctx).MINUS() != null &&
+            -temp < Integer.MIN_VALUE) {
             syntaxErr.intError(this._ctx.start.getLine(), false);
+          } else if (temp > Integer.MAX_VALUE) {
+            syntaxErr.intError(this._ctx.start.getLine(), true);
           }
          })                                                           #intLiter
 | (TRUE | FALSE)                                                      #boolLiter

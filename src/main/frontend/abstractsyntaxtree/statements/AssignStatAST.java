@@ -35,13 +35,23 @@ public class AssignStatAST extends Node {
     Identifier var;
     var = symtab.lookupAll(varName);
     if (var == null) {
-      SemanticErrorCollector.addVariableUndefined(varName, lhsCtx.getStart().getLine(), lhsCtx.getStart().getCharPositionInLine());
+      SemanticErrorCollector
+          .addVariableUndefined(varName, lhsCtx.getStart().getLine(),
+              lhsCtx.getStart().getCharPositionInLine());
     } else if (var instanceof FuncID) {
-      String errorMsg = String.format("line %d:%d -- Function %s cannot be assigned.",
-          lhsCtx.getStart().getLine(), lhsCtx.getStart().getCharPositionInLine(), varName);
+      String errorMsg = String
+          .format("line %d:%d -- Function %s cannot be assigned.",
+              lhsCtx.getStart().getLine(),
+              lhsCtx.getStart().getCharPositionInLine(), varName);
       SemanticErrorCollector.addError(errorMsg);
-    } else if (Utils.typeCompat(lhsCtx, rhsCtx, lhs, rhs)) {
-      setIdentifier(lhs.getIdentifier().getType());
+    } else if (!Utils.typeCompat(lhs.getIdentifier().getType(),
+        rhs.getIdentifier().getType())) {
+      SemanticErrorCollector
+          .addIncompatibleType(lhs.getIdentifier().getType().getTypeName(),
+              rhs.getIdentifier().getType().getTypeName(), lhs.getIdentName(),
+              lhsCtx.getStart().getLine(),
+              rhsCtx.getStart().getCharPositionInLine());
     }
+//    setIdentifier(lhs.getIdentifier().getType());
   }
 }

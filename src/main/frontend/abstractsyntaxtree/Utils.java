@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.abstractsyntaxtree.statements.BeginStatAST;
 import frontend.abstractsyntaxtree.statements.ExitAST;
 import frontend.abstractsyntaxtree.statements.IfAST;
 import frontend.abstractsyntaxtree.statements.ReturnAST;
@@ -7,6 +8,7 @@ import frontend.abstractsyntaxtree.statements.SequenceAST;
 import frontend.abstractsyntaxtree.statements.WhileAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
+import frontend.symboltable.EmptyID;
 import frontend.symboltable.ExitID;
 import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
@@ -18,163 +20,126 @@ import org.antlr.v4.runtime.misc.Pair;
 
 public class Utils {
 
-  public static boolean typeCompat(
-      ParserRuleContext n1Ctx, ParserRuleContext n2Ctx, Node n1, Node n2) {
-    assert (n1 != null);
-    assert (n2 != null);
-    int n1Line = n1Ctx.getStart().getLine();
-    int n1Pos = n1Ctx.getStart().getCharPositionInLine();
-    String n1Token = n1Ctx.getStart().getText();
-    int n2Line = n2Ctx.getStart().getLine();
-    int n2Pos = n2Ctx.getStart().getCharPositionInLine();
-    String n2Token = n2Ctx.getStart().getText();
-
-    boolean nodeIsNull = false;
-    if (n1.getIdentifier() == null) {
-      SemanticErrorCollector.addUnknownType(n1Token, n1Line, n1Pos);
-      nodeIsNull = true;
-    }
-    if (n2.getIdentifier() == null) {
-      SemanticErrorCollector.addUnknownType(n2Token, n2Line, n2Pos);
-      nodeIsNull = true;
-    }
-    if (nodeIsNull) {
-      return false;
-    }
-
-    TypeID t1 = n1.getIdentifier().getType();
-    TypeID t2 = n2.getIdentifier().getType();
+  public static boolean typeCompat(TypeID t1, TypeID t2) {
     assert (t1 != null);
     assert (t2 != null);
 
+    //For function return type comparison
     if (t1 instanceof NullID) {
-      if (!(t2 instanceof OptionalPairID)) {
-        SemanticErrorCollector.addIncompatibleType(
-            t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
-        return false;
+      return t2 instanceof OptionalPairID;
+    }
+
+    //Check pair types
+    if (t1 instanceof PairID) {
+      if (t2 instanceof OptionalPairID) {
+        return comparePairTypes((PairID) t1, (OptionalPairID) t2);
       }
+      return false;
+    }
+
+    //Check array types
+    if (t1 instanceof ArrayID) {
+      if (t2 instanceof ArrayID) {
+        return compareArrayTypes(t1, t2);
+      }
+      return false;
+    }
+
+    //Check base types
+    return t1.getType() == t2.getType();
+  }
+
+  public static boolean comparePairTypes(PairID eLType, OptionalPairID eRType) {
+    //Assigning null to pair
+    if (eRType instanceof NullID) {
       return true;
     }
 
-    if (t1 instanceof PairID) {
-      if (t2 instanceof OptionalPairID) {
-        if (comparePairTypes(t1, t2)) {
-          return true;
-        }
-      }
-      SemanticErrorCollector.addIncompatibleType(
-          t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
-      return false;
+    //Types of LHS pair
+    TypeID fstLType = eLType.getFstType();
+    TypeID sndLType = eLType.getSndType();
+
+    //Types of RHS pair
+    TypeID fstRType = ((PairID) eRType).getFstType();
+    TypeID sndRType = ((PairID) eRType).getSndType();
+
+    //Do shallow comparison between types within pairs
+
+    //Both pairs does not contain nulls
+    if (!(fstLType instanceof NullID) && !(sndLType instanceof NullID)
+        && !(fstRType instanceof NullID) && !(sndRType instanceof NullID)) {
+      return (fstLType.getClass() == fstRType.getClass())
+          && (sndLType.getClass() == sndRType.getClass());
     }
 
-    if (t1 instanceof ArrayID) {
-      if (t2 instanceof ArrayID) {
-        if (compareArrayTypes(t1, t2)) {
-          return true;
-        }
-        SemanticErrorCollector.addIncompatibleType(
-            t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
-        return false;
-      } else {
-        TypeID t1AsArrayElemType = ((ArrayID) t1).getElemType().getType();
-        if (t1AsArrayElemType != t2.getType()) {
-          SemanticErrorCollector.addIncompatibleType(
-              t1AsArrayElemType.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
-          return false;
-        }
-        return true;
-      }
+    //first of each pair is not null
+    if (!(fstLType instanceof NullID) && !(fstRType instanceof NullID)) {
+      return (fstLType.getClass() == fstRType.getClass());
     }
 
-    if (!(t1.getTypeName().equals((t2.getTypeName())))) {
-      SemanticErrorCollector.addIncompatibleType(
-          t1.getTypeName(), t2.getTypeName(), n2Token, n2Line, n2Pos);
-      return false;
+    //second of each pair is not null
+    if (!(sndRType instanceof NullID) && !(sndLType instanceof NullID)) {
+      return (sndLType.getClass() == sndRType.getClass());
     }
+
     return true;
   }
 
-  public static boolean comparePairTypes(TypeID eLType, TypeID eRType) {
-    if (eLType instanceof PairID && eRType instanceof NullID) {
-      return true;
-    }
-    if (eLType instanceof PairID && eRType instanceof PairID) {
-      TypeID fstLType = ((PairID) eLType).getFstType();
-      TypeID sndLType = ((PairID) eLType).getSndType();
-      TypeID fstRType = ((PairID) eRType).getFstType();
-      TypeID sndRType = ((PairID) eRType).getSndType();
-
-      if (!(fstLType instanceof NullID) && !(sndLType instanceof NullID) && !(fstRType instanceof NullID) && !(sndRType instanceof NullID)) {
-        return (fstLType.getClass() == fstRType.getClass())
-            && (sndLType.getClass() == sndRType.getClass());
-      }
-
-      if (!(fstLType instanceof NullID) && !(fstRType instanceof NullID)) {
-        return (fstLType.getClass() == fstRType.getClass());
-      }
-
-      if (!(sndRType instanceof NullID) && !(sndLType instanceof NullID)) {
-        return (sndLType.getClass() == sndRType.getClass());
-      }
-
-      return true;
-
-    } else {
-      if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-        return compareArrayTypes(eLType, eRType);
-      } else {
-        return (eLType == eRType);
-      }
-    }
-  }
-
   public static boolean compareArrayTypes(TypeID eLType, TypeID eRType) {
-    if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-      return compareArrayTypes(((ArrayID) eLType).getElemType(), ((ArrayID) eRType).getElemType());
-    } else {
-      if (eLType instanceof OptionalPairID && eRType instanceof OptionalPairID) {
-        return comparePairTypes(eLType, eRType);
-      } else {
-        if (eRType == null) {
-          return true;
-        }
-        return (eLType == eRType);
-      }
+    //Can always assign empty to any array
+    if (eRType instanceof EmptyID) {
+      return true;
     }
+
+    //Recurse to find underlying type
+    if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
+      return compareArrayTypes(((ArrayID) eLType).getElemType(),
+          ((ArrayID) eRType).getElemType());
+    }
+
+    //Call comparePairTypes is underlying type is pair
+    if (eLType instanceof PairID
+        && eRType instanceof OptionalPairID) {
+      return comparePairTypes((PairID) eLType, (OptionalPairID) eRType);
+    }
+
+    //Check base types
+    return typeCompat(eLType, eRType);
   }
 
-  public static TypeID inferFinalReturnType(Node statements) {
+  public static TypeID inferFinalReturnType(Node statements, int line) {
     if (statements instanceof ReturnAST) {
+      //Base case
       return ((ReturnAST) statements).getExpr().getIdentifier().getType();
     } else if (statements instanceof ExitAST) {
+      //Base case
       return statements.getIdentifier().getType();
     } else if (statements instanceof SequenceAST) {
       // Assume the final type of a sequence is found in the last statement
       List<Node> statsList = ((SequenceAST) statements).getStatements();
-      return inferFinalReturnType(statsList.get(1));
+      return inferFinalReturnType(statsList.get(1), line);
     } else if (statements instanceof IfAST) {
+      //Need to check both branch of execution for IfAST
       Node thenStat = ((IfAST) statements).getThenStat();
       Node elseStat = ((IfAST) statements).getElseStat();
-      TypeID thenID = inferFinalReturnType(thenStat);
-      TypeID elseID = inferFinalReturnType(elseStat);
-      //TODO: USE TYPE COMPAT
-      if (thenID == elseID || thenID instanceof OptionalPairID && elseID instanceof OptionalPairID || thenID instanceof ExitID || elseID instanceof ExitID) {
-        // Type of an if-statement should be same regardless which statement
-        if (thenID instanceof ExitID) {
-          return elseID;
-        } else {
-          return thenID;
-        }
-      } else {
-        SemanticErrorCollector.addError("Return types of if-statement do not match up");
-        return (thenID == null ? elseID : thenID);
+      TypeID thenID = inferFinalReturnType(thenStat, line);
+      TypeID elseID = inferFinalReturnType(elseStat, line);
+      if (!(thenID instanceof ExitID || elseID instanceof ExitID ||
+          typeCompat(thenID, elseID))) {
+        // Type of an if-statement should be same regardless which statements
+        SemanticErrorCollector
+            .addError(
+                line + " -- Return types of if-statement do not match up");
       }
+      return thenID instanceof ExitID ? elseID : thenID;
     } else if (statements instanceof WhileAST) {
       // Assume the final type of a while-block is found within the block
-      return inferFinalReturnType(((WhileAST) statements).getStat());
-    } else {
-      SemanticErrorCollector.addError("Missing return statement");
-      return null;
+      return inferFinalReturnType(((WhileAST) statements).getStat(), line);
+    } else if (statements instanceof BeginStatAST) {
+      return inferFinalReturnType(((BeginStatAST) statements).getStat(), line);
     }
+
+    //UNREACHABLE (Parser makes sure that there is always return/exit)
+    return null;
   }
 }

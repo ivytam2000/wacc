@@ -45,8 +45,9 @@ public class VarDecAST extends Node {
       } else if (variable != null && !(variable instanceof FuncID)) {
         SemanticErrorCollector.addSymbolAlreadyDefined(varName, ctx.getStart().getLine(),
             ctx.getStart().getCharPositionInLine());
+      } else if (!Utils.typeCompat(typeAST.getIdentifier().getType(), assignRHS.getIdentifier().getType())) {
+        SemanticErrorCollector.addIncompatibleType(typeName, assignRHS.getIdentifier().getType().getTypeName(), varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
       }
-      Utils.typeCompat(ctx.type(), ctx.assignRHS(), typeAST, assignRHS);
     }
 
     symtab.add(varName, typeAST.getIdentifier().getType());

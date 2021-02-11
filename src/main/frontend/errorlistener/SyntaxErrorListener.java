@@ -64,6 +64,7 @@ public class SyntaxErrorListener extends BaseErrorListener {
   private static final int BEGIN_STAT_RETURN_POSITION = 2;
 
   private boolean correctReturn(ParseTree ctx) {
+    //base case
     if (ctx instanceof Return_statContext || ctx instanceof Exit_statContext) {
       return true;
 
