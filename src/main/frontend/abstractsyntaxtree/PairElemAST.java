@@ -64,7 +64,12 @@ public class PairElemAST extends Node {
               : ((PairID) childIdentifier);
       Identifier childIDPairElem = first ? childIDAsPair.getFstType()
           : childIDAsPair.getSndType();
-      setIdentifier(childIDPairElem);
+
+      if (childIDPairElem == null) {
+        setIdentifier(new NullID());
+      } else {
+        setIdentifier(childIDPairElem);
+      }
     }
   }
 

@@ -38,6 +38,9 @@ public class SymbolTable {
     while (temp != null) {
       node = temp.lookup(name);
       if (node != null) {
+        if (node instanceof ParamID) {
+          return node.getType();
+        }
         return node;
       }
       temp = temp.parent;

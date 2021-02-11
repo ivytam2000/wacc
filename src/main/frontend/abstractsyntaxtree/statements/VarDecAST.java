@@ -90,24 +90,20 @@ public class VarDecAST extends Node {
     }
   }
 
-  private boolean verifyPairElemTypeOfRHS(TypeID elemType, TypeID elemRHS) {
+  private void verifyPairElemTypeOfRHS(TypeID elemType, TypeID elemRHS) {
     if (elemType instanceof PairID) {
       if (!(elemRHS instanceof OptionalPairID)) {
         SemanticErrorCollector.addError("First of pair : Expected pair");
-        return false;
       }
     } else if (elemType instanceof ArrayID) {
       if (!Utils.compareArrayTypes(elemType, elemRHS)) {
         SemanticErrorCollector.addError("First of pair : Expected array");
-        return false;
       }
     } else {
       if (elemType != elemRHS) {
         SemanticErrorCollector.addError("First of pair : Types mismatch");
-        return false;
       }
     }
-    return true;
   }
 
   // TODO: FOR DEBUGGING.
