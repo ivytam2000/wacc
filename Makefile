@@ -1,45 +1,25 @@
-# Sample Makefile for the WACC Compiler lab: edit this to build your own comiler
-# Locations
+# Makefile for the WACC Compiler lab
 
+# Locations
 ANTLR_DIR	:= antlr_config
-SOURCE_DIR	:= src
-OUTPUT_DIR	:= bin
+SOURCE_DIR := src
 
 # Tools
-
 ANTLR	:= antlrBuild
-FIND	:= find
 RM	:= rm -rf
-MKDIR	:= mkdir -p
-JAVA	:= java
-JAVAC	:= javac
-
-JFLAGS	:= -sourcepath $(SOURCE_DIR) -d $(OUTPUT_DIR) -cp lib/antlr-4.9.1-complete.jar 
 
 # the make rules
-
-# all: rules
 all:
 	cd $(ANTLR_DIR) && ./$(ANTLR)
-	gradle compileJava
-
-# runs the antlr build script then attempts to compile all .java files within src
-rules:
-	cd $(ANTLR_DIR) && ./$(ANTLR) 
-	$(FIND) $(SOURCE_DIR) -name '*.java' > $@
-	$(MKDIR) $(OUTPUT_DIR)
-	$(JAVAC) $(JFLAGS) @$@
-	$(RM) rules
+	./gradlew compileJava
 
 test: all
-	gradle test
+	[ -z "$(TESTCLASS)" ] && ./gradlew test || ./gradlew test --tests $(TESTCLASS)
 
-# clean:
-# 	$(RM) rules $(OUTPUT_DIR) $(SOURCE_DIR)/doc/y2/antlr
 clean:
 	$(RM) $(SOURCE_DIR)/main/antlr
 	gradle clean
 
-.PHONY: all rules clean
+.PHONY: all test clean
 
 

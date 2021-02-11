@@ -1,20 +1,31 @@
-stages:
-  - build
-  - test
-
-before_script:
-  - apt-get update && apt-get install -y make
+default:
+  image: gradle:6.8.1-jdk11
+  before_script:
+    - apt-get update && apt-get install -y make
 
 build job:
   stage: build
-  image: gradle:6.8.1-jdk11
   script:
-    - make clean && make
+    - make
 
-test job:
+invalid syntax test job:
   stage: test
-  image: gradle:6.8.1-jdk11
   script:
-    - make clean && make test
+    - make test TESTCLASS="frontend.InvalidSyntaxTests"
+  only:
+    - master
+
+invalid semantics test job:
+  stage: test
+  script:
+    - make test TESTCLASS="frontend.InvalidSemanticTests"
+  only:
+    - master
+
+valid test job:
+  stage: test
+  script:
+    - make test TESTCLASS="frontend.TypeSemanticsTests"
+    - make test TESTCLASS="frontend.ValidTests"
   only:
     - master
