@@ -12,7 +12,6 @@ public class ValidTests {
 
   String validFolderPath = "src/test/examples/valid/";
 
-  @Ignore
   @Test
   public void validAdvancedTests() throws IOException {
     exitsWith(validFolderPath + "advanced/", 0);

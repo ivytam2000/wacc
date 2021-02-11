@@ -39,12 +39,8 @@ public class FuncAST extends Node {
 
     if (funcReturnType != null) {
       if(funcReturnType instanceof PairID){
-        if(returnType instanceof PairID){
-          boolean isEqual =
-              ((PairID) funcReturnType).getFstType().getClass() ==
-                  ((PairID) returnType).getFstType().getClass();
-          isEqual =
-              isEqual && (((PairID) funcReturnType).getSndType().getClass() == ((PairID) returnType).getSndType().getClass());
+        if(returnType instanceof OptionalPairID){
+          boolean isEqual = Utils.comparePairTypes(funcReturnType, returnType);
           if(!isEqual){
             System.out.println(((PairID) funcReturnType).getSndType());
             System.out.println(((PairID) returnType).getSndType());
@@ -57,7 +53,8 @@ public class FuncAST extends Node {
         if(returnType == null){
           SemanticErrorCollector.addError("Got null return type");
         } else {
-          if (!(funcReturnType.getTypeName().equals(returnType.getTypeName()))){
+          //TODO: USE TYPE COMPAT
+          if (!(funcReturnType.getType() == returnType.getType() || returnType instanceof ExitID)) {
             SemanticErrorCollector.addError("Incompatible types");
           }
         }

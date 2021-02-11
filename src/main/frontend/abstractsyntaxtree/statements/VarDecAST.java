@@ -63,13 +63,6 @@ public class VarDecAST extends Node {
 
       verifyPairElemTypeOfRHS(fstType, assignRHSAsPair.getFstType());
       verifyPairElemTypeOfRHS(sndType, assignRHSAsPair.getSndType());
-
-      // Infer the exact pair type of LHS from RHS
-      TypeID assignRHSFstType = assignRHSAsPair.getFstType();
-      TypeID assignRHSSndType = assignRHSAsPair.getSndType();
-      PairID lhsType = new PairID(assignRHSFstType, assignRHSSndType);
-      // Replace identifier of LHS with exact pair type
-      typeAST.setIdentifier(lhsType);
     } else if (!(assignType instanceof NullID)) {
       SemanticErrorCollector.addIncompatibleType("pair", assignType.getTypeName(),
           varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
@@ -100,8 +93,11 @@ public class VarDecAST extends Node {
         SemanticErrorCollector.addError("First of pair : Expected array");
       }
     } else {
-      if (elemType != elemRHS) {
-        SemanticErrorCollector.addError("First of pair : Types mismatch");
+      //Null rhs can match with any pair
+      if (!(elemRHS instanceof NullID)) {
+        if (elemType != elemRHS) {
+          SemanticErrorCollector.addError("First of pair : Types mismatch");
+        }
       }
     }
   }

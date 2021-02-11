@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.statements;
 import antlr.WaccParser;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
+import frontend.symboltable.ExitID;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
@@ -13,7 +14,7 @@ public class ExitAST extends Node {
   private final Node expr;
 
   public ExitAST(Node expr, WaccParser.Exit_statContext ctx) {
-    super(expr.getIdentifier());
+    super(new ExitID());
     this.ctx = ctx;
     this.expr = expr;
   }

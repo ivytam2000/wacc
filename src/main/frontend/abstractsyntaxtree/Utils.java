@@ -7,6 +7,7 @@ import frontend.abstractsyntaxtree.statements.SequenceAST;
 import frontend.abstractsyntaxtree.statements.WhileAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
+import frontend.symboltable.ExitID;
 import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.OptionalPairID;
@@ -156,12 +157,17 @@ public class Utils {
       Node elseStat = ((IfAST) statements).getElseStat();
       TypeID thenID = inferFinalReturnType(thenStat);
       TypeID elseID = inferFinalReturnType(elseStat);
-      if (thenID == elseID) {
+      //TODO: USE TYPE COMPAT
+      if (thenID == elseID || thenID instanceof OptionalPairID && elseID instanceof OptionalPairID || thenID instanceof ExitID || elseID instanceof ExitID) {
         // Type of an if-statement should be same regardless which statement
-        return thenID;
+        if (thenID instanceof ExitID) {
+          return elseID;
+        } else {
+          return thenID;
+        }
       } else {
         SemanticErrorCollector.addError("Return types of if-statement do not match up");
-        return null;
+        return (thenID == null ? elseID : thenID);
       }
     } else if (statements instanceof WhileAST) {
       // Assume the final type of a while-block is found within the block
