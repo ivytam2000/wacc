@@ -243,11 +243,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     } else if (ctx.pairElem() != null) {
       // LHS is of pair type
       PairElemAST pairElem = (PairElemAST) visitPairElem((ctx.pairElem()));
-      return new AssignLHSAST(currSymTab, pairElem);
+      return new AssignLHSAST(currSymTab, pairElem, pairElem.getName());
     } else {
       // LHS is of array type
       ArrayElemAST arrayElem = (ArrayElemAST) visitArrayElem((ctx.arrayElem()));
-      return new AssignLHSAST(currSymTab, arrayElem.getName());
+      return new AssignLHSAST(currSymTab, arrayElem, arrayElem.getName());
     }
   }
 
