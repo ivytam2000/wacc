@@ -61,5 +61,6 @@ public class SymbolTable {
     symbolTable.add(new BoolID());
     symbolTable.add(new CharID());
     symbolTable.add(new StringID());
+    symbolTable.add(new NullID());
   }
 }

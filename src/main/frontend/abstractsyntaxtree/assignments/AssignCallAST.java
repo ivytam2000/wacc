@@ -6,6 +6,7 @@ import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
+import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import java.util.List;
@@ -47,16 +48,16 @@ public class AssignCallAST extends AssignRHSAST {
           for (int i = 0; i < paramSize; i++) {
             TypeID currParam = params.get(i);
             Node currArg = argsAST.get(i);
-            String paramType = currParam.getTypeName();
-            String argType = currArg.getIdentifier().getType().getTypeName();
-
-            if (!paramType.equals(argType)) {
-              String errorMsg = String.format(
-                  "line %d:%d -- Function %s argument %d expected type: %s but got actual type: %s",
-                  ctx.getStart().getLine(),
-                  ctx.argList().expr(i).getStart().getCharPositionInLine(), funcName, i, paramType,
-                  argType);
-              SemanticErrorCollector.addError(errorMsg);
+            TypeID argType = currArg.getIdentifier().getType();
+            if (!(argType instanceof NullID)) {
+              if (currParam.getClass() != argType.getClass()) {
+                String errorMsg = String.format(
+                    "line %d:%d -- Function %s argument %d expected type: %s but got actual type: %s",
+                    ctx.getStart().getLine(),
+                    ctx.argList().expr(i).getStart().getCharPositionInLine(), funcName, i, currParam.getTypeName(),
+                    argType.getTypeName());
+                SemanticErrorCollector.addError(errorMsg);
+              }
             }
           }
         }
