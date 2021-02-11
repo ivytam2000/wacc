@@ -19,7 +19,8 @@ options {
 program: BEGIN (func)* stat END EOF ;
 
 /** Functions */
-func: type IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat END ;
+func: (type IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat END
+{syntaxErr.returnCheck(this._ctx);}) ;
 
 /** Parameters list */
 paramList: param (COMMA param)* ;

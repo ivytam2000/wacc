@@ -37,9 +37,11 @@ public class FrontEndAnalyser {
     // Begin parsing at rule for program
     ParseTree tree = parser.program();
 
-    //Second case needed because we treat int overflow separately
+    /* Second and third case needed because we treat
+    int overflow and return error separately */
     if (parser.getNumberOfSyntaxErrors() > 0 ||
-        syntaxErrorListener.hasIntError()) {
+        syntaxErrorListener.hasIntError() ||
+        syntaxErrorListener.hasReturnError()) {
       syntaxErrorListener.printErrors();
       return 100;
     }

@@ -39,7 +39,6 @@ public class InvalidSyntaxTests {
     exitsWith(invalidSyntaxFolderPath + "expressions/", 100);
   }
 
-  @Ignore
   /* functionJunkAfterReturn does not exit with 100 because it did not detect
    * that the function did not end with a return or exit statement - semantic
    * checker should detect? */
@@ -68,7 +67,6 @@ public class InvalidSyntaxTests {
     exitsWith(invalidSyntaxFolderPath + "sequence/", 100);
   }
 
-  @Ignore
   /* bigIntAssignment does not exit with 100 because it did not detect the
    * badly formatted integer - semantic checker should detect? */
   @Test
