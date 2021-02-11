@@ -56,8 +56,12 @@ public class TypeSemanticsTests {
     assert (sndTypeLHS instanceof PairID);
 
     //LHS : Check inner pair
-    PairID fstPairLHS = (PairID) fstTypeLHS.getType();
-    PairID sndPairLHS = (PairID) sndTypeLHS.getType();
+//    PairID fstPairLHS = (PairID) fstTypeLHS.getType();
+//    PairID sndPairLHS = (PairID) sndTypeLHS.getType();
+//    assert (fstPairLHS.getFstType() instanceof IntID);
+//    assert (fstPairLHS.getSndType() instanceof BoolID);
+//    assert (sndPairLHS.getFstType() instanceof CharID);
+//    assert (sndPairLHS.getSndType() instanceof StringID);
 
     //RHS : Check outer pair
     TypeID rhsType = varDecAST.getAssignRHS().getIdentifier().getType();
