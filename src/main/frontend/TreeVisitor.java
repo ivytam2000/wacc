@@ -109,7 +109,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitReturn_stat(Return_statContext ctx) {
     Node expr = visit(ctx.expr());
-    Node returnAST = new ReturnAST(currSymTab, expr);
+    Node returnAST = new ReturnAST(currSymTab, expr, ctx);
     returnAST.check();
     return returnAST;
   }
@@ -155,7 +155,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node expr = visit(ctx.expr());
     Node stat = visit(ctx.stat());
 
-    WhileAST whileAST = new WhileAST(expr, stat);
+    WhileAST whileAST = new WhileAST(expr, stat, ctx.expr());
     whileAST.check();
     // Swap back to parent scope
     currSymTab = encScope;
