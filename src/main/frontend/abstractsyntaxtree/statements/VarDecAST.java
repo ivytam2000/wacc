@@ -81,9 +81,9 @@ public class VarDecAST extends Node {
     if (assignType instanceof ArrayID) {
       if (!Utils.compareArrayTypes(typeAST.getIdentifier().getType(), assignType)) {
         String errorMsg = String.format("line %d:%d -- Array doesn't have consistent types, "
-                + "index %d has expected type: %s but got actual type: %s",
+                + "expected type: %s but got actual type: %s",
             ctx.getStart().getLine(),
-            ctx.getStart().getCharPositionInLine(), 0,
+            ctx.getStart().getCharPositionInLine(),
             typeAST.getIdentifier().getType().getTypeName(), assignType.getTypeName());
         SemanticErrorCollector.addError(errorMsg);
       }

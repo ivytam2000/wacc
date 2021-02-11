@@ -131,10 +131,10 @@ public class Utils {
     if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
       return compareArrayTypes(((ArrayID) eLType).getElemType(), ((ArrayID) eRType).getElemType());
     } else {
-      if (eLType instanceof PairID && eRType instanceof PairID) {
+      if (eLType instanceof OptionalPairID && eRType instanceof OptionalPairID) {
         return comparePairTypes(eLType, eRType);
       } else {
-        if (eRType instanceof NullID) {
+        if (eRType == null) {
           return true;
         }
         return (eLType == eRType);
