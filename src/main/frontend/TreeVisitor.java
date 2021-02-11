@@ -204,7 +204,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitRead_stat(Read_statContext ctx) {
     AssignLHSAST assignLHSAST = (AssignLHSAST) visit(ctx.assignLHS());
-    ReadAST readAST = new ReadAST(assignLHSAST);
+    ReadAST readAST = new ReadAST(assignLHSAST, ctx.assignLHS());
     readAST.check();
     return assignLHSAST;
   }

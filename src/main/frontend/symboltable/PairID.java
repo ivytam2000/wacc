@@ -27,4 +27,13 @@ public class PairID extends OptionalPairID {
   public TypeID getType() {
     return this;
   }
+
+  @Override
+  public String getTypeName() {
+    if (fst != null && snd != null) {
+      return String.format("pair(%s,%s)", fst.getTypeName(),
+          snd.getTypeName());
+    }
+    return super.getTypeName();
+  }
 }
