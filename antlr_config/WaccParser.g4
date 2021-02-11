@@ -1,5 +1,17 @@
 parser grammar WaccParser;
 
+@header {
+  import frontend.errorlistener.SyntaxErrorListener;
+}
+
+@parser::members {
+  SyntaxErrorListener syntaxErr;
+  public WaccParser(TokenStream input, SyntaxErrorListener syntaxErr) {
+    this(input);
+    this.syntaxErr = syntaxErr;
+  }
+}
+
 options {
   tokenVocab=WaccLexer;
 }
@@ -69,21 +81,30 @@ pairElemType: baseType
 | PAIR
 ;
 
-expr: (PLUS | MINUS)? INTEGER                  #intLiter
-| (TRUE | FALSE)                               #boolLiter
-| CHAR_LITER                                   #charLiter
-| STR_LITER                                    #strLiter
-| NULL                                         #pairLiter
-| IDENT                                        #identExpr
-| arrayElem                                    #arrElemExpr
-| OPEN_PARENTHESES expr CLOSE_PARENTHESES      #paranExpr
-| unaryOper expr                               #unOpExpr
-| expr arithmeticOper1 expr                    #arithOpExpr_1
-| expr arithmeticOper2 expr                    #arithOpExpr_2
-| expr binaryOper1 expr                        #binOpExpr_1
-| expr binaryOper2 expr                        #binOpExpr_2
-| expr AND expr                                #andExpr
-| expr OR expr                                 #orExpr
+expr:
+(PLUS | MINUS)?
+(INTEGER {
+          long temp = Long.valueOf($INTEGER.text);
+          if (temp > Integer.MAX_VALUE) {
+            syntaxErr.intError(this._ctx.start.getLine(), true);
+          } else if (temp < Integer.MIN_VALUE) {
+            syntaxErr.intError(this._ctx.start.getLine(), false);
+          }
+         })                                                           #intLiter
+| (TRUE | FALSE)                                                      #boolLiter
+| CHAR_LITER                                                          #charLiter
+| STR_LITER                                                           #strLiter
+| NULL                                                                #pairLiter
+| IDENT                                                               #identExpr
+| arrayElem                                                           #arrElemExpr
+| OPEN_PARENTHESES expr CLOSE_PARENTHESES                             #paranExpr
+| unaryOper expr                                                      #unOpExpr
+| expr arithmeticOper1 expr                                           #arithOpExpr_1
+| expr arithmeticOper2 expr                                           #arithOpExpr_2
+| expr binaryOper1 expr                                               #binOpExpr_1
+| expr binaryOper2 expr                                               #binOpExpr_2
+| expr AND expr                                                       #andExpr
+| expr OR expr                                                        #orExpr
 ;
 
 /*
