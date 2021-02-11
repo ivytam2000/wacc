@@ -30,8 +30,8 @@ public class ExitAST extends Node {
     if (!(exprType instanceof IntID)) {
       int line = exprCtx.getStart().getLine();
       int pos = exprCtx.getStart().getCharPositionInLine();
-      SemanticErrorCollector.addIncompatibleType("int",
-          exprType.getTypeName(), exprCtx.getText(), line, pos);
+      SemanticErrorCollector.addIncompatibleType(
+          "int", exprType.getTypeName(), exprCtx.getText(), line, pos);
     }
   }
 }

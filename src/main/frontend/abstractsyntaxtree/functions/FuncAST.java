@@ -16,8 +16,12 @@ public class FuncAST extends Node {
 
   private FuncContext ctx;
 
-  public FuncAST(Identifier identifier, SymbolTable currSymTab, String funcName,
-      ParamListAST params, FuncContext ctx) {
+  public FuncAST(
+      Identifier identifier,
+      SymbolTable currSymTab,
+      String funcName,
+      ParamListAST params,
+      FuncContext ctx) {
     super(identifier);
     this.funcName = funcName;
     this.params = params;
@@ -34,17 +38,18 @@ public class FuncAST extends Node {
 
     ((FuncID) identifier).setSymtab(symtab);
 
-    //Return type of body
-    TypeID bodyReturnType = Utils
-        .inferFinalReturnType(statements, ctx.getStart().getLine());
-    //Declared return type
+    // Return type of body
+    TypeID bodyReturnType = Utils.inferFinalReturnType(statements, ctx.getStart().getLine());
+    // Declared return type
     TypeID funcReturnType = identifier.getType();
 
-    //Body can just exit and match any return type
-    if (!(bodyReturnType instanceof ExitID ||
-        Utils.typeCompat(funcReturnType, bodyReturnType))) {
-      SemanticErrorCollector.addIncompatibleType(funcReturnType.getTypeName(),
-          bodyReturnType.getTypeName(), funcName, ctx.getStart().getLine(),
+    // Body can just exit and match any return type
+    if (!(bodyReturnType instanceof ExitID || Utils.typeCompat(funcReturnType, bodyReturnType))) {
+      SemanticErrorCollector.addIncompatibleType(
+          funcReturnType.getTypeName(),
+          bodyReturnType.getTypeName(),
+          funcName,
+          ctx.getStart().getLine(),
           ctx.getStart().getCharPositionInLine());
     }
   }
@@ -53,9 +58,8 @@ public class FuncAST extends Node {
     Identifier f = symtab.lookupAll(funcName);
 
     if (f != null) {
-      SemanticErrorCollector
-          .addSymbolAlreadyDefined(funcName, ctx.getStart().getLine(),
-              ctx.getStart().getCharPositionInLine());
+      SemanticErrorCollector.addSymbolAlreadyDefined(
+          funcName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
       return;
     }
 

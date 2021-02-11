@@ -35,28 +35,30 @@ public class VarDecAST extends Node {
   public void check() {
     TypeID decType = typeAST.getIdentifier().getType();
     TypeID rhsType = assignRHS.getIdentifier().getType();
-
     String typeName = decType.getTypeName();
-
     int line = ctx.getStart().getLine();
     int pos = ctx.getStart().getCharPositionInLine();
 
-    if (typeAST instanceof PairTypeAST || typeAST instanceof ArrayTypeAST) {
-      if (!Utils.typeCompat(decType, rhsType)) {
-        SemanticErrorCollector.addIncompatibleType(
-            decType.getTypeName(), rhsType.getTypeName(), varName, line, pos);
-      }
-    } else {
+    Identifier variable = symtab.lookup(varName);
 
+    // Check if var is already declared unless it is a function name
+    if (variable != null && !(variable instanceof FuncID)) {
+      SemanticErrorCollector.addSymbolAlreadyDefined(varName, line, pos);
+    }
+
+    boolean checkTypes = true;
+
+    // Check if type is a valid type if its not pair or array type (edge cases)
+    if (!(typeAST instanceof PairTypeAST || typeAST instanceof ArrayTypeAST)) {
       Identifier typeID = symtab.lookupAll(typeName);
-      Identifier variable = symtab.lookup(varName);
-
       if (!(typeID instanceof TypeID)) {
-        // Check if the identifier returned has a known type
+        checkTypes = false;
         SemanticErrorCollector.addUnknownType(typeName, line, pos);
-      } else if (variable != null && !(variable instanceof FuncID)) {
-        SemanticErrorCollector.addSymbolAlreadyDefined(varName, line, pos);
-      } else if (!Utils.typeCompat(decType, rhsType)) {
+      }
+    }
+    // Check if types are compatible
+    if (checkTypes) {
+      if (!Utils.typeCompat(decType, rhsType)) {
         SemanticErrorCollector.addIncompatibleType(
             decType.getTypeName(), rhsType.getTypeName(), varName, line, pos);
       }

@@ -26,7 +26,9 @@ public class FreeAST extends Node {
     if ((!(exprType instanceof PairID)) && (!(exprType instanceof ArrayID))) {
       SemanticErrorCollector.addIncompatibleType(
           "pair(T1, T2) or T[] (for " + "some T, T1, T2)",
-          exprType.getTypeName(), ctx.getText(), ctx.getStart().getLine(),
+          exprType.getTypeName(),
+          ctx.getText(),
+          ctx.getStart().getLine(),
           ctx.getStart().getCharPositionInLine());
     }
   }
