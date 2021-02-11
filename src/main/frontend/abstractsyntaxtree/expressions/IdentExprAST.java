@@ -22,7 +22,6 @@ public class IdentExprAST extends Node {
 
   @Override
   public void check() {
-    //TODO: Check that this is correct after variables are added to symtab
     Identifier identifier = currsymtab.lookupAll(val);
     if (identifier == null) {
       //Unknown variable

@@ -159,7 +159,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     whileAST.check();
     // Swap back to parent scope
     currSymTab = encScope;
-    return visitChildren(ctx);
+    return whileAST;
   }
 
   @Override
