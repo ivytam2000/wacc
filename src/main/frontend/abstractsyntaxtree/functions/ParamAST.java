@@ -9,7 +9,6 @@ import frontend.symboltable.SymbolTable;
 
 public class ParamAST extends Node {
 
-  private final String typeName;
   private final String varName;
   private ParamID paramObj;
   private SymbolTable symtab;
@@ -18,7 +17,6 @@ public class ParamAST extends Node {
   public ParamAST(Identifier identifier, SymbolTable symtab, String varName, ParamContext ctx) {
     super(identifier);
     this.symtab = symtab;
-    this.typeName = identifier.getType().getTypeName();
     this.varName = varName;
     this.ctx = ctx;
   }

@@ -9,7 +9,7 @@ import frontend.symboltable.*;
 public class FuncAST extends Node {
 
   private final String funcName;
-  private final ParamListAST params; //For backend
+  private final ParamListAST params; //For code generation
 
   private SymbolTable globalScope;
   private Node statements;

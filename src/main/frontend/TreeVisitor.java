@@ -312,7 +312,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       }
     }
     // Don't need to check the since creating the exprASTs will call check
-    return new ArgListAST(currSymTab, expressions);
+    return new ArgListAST(expressions);
   }
 
   @Override
