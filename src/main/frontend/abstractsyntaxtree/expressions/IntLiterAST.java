@@ -19,10 +19,6 @@ public class IntLiterAST extends Node {
 
   @Override
   public void check() {
-    //TODO: SHOULD BE SYNTAX ERROR! LOOK AT SECITON 4.4 OF ANTLR REFERENCE
-    long valTemp = Long.parseLong(val);
-    if ((positive && IntID.MAX < valTemp) || IntID.MIN > valTemp) {
-      SemanticErrorCollector.addError("Int assignment overflow!");
-    }
+
   }
 }
