@@ -10,7 +10,5 @@ public class PairLiterAST extends Node {
   }
 
   @Override
-  public void check() {
-
-  }
+  public void check() {}
 }

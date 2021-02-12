@@ -478,7 +478,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public Node visitUnOpExpr(UnOpExprContext ctx) {
     Node exprAST = visit(ctx.expr());
-    Node unOpAST = new UnOpExprAST(currSymTab, ctx.unaryOper(), exprAST);
+    Node unOpAST = new UnOpExprAST(currSymTab, exprAST, ctx.unaryOper());
     unOpAST.check();
     return unOpAST;
   }

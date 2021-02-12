@@ -35,7 +35,7 @@ public class VarDecAST extends Node {
   public void check() {
     TypeID decType = typeAST.getIdentifier().getType();
     TypeID rhsType = assignRHS.getIdentifier().getType();
-    String typeName = decType.getTypeName();
+
     int line = ctx.getStart().getLine();
     int pos = ctx.getStart().getCharPositionInLine();
 
@@ -46,23 +46,12 @@ public class VarDecAST extends Node {
       SemanticErrorCollector.addSymbolAlreadyDefined(varName, line, pos);
     }
 
-    boolean checkTypes = true;
-
-    // Check if type is a valid type if its not pair or array type (edge cases)
-    if (!(typeAST instanceof PairTypeAST || typeAST instanceof ArrayTypeAST)) {
-      Identifier typeID = symtab.lookupAll(typeName);
-      if (!(typeID instanceof TypeID)) {
-        checkTypes = false;
-        SemanticErrorCollector.addUnknownType(typeName, line, pos);
-      }
-    }
     // Check if types are compatible
-    if (checkTypes) {
-      if (!Utils.typeCompat(decType, rhsType)) {
-        SemanticErrorCollector.addIncompatibleType(
-            decType.getTypeName(), rhsType.getTypeName(), varName, line, pos);
-      }
+    if (!Utils.typeCompat(decType, rhsType)) {
+      SemanticErrorCollector.addIncompatibleType(
+          decType.getTypeName(), rhsType.getTypeName(), varName, line, pos);
     }
+
     symtab.add(varName, typeAST.getIdentifier().getType());
     setIdentifier(typeAST.getIdentifier().getType());
   }
