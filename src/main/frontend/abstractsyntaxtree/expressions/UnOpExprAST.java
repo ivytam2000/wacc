@@ -18,7 +18,7 @@ public class UnOpExprAST extends Node {
   private final UnaryOperContext ctx;
   private final Node exprAST;
 
-  public UnOpExprAST(SymbolTable symbtab, UnaryOperContext ctx, Node exprAST) {
+  public UnOpExprAST(SymbolTable symbtab, Node exprAST, UnaryOperContext ctx) {
     super();
     this.symbtab = symbtab;
     this.ctx = ctx;
@@ -57,7 +57,11 @@ public class UnOpExprAST extends Node {
       unOpExprType = symbtab.lookupAll("int");
     }
     if (error) {
-      SemanticErrorCollector.addError("Unary Operator : Incompatible type");
+      SemanticErrorCollector
+          .addIncompatibleType(unOpExprType.getType().getTypeName(),
+              exprType.getTypeName(),
+              ctx.getText(), ctx.getStart().getLine(),
+              ctx.getStart().getCharPositionInLine());
     }
     setIdentifier(unOpExprType);
   }
