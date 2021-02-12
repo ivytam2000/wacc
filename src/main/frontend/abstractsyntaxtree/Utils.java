@@ -113,14 +113,20 @@ public class Utils {
     if (statements instanceof ReturnAST) {
       // Base case
       return ((ReturnAST) statements).getExpr().getIdentifier().getType();
-    } else if (statements instanceof ExitAST) {
+    }
+
+    if (statements instanceof ExitAST) {
       // Base case
       return statements.getIdentifier().getType();
-    } else if (statements instanceof SequenceAST) {
+    }
+
+    if (statements instanceof SequenceAST) {
       // Assume the final type of a sequence is found in the last statement
       List<Node> statsList = ((SequenceAST) statements).getStatements();
       return inferFinalReturnType(statsList.get(1), line);
-    } else if (statements instanceof IfAST) {
+    }
+
+    if (statements instanceof IfAST) {
       // Need to check both branch of execution for IfAST
       Node thenStat = ((IfAST) statements).getThenStat();
       Node elseStat = ((IfAST) statements).getElseStat();
@@ -131,12 +137,17 @@ public class Utils {
         SemanticErrorCollector.addIfReturnTypesError(line);
       }
       return thenID instanceof ExitID ? elseID : thenID;
-    } else if (statements instanceof WhileAST) {
+    }
+
+    if (statements instanceof WhileAST) {
       // Assume the final type of a while-block is found within the block
       return inferFinalReturnType(((WhileAST) statements).getStat(), line);
-    } else if (statements instanceof BeginStatAST) {
+    }
+
+    if (statements instanceof BeginStatAST) {
       return inferFinalReturnType(((BeginStatAST) statements).getStat(), line);
     }
+
     // UNREACHABLE (Parser makes sure that there is always return/exit)
     return null;
   }
