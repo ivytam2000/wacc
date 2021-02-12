@@ -28,44 +28,44 @@ public class AssignCallAST extends AssignRHSAST {
   @Override
   public void check() {
     Identifier funcID = this.symtab.lookupAll(funcName);
+    int line = ctx.getStart().getLine();
+    int identPos = ctx.IDENT().getSymbol().getCharPositionInLine();
 
+    // function not defined yet
     if (funcID == null) {
-      SemanticErrorCollector.addFunctionUndefined(funcName, ctx.getStart().getLine(),
-          ctx.IDENT().getSymbol().getCharPositionInLine());
+      SemanticErrorCollector.addFunctionUndefined(funcName, line, identPos);
     } else {
       if (funcID instanceof FuncID) {
         List<TypeID> params = ((FuncID) funcID).getParams();
         List<Node> argsAST = args.getArguments();
         int paramSize = params.size();
         int argsSize = argsAST.size();
+
+        // if given number of arguments are not the same as the number of params
         if (paramSize != argsSize) {
-          String errorMsg = String
-              .format("line %d:%d -- Function %s expected %d arguments but got %d arguments",
-                  ctx.getStart().getLine(), ctx.argList().getStart().getCharPositionInLine(),
+          SemanticErrorCollector
+              .addFuncInconsistentArgsError(line, ctx.argList().getStart().getCharPositionInLine(),
                   funcName, paramSize, argsSize);
-          SemanticErrorCollector.addError(errorMsg);
         } else {
           for (int i = 0; i < paramSize; i++) {
             TypeID currParam = params.get(i);
             Node currArg = argsAST.get(i);
             TypeID argType = currArg.getIdentifier().getType();
             if (!(argType instanceof NullID)) {
+
+              // if argument and param types don't match
               if (currParam.getClass() != argType.getClass()) {
-                String errorMsg = String.format(
-                    "line %d:%d -- Function %s argument %d expected type: %s but got actual type: %s",
-                    ctx.getStart().getLine(),
-                    ctx.argList().expr(i).getStart().getCharPositionInLine(), funcName, i, currParam.getTypeName(),
-                    argType.getTypeName());
-                SemanticErrorCollector.addError(errorMsg);
+                SemanticErrorCollector.addFuncInconsistentArgTypeError(line,
+                    ctx.argList().expr(i).getStart().getCharPositionInLine(), funcName, i,
+                    currParam.getTypeName(), argType.getTypeName());
               }
             }
           }
         }
       } else {
-        String errorMsg = String.format("line %d:%d -- %s is not a function, it is a %s",
-            ctx.getStart().getLine(), ctx.IDENT().getSymbol().getCharPositionInLine(), funcName,
-            funcID.getType().getTypeName());
-        SemanticErrorCollector.addError(errorMsg);
+
+        // given function name is not actually a function type
+        SemanticErrorCollector.addIsNotFuncError(line, identPos, funcName, funcID.getType().getTypeName());
       }
     }
 

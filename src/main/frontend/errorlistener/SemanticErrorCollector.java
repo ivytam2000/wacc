@@ -63,6 +63,26 @@ public class SemanticErrorCollector {
     SemanticErrorCollector.addError(errorMsg);
   }
 
+  public static void addFuncInconsistentArgsError(int line, int pos, String funcName, int paramSize, int argsSize) {
+    String errorMsg = String
+        .format("line %d:%d -- Function %s expected %d arguments but got %d arguments",
+            line, pos, funcName, paramSize, argsSize);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
+  public static void addFuncInconsistentArgTypeError(int line, int pos, String funcName, int index, String paramType, String argType) {
+    String errorMsg = String.format(
+        "line %d:%d -- Function %s argument %d expected type: %s but got actual type: %s",
+        line, pos, funcName, index, paramType, argType);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
+  public static void addIsNotFuncError(int line, int pos, String funcName, String gotType) {
+    String errorMsg = String.format("line %d:%d -- %s is not a function, it is a %s",
+        line, pos, funcName, gotType);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
   public static void addGlobalReturnError(int line, int pos) {
     String errMsg =
         String.format("line %d:%d -- Cannot return from the " + "global scope", line, pos);
