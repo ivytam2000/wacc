@@ -603,14 +603,20 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     //Check that the IDENT is an array. If not, no point moving forward.
     Identifier identifier = currSymTab.lookupAll(arrayName);
     if (!(identifier instanceof ArrayID)) {
-      SemanticErrorCollector.addError(arrayName + " is not an array");
+      SemanticErrorCollector
+          .addCannotBeIndexed(ctx.getStart().getLine(),
+              ctx.getStart().getCharPositionInLine(), arrayName);
     }
     List<Node> indexes = new ArrayList<>();
     List<ExprContext> expressions = ctx.expr();
     for (ExprContext e : expressions) {
       Node exprAST = visit(e);
-      if (!(exprAST.getIdentifier().getType() instanceof IntID)) {
-        SemanticErrorCollector.addError("Array index not of type int");
+      TypeID exprType = exprAST.getIdentifier().getType();
+      if (!(exprType instanceof IntID)) {
+        SemanticErrorCollector
+            .addIncompatibleType("int", exprType.getTypeName(),
+                e.getText(), ctx.getStart().getLine(),
+                ctx.getStart().getCharPositionInLine());
       } else {
         indexes.add(exprAST);
       }
