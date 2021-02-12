@@ -80,7 +80,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   // verifies function body
   private void visitFuncWrapper(FuncContext ctx, FuncAST funcAST) {
-    FuncID funcID = (FuncID) currSymTab.lookupAll(ctx.IDENT().getText());
+    FuncID funcID = (FuncID) funcAST.getIdentifier();
 
     SymbolTable globalScope = currSymTab;
     currSymTab = funcID.getSymtab(); // set correct scope

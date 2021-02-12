@@ -47,7 +47,7 @@ public class FuncAST extends Node {
   }
 
   public void addFuncToGlobalScope() {
-    Identifier f = globalScope.lookupAll(funcName);
+    Identifier f = globalScope.lookupAll("func " + funcName);
 
     //f already defined
     if (f != null) {
@@ -57,6 +57,6 @@ public class FuncAST extends Node {
       return;
     }
 
-    globalScope.add(funcName, identifier);
+    globalScope.add("func " + funcName, identifier);
   }
 }

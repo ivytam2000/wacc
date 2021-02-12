@@ -19,7 +19,7 @@ public class AssignCallAST extends AssignRHSAST {
 
   public AssignCallAST(
       String funcName, SymbolTable symtab, ArgListAST args, Call_assignRHSContext ctx) {
-    super(symtab.lookupAll(funcName), symtab);
+    super(symtab.lookupAll("func " + funcName), symtab);
     this.funcName = funcName;
     this.args = args;
     this.ctx = ctx;
@@ -27,7 +27,7 @@ public class AssignCallAST extends AssignRHSAST {
 
   @Override
   public void check() {
-    Identifier funcID = this.symtab.lookupAll(funcName);
+    Identifier funcID = getIdentifier();
     int line = ctx.getStart().getLine();
     int identPos = ctx.IDENT().getSymbol().getCharPositionInLine();
 
