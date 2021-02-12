@@ -141,7 +141,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public FreeAST visitFree_stat(Free_statContext ctx) {
-    // TODO: do we need a ExprAST class?
     Node expr = visit(ctx.expr());
     FreeAST freeAST = new FreeAST(expr, ctx.expr());
     freeAST.check();
@@ -576,9 +575,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public ArrayElemAST visitArrayElem(ArrayElemContext ctx) {
-    // TODO: Does the implementation handle nested arrays?
-    // int[][] a = [[1, 2], [3,4]];
-    // int y = a[0][1];
     String arrayName = ctx.IDENT().getText();
     // Check that the IDENT is an array. If not, no point moving forward.
     Identifier identifier = currSymTab.lookupAll(arrayName);

@@ -12,6 +12,8 @@ import frontend.symboltable.PairID;
 import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
 
+import java.util.Objects;
+
 public class PairElemAST extends Node {
 
   private SymbolTable symtab;
@@ -67,11 +69,7 @@ public class PairElemAST extends Node {
       Identifier childIDPairElem = first ? childIDAsPair.getFstType()
           : childIDAsPair.getSndType();
 
-      if (childIDPairElem == null) {
-        setIdentifier(new NullID());
-      } else {
-        setIdentifier(childIDPairElem);
-      }
+      setIdentifier(Objects.requireNonNullElseGet(childIDPairElem, NullID::new));
     }
   }
 
