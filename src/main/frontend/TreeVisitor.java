@@ -653,7 +653,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     }
 
     ArrayElemAST arrayElemAST =
-        new ArrayElemAST(identifier, arrayName, indexes, ctx);
+        new ArrayElemAST(identifier, currSymTab, arrayName, indexes, ctx);
     arrayElemAST.check();
 
     return arrayElemAST;

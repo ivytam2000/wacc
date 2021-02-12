@@ -88,9 +88,9 @@ public class SemanticErrorCollector {
     addError(errMsg);
   }
 
-  public static void addCannotBeIndexed(int line, int pos, String var) {
+  public static void addCannotBeIndexed(int line, int pos, String var, String type) {
     String errorMsg =
-        String.format("line %d:%d -- %s is not an array and cannot be indexed", line, pos, var);
+        String.format("line %d:%d -- %s (Actual type: %s) is not an array and cannot be indexed", line, pos, var, type);
     addError(errorMsg);
   }
 
