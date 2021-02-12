@@ -9,6 +9,7 @@ import frontend.symboltable.CharID;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.UnknownID;
 
 public class BinOpExprAST extends Node {
 
@@ -49,12 +50,12 @@ public class BinOpExprAST extends Node {
       String expectedTypes = "";
 
       if (expectedExprTypes == Utils.INT_CHAR) { //Defined for int and char
-        errorL = !(eLType instanceof IntID || eLType instanceof CharID);
-        errorR = !(eRType instanceof IntID || eRType instanceof CharID);
+        errorL = !(eLType instanceof IntID || eLType instanceof CharID || eLType instanceof UnknownID);
+        errorR = !(eRType instanceof IntID || eRType instanceof CharID || eRType instanceof UnknownID);
         expectedTypes = "int or char";
       } else if (expectedExprTypes == Utils.BOOL) { //Defined for bool only
-        errorL = !(eLType instanceof BoolID);
-        errorR = !(eRType instanceof BoolID);
+        errorL = !(eLType instanceof BoolID || eLType instanceof UnknownID);
+        errorR = !(eRType instanceof BoolID || eRType instanceof UnknownID);
         expectedTypes = "bool";
       }
 

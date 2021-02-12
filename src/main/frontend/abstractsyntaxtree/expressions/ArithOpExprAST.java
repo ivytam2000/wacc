@@ -8,6 +8,7 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.UnknownID;
 
 public class ArithOpExprAST extends Node {
 
@@ -37,7 +38,7 @@ public class ArithOpExprAST extends Node {
 
     //Both eL and eR must be of type int to do arithmetic
 
-    if (!(eLType instanceof IntID)) {
+    if (!(eLType instanceof IntID || eLType instanceof UnknownID)) {
       SemanticErrorCollector
           .addIncompatibleType("int (For " + op + ")", eLType.getTypeName(),
               ctx.children.get(fstStatPosition).getText(),
@@ -45,7 +46,7 @@ public class ArithOpExprAST extends Node {
               ctx.getStart().getCharPositionInLine());
     }
 
-    if (!(eRType instanceof IntID)) {
+    if (!(eRType instanceof IntID || eRType instanceof UnknownID)) {
       SemanticErrorCollector
           .addIncompatibleType("int (For " + op + ")", eRType.getTypeName(),
               ctx.children.get(sndStatPosition).getText(),
