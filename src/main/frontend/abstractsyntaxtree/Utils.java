@@ -18,10 +18,15 @@ import java.util.List;
 
 public class Utils {
 
+  // Used to define what types certain binary operators are supposed to support
   public static final int BOOL = 1;
   public static final int INT_CHAR = 2;
   public static final int ALL_TYPES = 3;
 
+  /**
+   * Checks if types t1 and t2 are the same or are compatible to each other in
+   * the case of assignment.
+   */
   public static boolean typeCompat(TypeID t1, TypeID t2) {
     assert (t1 != null);
     assert (t2 != null);
@@ -51,6 +56,11 @@ public class Utils {
     return t1.getType() == t2.getType();
   }
 
+  /**
+   * Checks if two pair types are the same or are compatible to each other in
+   * the case of assignment. Assumes pairs can be polymorphic, i.e. does not try
+   * to determine the exact type of a pair if a generic pair is reached.
+   */
   public static boolean comparePairTypes(PairID eLType, OptionalPairID eRType) {
     // Assigning null to pair
     if (eRType instanceof NullID) {
@@ -76,12 +86,12 @@ public class Utils {
           && (sndLType.getClass() == sndRType.getClass());
     }
 
-    // first of each pair is not null
+    // First of each pair is not null
     if (!(fstLType instanceof NullID) && !(fstRType instanceof NullID)) {
       return (fstLType.getClass() == fstRType.getClass());
     }
 
-    // second of each pair is not null
+    // Second of each pair is not null
     if (!(sndRType instanceof NullID) && !(sndLType instanceof NullID)) {
       return (sndLType.getClass() == sndRType.getClass());
     }
@@ -89,6 +99,10 @@ public class Utils {
     return true;
   }
 
+  /**
+   * Checks if two array types are the same or are compatible to each other in
+   * the case of assignment.
+   */
   public static boolean compareArrayTypes(TypeID eLType, TypeID eRType) {
     // Can always assign empty to any array
     if (eRType instanceof EmptyID) {
@@ -97,7 +111,8 @@ public class Utils {
 
     // Recurse to find underlying type
     if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-      return compareArrayTypes(((ArrayID) eLType).getElemType(), ((ArrayID) eRType).getElemType());
+      return compareArrayTypes(((ArrayID) eLType).getElemType(),
+          ((ArrayID) eRType).getElemType());
     }
 
     // Call comparePairTypes is underlying type is pair
@@ -132,7 +147,8 @@ public class Utils {
       Node elseStat = ((IfAST) statements).getElseStat();
       TypeID thenID = inferFinalReturnType(thenStat, line);
       TypeID elseID = inferFinalReturnType(elseStat, line);
-      if (!(thenID instanceof ExitID || elseID instanceof ExitID || typeCompat(thenID, elseID))) {
+      if (!(thenID instanceof ExitID || elseID instanceof ExitID || typeCompat(
+          thenID, elseID))) {
         // Type of an if-statement should be same regardless which statements
         SemanticErrorCollector.addIfReturnTypesError(line);
       }

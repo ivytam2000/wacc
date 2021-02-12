@@ -11,7 +11,8 @@ public class BaseTypeAST extends Node {
   private final SymbolTable symtab;
   private final BaseTypeContext ctx;
 
-  public BaseTypeAST(Identifier identifier, SymbolTable symtab, BaseTypeContext ctx) {
+  public BaseTypeAST(Identifier identifier, SymbolTable symtab,
+      BaseTypeContext ctx) {
     super(identifier);
     this.symtab = symtab;
     this.typeName = identifier.getType().getTypeName();

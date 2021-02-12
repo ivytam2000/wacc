@@ -14,7 +14,7 @@ public class IfAST extends Node {
   private final ExprContext exprCtx;
 
   public IfAST(Node expr, Node thenStat, Node elseStat, ExprContext ctx) {
-    // set identifier to be same as expressions but not sure if its correct?
+    // Set identifier to be same as expressions
     super(expr.getIdentifier());
     this.expr = expr;
     this.thenStat = thenStat;

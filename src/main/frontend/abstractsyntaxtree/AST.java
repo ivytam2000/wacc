@@ -2,8 +2,12 @@ package frontend.abstractsyntaxtree;
 
 import java.util.List;
 
+/**
+ * A top-level AST node for the whole program.
+ */
 public class AST extends Node {
 
+  // A list of all the functions within the program scanned in the first pass
   private final List<Node> funcASTs;
   private final Node statAST;
 
@@ -13,7 +17,7 @@ public class AST extends Node {
     this.statAST = statAST;
   }
 
-  // for future use in code generation
+  // For future use in code generation
   public List<Node> getFuncASTs() {
     return funcASTs;
   }

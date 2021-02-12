@@ -9,6 +9,7 @@ import frontend.symboltable.IntID;
 import frontend.symboltable.TypeID;
 
 public class ExitAST extends Node {
+
   Exit_statContext ctx;
   private final Node expr;
 

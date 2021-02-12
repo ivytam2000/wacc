@@ -2,6 +2,9 @@ package frontend.abstractsyntaxtree;
 
 import frontend.symboltable.Identifier;
 
+/**
+ * A node within the abstract syntax tree.
+ */
 public abstract class Node {
 
   protected Identifier identifier;

@@ -25,7 +25,8 @@ public class ReadAST extends Node {
 
     if (!(lhsType instanceof IntID) && !(lhsType instanceof CharID)) {
       SemanticErrorCollector.addIncompatibleType(
-          "int or char", lhsType.getType().getTypeName(), ctx.getText(), line, pos);
+          "int or char", lhsType.getType().getTypeName(), ctx.getText(),
+          line, pos);
     }
   }
 }

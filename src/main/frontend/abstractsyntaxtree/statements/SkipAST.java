@@ -4,9 +4,11 @@ import frontend.abstractsyntaxtree.Node;
 
 public class SkipAST extends Node {
 
-  public SkipAST() {}
+  public SkipAST() {
+  }
 
-  /* No need to check as it is a terminal node */
+  // No need to check as it is a terminal node
   @Override
-  public void check() {}
+  public void check() {
+  }
 }

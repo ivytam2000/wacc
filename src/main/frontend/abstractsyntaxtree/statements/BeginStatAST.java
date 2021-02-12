@@ -12,7 +12,8 @@ public class BeginStatAST extends Node {
   }
 
   @Override
-  public void check() {}
+  public void check() {
+  }
 
   public Node getStat() {
     return stat;

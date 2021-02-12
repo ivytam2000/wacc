@@ -50,7 +50,8 @@ public class VarDecAST extends Node {
     // Check if types are compatible
     if (!Utils.typeCompat(decType, rhsType)) {
       SemanticErrorCollector.addIncompatibleType(
-          decType.getTypeName(), rhsType.getTypeName(), rhsCtx.getText(), line, pos);
+          decType.getTypeName(), rhsType.getTypeName(), rhsCtx.getText(), line,
+          pos);
     }
 
     symtab.add(varName, typeAST.getIdentifier().getType());

@@ -12,7 +12,6 @@ public class FreeAST extends Node {
   private final Node expr;
   private final ExprContext ctx;
 
-  // TODO: do we need an ExprAST class?
   public FreeAST(Node expr, ExprContext ctx) {
     super(expr.getIdentifier());
     this.expr = expr;

@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.statements;
 import frontend.abstractsyntaxtree.Node;
 
 public class PrintlnAST extends Node {
+
   private final Node expr;
 
   public PrintlnAST(Node expr) {
@@ -15,5 +16,6 @@ public class PrintlnAST extends Node {
   }
 
   @Override
-  public void check() {}
+  public void check() {
+  }
 }
