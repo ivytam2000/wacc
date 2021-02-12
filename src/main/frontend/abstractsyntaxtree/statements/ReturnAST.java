@@ -1,6 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
-import antlr.WaccParser;
+import antlr.WaccParser.Return_statContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.SymbolTable;
@@ -9,10 +9,9 @@ public class ReturnAST extends Node {
 
   private final SymbolTable symtab;
   private final Node expr;
-  private final WaccParser.Return_statContext ctx;
+  private final Return_statContext ctx;
 
-  public ReturnAST(SymbolTable symtab, Node expr,
-      WaccParser.Return_statContext ctx) {
+  public ReturnAST(SymbolTable symtab, Node expr, Return_statContext ctx) {
     super(expr.getIdentifier());
     this.symtab = symtab;
     this.expr = expr;

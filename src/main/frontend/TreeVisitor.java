@@ -28,7 +28,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   private SymbolTable currSymTab;
 
   public TreeVisitor() {
-    this.currSymTab = new SymbolTable(); // Initialised with top level symtab
+    // Initialised with top level symtab
+    this.currSymTab = new SymbolTable();
   }
 
   // Root of parse tree
@@ -184,7 +185,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node elseStat = visit(ctx.stat(1));
     // Swap back to parent scope
     currSymTab = encScope;
-    IfAST ifAST = new IfAST(expr, thenStat, elseStat, ctx);
+    IfAST ifAST = new IfAST(expr, thenStat, elseStat, ctx.expr());
     ifAST.check();
     return ifAST;
   }

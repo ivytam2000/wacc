@@ -1,6 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
-import antlr.WaccParser;
+import antlr.WaccParser.ExprContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
@@ -10,10 +10,10 @@ import frontend.symboltable.TypeID;
 public class FreeAST extends Node {
 
   private final Node expr;
-  private final WaccParser.ExprContext ctx;
+  private final ExprContext ctx;
 
   // TODO: do we need an ExprAST class?
-  public FreeAST(Node expr, WaccParser.ExprContext ctx) {
+  public FreeAST(Node expr, ExprContext ctx) {
     super(expr.getIdentifier());
     this.expr = expr;
     this.ctx = ctx;
