@@ -9,6 +9,9 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+/**
+ * Encompasses the lexer, and the syntax and semantic checkers of the compiler.
+ */
 public class FrontEndAnalyser {
 
   private final WaccParser parser;
@@ -38,9 +41,9 @@ public class FrontEndAnalyser {
     // Begin parsing at rule for program
     ParseTree tree = parser.program();
 
-    //Syntax error check
-    /* Second and third case needed because we treat
-    int overflow and return error separately */
+    // Syntax error check
+    /* Second and third case needed because we treat integer overflow and
+    return errors separately */
     if (parser.getNumberOfSyntaxErrors() > 0 ||
         syntaxErrorListener.hasIntError() ||
         syntaxErrorListener.hasReturnError()) {
@@ -48,12 +51,12 @@ public class FrontEndAnalyser {
       return 100;
     }
 
-    //Semantic analysis
+    // Semantic analysis
     SemanticErrorCollector.init();
     TreeVisitor treeVisitor = new TreeVisitor();
     Node ast = treeVisitor.visit(tree);
 
-    //Semantic error check
+    // Semantic error check
     if (SemanticErrorCollector.getNumberOfSemanticErrors() > 0) {
       SemanticErrorCollector.printErrors();
       return 200;
