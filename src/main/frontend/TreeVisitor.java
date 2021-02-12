@@ -82,25 +82,21 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     FuncID funcID = (FuncID) currSymTab.lookupAll(ctx.IDENT().getText());
 
     SymbolTable globalScope = currSymTab;
-    // set correct scope
-    currSymTab = funcID.getSymtab();
+    currSymTab = funcID.getSymtab(); // set correct scope
 
     Node stat = visit(ctx.stat());
     funcAST.setStatements(stat);
     funcAST.check();
 
-    // swap back to global scope
-    currSymTab = globalScope;
+    currSymTab = globalScope; // swap back to global scope
   }
 
-  // PRINT expr
   @Override
   public PrintAST visitPrint_stat(Print_statContext ctx) {
     Node expr = visit(ctx.expr());
     return new PrintAST(expr);
   }
 
-  // assignLHS ASSIGN assignRHS
   @Override
   public AssignStatAST visitAssign_stat(Assign_statContext ctx) {
     AssignLHSAST lhs = (AssignLHSAST) visit(ctx.assignLHS());
@@ -109,6 +105,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     AssignStatAST assignStatAST =
         new AssignStatAST(ctx.assignLHS(), ctx.assignRHS(), lhs, rhs, currSymTab);
     assignStatAST.check();
+
     return assignStatAST;
   }
 
@@ -121,16 +118,20 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public ReturnAST visitReturn_stat(Return_statContext ctx) {
     Node expr = visit(ctx.expr());
+
     ReturnAST returnAST = new ReturnAST(currSymTab, expr, ctx);
     returnAST.check();
+
     return returnAST;
   }
 
   @Override
   public ExitAST visitExit_stat(Exit_statContext ctx) {
     Node expr = visit(ctx.expr());
+
     ExitAST exitAST = new ExitAST(expr, ctx);
     exitAST.check();
+
     return exitAST;
   }
 
@@ -142,86 +143,100 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public FreeAST visitFree_stat(Free_statContext ctx) {
     Node expr = visit(ctx.expr());
+
     FreeAST freeAST = new FreeAST(expr, ctx.expr());
     freeAST.check();
+
     return freeAST;
   }
 
   @Override
   public VarDecAST visitVar_decl_stat(Var_decl_statContext ctx) {
-    AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
     Node typeAST = visit(ctx.type());
     String varName = ctx.IDENT().getText();
+    AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
+
     VarDecAST varDec = new VarDecAST(currSymTab, typeAST, varName, assignRHS, ctx);
     varDec.check();
+
     return varDec;
   }
 
   @Override
   public WhileAST visitWhile_stat(While_statContext ctx) {
-    // New scope
     SymbolTable encScope = currSymTab;
-    currSymTab = new SymbolTable(encScope);
+    currSymTab = new SymbolTable(encScope); // New scope
 
     Node expr = visit(ctx.expr());
     Node stat = visit(ctx.stat());
 
     WhileAST whileAST = new WhileAST(expr, stat, ctx.expr());
     whileAST.check();
-    // Swap back to parent scope
-    currSymTab = encScope;
+
+    currSymTab = encScope; // Swap back to parent scope
+
     return whileAST;
   }
 
   @Override
   public IfAST visitIf_stat(If_statContext ctx) {
     Node expr = visit(ctx.expr());
+
     SymbolTable encScope = currSymTab;
+
     // Each branch is executed in its own scope
     currSymTab = new SymbolTable(encScope);
     Node thenStat = visit(ctx.stat(0));
     currSymTab = new SymbolTable(encScope);
     Node elseStat = visit(ctx.stat(1));
-    // Swap back to parent scope
-    currSymTab = encScope;
+
+    currSymTab = encScope;// Swap back to parent scope
+
     IfAST ifAST = new IfAST(expr, thenStat, elseStat, ctx);
     ifAST.check();
+
     return ifAST;
   }
 
   @Override
   public BeginStatAST visitBegin_stat(WaccParser.Begin_statContext ctx) {
     SymbolTable encScope = currSymTab;
-    // Create new scope
-    currSymTab = new SymbolTable(encScope);
+    currSymTab = new SymbolTable(encScope); // Create new scope
+
     Node stat = visit(ctx.stat());
     BeginStatAST beginAST = new BeginStatAST(stat);
-    // Swap back to parent scope
-    currSymTab = encScope;
+
+    currSymTab = encScope; // Swap back to parent scope
+
     return beginAST;
   }
 
   @Override
   public SequenceAST visitSequence_stat(Sequence_statContext ctx) {
-    List<StatContext> statCtxs = ctx.stat();
     List<Node> statASTs = new ArrayList<>();
+
+    List<StatContext> statCtxs = ctx.stat();
     for (StatContext s : statCtxs) {
       statASTs.add(visit(s));
     }
+
     return new SequenceAST(statASTs);
   }
 
   @Override
   public ReadAST visitRead_stat(Read_statContext ctx) {
     AssignLHSAST assignLHSAST = (AssignLHSAST) visit(ctx.assignLHS());
+
     ReadAST readAST = new ReadAST(assignLHSAST, ctx.assignLHS());
     readAST.check();
+
     return readAST;
   }
 
   @Override
   public ParamListAST visitParamList(ParamListContext ctx) {
     List<ParamAST> paramASTs = new ArrayList<>();
+
     for (ParamContext paramCtx : ctx.param()) {
       paramASTs.add(visitParam(paramCtx));
     }
@@ -237,6 +252,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public ParamAST visitParam(ParamContext ctx) {
     Identifier paramID = new ParamID(visitType(ctx.type()).getIdentifier().getType());
     String varName = ctx.IDENT().getText();
+
     // Assume function sets currSymTab to be the inner-scope symbol table
     return new ParamAST(paramID, currSymTab, varName, ctx);
   }
@@ -246,12 +262,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     if (ctx.IDENT() != null) {
       String assignName = ctx.IDENT().getText();
       return new AssignLHSAST(currSymTab, assignName);
-    } else if (ctx.pairElem() != null) {
-      // LHS is of pair type
+
+    } else if (ctx.pairElem() != null) { // LHS is of pair type
       PairElemAST pairElem = visitPairElem((ctx.pairElem()));
       return new AssignLHSAST(pairElem, pairElem.getName());
-    } else {
-      // LHS is of array type
+
+    } else { // LHS is of array type
       ArrayElemAST arrayElem = visitArrayElem((ctx.arrayElem()));
       return new AssignLHSAST(arrayElem, arrayElem.getName());
     }
@@ -261,8 +277,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public AssignRHSAST visitExpr_assignRHS(Expr_assignRHSContext ctx) {
     List<Node> children = new ArrayList<>();
+
     Node exprAST = visit(ctx.expr());
     children.add(exprAST);
+
     return new AssignRHSAST(exprAST.getIdentifier().getType(), currSymTab, children);
   }
 
@@ -270,8 +288,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public AssignRHSAST visitArrayLiter_assignRHS(ArrayLiter_assignRHSContext ctx) {
     List<Node> children = new ArrayList<>();
+
     Node arrayLiterAST = visitArrayLiter(ctx.arrayLiter());
     children.add(arrayLiterAST);
+
     return new AssignRHSAST(arrayLiterAST.getIdentifier().getType(), currSymTab, children);
   }
 
@@ -280,20 +300,24 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public AssignRHSAST visitNewPair_assignRHS(NewPair_assignRHSContext ctx) {
     Node firstExprAST = visit(ctx.expr(0));
     Node secondExprAST = visit(ctx.expr(1));
+
     List<Node> children = new ArrayList<>();
     children.add(firstExprAST);
     children.add(secondExprAST);
-    PairID pairID =
-        new PairID(firstExprAST.getIdentifier().getType(), secondExprAST.getIdentifier().getType());
+    PairID pairID = new PairID(firstExprAST.getIdentifier().getType(),
+        secondExprAST.getIdentifier().getType());
+
     return new AssignRHSAST(pairID, currSymTab, children);
   }
 
   /** Pre-condition: ExprAST calls check() */
   @Override
   public AssignRHSAST visitPairElem_assignRHS(PairElem_assignRHSContext ctx) {
-    List<Node> children = new ArrayList<>();
     Node pairElemAST = visitPairElem(ctx.pairElem());
+
+    List<Node> children = new ArrayList<>();
     children.add(pairElemAST);
+
     return new AssignRHSAST(pairElemAST.getIdentifier().getType(), currSymTab, children);
   }
 
@@ -301,8 +325,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public AssignCallAST visitCall_assignRHS(Call_assignRHSContext ctx) {
     String funcName = ctx.IDENT().getText();
     ArgListAST argListAST = visitArgList(ctx.argList());
+
     AssignCallAST assignCallAST = new AssignCallAST(funcName, currSymTab, argListAST, ctx);
     assignCallAST.check();
+
     return assignCallAST;
   }
 
@@ -314,6 +340,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
         expressions.add(visit(exprContext));
       }
     }
+
     // Don't need to check the since creating the exprASTs will call check
     return new ArgListAST(expressions);
   }
@@ -324,13 +351,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Identifier ident = exprAST.getIdentifier();
 
     PairElemAST pairElemAST;
-    // Don't need to check the since creating the exprAST will call check
     if (ctx.FST() != null) {
       pairElemAST = new PairElemAST(ident, currSymTab, true, exprAST, ctx);
     } else {
       pairElemAST = new PairElemAST(ident, currSymTab, false, exprAST, ctx);
     }
     pairElemAST.check();
+
     return pairElemAST;
   }
 
@@ -360,17 +387,21 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     if (ctx.baseType() != null) {
       Node baseTypeAST = visit(ctx.baseType());
+
       ArrayID nestedID = new ArrayID(baseTypeAST.getIdentifier().getType());
       for (int i = 1; i < dimensions; i++) {
         nestedID = new ArrayID(nestedID);
       }
       currSymTab.add(nestedID);
+
       return new ArrayTypeAST(nestedID, dimensions);
     } else {
       // Pair-type array
       Node pairTypeAST = visit(ctx.pairType());
+
       ArrayID pairArrayID = new ArrayID(pairTypeAST.getIdentifier().getType());
       currSymTab.add(pairArrayID);
+
       return new ArrayTypeAST(pairArrayID, dimensions);
     }
   }
@@ -410,6 +441,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     IntLiterAST intLiterAST =
         new IntLiterAST(currSymTab, ctx.MINUS() == null, ctx.INTEGER().getText());
     intLiterAST.check();
+
     return intLiterAST;
   }
 
@@ -421,16 +453,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public CharLiterAST visitCharLiter(CharLiterContext ctx) {
     String s = ctx.CHAR_LITER().getText();
-    // Length will be 3 accounting for quotes or 4 if it's an escape char
-    assert ((s.charAt(1) == '\\' && s.length() == 4) || s.length() == 3);
-    char val = s.charAt(0);
-    return new CharLiterAST(currSymTab, val);
+    //substring removes quotes
+    return new CharLiterAST(currSymTab, s.substring(1, s.length() - 1));
   }
 
   @Override
   public StrLiterAST visitStrLiter(StrLiterContext ctx) {
     String val = ctx.STR_LITER().getText();
-    assert (val != null);
     return new StrLiterAST(currSymTab, val);
   }
 
@@ -439,9 +468,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     if (ctx.baseType() != null) {
       return visitBaseType(ctx.baseType());
     }
+
     if (ctx.arrayType() != null) {
       return visitArrayType(ctx.arrayType());
     }
+
     return visitPairType(ctx.pairType());
   }
 

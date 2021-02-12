@@ -46,15 +46,18 @@ public class PairElemAST extends Node {
       if (!(symtab.lookupAll(identName) instanceof PairID)) {
         addIncompatibleTypeSemanticError();
       }
+
     } else if (child instanceof ArrayElemAST) {
       if (!(child.getIdentifier().getType() instanceof PairID)) {
         addIncompatibleTypeSemanticError();
       }
+
     } else if (child instanceof PairLiterAST) {
       SemanticErrorCollector
           .addIncompatibleType("pair",
               "null", identName,
               ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
     } else {
       addIncompatibleTypeSemanticError();
     }

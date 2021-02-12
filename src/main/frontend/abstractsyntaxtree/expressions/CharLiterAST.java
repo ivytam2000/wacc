@@ -5,9 +5,9 @@ import frontend.symboltable.SymbolTable;
 
 public class CharLiterAST extends Node {
 
-  private final char val; //For backend
+  private final String val; //For backend
 
-  public CharLiterAST(SymbolTable symtab, char val) {
+  public CharLiterAST(SymbolTable symtab, String val) {
     super(symtab.lookupAll("char"));
     this.val = val;
   }
