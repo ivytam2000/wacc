@@ -1,62 +1,63 @@
 package frontend.abstractsyntaxtree.expressions;
 
+import antlr.WaccParser.ExprContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
-import frontend.symboltable.ArrayID;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.CharID;
 import frontend.symboltable.IntID;
-import frontend.symboltable.PairID;
-import frontend.symboltable.OptionalPairID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 
 public class BinOpExprAST extends Node {
 
-  public static final int BOOL = 1;
-  public static final int INT_CHAR = 2;
-  public static final int ALL_TYPES = 3;
-
-  private final String operation;
+  private final String op;
   private final int expectedExprTypes;
   private final Node eL;
   private final Node eR;
+  private final ExprContext ctx;
 
   public BinOpExprAST(SymbolTable symtab, int expectedExprTypes,
-      String operation, Node eL, Node eR) {
+      String op, Node eL, Node eR, ExprContext ctx) {
     super(symtab.lookupAll("bool")); //BinOpExpr always has bool return type
+    this.op = op;
     this.expectedExprTypes = expectedExprTypes;
-    this.operation = operation;
     this.eL = eL;
     this.eR = eR;
+    this.ctx = ctx;
   }
 
   @Override
   public void check() {
-    boolean error = false;
-    if (expectedExprTypes == BOOL) {
-      error = !(eL.getIdentifier().getType() instanceof BoolID &&
-          eR.getIdentifier().getType() instanceof BoolID);
-    } else if (expectedExprTypes == INT_CHAR) {
-      boolean isInt = eL.getIdentifier().getType() instanceof IntID &&
-          eR.getIdentifier().getType() instanceof IntID;
-      boolean isChar = eL.getIdentifier().getType() instanceof CharID &&
-          eR.getIdentifier().getType() instanceof CharID;
-      error = !(isInt || isChar);
-    } else if (expectedExprTypes == ALL_TYPES) {
-      TypeID eLType = eL.getIdentifier().getType();
-      TypeID eRType = eR.getIdentifier().getType();
-      if (eLType instanceof PairID && eRType instanceof OptionalPairID) {
-        error = !Utils.comparePairTypes((PairID) eLType, (OptionalPairID) eRType);
-      } else if (eLType instanceof ArrayID && eRType instanceof ArrayID) {
-        error = !Utils.compareArrayTypes(eLType, eRType);
-      } else {
-        error = !(eLType == eRType);
+    TypeID eLType = eL.getIdentifier().getType();
+    TypeID eRType = eR.getIdentifier().getType();
+    if (expectedExprTypes == Utils.ALL_TYPES) {
+      if (!Utils.typeCompat(eLType, eRType)) {
+        SemanticErrorCollector.addTypeMismatch(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), op);
       }
-    }
-    if (error) {
-      SemanticErrorCollector.addError("Binary Operator : Incompatible types.");
+    } else {
+      boolean errorL = false;
+      boolean errorR = false;
+      if (expectedExprTypes == Utils.BOOL) {
+        errorL = !(eLType instanceof BoolID);
+        errorR = !(eRType instanceof BoolID);
+      } else if (expectedExprTypes == Utils.INT_CHAR) {
+        errorL = !(eLType instanceof IntID || eLType instanceof CharID);
+        errorR = !(eRType instanceof IntID || eRType instanceof CharID);
+      }
+      if (errorL) {
+        SemanticErrorCollector
+            .addIncompatibleType("bool", eLType.getTypeName(), ctx.getText(),
+                ctx.getStart().getLine(),
+                ctx.getStart().getCharPositionInLine());
+      }
+      if (errorR) {
+        SemanticErrorCollector
+            .addIncompatibleType("bool", eRType.getTypeName(), ctx.getText(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getCharPositionInLine());
+      }
     }
   }
 

@@ -240,9 +240,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitAssignLHS(AssignLHSContext ctx) {
     if (ctx.IDENT() != null) {
       String assignName = ctx.IDENT().getText();
-      AssignLHSAST identLHS = new AssignLHSAST(currSymTab, assignName);
-      identLHS.check();
-      return identLHS;
+      return new AssignLHSAST(currSymTab, assignName);
     } else if (ctx.pairElem() != null) {
       // LHS is of pair type
       PairElemAST pairElem = (PairElemAST) visitPairElem((ctx.pairElem()));
@@ -468,7 +466,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitIdentExpr(IdentExprContext ctx) {
     String val = ctx.IDENT().getText();
     assert (val != null);
-    Node identExprAST = new IdentExprAST(currSymTab, val);
+    Node identExprAST = new IdentExprAST(currSymTab, ctx);
     identExprAST.check();
     return identExprAST;
   }
@@ -498,11 +496,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     ArithmeticOper1Context arithCtx = ctx.arithmeticOper1();
     String op = null;
     if (arithCtx.MULT() != null) {
-      op = "MULT";
+      op = "*";
     } else if (arithCtx.DIV() != null) {
-      op = "DIV";
+      op = "/";
     } else if (arithCtx.MOD() != null) {
-      op = "MOD";
+      op = "%";
     }
     assert (op != null);
     Node arithOpExprAST = new ArithOpExprAST(currSymTab, op, eL, eR, ctx);
@@ -517,9 +515,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     ArithmeticOper2Context arithCtx = ctx.arithmeticOper2();
     String op = null;
     if (arithCtx.PLUS() != null) {
-      op = "PLUS";
+      op = "+";
     } else if (arithCtx.MINUS() != null) {
-      op = "MINUS";
+      op = "-";
     }
     assert (op != null);
     Node arithOpExprAST = new ArithOpExprAST(currSymTab, op, eL, eR, ctx);
@@ -535,16 +533,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     BinaryOper1Context binOp1Ctx = ctx.binaryOper1();
     String operation = null;
     if (binOp1Ctx.GT() != null) {
-      operation = "GT";
+      operation = ">";
     } else if (binOp1Ctx.GTE() != null) {
-      operation = "GTE";
+      operation = ">=";
     } else if (binOp1Ctx.LT() != null) {
-      operation = "LT";
+      operation = "<";
     } else if (binOp1Ctx.LTE() != null) {
-      operation = "LTE";
+      operation = "<=";
     }
     assert (operation != null);
-    Node binOpExprAST = new BinOpExprAST(currSymTab, 2, operation, eL, eR);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.INT_CHAR, operation, eL, eR, ctx);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -557,12 +555,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     BinaryOper2Context binOp2Ctx = ctx.binaryOper2();
     String operation = null;
     if (binOp2Ctx.EQ() != null) {
-      operation = "EQ";
+      operation = "==";
     } else if (binOp2Ctx.NE() != null) {
-      operation = "NE";
+      operation = "!=";
     }
     assert (operation != null);
-    Node binOpExprAST = new BinOpExprAST(currSymTab, 3, operation, eL, eR);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.ALL_TYPES, operation, eL, eR, ctx);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -571,7 +569,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitAndExpr(AndExprContext ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
-    Node binOpExprAST = new BinOpExprAST(currSymTab, 1, "AND", eL, eR);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.BOOL, "&&", eL, eR, ctx);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -580,7 +578,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitOrExpr(OrExprContext ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
-    Node binOpExprAST = new BinOpExprAST(currSymTab, 1, "OR", eL, eR);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.BOOL, "||", eL, eR, ctx);
     binOpExprAST.check();
     return binOpExprAST;
   }

@@ -50,6 +50,12 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addTypeMismatch(int line, int position, String op) {
+    String errorMsg = String
+        .format("line %d:%d -- Type mismatch at %s", line, position, op);
+    addError(errorMsg);
+  }
+
   public static void init() {
     errors.clear();
   }

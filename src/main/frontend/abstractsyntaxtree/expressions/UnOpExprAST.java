@@ -29,31 +29,36 @@ public class UnOpExprAST extends Node {
   public void check() {
     TypeID exprType = exprAST.getIdentifier().getType();
     Identifier unOpExprType = null;
+    boolean error = false;
     if (ctx.NOT() != null) {
-      if (exprType instanceof BoolID) {
-        unOpExprType = symbtab.lookupAll("bool");
+      if (!(exprType instanceof BoolID)) {
+        error = true;
       }
+      unOpExprType = symbtab.lookupAll("bool");
     } else if (ctx.MINUS() != null) {
-      if (exprType instanceof IntID) {
-        unOpExprType = symbtab.lookupAll("int");
+      if (!(exprType instanceof IntID)) {
+        error = true;
       }
+      unOpExprType = symbtab.lookupAll("int");
     } else if (ctx.CHR() != null) {
-      if (exprType instanceof IntID) {
-        unOpExprType = symbtab.lookupAll("char");
+      if (!(exprType instanceof IntID)) {
+        error = true;
       }
+      unOpExprType = symbtab.lookupAll("char");
     } else if (ctx.LEN() != null) {
-      if (exprType instanceof StringID || exprType instanceof ArrayID) {
-        unOpExprType = symbtab.lookupAll("int");
+      if (!(exprType instanceof StringID || exprType instanceof ArrayID)) {
+        error = true;
       }
+      unOpExprType = symbtab.lookupAll("int");
     } else if (ctx.ORD() != null) {
-      if (exprType instanceof CharID) {
-        unOpExprType = symbtab.lookupAll("int");
+      if (!(exprType instanceof CharID)) {
+        error = true;
       }
+      unOpExprType = symbtab.lookupAll("int");
     }
-    if (unOpExprType == null) {
+    if (error) {
       SemanticErrorCollector.addError("Unary Operator : Incompatible type");
-    } else {
-      setIdentifier(unOpExprType);
     }
+    setIdentifier(unOpExprType);
   }
 }

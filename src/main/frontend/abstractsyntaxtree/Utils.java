@@ -20,6 +20,10 @@ import org.antlr.v4.runtime.misc.Pair;
 
 public class Utils {
 
+  public static final int BOOL = 1;
+  public static final int INT_CHAR = 2;
+  public static final int ALL_TYPES = 3;
+
   public static boolean typeCompat(TypeID t1, TypeID t2) {
     assert (t1 != null);
     assert (t2 != null);
