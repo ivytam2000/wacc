@@ -35,7 +35,7 @@ public class SemanticErrorCollector {
 
   public static void addVariableUndefined(String varName, int line, int position) {
     String errorMsg =
-        String.format("line %d:%d -- Variable %s is not defined", line, position, varName);
+        String.format("line %d:%d -- Variable %s is not defined in this scope", line, position, varName);
     addError(errorMsg);
   }
 

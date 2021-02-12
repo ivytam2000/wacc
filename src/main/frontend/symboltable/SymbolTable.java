@@ -12,13 +12,17 @@ public class SymbolTable {
     this.parent = parent;
   }
 
-  //Top-level symbol table
+  /**
+   * Defines a top-level symbol table, pre-loaded with default types.
+   */
   public SymbolTable() {
     this(null);
     loadTopLevelSymbolTable(this);
   }
 
-  //To initialise global scope
+  /**
+   * Loads a top-level symbol table for the global scope.
+   */
   private void loadTopLevelSymbolTable(SymbolTable symbolTable) {
     symbolTable.add(new IntID());
     symbolTable.add(new BoolID());
@@ -27,12 +31,14 @@ public class SymbolTable {
     symbolTable.add(new NullID());
   }
 
-  //Global scope
+  /**
+   * Checks if this symbol table is a top-level one, i.e. of global scope.
+   */
   public boolean isTopLevel() {
     return parent == null;
   }
 
-  //For types only
+  // For types only
   public void add(TypeID type) {
     dictionary.put(type.getTypeName(), type);
   }
@@ -41,10 +47,17 @@ public class SymbolTable {
     dictionary.put(name, identifier);
   }
 
+  /**
+   * Finds identifiers within this symbol table only.
+   */
   public Identifier lookup(String name) {
     return dictionary.get(name);
   }
 
+  /**
+   * Finds identifiers in this symbol table and any of its parent symbol
+   * tables.
+   */
   public Identifier lookupAll(String name) {
     SymbolTable temp = this;
     Identifier node;
