@@ -12,14 +12,27 @@ public class SymbolTable {
     this.parent = parent;
   }
 
-  /**
-   * Top-level symbol table.
-   */
+  //Top-level symbol table
   public SymbolTable() {
     this(null);
     loadTopLevelSymbolTable(this);
   }
 
+  //To initialise global scope
+  private void loadTopLevelSymbolTable(SymbolTable symbolTable) {
+    symbolTable.add(new IntID());
+    symbolTable.add(new BoolID());
+    symbolTable.add(new CharID());
+    symbolTable.add(new StringID());
+    symbolTable.add(new NullID());
+  }
+
+  //Global scope
+  public boolean isTopLevel() {
+    return parent == null;
+  }
+
+  //For types only
   public void add(TypeID type) {
     dictionary.put(type.getTypeName(), type);
   }
@@ -46,21 +59,5 @@ public class SymbolTable {
       temp = temp.parent;
     }
     return null;
-  }
-
-  public boolean isTopLevel() {
-    return parent == null;
-  }
-
-  public SymbolTable getParent() {
-    return parent;
-  }
-
-  private void loadTopLevelSymbolTable(SymbolTable symbolTable) {
-    symbolTable.add(new IntID());
-    symbolTable.add(new BoolID());
-    symbolTable.add(new CharID());
-    symbolTable.add(new StringID());
-    symbolTable.add(new NullID());
   }
 }

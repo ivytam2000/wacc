@@ -9,22 +9,19 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.TypeID;
 
 public class AssignStatAST extends Node {
 
   private final AssignRHSAST rhs;
   private final AssignLHSAST lhs;
   private SymbolTable symtab;
-  private Identifier assignObj;
   private final WaccParser.AssignRHSContext rhsCtx;
   private final WaccParser.AssignLHSContext lhsCtx;
 
   public AssignStatAST(
-      WaccParser.AssignLHSContext lhsCtx,
-      WaccParser.AssignRHSContext rhsCtx,
-      AssignLHSAST lhs,
-      AssignRHSAST rhs,
-      SymbolTable symtab) {
+      WaccParser.AssignLHSContext lhsCtx, WaccParser.AssignRHSContext rhsCtx,
+      AssignLHSAST lhs, AssignRHSAST rhs, SymbolTable symtab) {
     this.rhs = rhs;
     this.lhs = lhs;
     this.lhsCtx = lhsCtx;
@@ -35,25 +32,26 @@ public class AssignStatAST extends Node {
   @Override
   public void check() {
     String varName = lhs.getIdentName();
-    Identifier var;
-    var = symtab.lookupAll(varName);
-    if (var == null) {
-      SemanticErrorCollector.addVariableUndefined(
-          varName, lhsCtx.getStart().getLine(), lhsCtx.getStart().getCharPositionInLine());
-    } else if (var instanceof FuncID) {
-      String errorMsg =
-          String.format(
-              "line %d:%d -- Function %s cannot be assigned.",
-              lhsCtx.getStart().getLine(), lhsCtx.getStart().getCharPositionInLine(), varName);
-      SemanticErrorCollector.addError(errorMsg);
-    } else if (!Utils.typeCompat(lhs.getIdentifier().getType(), rhs.getIdentifier().getType())) {
-      SemanticErrorCollector.addIncompatibleType(
-          lhs.getIdentifier().getType().getTypeName(),
-          rhs.getIdentifier().getType().getTypeName(),
-          lhs.getIdentName(),
-          lhsCtx.getStart().getLine(),
-          rhsCtx.getStart().getCharPositionInLine());
+    Identifier var = symtab.lookupAll(varName);
+
+    int lhsLine = lhsCtx.getStart().getLine();
+    int lhsPos = lhsCtx.getStart().getCharPositionInLine();
+
+    if (var == null) { //Undefined variable
+      SemanticErrorCollector
+          .addVariableUndefined(varName, lhsLine, lhsPos);
+    } else if (var instanceof FuncID) { //Trying to assign to a function
+      SemanticErrorCollector
+          .addAssignToFuncError(lhsLine, lhsPos, varName);
+    } else {
+      TypeID lhsType = lhs.getIdentifier().getType();
+      TypeID rhsType = rhs.getIdentifier().getType();
+
+      if (!Utils.typeCompat(lhsType, rhsType)) { //types don't match
+        SemanticErrorCollector
+            .addIncompatibleType(lhsType.getTypeName(), rhsType.getTypeName(),
+                varName, lhsLine, rhsCtx.getStart().getCharPositionInLine());
+      }
     }
-    //    setIdentifier(lhs.getIdentifier().getType());
   }
 }

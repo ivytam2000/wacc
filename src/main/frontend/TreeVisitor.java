@@ -26,17 +26,17 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     this.currSymTab = new SymbolTable(); // Initialised with top level symtab
   }
 
+  //Root of parse tree
   @Override
   public Node visitProgram(ProgramContext ctx) {
-    assert (ctx.BEGIN() != null);
-    assert (ctx.END() != null);
-    assert (ctx.EOF() != null);
-
+    //Functions analysis
     List<Node> fs = new ArrayList<>();
     List<FuncContext> funcContexts = ctx.func();
+    //Add all functions to global scope first in order to support recursion
     for (FuncContext fc : funcContexts) {
       fs.add(visitFunc(fc));
     }
+    //Iterates through functions and checks its body
     for (int i = 0; i < fs.size(); i++) {
       visitFuncWrapper(funcContexts.get(i), (FuncAST) fs.get(i));
     }
@@ -47,35 +47,25 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return new AST(fs, statAST);
   }
 
-  private void visitFuncWrapper(FuncContext ctx, FuncAST funcAST) {
-    assert (ctx.IDENT() != null);
-    FuncID funcID = (FuncID) currSymTab.lookupAll(ctx.IDENT().getText());
-    SymbolTable globalScope = currSymTab;
-    currSymTab = funcID.getSymtab();
-    Node stat = visit(ctx.stat());
-    funcAST.setStatements(stat);
-    funcAST.check();
-    currSymTab = globalScope;
-  }
-
+  //Sets up FuncAST and adds to global scope
   @Override
   public Node visitFunc(FuncContext ctx) {
-    assert (ctx.IDENT() != null);
-
     // Create symbol table
     SymbolTable globalScope = currSymTab;
     currSymTab = new SymbolTable(globalScope);
 
+    Node returnType = visitType(ctx.type());
+
+    //Initialises empty ParamListAST if no params
     ParamListAST params = ctx.paramList() == null ? new ParamListAST()
         : (ParamListAST) visitParamList(ctx.paramList());
 
-    Node returnType = visitType(ctx.type());
     FuncID funcID = new FuncID(returnType, params.convertToParamIDs(),
         currSymTab);
     String funcName = ctx.IDENT().getText();
 
     FuncAST funcAST = new FuncAST(funcID, globalScope, funcName, params, ctx);
-    funcAST.checkFunctionNameAndReturnType();
+    funcAST.addFuncToGlobalScope();
 
     // Swap back symbol table
     currSymTab = globalScope;
@@ -83,20 +73,37 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return funcAST;
   }
 
+  //verifies function body
+  private void visitFuncWrapper(FuncContext ctx, FuncAST funcAST) {
+    FuncID funcID = (FuncID) currSymTab.lookupAll(ctx.IDENT().getText());
+
+    SymbolTable globalScope = currSymTab;
+    //set correct scope
+    currSymTab = funcID.getSymtab();
+
+    Node stat = visit(ctx.stat());
+    funcAST.setStatements(stat);
+    funcAST.check();
+
+    //swap back to global scope
+    currSymTab = globalScope;
+  }
+
+  //PRINT expr
   @Override
   public Node visitPrint_stat(Print_statContext ctx) {
     Node expr = visit(ctx.expr());
     return new PrintAST(expr);
   }
 
+  //assignLHS ASSIGN assignRHS
   @Override
   public Node visitAssign_stat(Assign_statContext ctx) {
     AssignLHSAST lhs = (AssignLHSAST) visit(ctx.assignLHS());
     AssignRHSAST rhs = (AssignRHSAST) visit(ctx.assignRHS());
 
     AssignStatAST assignStatAST = new AssignStatAST(ctx.assignLHS(),
-        ctx.assignRHS(), lhs, rhs,
-        currSymTab);
+        ctx.assignRHS(), lhs, rhs, currSymTab);
     assignStatAST.check();
     return assignStatAST;
   }
@@ -244,11 +251,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     } else if (ctx.pairElem() != null) {
       // LHS is of pair type
       PairElemAST pairElem = (PairElemAST) visitPairElem((ctx.pairElem()));
-      return new AssignLHSAST(currSymTab, pairElem, pairElem.getName());
+      return new AssignLHSAST(pairElem, pairElem.getName());
     } else {
       // LHS is of array type
       ArrayElemAST arrayElem = (ArrayElemAST) visitArrayElem((ctx.arrayElem()));
-      return new AssignLHSAST(currSymTab, arrayElem, arrayElem.getName());
+      return new AssignLHSAST(arrayElem, arrayElem.getName());
     }
   }
 
@@ -542,7 +549,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       operation = "<=";
     }
     assert (operation != null);
-    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.INT_CHAR, operation, eL, eR, ctx);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.INT_CHAR, operation,
+        eL, eR, ctx);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -560,7 +568,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       operation = "!=";
     }
     assert (operation != null);
-    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.ALL_TYPES, operation, eL, eR, ctx);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.ALL_TYPES, operation,
+        eL, eR, ctx);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -569,7 +578,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitAndExpr(AndExprContext ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
-    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.BOOL, "&&", eL, eR, ctx);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.BOOL, "&&", eL, eR,
+        ctx);
     binOpExprAST.check();
     return binOpExprAST;
   }
@@ -578,7 +588,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitOrExpr(OrExprContext ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
-    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.BOOL, "||", eL, eR, ctx);
+    Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.BOOL, "||", eL, eR,
+        ctx);
     binOpExprAST.check();
     return binOpExprAST;
   }

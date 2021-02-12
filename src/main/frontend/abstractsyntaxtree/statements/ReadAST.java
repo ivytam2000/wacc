@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser;
+import antlr.WaccParser.AssignLHSContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -9,10 +10,10 @@ import frontend.symboltable.*;
 public class ReadAST extends Node {
 
   private final AssignLHSAST lhs;
-  private WaccParser.AssignLHSContext ctx;
+  private final AssignLHSContext ctx;
 
-  public ReadAST(AssignLHSAST assignLHS, WaccParser.AssignLHSContext ctx) {
-    super(assignLHS.getIdentifier());
+  public ReadAST(AssignLHSAST assignLHS, AssignLHSContext ctx) {
+    super();
     this.lhs = assignLHS;
     this.ctx = ctx;
   }
@@ -23,18 +24,20 @@ public class ReadAST extends Node {
     int line = ctx.getStart().getLine();
     int pos = ctx.getStart().getCharPositionInLine();
 
-    if (lhsType == null) {
-      SemanticErrorCollector.addUnknownType(lhs.getIdentName(), line, pos);
-    } else if (!(lhsType instanceof TypeID)) {
-      String errMsg =
-          String.format(
-              "line %d:%d -- %s is not a type", line, pos, lhsType.getType().getTypeName());
-      SemanticErrorCollector.addError(errMsg);
-    } else if (!(lhsType instanceof IntID) && !(lhsType instanceof CharID)) {
+    if (!(lhsType instanceof IntID) && !(lhsType instanceof CharID)) {
       SemanticErrorCollector.addIncompatibleType(
           "int or char", lhsType.getType().getTypeName(), ctx.getText(), line, pos);
-    } else {
-      setIdentifier(lhsType);
     }
   }
 }
+
+//if (lhsType == null) {
+//    SemanticErrorCollector.addUnknownType(lhs.getIdentName(), line, pos);
+//    } else
+
+//else if (!(lhsType instanceof TypeID)) {
+//    String errMsg =
+//    String.format(
+//    "line %d:%d -- %s is not a type", line, pos, lhsType.getType().getTypeName());
+//    SemanticErrorCollector.addError(errMsg);
+//    }

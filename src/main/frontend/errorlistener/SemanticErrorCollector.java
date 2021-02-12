@@ -7,15 +7,13 @@ public class SemanticErrorCollector {
 
   private static final List<String> errors = new ArrayList<>();
 
-  public static void addError(String s) {
-    errors.add(s);
-  }
-
   public static void printErrors() {
     System.out.println("Errors detected during compilation! Exit code 200 returned.");
     for (String s : errors) {
       System.out.println("Semantic Error at " + s);
     }
+    System.out.println(errors.size()
+        + " semantic error(s) detected, no further compilation attempted");
   }
 
   public static void addIncompatibleType(String expected, String actual,
@@ -54,6 +52,30 @@ public class SemanticErrorCollector {
     String errorMsg = String
         .format("line %d:%d -- Type mismatch at %s", line, position, op);
     addError(errorMsg);
+  }
+
+  public static void addAssignToFuncError(int line, int pos, String funcName) {
+    String errorMsg =
+        String.format("line %d:%d -- Function %s cannot be assigned.",
+            line, pos, funcName);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
+  public static void addGlobalReturnError(int line, int pos) {
+    String errMsg =
+        String.format("line %d:%d -- Cannot return from the " + "global scope",
+            line, pos);
+    SemanticErrorCollector.addError(errMsg);
+  }
+
+  public static void addCannotBeIndexed(int line, int pos, String var) {
+    String errorMsg = String.format("line %d:%d -- %s is not an array and cannot be indexed",
+        line, pos, var);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
+  private static void addError(String s) {
+    errors.add(s);
   }
 
   public static void init() {

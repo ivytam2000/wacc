@@ -32,9 +32,8 @@ public class ArrayElemAST extends Node {
     for (Node e : exprs) {
       assert (e.getIdentifier().getType() instanceof IntID);
       if (!(currIdentifier instanceof ArrayID)) {
-        String errorMsg = String.format("line %d:%d -- %s is not an array and cannot be indexed",
-            ctx.getStart().getLine(), ctx.IDENT().getSymbol().getStartIndex(), val);
-        SemanticErrorCollector.addError(errorMsg);
+        SemanticErrorCollector.addCannotBeIndexed(ctx.getStart().getLine(),
+            ctx.IDENT().getSymbol().getStartIndex(), val);
       } else {
         currIdentifier = ((ArrayID) currIdentifier).getElemType();
       }

@@ -24,10 +24,6 @@ public class FuncID extends Identifier {
     this.symtab = symtab;
   }
 
-  public void appendParam(TypeID param) {
-    params.add(param);
-  }
-
   public List<TypeID> getParams() {
     return params;
   }

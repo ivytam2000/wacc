@@ -21,10 +21,6 @@ public class AssignRHSAST extends Node {
     this.symtab = symtab;
   }
 
-  public List<Node> getChildren() {
-    return children;
-  }
-
   @Override
   public void check() {
 

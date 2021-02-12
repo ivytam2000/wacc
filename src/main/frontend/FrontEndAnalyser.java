@@ -24,7 +24,8 @@ public class FrontEndAnalyser {
     // Create a buffer of tokens read from the lexer
     CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-    // Create a parser that reads from the tokens buffer
+    // Create a parser that reads from the tokens buffer.
+    // SyntaxErrorListener passed in to check potential int overflow and missing returns
     parser = new WaccParser(tokens, syntaxErrorListener);
     // Remove standard error listener from parser
     parser.removeErrorListeners();
@@ -37,6 +38,7 @@ public class FrontEndAnalyser {
     // Begin parsing at rule for program
     ParseTree tree = parser.program();
 
+    //Syntax error check
     /* Second and third case needed because we treat
     int overflow and return error separately */
     if (parser.getNumberOfSyntaxErrors() > 0 ||
@@ -46,20 +48,18 @@ public class FrontEndAnalyser {
       return 100;
     }
 
+    //Semantic analysis
     SemanticErrorCollector.init();
     TreeVisitor treeVisitor = new TreeVisitor();
     Node ast = treeVisitor.visit(tree);
 
+    //Semantic error check
     if (SemanticErrorCollector.getNumberOfSemanticErrors() > 0) {
       SemanticErrorCollector.printErrors();
       return 200;
     }
 
-    // Print a LISP-style parse tree
     System.out.println("--- Parsing finished... ---");
-
-    //For debugging
-    //System.out.println(tree.toStringTree(parser));
 
     return 0;
   }
