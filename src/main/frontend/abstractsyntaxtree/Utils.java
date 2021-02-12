@@ -15,8 +15,6 @@ import frontend.symboltable.PairID;
 import frontend.symboltable.OptionalPairID;
 import frontend.symboltable.TypeID;
 import java.util.List;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.Pair;
 
 public class Utils {
 
@@ -111,7 +109,6 @@ public class Utils {
     return typeCompat(eLType, eRType);
   }
 
-// TODO : Turn into a switch statment??
   public static TypeID inferFinalReturnType(Node statements, int line) {
     if (statements instanceof ReturnAST) {
       // Base case

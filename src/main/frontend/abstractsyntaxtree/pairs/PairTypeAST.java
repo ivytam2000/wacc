@@ -1,5 +1,6 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.pairs;
 
+import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.PairLiterAST;
 import frontend.symboltable.Identifier;
 

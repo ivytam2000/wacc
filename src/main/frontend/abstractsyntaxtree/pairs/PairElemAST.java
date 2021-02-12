@@ -1,6 +1,7 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.pairs;
 
 import antlr.WaccParser.PairElemContext;
+import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.abstractsyntaxtree.expressions.PairLiterAST;

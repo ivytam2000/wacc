@@ -2,7 +2,7 @@ package frontend;
 
 import frontend.abstractsyntaxtree.AST;
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.PairTypeAST;
+import frontend.abstractsyntaxtree.pairs.PairTypeAST;
 import frontend.abstractsyntaxtree.statements.SequenceAST;
 import frontend.abstractsyntaxtree.statements.VarDecAST;
 import frontend.symboltable.BoolID;

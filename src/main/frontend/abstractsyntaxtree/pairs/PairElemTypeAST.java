@@ -1,5 +1,6 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.pairs;
 
+import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.Identifier;
 
 public class PairElemTypeAST extends Node {

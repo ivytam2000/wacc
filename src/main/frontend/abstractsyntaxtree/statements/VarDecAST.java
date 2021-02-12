@@ -1,9 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.Var_decl_statContext;
-import frontend.abstractsyntaxtree.ArrayTypeAST;
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.PairTypeAST;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;

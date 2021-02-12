@@ -1,12 +1,12 @@
 package frontend.abstractsyntaxtree.functions;
 
-import frontend.abstractsyntaxtree.Parent;
+import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.TypeID;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ParamListAST extends Parent {
+public class ParamListAST extends Node {
 
   protected List<ParamAST> paramASTs;
 

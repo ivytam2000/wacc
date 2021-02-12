@@ -4,10 +4,15 @@ import antlr.WaccParser;
 import antlr.WaccParser.*;
 import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
+import frontend.abstractsyntaxtree.array.ArrayLiterAST;
+import frontend.abstractsyntaxtree.array.ArrayTypeAST;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.abstractsyntaxtree.functions.FuncAST;
 import frontend.abstractsyntaxtree.functions.ParamAST;
 import frontend.abstractsyntaxtree.functions.ParamListAST;
+import frontend.abstractsyntaxtree.pairs.PairElemAST;
+import frontend.abstractsyntaxtree.pairs.PairElemTypeAST;
+import frontend.abstractsyntaxtree.pairs.PairTypeAST;
 import frontend.abstractsyntaxtree.statements.*;
 import frontend.abstractsyntaxtree.assignments.AssignCallAST;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
@@ -200,7 +205,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public SequenceAST visitSequence_stat(Sequence_statContext ctx) {
     List<StatContext> statCtxs = ctx.stat();
-    // TODO: Should I create an abstract statement node class?
     List<Node> statASTs = new ArrayList<>();
     for (StatContext s : statCtxs) {
       statASTs.add(visit(s));
