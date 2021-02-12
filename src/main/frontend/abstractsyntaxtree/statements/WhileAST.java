@@ -5,6 +5,7 @@ import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.UnknownID;
 
 public class WhileAST extends Node {
   private final Node expr;
@@ -26,7 +27,7 @@ public class WhileAST extends Node {
   public void check() {
     if (expr.getIdentifier() != null) {
       TypeID exprType = expr.getIdentifier().getType();
-      if (!(exprType instanceof BoolID)) {
+      if (!(exprType instanceof UnknownID || exprType instanceof BoolID)) {
         SemanticErrorCollector.addIncompatibleType(
             "bool",
             exprType.getTypeName(),
