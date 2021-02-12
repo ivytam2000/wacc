@@ -11,16 +11,9 @@ public class PairTypeAST extends Node {
 
   public PairTypeAST(Identifier identifier, Node fst, Node snd) {
     super(identifier);
-    if (fst == null) {
-      this.fst = new PairLiterAST();
-    } else {
-      this.fst = fst;
-    }
-    if (snd == null) {
-      this.snd = new PairLiterAST();
-    } else {
-      this.snd = snd;
-    }
+    // Assigns its children to a NullID if its types are not specified
+    this.fst = fst == null ? new PairLiterAST() : fst;
+    this.snd = snd == null ? new PairLiterAST() : snd;
   }
 
   public Node getFst() {

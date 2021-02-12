@@ -25,8 +25,10 @@ public class ParamListAST extends Node {
     }
   }
 
+  // Used in the visitor to convert ASTs to IDs
   public List<TypeID> convertToParamIDs() {
-    return paramASTs.stream().map(paramAST -> paramAST.getIdentifier().getType())
+    return paramASTs.stream()
+        .map(paramAST -> paramAST.getIdentifier().getType())
         .collect(Collectors.toList());
   }
 }

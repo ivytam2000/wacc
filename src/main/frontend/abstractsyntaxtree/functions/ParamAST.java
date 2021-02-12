@@ -10,11 +10,11 @@ import frontend.symboltable.SymbolTable;
 public class ParamAST extends Node {
 
   private final String varName;
-  private ParamID paramObj;
   private final SymbolTable symtab;
   private final ParamContext ctx;
 
-  public ParamAST(Identifier identifier, SymbolTable symtab, String varName, ParamContext ctx) {
+  public ParamAST(Identifier identifier, SymbolTable symtab, String varName,
+      ParamContext ctx) {
     super(identifier);
     this.symtab = symtab;
     this.varName = varName;
@@ -26,10 +26,10 @@ public class ParamAST extends Node {
     Identifier v = symtab.lookup(varName);
     if (v != null) {
       SemanticErrorCollector.addSymbolAlreadyDefined(
-          varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+          varName, ctx.getStart().getLine(),
+          ctx.getStart().getCharPositionInLine());
       return;
     }
-    paramObj = (ParamID) identifier;
-    symtab.add(varName, paramObj);
+    symtab.add(varName, identifier);
   }
 }

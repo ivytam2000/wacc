@@ -9,7 +9,7 @@ import frontend.symboltable.*;
 public class FuncAST extends Node {
 
   private final String funcName;
-  private final ParamListAST params; //For code generation
+  private final ParamListAST params; // For code generation
 
   private SymbolTable globalScope;
   private Node statements;
@@ -40,16 +40,18 @@ public class FuncAST extends Node {
     // Body can just exit and match any return type
     if (!(bodyReturnType instanceof ExitID || Utils
         .typeCompat(funcReturnType, bodyReturnType))) {
-      SemanticErrorCollector.addIncompatibleReturnTypes(funcReturnType.getTypeName(),
-          bodyReturnType.getTypeName(), "function " + funcName, ctx.getStart().getLine(),
-          ctx.getStart().getCharPositionInLine());
+      SemanticErrorCollector
+          .addIncompatibleReturnTypes(funcReturnType.getTypeName(),
+              bodyReturnType.getTypeName(), "function " + funcName,
+              ctx.getStart().getLine(),
+              ctx.getStart().getCharPositionInLine());
     }
   }
 
   public void addFuncToGlobalScope() {
     Identifier f = globalScope.lookupAll("func " + funcName);
 
-    //f already defined
+    // f already defined
     if (f != null) {
       SemanticErrorCollector.addSymbolAlreadyDefined(
           funcName, ctx.getStart().getLine(),

@@ -23,7 +23,8 @@ public class PairElemAST extends Node {
   private String identName;
   private final PairElemContext ctx;
 
-  public PairElemAST(Identifier childIdentifier, SymbolTable symtab, boolean first, Node child,
+  public PairElemAST(Identifier childIdentifier, SymbolTable symtab,
+      boolean first, Node child,
       PairElemContext ctx) {
     super();
     this.childIdentifier = childIdentifier;
@@ -62,17 +63,19 @@ public class PairElemAST extends Node {
       addIncompatibleTypeSemanticError();
     }
 
-    // set identifier
+    // Set identifier
     if (childIdentifier instanceof NullID) {
       setIdentifier(childIdentifier);
     } else {
       PairID childIDAsPair =
-          childIdentifier instanceof ParamID ? ((PairID) (childIdentifier).getType())
+          childIdentifier instanceof ParamID ? ((PairID) (childIdentifier)
+              .getType())
               : ((PairID) childIdentifier);
       Identifier childIDPairElem = first ? childIDAsPair.getFstType()
           : childIDAsPair.getSndType();
 
-      setIdentifier(Objects.requireNonNullElseGet(childIDPairElem, NullID::new));
+      setIdentifier(
+          Objects.requireNonNullElseGet(childIDPairElem, NullID::new));
     }
   }
 
