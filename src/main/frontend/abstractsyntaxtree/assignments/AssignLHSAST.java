@@ -1,7 +1,6 @@
 package frontend.abstractsyntaxtree.assignments;
 
 import frontend.abstractsyntaxtree.Node;
-import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 
 public class AssignLHSAST extends Node {
@@ -23,6 +22,5 @@ public class AssignLHSAST extends Node {
   }
 
   @Override
-  public void check() {
-  }
+  public void check() {}
 }

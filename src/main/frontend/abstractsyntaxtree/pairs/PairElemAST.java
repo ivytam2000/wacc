@@ -1,6 +1,7 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.pairs;
 
 import antlr.WaccParser.PairElemContext;
+import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.abstractsyntaxtree.expressions.PairLiterAST;
@@ -10,6 +11,8 @@ import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
+
+import java.util.Objects;
 
 public class PairElemAST extends Node {
 
@@ -56,6 +59,7 @@ public class PairElemAST extends Node {
       addIncompatibleTypeSemanticError();
     }
 
+    // set identifier
     if (childIdentifier instanceof NullID) {
       setIdentifier(childIdentifier);
     } else {
@@ -65,11 +69,7 @@ public class PairElemAST extends Node {
       Identifier childIDPairElem = first ? childIDAsPair.getFstType()
           : childIDAsPair.getSndType();
 
-      if (childIDPairElem == null) {
-        setIdentifier(new NullID());
-      } else {
-        setIdentifier(childIDPairElem);
-      }
+      setIdentifier(Objects.requireNonNullElseGet(childIDPairElem, NullID::new));
     }
   }
 

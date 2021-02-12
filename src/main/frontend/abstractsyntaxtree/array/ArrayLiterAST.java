@@ -1,6 +1,7 @@
-package frontend.abstractsyntaxtree;
+package frontend.abstractsyntaxtree.array;
 
 import antlr.WaccParser.ArrayLiterContext;
+import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import java.util.List;
