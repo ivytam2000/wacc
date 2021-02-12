@@ -57,12 +57,6 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
-  public static void addAssignToFuncError(int line, int pos, String funcName) {
-    String errorMsg =
-        String.format("line %d:%d -- Function %s cannot be assigned.", line, pos, funcName);
-    addError(errorMsg);
-  }
-
   public static void addFuncInconsistentArgsError(
       int line, int pos, String funcName, int paramSize, int argsSize) {
     String errorMsg =
@@ -94,9 +88,9 @@ public class SemanticErrorCollector {
     addError(errMsg);
   }
 
-  public static void addCannotBeIndexed(int line, int pos, String var) {
+  public static void addCannotBeIndexed(int line, int pos, String var, String type) {
     String errorMsg =
-        String.format("line %d:%d -- %s is not an array and cannot be indexed", line, pos, var);
+        String.format("line %d:%d -- %s (Actual type: %s) is not an array and cannot be indexed", line, pos, var, type);
     addError(errorMsg);
   }
 
