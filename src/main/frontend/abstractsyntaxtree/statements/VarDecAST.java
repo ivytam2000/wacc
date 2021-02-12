@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
+import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.Var_decl_statContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
@@ -14,6 +15,7 @@ public class VarDecAST extends Node {
   private final String varName;
   private final AssignRHSAST assignRHS;
   private final Var_decl_statContext ctx;
+  private final AssignRHSContext rhsCtx;
 
   public VarDecAST(
       SymbolTable symtab,
@@ -26,6 +28,7 @@ public class VarDecAST extends Node {
     this.typeAST = typeAST;
     this.varName = varName;
     this.ctx = ctx;
+    this.rhsCtx = ctx.assignRHS();
     this.assignRHS = assignRHS;
   }
 
@@ -34,8 +37,8 @@ public class VarDecAST extends Node {
     TypeID decType = typeAST.getIdentifier().getType();
     TypeID rhsType = assignRHS.getIdentifier().getType();
 
-    int line = ctx.getStart().getLine();
-    int pos = ctx.getStart().getCharPositionInLine();
+    int line = rhsCtx.getStart().getLine();
+    int pos = rhsCtx.getStart().getCharPositionInLine();
 
     Identifier variable = symtab.lookup(varName);
 
@@ -47,7 +50,7 @@ public class VarDecAST extends Node {
     // Check if types are compatible
     if (!Utils.typeCompat(decType, rhsType)) {
       SemanticErrorCollector.addIncompatibleType(
-          decType.getTypeName(), rhsType.getTypeName(), varName, line, pos);
+          decType.getTypeName(), rhsType.getTypeName(), rhsCtx.getText(), line, pos);
     }
 
     symtab.add(varName, typeAST.getIdentifier().getType());

@@ -71,7 +71,7 @@ public class SemanticErrorCollector {
             line, pos, funcName, paramSize, argsSize);
     addError(errorMsg);
   }
-  
+
   public static void addFuncInconsistentArgTypeError(
       int line, int pos, String funcName, int index, String paramType, String argType) {
     String errorMsg =
@@ -114,6 +114,17 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addIncompatibleReturnTypes(
+      String expected, String actual, String token, int line, int pos) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Incompatible Types at %s, "
+                + "Expected Return Type: %s, "
+                + "but Actual Return Type: %s",
+            line, pos, token, expected, actual);
+    addError(errorMsg);
+  }
+
   private static void addError(String s) {
     errors.add(s);
   }
@@ -125,4 +136,6 @@ public class SemanticErrorCollector {
   public static int getNumberOfSemanticErrors() {
     return errors.size();
   }
+
+
 }

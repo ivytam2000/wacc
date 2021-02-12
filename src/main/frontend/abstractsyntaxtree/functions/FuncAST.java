@@ -40,8 +40,8 @@ public class FuncAST extends Node {
     // Body can just exit and match any return type
     if (!(bodyReturnType instanceof ExitID || Utils
         .typeCompat(funcReturnType, bodyReturnType))) {
-      SemanticErrorCollector.addIncompatibleType(funcReturnType.getTypeName(),
-          bodyReturnType.getTypeName(), funcName, ctx.getStart().getLine(),
+      SemanticErrorCollector.addIncompatibleReturnTypes(funcReturnType.getTypeName(),
+          bodyReturnType.getTypeName(), "function " + funcName, ctx.getStart().getLine(),
           ctx.getStart().getCharPositionInLine());
     }
   }
