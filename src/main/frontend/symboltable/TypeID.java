@@ -1,5 +1,8 @@
 package frontend.symboltable;
 
+/**
+ * An abstract generic identifier object with a known type.
+ */
 public abstract class TypeID extends Identifier {
 
   private final String typeName;

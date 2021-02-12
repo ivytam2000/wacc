@@ -39,6 +39,10 @@ public class PairID extends OptionalPairID {
     return this;
   }
 
+  /**
+   * Returns the detailed type name of the pair if its child types are
+   * well-defined. Otherwise, if it is a generic pair, simply returns "pair".
+   */
   @Override
   public String getTypeName() {
     if (!(fst instanceof NullID) && !(snd instanceof NullID)) {
