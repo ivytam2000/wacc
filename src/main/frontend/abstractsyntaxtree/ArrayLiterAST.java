@@ -3,20 +3,16 @@ package frontend.abstractsyntaxtree;
 import antlr.WaccParser.ArrayLiterContext;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
-import frontend.symboltable.SymbolTable;
-import frontend.symboltable.TypeID;
 import java.util.List;
 
 public class ArrayLiterAST extends Node {
 
-  private final SymbolTable symtab;
   private final List<Node> children;
   private final ArrayLiterContext ctx;
 
   public ArrayLiterAST(
-      Identifier identifier, SymbolTable symtab, List<Node> children, ArrayLiterContext ctx) {
+      Identifier identifier,List<Node> children, ArrayLiterContext ctx) {
     super(identifier);
-    this.symtab = symtab;
     this.children = children;
     this.ctx = ctx;
   }
