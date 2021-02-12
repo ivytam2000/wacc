@@ -362,13 +362,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
         nestedID = new ArrayID(nestedID);
       }
       currSymTab.add(nestedID);
-      return new ArrayTypeAST(nestedID, currSymTab, dimensions);
+      return new ArrayTypeAST(nestedID, dimensions);
     } else {
       // Pair-type array
       Node pairTypeAST = visit(ctx.pairType());
       ArrayID pairArrayID = new ArrayID(pairTypeAST.getIdentifier().getType());
       currSymTab.add(pairArrayID);
-      return new ArrayTypeAST(pairArrayID, currSymTab, dimensions);
+      return new ArrayTypeAST(pairArrayID, dimensions);
     }
   }
 
@@ -380,7 +380,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node snd = visitPairElemType(ctx.pairElemType(1));
     TypeID pairID = new PairID(fst.getIdentifier().getType(), snd.getIdentifier().getType());
 
-    PairTypeAST pairTypeAST = new PairTypeAST(pairID, currSymTab, fst, snd);
+    PairTypeAST pairTypeAST = new PairTypeAST(pairID, fst, snd);
     pairTypeAST.check();
 
     return pairTypeAST;
@@ -396,7 +396,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     }
 
     Identifier pairGenericID = new PairID();
-    PairElemTypeAST pairElemTypeAST = new PairElemTypeAST(pairGenericID, currSymTab);
+    PairElemTypeAST pairElemTypeAST = new PairElemTypeAST(pairGenericID);
     currSymTab.add(pairGenericID.getType().getTypeName(), pairGenericID);
 
     return pairElemTypeAST;

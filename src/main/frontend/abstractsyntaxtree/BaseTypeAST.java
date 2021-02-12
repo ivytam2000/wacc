@@ -4,7 +4,6 @@ import antlr.WaccParser.BaseTypeContext;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
-import frontend.symboltable.TypeID;
 
 public class BaseTypeAST extends Node {
 

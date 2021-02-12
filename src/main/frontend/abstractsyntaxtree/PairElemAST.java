@@ -56,6 +56,7 @@ public class PairElemAST extends Node {
       addIncompatibleTypeSemanticError();
     }
 
+    // set identifier
     if (childIdentifier instanceof NullID) {
       setIdentifier(childIdentifier);
     } else {

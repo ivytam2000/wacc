@@ -1,6 +1,5 @@
 package frontend.abstractsyntaxtree;
 
-import frontend.symboltable.SymbolTable;
 import java.util.List;
 
 public class AST extends Node {
@@ -14,17 +13,16 @@ public class AST extends Node {
     this.statAST = statAST;
   }
 
-  @Override
-  public void check() {
-
-  }
-
-//  FOR DEBUGGING
+  // for future use in code generation
   public List<Node> getFuncASTs() {
     return funcASTs;
   }
 
   public Node getStatAST() {
     return statAST;
+  }
+
+  @Override
+  public void check() {
   }
 }
