@@ -131,7 +131,7 @@ public class Utils {
       TypeID elseID = inferFinalReturnType(elseStat, line);
       if (!(thenID instanceof ExitID || elseID instanceof ExitID || typeCompat(thenID, elseID))) {
         // Type of an if-statement should be same regardless which statements
-        SemanticErrorCollector.addError(line + " -- Return types of if-statement do not match up");
+        SemanticErrorCollector.addIfReturnTypesError(line);
       }
       return thenID instanceof ExitID ? elseID : thenID;
     } else if (statements instanceof WhileAST) {
@@ -140,7 +140,6 @@ public class Utils {
     } else if (statements instanceof BeginStatAST) {
       return inferFinalReturnType(((BeginStatAST) statements).getStat(), line);
     }
-
     // UNREACHABLE (Parser makes sure that there is always return/exit)
     return null;
   }
