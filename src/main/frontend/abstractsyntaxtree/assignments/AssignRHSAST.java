@@ -10,7 +10,8 @@ public class AssignRHSAST extends Node {
   protected final SymbolTable symtab;
   protected List<Node> children;
 
-  public AssignRHSAST(Identifier identifier, SymbolTable symtab, List<Node> children) {
+  public AssignRHSAST(Identifier identifier, SymbolTable symtab,
+      List<Node> children) {
     super(identifier);
     this.symtab = symtab;
     this.children = children;
@@ -22,5 +23,6 @@ public class AssignRHSAST extends Node {
   }
 
   @Override
-  public void check() {}
+  public void check() {
+  }
 }

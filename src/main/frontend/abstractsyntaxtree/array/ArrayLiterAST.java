@@ -12,7 +12,7 @@ public class ArrayLiterAST extends Node {
   private final ArrayLiterContext ctx;
 
   public ArrayLiterAST(
-      Identifier identifier,List<Node> children, ArrayLiterContext ctx) {
+      Identifier identifier, List<Node> children, ArrayLiterContext ctx) {
     super(identifier);
     this.children = children;
     this.ctx = ctx;
@@ -28,7 +28,8 @@ public class ArrayLiterAST extends Node {
         String childType = child.getIdentifier().getType().getTypeName();
         if (!childType.equals(type)) {
           SemanticErrorCollector.addArrayInconsistentTypes(
-              line, ctx.expr(i).getStart().getCharPositionInLine(), i, type, childType);
+              line, ctx.expr(i).getStart().getCharPositionInLine(), i, type,
+              childType);
         }
       }
     }

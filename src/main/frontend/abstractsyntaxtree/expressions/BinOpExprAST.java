@@ -50,8 +50,10 @@ public class BinOpExprAST extends Node {
       String expectedTypes = "";
 
       if (expectedExprTypes == Utils.INT_CHAR) { //Defined for int and char
-        errorL = !(eLType instanceof IntID || eLType instanceof CharID || eLType instanceof UnknownID);
-        errorR = !(eRType instanceof IntID || eRType instanceof CharID || eRType instanceof UnknownID);
+        errorL = !(eLType instanceof IntID || eLType instanceof CharID
+            || eLType instanceof UnknownID);
+        errorR = !(eRType instanceof IntID || eRType instanceof CharID
+            || eRType instanceof UnknownID);
         expectedTypes = "int or char";
       } else if (expectedExprTypes == Utils.BOOL) { //Defined for bool only
         errorL = !(eLType instanceof BoolID || eLType instanceof UnknownID);
@@ -61,14 +63,16 @@ public class BinOpExprAST extends Node {
 
       if (errorL) {
         SemanticErrorCollector
-            .addIncompatibleType(expectedTypes, eLType.getTypeName(), ctx.getText(),
+            .addIncompatibleType(expectedTypes, eLType.getTypeName(),
+                ctx.getText(),
                 ctx.getStart().getLine(),
                 ctx.getStart().getCharPositionInLine());
       }
 
       if (errorR) {
         SemanticErrorCollector
-            .addIncompatibleType(expectedTypes, eRType.getTypeName(), ctx.getText(),
+            .addIncompatibleType(expectedTypes, eRType.getTypeName(),
+                ctx.getText(),
                 ctx.getStop().getLine(),
                 ctx.getStop().getCharPositionInLine());
       }

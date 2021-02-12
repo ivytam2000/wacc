@@ -18,7 +18,8 @@ public class ArrayElemAST extends Node {
   private final List<Node> exprs;
   private final ArrayElemContext ctx;
 
-  public ArrayElemAST(Identifier currIdentifier, SymbolTable symtab, String val, List<Node> exprs, ArrayElemContext ctx) {
+  public ArrayElemAST(Identifier currIdentifier, SymbolTable symtab, String val,
+      List<Node> exprs, ArrayElemContext ctx) {
     super();
     this.symtab = symtab;
     this.currIdentifier = currIdentifier;
@@ -37,7 +38,8 @@ public class ArrayElemAST extends Node {
       //We cannot index further into something that's not an array
       if (!(currIdentifier instanceof ArrayID)) {
         SemanticErrorCollector.addCannotBeIndexed(ctx.getStart().getLine(),
-            ctx.getStart().getCharPositionInLine(), val, currIdentifier.getType().getTypeName());
+            ctx.getStart().getCharPositionInLine(), val,
+            currIdentifier.getType().getTypeName());
         //Treat string as array of chars in error case
         if (currIdentifier instanceof StringID) {
           currIdentifier = symtab.lookupAll("char");

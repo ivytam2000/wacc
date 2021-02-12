@@ -18,7 +18,8 @@ public class AssignCallAST extends AssignRHSAST {
   private final Call_assignRHSContext ctx;
 
   public AssignCallAST(
-      String funcName, SymbolTable symtab, ArgListAST args, Call_assignRHSContext ctx) {
+      String funcName, SymbolTable symtab, ArgListAST args,
+      Call_assignRHSContext ctx) {
     super(symtab.lookupAll("func " + funcName), symtab);
     this.funcName = funcName;
     this.args = args;
