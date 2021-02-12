@@ -38,6 +38,7 @@ public class TestUtilities {
     List<String> names = getTestNames(folderPath);
     for (String name : names) {
       String sourceFilePath = folderPath + name;
+      // Redirects standard output to prevent clogging up the CI pipeline 
       OutputStream os = new ByteArrayOutputStream();
       System.setOut(new PrintStream(os));
       FrontEndAnalyser analyser = buildFrontEndAnalyser(sourceFilePath);
