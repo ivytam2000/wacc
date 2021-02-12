@@ -1,6 +1,5 @@
 package frontend.abstractsyntaxtree.statements;
 
-import antlr.WaccParser;
 import antlr.WaccParser.AssignLHSContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
@@ -30,14 +29,3 @@ public class ReadAST extends Node {
     }
   }
 }
-
-//if (lhsType == null) {
-//    SemanticErrorCollector.addUnknownType(lhs.getIdentName(), line, pos);
-//    } else
-
-//else if (!(lhsType instanceof TypeID)) {
-//    String errMsg =
-//    String.format(
-//    "line %d:%d -- %s is not a type", line, pos, lhsType.getType().getTypeName());
-//    SemanticErrorCollector.addError(errMsg);
-//    }

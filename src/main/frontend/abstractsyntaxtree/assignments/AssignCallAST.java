@@ -17,8 +17,8 @@ public class AssignCallAST extends AssignRHSAST {
   private final ArgListAST args;
   private final Call_assignRHSContext ctx;
 
-  public AssignCallAST(String funcName, SymbolTable symtab, ArgListAST args,
-      Call_assignRHSContext ctx) {
+  public AssignCallAST(
+      String funcName, SymbolTable symtab, ArgListAST args, Call_assignRHSContext ctx) {
     super(symtab.lookupAll(funcName), symtab);
     this.funcName = funcName;
     this.args = args;
@@ -43,9 +43,12 @@ public class AssignCallAST extends AssignRHSAST {
 
         // if given number of arguments are not the same as the number of params
         if (paramSize != argsSize) {
-          SemanticErrorCollector
-              .addFuncInconsistentArgsError(line, ctx.argList().getStart().getCharPositionInLine(),
-                  funcName, paramSize, argsSize);
+          SemanticErrorCollector.addFuncInconsistentArgsError(
+              line,
+              ctx.argList().getStart().getCharPositionInLine(),
+              funcName,
+              paramSize,
+              argsSize);
         } else {
           for (int i = 0; i < paramSize; i++) {
             TypeID currParam = params.get(i);
@@ -55,19 +58,22 @@ public class AssignCallAST extends AssignRHSAST {
 
               // if argument and param types don't match
               if (currParam.getClass() != argType.getClass()) {
-                SemanticErrorCollector.addFuncInconsistentArgTypeError(line,
-                    ctx.argList().expr(i).getStart().getCharPositionInLine(), funcName, i,
-                    currParam.getTypeName(), argType.getTypeName());
+                SemanticErrorCollector.addFuncInconsistentArgTypeError(
+                    line,
+                    ctx.argList().expr(i).getStart().getCharPositionInLine(),
+                    funcName,
+                    i,
+                    currParam.getTypeName(),
+                    argType.getTypeName());
               }
             }
           }
         }
       } else {
-
         // given function name is not actually a function type
-        SemanticErrorCollector.addIsNotFuncError(line, identPos, funcName, funcID.getType().getTypeName());
+        SemanticErrorCollector.addIsNotFuncError(
+            line, identPos, funcName, funcID.getType().getTypeName());
       }
     }
-
   }
 }

@@ -54,62 +54,6 @@ public class VarDecAST extends Node {
     setIdentifier(typeAST.getIdentifier().getType());
   }
 
-  //  private void checkAsPairType() {
-  //    TypeID fstType = ((PairTypeAST) typeAST).getFst().getIdentifier().getType();
-  //    TypeID sndType = ((PairTypeAST) typeAST).getSnd().getIdentifier().getType();
-  //    TypeID assignType = assignRHS.getIdentifier().getType();
-  //
-  //    if (assignType instanceof PairID) {
-  //      PairID assignRHSAsPair = (PairID) assignType;
-  //
-  //      verifyPairElemTypeOfRHS(fstType, assignRHSAsPair.getFstType());
-  //      verifyPairElemTypeOfRHS(sndType, assignRHSAsPair.getSndType());
-  //    } else if (!(assignType instanceof NullID)) {
-  //      SemanticErrorCollector.addIncompatibleType(
-  //          "pair",
-  //          assignType.getTypeName(),
-  //          varName,
-  //          ctx.getStart().getLine(),
-  //          ctx.getStart().getCharPositionInLine());
-  //    }
-  //  }
-  //
-  //  private void checkAsArrayType() {
-  //    TypeID assignType = assignRHS.getIdentifier().getType();
-  //    if (assignType instanceof ArrayID) {
-  //      if (!Utils.compareArrayTypes(typeAST.getIdentifier().getType(), assignType)) {
-  //        String errorMsg =
-  //            String.format(
-  //                "line %d:%d -- Array doesn't have consistent types, "
-  //                    + "expected type: %s but got actual type: %s",
-  //                ctx.getStart().getLine(),
-  //                ctx.getStart().getCharPositionInLine(),
-  //                typeAST.getIdentifier().getType().getTypeName(),
-  //                assignType.getTypeName());
-  //        SemanticErrorCollector.addError(errorMsg);
-  //      }
-  //    }
-  //  }
-  //
-  //  private void verifyPairElemTypeOfRHS(TypeID elemType, TypeID elemRHS) {
-  //    if (elemType instanceof OptionalPairID) {
-  //      if (!(elemRHS instanceof OptionalPairID)) {
-  //        SemanticErrorCollector.addError("First of pair : Expected pair");
-  //      }
-  //    } else if (elemType instanceof ArrayID) {
-  //      if (!Utils.compareArrayTypes(elemType, elemRHS)) {
-  //        SemanticErrorCollector.addError("First of pair : Expected array");
-  //      }
-  //    } else {
-  //      // Null rhs can match with any pair
-  //      if (!(elemRHS instanceof NullID)) {
-  //        if (elemType != elemRHS) {
-  //          SemanticErrorCollector.addError("First of pair : Types mismatch");
-  //        }
-  //      }
-  //    }
-  //  }
-  // TODO: FOR DEBUGGING.
   public Node getTypeAST() {
     return typeAST;
   }
