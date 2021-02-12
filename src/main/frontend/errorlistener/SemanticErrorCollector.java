@@ -57,12 +57,6 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
-  public static void addAssignToFuncError(int line, int pos, String funcName) {
-    String errorMsg =
-        String.format("line %d:%d -- Function %s cannot be assigned.", line, pos, funcName);
-    addError(errorMsg);
-  }
-
   public static void addFuncInconsistentArgsError(
       int line, int pos, String funcName, int paramSize, int argsSize) {
     String errorMsg =

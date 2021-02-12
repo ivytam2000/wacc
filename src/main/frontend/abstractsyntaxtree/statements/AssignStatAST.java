@@ -39,8 +39,6 @@ public class AssignStatAST extends Node {
 
     if (var == null) { // Undefined variable
       SemanticErrorCollector.addVariableUndefined(varName, lhsLine, lhsPos);
-    } else if (var instanceof FuncID) { // Trying to assign to a function
-      SemanticErrorCollector.addAssignToFuncError(lhsLine, lhsPos, varName);
     } else {
       TypeID lhsType = lhs.getIdentifier().getType();
       TypeID rhsType = rhs.getIdentifier().getType();
