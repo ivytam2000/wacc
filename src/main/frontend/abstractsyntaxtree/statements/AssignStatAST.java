@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
-import antlr.WaccParser;
+import antlr.WaccParser.AssignRHSContext;
+import antlr.WaccParser.AssignLHSContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
@@ -16,11 +17,10 @@ public class AssignStatAST extends Node {
   private final AssignRHSAST rhs;
   private final AssignLHSAST lhs;
   private SymbolTable symtab;
-  private final WaccParser.AssignRHSContext rhsCtx;
-  private final WaccParser.AssignLHSContext lhsCtx;
+  private final AssignRHSContext rhsCtx;
+  private final AssignLHSContext lhsCtx;
 
-  public AssignStatAST(
-      WaccParser.AssignLHSContext lhsCtx, WaccParser.AssignRHSContext rhsCtx,
+  public AssignStatAST(AssignLHSContext lhsCtx, AssignRHSContext rhsCtx,
       AssignLHSAST lhs, AssignRHSAST rhs, SymbolTable symtab) {
     this.rhs = rhs;
     this.lhs = lhs;
@@ -37,20 +37,21 @@ public class AssignStatAST extends Node {
     int lhsLine = lhsCtx.getStart().getLine();
     int lhsPos = lhsCtx.getStart().getCharPositionInLine();
 
-    if (var == null) { //Undefined variable
-      SemanticErrorCollector
-          .addVariableUndefined(varName, lhsLine, lhsPos);
-    } else if (var instanceof FuncID) { //Trying to assign to a function
-      SemanticErrorCollector
-          .addAssignToFuncError(lhsLine, lhsPos, varName);
+    if (var == null) { // Undefined variable
+      SemanticErrorCollector.addVariableUndefined(varName, lhsLine, lhsPos);
+    } else if (var instanceof FuncID) { // Trying to assign to a function
+      SemanticErrorCollector.addAssignToFuncError(lhsLine, lhsPos, varName);
     } else {
       TypeID lhsType = lhs.getIdentifier().getType();
       TypeID rhsType = rhs.getIdentifier().getType();
 
-      if (!Utils.typeCompat(lhsType, rhsType)) { //types don't match
-        SemanticErrorCollector
-            .addIncompatibleType(lhsType.getTypeName(), rhsType.getTypeName(),
-                varName, lhsLine, rhsCtx.getStart().getCharPositionInLine());
+      if (!Utils.typeCompat(lhsType, rhsType)) { // types don't match
+        SemanticErrorCollector.addIncompatibleType(
+            lhsType.getTypeName(),
+            rhsType.getTypeName(),
+            varName,
+            lhsLine,
+            rhsCtx.getStart().getCharPositionInLine());
       }
     }
   }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AssignRHSAST extends Node {
 
-  protected SymbolTable symtab;
+  protected final SymbolTable symtab;
   protected List<Node> children;
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab, List<Node> children) {

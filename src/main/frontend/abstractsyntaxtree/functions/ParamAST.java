@@ -11,8 +11,8 @@ public class ParamAST extends Node {
 
   private final String varName;
   private ParamID paramObj;
-  private SymbolTable symtab;
-  private ParamContext ctx;
+  private final SymbolTable symtab;
+  private final ParamContext ctx;
 
   public ParamAST(Identifier identifier, SymbolTable symtab, String varName, ParamContext ctx) {
     super(identifier);

@@ -8,8 +8,8 @@ import frontend.symboltable.SymbolTable;
 public class BaseTypeAST extends Node {
 
   private final String typeName;
-  private SymbolTable symtab;
-  private BaseTypeContext ctx;
+  private final SymbolTable symtab;
+  private final BaseTypeContext ctx;
 
   public BaseTypeAST(Identifier identifier, SymbolTable symtab, BaseTypeContext ctx) {
     super(identifier);

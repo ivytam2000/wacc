@@ -5,7 +5,7 @@ import frontend.symboltable.SymbolTable;
 
 public class AssignLHSAST extends Node {
 
-  private String assignName;
+  private final String assignName;
 
   public AssignLHSAST(Node assignNode, String assignName) {
     super(assignNode.getIdentifier());

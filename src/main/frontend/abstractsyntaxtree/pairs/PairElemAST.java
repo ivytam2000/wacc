@@ -16,12 +16,12 @@ import java.util.Objects;
 
 public class PairElemAST extends Node {
 
-  private SymbolTable symtab;
+  private final SymbolTable symtab;
   private final Identifier childIdentifier;
-  private boolean first;
-  private Node child;
+  private final boolean first;
+  private final Node child;
   private String identName;
-  private PairElemContext ctx;
+  private final PairElemContext ctx;
 
   public PairElemAST(Identifier childIdentifier, SymbolTable symtab, boolean first, Node child,
       PairElemContext ctx) {

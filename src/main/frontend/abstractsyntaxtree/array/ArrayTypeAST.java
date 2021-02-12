@@ -5,14 +5,14 @@ import frontend.symboltable.Identifier;
 
 public class ArrayTypeAST extends Node {
 
-  private int dimensions;
+  private final int dimensions;
 
   public ArrayTypeAST(Identifier identifier, int dimensions) {
     super(identifier);
     this.dimensions = dimensions;
   }
 
-  // for future use in code generation
+  //For future use in code generation
   public int getDimensions() {
     return dimensions;
   }

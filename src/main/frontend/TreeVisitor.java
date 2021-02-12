@@ -28,7 +28,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   private SymbolTable currSymTab;
 
   public TreeVisitor() {
-    this.currSymTab = new SymbolTable(); // Initialised with top level symtab
+    // Initialised with top level symtab
+    this.currSymTab = new SymbolTable();
   }
 
   // Root of parse tree
@@ -190,9 +191,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     currSymTab = new SymbolTable(encScope);
     Node elseStat = visit(ctx.stat(1));
 
-    currSymTab = encScope;// Swap back to parent scope
+    currSymTab = encScope; // Swap back to parent scope
 
-    IfAST ifAST = new IfAST(expr, thenStat, elseStat, ctx);
+    IfAST ifAST = new IfAST(expr, thenStat, elseStat, ctx.expr());
     ifAST.check();
 
     return ifAST;
@@ -453,7 +454,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public CharLiterAST visitCharLiter(CharLiterContext ctx) {
     String s = ctx.CHAR_LITER().getText();
-    //substring removes quotes
+    // substring removes quotes
     return new CharLiterAST(currSymTab, s.substring(1, s.length() - 1));
   }
 
@@ -501,7 +502,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public UnOpExprAST visitUnOpExpr(UnOpExprContext ctx) {
-    Node exprAST = visit(ctx.expr()); //Build AST to expr
+    Node exprAST = visit(ctx.expr()); // Build AST to expr
 
     UnOpExprAST unOpAST = new UnOpExprAST(currSymTab, exprAST, ctx.unaryOper());
     unOpAST.check();
@@ -514,7 +515,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
 
-    //Set correct operator depending on context
+    // Set correct operator depending on context
     ArithmeticOper1Context arithCtx = ctx.arithmeticOper1();
     String op = null;
     if (arithCtx.MULT() != null) {
@@ -537,7 +538,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
 
-    //Set correct operator depending on context
+    // Set correct operator depending on context
     ArithmeticOper2Context arithCtx = ctx.arithmeticOper2();
     String op = null;
     if (arithCtx.PLUS() != null) {
@@ -555,11 +556,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public BinOpExprAST visitBinOpExpr_1(BinOpExpr_1Context ctx) {
-    //BinOpExpr_1 only defined for int and char only
+    // BinOpExpr_1 only defined for int and char only
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
 
-    //Set operation correctly depending on context
+    // Set operation correctly depending on context
     BinaryOper1Context binOp1Ctx = ctx.binaryOper1();
     String operation = null;
     if (binOp1Ctx.GT() != null) {
@@ -582,11 +583,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public BinOpExprAST visitBinOpExpr_2(BinOpExpr_2Context ctx) {
-    //BinOpExpr_2 defined for all types
+    // BinOpExpr_2 defined for all types
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
 
-    //Set operation correctly depending on context
+    // Set operation correctly depending on context
     BinaryOper2Context binOp2Ctx = ctx.binaryOper2();
     String operation = null;
     if (binOp2Ctx.EQ() != null) {
@@ -605,7 +606,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public BinOpExprAST visitAndExpr(AndExprContext ctx) {
-    //AND only compatible with bools
+    // AND only compatible with bools
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
 
@@ -618,7 +619,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public BinOpExprAST visitOrExpr(OrExprContext ctx) {
-    //OR only compatible with bools
+    // OR only compatible with bools
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
 
@@ -633,11 +634,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public ArrayElemAST visitArrayElem(ArrayElemContext ctx) {
     String arrayName = ctx.IDENT().getText();
 
-    //Check that each expression (index into the array) is an int
+    // Check that each expression (index into the array) is an int
     Identifier identifier = currSymTab.lookupAll(arrayName);
     List<Node> indexes = new ArrayList<>();
 
-    //Check for multidimensional arrays (all indexes have to be of type int)
+    // Check for multidimensional arrays (all indexes have to be of type int)
     List<ExprContext> expressions = ctx.expr();
     for (ExprContext e : expressions) {
       Node exprAST = visit(e);

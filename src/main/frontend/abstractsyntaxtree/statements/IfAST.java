@@ -1,6 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
-import antlr.WaccParser;
+import antlr.WaccParser.ExprContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
@@ -11,17 +11,15 @@ public class IfAST extends Node {
   private final Node expr;
   private final Node thenStat;
   private final Node elseStat;
-  private final WaccParser.If_statContext ifCtx;
-  private final WaccParser.ExprContext exprCtx;
+  private final ExprContext exprCtx;
 
-  public IfAST(Node expr, Node thenStat, Node elseStat, WaccParser.If_statContext ctx) {
+  public IfAST(Node expr, Node thenStat, Node elseStat, ExprContext ctx) {
     // set identifier to be same as expressions but not sure if its correct?
     super(expr.getIdentifier());
     this.expr = expr;
     this.thenStat = thenStat;
     this.elseStat = elseStat;
-    this.ifCtx = ctx;
-    this.exprCtx = ctx.expr();
+    this.exprCtx = ctx;
   }
 
   public Node getThenStat() {
