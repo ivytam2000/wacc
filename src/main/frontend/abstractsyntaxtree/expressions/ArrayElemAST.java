@@ -30,10 +30,11 @@ public class ArrayElemAST extends Node {
   @Override
   public void check() {
     for (Node e : exprs) {
-      assert (e.getIdentifier().getType() instanceof IntID);
+      //We cannot index further into something that's not an array
       if (!(currIdentifier instanceof ArrayID)) {
         SemanticErrorCollector.addCannotBeIndexed(ctx.getStart().getLine(),
-            ctx.IDENT().getSymbol().getStartIndex(), val);
+            ctx.getStart().getCharPositionInLine(), val);
+        break;
       } else {
         currIdentifier = ((ArrayID) currIdentifier).getElemType();
       }

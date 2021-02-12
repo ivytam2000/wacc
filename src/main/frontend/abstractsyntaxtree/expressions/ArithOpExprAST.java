@@ -35,6 +35,8 @@ public class ArithOpExprAST extends Node {
     TypeID eLType = eL.getIdentifier().getType();
     TypeID eRType = eR.getIdentifier().getType();
 
+    //Both eL and eR must be of type int to do arithmetic
+
     if (!(eLType instanceof IntID)) {
       SemanticErrorCollector
           .addIncompatibleType("int (For " + op + ")", eLType.getTypeName(),
@@ -42,6 +44,7 @@ public class ArithOpExprAST extends Node {
               ctx.getStart().getLine(),
               ctx.getStart().getCharPositionInLine());
     }
+
     if (!(eRType instanceof IntID)) {
       SemanticErrorCollector
           .addIncompatibleType("int (For " + op + ")", eRType.getTypeName(),

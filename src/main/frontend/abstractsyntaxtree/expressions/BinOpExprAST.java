@@ -32,26 +32,36 @@ public class BinOpExprAST extends Node {
   public void check() {
     TypeID eLType = eL.getIdentifier().getType();
     TypeID eRType = eR.getIdentifier().getType();
-    if (expectedExprTypes == Utils.ALL_TYPES) {
+
+    //Different binOps are compatible w different types
+
+    if (expectedExprTypes == Utils.ALL_TYPES) { //Defined for all types
       if (!Utils.typeCompat(eLType, eRType)) {
-        SemanticErrorCollector.addTypeMismatch(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(), op);
+        SemanticErrorCollector
+            .addTypeMismatch(ctx.getStart().getLine(),
+                ctx.getStart().getCharPositionInLine(), op);
       }
     } else {
+      //Check for left and right expr of binOp separated to pin point error
+
       boolean errorL = false;
       boolean errorR = false;
-      if (expectedExprTypes == Utils.BOOL) {
-        errorL = !(eLType instanceof BoolID);
-        errorR = !(eRType instanceof BoolID);
-      } else if (expectedExprTypes == Utils.INT_CHAR) {
+
+      if (expectedExprTypes == Utils.INT_CHAR) { //Defined for int and char
         errorL = !(eLType instanceof IntID || eLType instanceof CharID);
         errorR = !(eRType instanceof IntID || eRType instanceof CharID);
+      } else if (expectedExprTypes == Utils.BOOL) { //Defined for bool only
+        errorL = !(eLType instanceof BoolID);
+        errorR = !(eRType instanceof BoolID);
       }
+
       if (errorL) {
         SemanticErrorCollector
             .addIncompatibleType("bool", eLType.getTypeName(), ctx.getText(),
                 ctx.getStart().getLine(),
                 ctx.getStart().getCharPositionInLine());
       }
+
       if (errorR) {
         SemanticErrorCollector
             .addIncompatibleType("bool", eRType.getTypeName(), ctx.getText(),

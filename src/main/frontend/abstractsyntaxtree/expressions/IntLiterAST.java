@@ -7,12 +7,11 @@ import frontend.symboltable.SymbolTable;
 
 public class IntLiterAST extends Node {
 
-  private final boolean positive;
-  private final String val;
+  private final boolean positive; //For backend
+  private final String val; //For backend
 
   public IntLiterAST(SymbolTable symtab, boolean positive, String val) {
     super(symtab.lookupAll("int"));
-    assert (super.identifier != null);
     this.positive = positive;
     this.val = val;
   }

@@ -5,7 +5,7 @@ import frontend.symboltable.SymbolTable;
 
 public class StrLiterAST extends Node {
 
-  private final String val;
+  private final String val; //For backend
 
   public StrLiterAST(SymbolTable symtab, String val) {
     super(symtab.lookupAll("string"));

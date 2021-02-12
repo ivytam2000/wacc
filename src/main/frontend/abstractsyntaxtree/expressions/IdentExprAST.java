@@ -26,8 +26,8 @@ public class IdentExprAST extends Node {
   public void check() {
     String varName = getName();
     Identifier identifier = currsymtab.lookupAll(varName);
-    if (identifier == null) {
-      //Unknown variable
+
+    if (identifier == null) { //Unknown variable
       SemanticErrorCollector
           .addVariableUndefined(varName, ctx.getStart().getLine(),
               ctx.getStart().getCharPositionInLine());

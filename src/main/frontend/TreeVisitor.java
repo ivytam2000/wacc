@@ -465,16 +465,15 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitPairLiter(PairLiterContext ctx) {
+  public Node visitPairLiter(PairLiterContext ctx) { //NULL
     return new PairLiterAST();
   }
 
   @Override
   public Node visitIdentExpr(IdentExprContext ctx) {
-    String val = ctx.IDENT().getText();
-    assert (val != null);
     Node identExprAST = new IdentExprAST(currSymTab, ctx);
     identExprAST.check();
+
     return identExprAST;
   }
 
@@ -490,9 +489,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitUnOpExpr(UnOpExprContext ctx) {
-    Node exprAST = visit(ctx.expr());
+    Node exprAST = visit(ctx.expr()); //Build AST to expr
     Node unOpAST = new UnOpExprAST(currSymTab, exprAST, ctx.unaryOper());
     unOpAST.check();
+
     return unOpAST;
   }
 
@@ -500,6 +500,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitArithOpExpr_1(ArithOpExpr_1Context ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
+
+    //Set correct operator depending on context
     ArithmeticOper1Context arithCtx = ctx.arithmeticOper1();
     String op = null;
     if (arithCtx.MULT() != null) {
@@ -510,8 +512,10 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       op = "%";
     }
     assert (op != null);
+
     Node arithOpExprAST = new ArithOpExprAST(currSymTab, op, eL, eR, ctx);
     arithOpExprAST.check();
+
     return arithOpExprAST;
   }
 
@@ -519,6 +523,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitArithOpExpr_2(ArithOpExpr_2Context ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
+
+    //Set correct operator depending on context
     ArithmeticOper2Context arithCtx = ctx.arithmeticOper2();
     String op = null;
     if (arithCtx.PLUS() != null) {
@@ -527,16 +533,20 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       op = "-";
     }
     assert (op != null);
+
     Node arithOpExprAST = new ArithOpExprAST(currSymTab, op, eL, eR, ctx);
     arithOpExprAST.check();
+
     return arithOpExprAST;
   }
 
   @Override
   public Node visitBinOpExpr_1(BinOpExpr_1Context ctx) {
-    //Int or char only
+    //BinOpExpr_1 only defined for int and char only
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
+
+    //Set operation correctly depending on context
     BinaryOper1Context binOp1Ctx = ctx.binaryOper1();
     String operation = null;
     if (binOp1Ctx.GT() != null) {
@@ -549,17 +559,21 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       operation = "<=";
     }
     assert (operation != null);
+
     Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.INT_CHAR, operation,
         eL, eR, ctx);
     binOpExprAST.check();
+
     return binOpExprAST;
   }
 
   @Override
   public Node visitBinOpExpr_2(BinOpExpr_2Context ctx) {
-    //Defined for all types
+    //BinOpExpr_2 defined for all types
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
+
+    //Set operation correctly depending on context
     BinaryOper2Context binOp2Ctx = ctx.binaryOper2();
     String operation = null;
     if (binOp2Ctx.EQ() != null) {
@@ -568,46 +582,49 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       operation = "!=";
     }
     assert (operation != null);
+
     Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.ALL_TYPES, operation,
         eL, eR, ctx);
     binOpExprAST.check();
+
     return binOpExprAST;
   }
 
   @Override
   public Node visitAndExpr(AndExprContext ctx) {
+    //AND only compatible with bools
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
+
     Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.BOOL, "&&", eL, eR,
         ctx);
     binOpExprAST.check();
+
     return binOpExprAST;
   }
 
   @Override
   public Node visitOrExpr(OrExprContext ctx) {
+    //OR only compatible with bools
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
+
     Node binOpExprAST = new BinOpExprAST(currSymTab, Utils.BOOL, "||", eL, eR,
         ctx);
     binOpExprAST.check();
+
     return binOpExprAST;
   }
 
   @Override
   public Node visitArrayElem(ArrayElemContext ctx) {
-    //TODO: Does the implementation handle nested arrays?
-    // int[][] a = [[1, 2], [3,4]];
-    // int y = a[0][1];
     String arrayName = ctx.IDENT().getText();
-    //Check that the IDENT is an array. If not, no point moving forward.
+
+    //Check that each expression (index into the array) is an int
     Identifier identifier = currSymTab.lookupAll(arrayName);
-    if (!(identifier instanceof ArrayID)) {
-      SemanticErrorCollector
-          .addCannotBeIndexed(ctx.getStart().getLine(),
-              ctx.getStart().getCharPositionInLine(), arrayName);
-    }
     List<Node> indexes = new ArrayList<>();
+
+    //Check for multidimensional arrays (all indexes have to be of type int)
     List<ExprContext> expressions = ctx.expr();
     for (ExprContext e : expressions) {
       Node exprAST = visit(e);
@@ -616,14 +633,15 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
         SemanticErrorCollector
             .addIncompatibleType("int", exprType.getTypeName(),
                 e.getText(), ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine());
-      } else {
-        indexes.add(exprAST);
+                e.getStart().getCharPositionInLine());
       }
+      indexes.add(exprAST);
     }
+
     ArrayElemAST arrayElemAST =
         new ArrayElemAST(identifier, arrayName, indexes, ctx);
     arrayElemAST.check();
+
     return arrayElemAST;
   }
 

@@ -110,10 +110,6 @@ expr:
 | expr OR expr                                                        #orExpr
 ;
 
-/*
-Cant treat unary and binary operators as lexer rules, causes errors when
-matching with expr
-*/
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;
 arithmeticOper1: MULT | DIV | MOD;
 arithmeticOper2: PLUS | MINUS;
@@ -122,13 +118,4 @@ binaryOper2: EQ | NE;
 
 arrayElem: IDENT (OPEN_SQUARE_BRACKETS expr CLOSE_SQUARE_BRACKETS)+ ;
 
-//intLiter: (PLUS | MINUS)? INTEGER ;
-//boolLiter: TRUE | FALSE ;
-//charLiter: CHAR_LITER;
-//strLiter: STR_LITER ;
-//pairLiter: NULL ;
-
 arrayLiter: OPEN_SQUARE_BRACKETS (expr (COMMA expr)*)? CLOSE_SQUARE_BRACKETS ;
-
-// For testing
-prog: stat EOF ;

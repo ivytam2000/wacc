@@ -5,11 +5,10 @@ import frontend.symboltable.SymbolTable;
 
 public class CharLiterAST extends Node {
 
-  public final char val;
+  private final char val; //For backend
 
   public CharLiterAST(SymbolTable symtab, char val) {
     super(symtab.lookupAll("char"));
-    assert (super.identifier != null);
     this.val = val;
   }
 

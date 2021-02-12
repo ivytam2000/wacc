@@ -25,37 +25,44 @@ public class UnOpExprAST extends Node {
     this.exprAST = exprAST;
   }
 
+  //Different unOp defined for different types
   @Override
   public void check() {
     TypeID exprType = exprAST.getIdentifier().getType();
     Identifier unOpExprType = null;
     boolean error = false;
-    if (ctx.NOT() != null) {
+
+    if (ctx.NOT() != null) { //NOT defined for bool only
       if (!(exprType instanceof BoolID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("bool");
-    } else if (ctx.MINUS() != null) {
+
+    } else if (ctx.MINUS() != null) { //MINUS defined for int only
       if (!(exprType instanceof IntID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("int");
-    } else if (ctx.CHR() != null) {
+
+    } else if (ctx.CHR() != null) { //CHR defined for int only
       if (!(exprType instanceof IntID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("char");
-    } else if (ctx.LEN() != null) {
+
+    } else if (ctx.LEN() != null) { //LEN defined for string and array
       if (!(exprType instanceof StringID || exprType instanceof ArrayID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("int");
-    } else if (ctx.ORD() != null) {
+
+    } else if (ctx.ORD() != null) { //ORD defined for char only
       if (!(exprType instanceof CharID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("int");
     }
+
     if (error) {
       SemanticErrorCollector
           .addIncompatibleType(unOpExprType.getType().getTypeName(),
@@ -63,6 +70,7 @@ public class UnOpExprAST extends Node {
               ctx.getText(), ctx.getStart().getLine(),
               ctx.getStart().getCharPositionInLine());
     }
+
     setIdentifier(unOpExprType);
   }
 }
