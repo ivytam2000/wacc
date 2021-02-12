@@ -5,9 +5,7 @@ import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ExitID;
 import frontend.symboltable.IntID;
-import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
-import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ExitAST extends Node {
   WaccParser.Exit_statContext ctx;

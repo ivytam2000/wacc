@@ -26,13 +26,11 @@ public class ParamAST extends Node {
   @Override
   public void check() {
     Identifier v = symtab.lookup(varName);
-
     if (v != null) {
-      SemanticErrorCollector.addSymbolAlreadyDefined(varName, ctx.getStart().getLine(),
-          ctx.getStart().getCharPositionInLine());
+      SemanticErrorCollector.addSymbolAlreadyDefined(
+          varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
       return;
     }
-
     paramObj = (ParamID) identifier;
     symtab.add(varName, paramObj);
   }
