@@ -4,7 +4,6 @@ import antlr.WaccParser.ParamContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
-import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
 
 public class ParamAST extends Node {

@@ -5,12 +5,8 @@ import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.pairs.PairTypeAST;
 import frontend.abstractsyntaxtree.statements.SequenceAST;
 import frontend.abstractsyntaxtree.statements.VarDecAST;
-import frontend.symboltable.BoolID;
-import frontend.symboltable.CharID;
-import frontend.symboltable.IntID;
-import frontend.symboltable.PairID;
-import frontend.symboltable.StringID;
-import frontend.symboltable.TypeID;
+import frontend.symboltable.*;
+
 import java.io.IOException;
 import org.junit.Test;
 
@@ -56,12 +52,12 @@ public class TypeSemanticsTests {
     assert (sndTypeLHS instanceof PairID);
 
     //LHS : Check inner pair
-//    PairID fstPairLHS = (PairID) fstTypeLHS.getType();
-//    PairID sndPairLHS = (PairID) sndTypeLHS.getType();
-//    assert (fstPairLHS.getFstType() instanceof IntID);
-//    assert (fstPairLHS.getSndType() instanceof BoolID);
-//    assert (sndPairLHS.getFstType() instanceof CharID);
-//    assert (sndPairLHS.getSndType() instanceof StringID);
+    PairID fstPairLHS = (PairID) fstTypeLHS.getType();
+    PairID sndPairLHS = (PairID) sndTypeLHS.getType();
+    assert (fstPairLHS.getFstType() instanceof NullID);
+    assert (fstPairLHS.getSndType() instanceof NullID);
+    assert (sndPairLHS.getFstType() instanceof NullID);
+    assert (sndPairLHS.getSndType() instanceof NullID);
 
     //RHS : Check outer pair
     TypeID rhsType = varDecAST.getAssignRHS().getIdentifier().getType();
