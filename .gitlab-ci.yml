@@ -3,6 +3,11 @@ default:
   before_script:
     - apt-get update && apt-get install -y make
 
+stages:
+  - build
+  - frontend-test
+  - backend-test
+
 build job:
   stage: build
   script:
@@ -11,23 +16,30 @@ build job:
     - master
 
 invalid syntax test job:
-  stage: test
+  stage: frontend-test
   script:
     - make test TESTCLASS="frontend.InvalidSyntaxTests"
   only:
     - master
 
 invalid semantics test job:
-  stage: test
+  stage: frontend-test
   script:
     - make test TESTCLASS="frontend.InvalidSemanticTests"
   only:
     - master
 
-valid test job:
-  stage: test
+valid frontend test job:
+  stage: frontend-test
   script:
     - make test TESTCLASS="frontend.TypeSemanticsTests"
     - make test TESTCLASS="frontend.ValidTests"
+  only:
+    - master
+
+valid backend test job:
+  stage: backend-test
+  script:
+    - make test TESTCLASS="backend.ValidTests"
   only:
     - master
