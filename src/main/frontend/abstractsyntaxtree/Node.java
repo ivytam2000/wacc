@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import backend.instructions.Instr;
 import frontend.symboltable.Identifier;
 
 /**
@@ -26,4 +27,6 @@ public abstract class Node {
   }
 
   public abstract void check();
+
+//  public abstract List<Instr> toAssembly();
 }

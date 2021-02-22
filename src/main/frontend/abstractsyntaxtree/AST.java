@@ -1,6 +1,8 @@
 package frontend.abstractsyntaxtree;
 
+import backend.instructions.Instr;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A top-level AST node for the whole program.
@@ -28,5 +30,10 @@ public class AST extends Node {
 
   @Override
   public void check() {
+  }
+
+  public Map<String, List<Instr>> generateFunc() {
+    //TODO
+    return null;
   }
 }
