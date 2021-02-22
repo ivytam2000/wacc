@@ -3,6 +3,11 @@ default:
   before_script:
     - apt-get update && apt-get install -y make
 
+stages:
+  - build
+  - frontend-test
+  - backend-test
+
 build job:
   stage: build
   script:
