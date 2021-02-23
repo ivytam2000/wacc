@@ -1,11 +1,13 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.TypeID;
+import java.util.List;
 
 public class FreeAST extends Node {
 
@@ -30,5 +32,10 @@ public class FreeAST extends Node {
           ctx.getStart().getLine(),
           ctx.getStart().getCharPositionInLine());
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

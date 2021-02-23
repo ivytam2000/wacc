@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.pairs;
 
 import antlr.WaccParser.PairElemContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
@@ -12,6 +13,7 @@ import frontend.symboltable.PairID;
 import frontend.symboltable.ParamID;
 import frontend.symboltable.SymbolTable;
 
+import java.util.List;
 import java.util.Objects;
 
 public class PairElemAST extends Node {
@@ -77,6 +79,11 @@ public class PairElemAST extends Node {
       setIdentifier(
           Objects.requireNonNullElseGet(childIDPairElem, NullID::new));
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 
   private void addIncompatibleTypeSemanticError() {

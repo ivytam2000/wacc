@@ -1,11 +1,13 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.IdentExprContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.UnknownID;
+import java.util.List;
 
 public class IdentExprAST extends Node {
 
@@ -35,5 +37,10 @@ public class IdentExprAST extends Node {
     } else {
       setIdentifier(identifier);
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

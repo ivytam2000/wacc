@@ -1,9 +1,11 @@
 package frontend.abstractsyntaxtree;
 
 import antlr.WaccParser.BaseTypeContext;
+import backend.instructions.Instr;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import java.util.List;
 
 public class BaseTypeAST extends Node {
 
@@ -27,5 +29,10 @@ public class BaseTypeAST extends Node {
       SemanticErrorCollector.addUnknownType(typeName, ctx.getStart().getLine(),
           ctx.getStart().getCharPositionInLine());
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

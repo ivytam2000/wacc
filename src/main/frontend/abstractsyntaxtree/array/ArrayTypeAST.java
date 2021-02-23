@@ -1,7 +1,9 @@
 package frontend.abstractsyntaxtree.array;
 
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.Identifier;
+import java.util.List;
 
 public class ArrayTypeAST extends Node {
 
@@ -20,5 +22,10 @@ public class ArrayTypeAST extends Node {
   @Override
   public void check() {
 
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

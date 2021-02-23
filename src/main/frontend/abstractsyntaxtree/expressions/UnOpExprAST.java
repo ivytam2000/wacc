@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.UnaryOperContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
@@ -11,6 +12,7 @@ import frontend.symboltable.IntID;
 import frontend.symboltable.StringID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.List;
 
 public class UnOpExprAST extends Node {
 
@@ -72,5 +74,10 @@ public class UnOpExprAST extends Node {
     }
 
     setIdentifier(unOpExprType);
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

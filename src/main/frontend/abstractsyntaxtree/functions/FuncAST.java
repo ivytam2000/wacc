@@ -1,10 +1,12 @@
 package frontend.abstractsyntaxtree.functions;
 
 import antlr.WaccParser.FuncContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
+import java.util.List;
 
 public class FuncAST extends Node {
 
@@ -46,6 +48,11 @@ public class FuncAST extends Node {
               ctx.getStart().getLine(),
               ctx.getStart().getCharPositionInLine());
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 
   public void addFuncToGlobalScope() {

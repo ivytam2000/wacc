@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.functions;
 
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.TypeID;
 import java.util.Collections;
@@ -23,6 +24,11 @@ public class ParamListAST extends Node {
     for (ParamAST paramAST : paramASTs) {
       paramAST.check();
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 
   // Used in the visitor to convert ASTs to IDs

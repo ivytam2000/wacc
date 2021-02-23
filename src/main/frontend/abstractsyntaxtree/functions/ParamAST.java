@@ -1,10 +1,12 @@
 package frontend.abstractsyntaxtree.functions;
 
 import antlr.WaccParser.ParamContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import java.util.List;
 
 public class ParamAST extends Node {
 
@@ -30,5 +32,10 @@ public class ParamAST extends Node {
       return;
     }
     symtab.add(varName, identifier);
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

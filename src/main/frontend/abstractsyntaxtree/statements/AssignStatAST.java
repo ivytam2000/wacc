@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.AssignLHSContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
@@ -10,6 +11,7 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.List;
 
 public class AssignStatAST extends Node {
 
@@ -51,5 +53,10 @@ public class AssignStatAST extends Node {
             rhsCtx.getStart().getCharPositionInLine());
       }
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.assignments;
 
 import antlr.WaccParser.Call_assignRHSContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -76,5 +77,10 @@ public class AssignCallAST extends AssignRHSAST {
             line, identPos, funcName, funcID.getType().getTypeName());
       }
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

@@ -1,6 +1,8 @@
 package frontend.abstractsyntaxtree.statements;
 
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
+import java.util.List;
 
 public class BeginStatAST extends Node {
 
@@ -13,6 +15,11 @@ public class BeginStatAST extends Node {
 
   @Override
   public void check() {
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 
   public Node getStat() {

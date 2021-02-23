@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree;
 
 import backend.instructions.Instr;
 import frontend.symboltable.Identifier;
+import java.util.List;
 
 /**
  * A node within the abstract syntax tree.
@@ -28,5 +29,5 @@ public abstract class Node {
 
   public abstract void check();
 
-//  public abstract List<Instr> toAssembly();
+  public abstract List<Instr> toAssembly();
 }

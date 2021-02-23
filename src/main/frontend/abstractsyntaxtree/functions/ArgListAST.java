@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.functions;
 
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import java.util.List;
 
@@ -17,5 +18,10 @@ public class ArgListAST extends Node {
 
   @Override
   public void check() {
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

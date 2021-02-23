@@ -6,6 +6,8 @@ import java.util.Map;
 public class SymbolTable {
 
   private final Map<String, Identifier> dictionary = new HashMap<>();
+  private int size = 0;
+  private final Map<String, Integer> varOffsets = new HashMap<>();
   private final SymbolTable parent;
 
   public SymbolTable(SymbolTable parent) {
@@ -72,5 +74,21 @@ public class SymbolTable {
       temp = temp.parent;
     }
     return null;
+  }
+
+  public void incrementSize(int val) {
+    size += val;
+  }
+
+  public int getStackOffset(String var) {
+    SymbolTable temp = this;
+    int innerOffset = 0;
+
+    while (!temp.varOffsets.containsKey(var)) {
+      innerOffset += temp.size;
+      temp = temp.parent;
+    }
+
+    return innerOffset + temp.varOffsets.get(var);
   }
 }

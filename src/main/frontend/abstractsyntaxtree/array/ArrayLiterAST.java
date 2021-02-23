@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.array;
 
 import antlr.WaccParser.ArrayLiterContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
@@ -33,5 +34,10 @@ public class ArrayLiterAST extends Node {
         }
       }
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

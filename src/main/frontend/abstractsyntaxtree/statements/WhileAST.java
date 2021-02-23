@@ -1,11 +1,13 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import java.util.List;
 
 public class WhileAST extends Node {
   private final Node expr;
@@ -36,5 +38,10 @@ public class WhileAST extends Node {
             exprCtx.getStart().getCharPositionInLine());
       }
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

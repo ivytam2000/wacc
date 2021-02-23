@@ -3,12 +3,14 @@ package frontend.abstractsyntaxtree.expressions;
 import antlr.WaccParser.ArithOpExpr_1Context;
 import antlr.WaccParser.ArithOpExpr_2Context;
 import antlr.WaccParser.ExprContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import java.util.List;
 
 public class ArithOpExprAST extends Node {
 
@@ -53,5 +55,10 @@ public class ArithOpExprAST extends Node {
               ctx.getStart().getLine(),
               ctx.getStop().getCharPositionInLine());
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

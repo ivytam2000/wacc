@@ -2,11 +2,13 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.Var_decl_statContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
+import java.util.List;
 
 public class VarDecAST extends Node {
 
@@ -35,6 +37,11 @@ public class VarDecAST extends Node {
   @Override
   public void check() {
     TypeID decType = typeAST.getIdentifier().getType();
+    if (decType instanceof CharID || decType instanceof BoolID) {
+      symtab.incrementSize(1);
+    } else {
+      symtab.incrementSize(4);
+    }
     TypeID rhsType = assignRHS.getIdentifier().getType();
 
     int line = rhsCtx.getStart().getLine();
@@ -56,6 +63,11 @@ public class VarDecAST extends Node {
 
     symtab.add(varName, typeAST.getIdentifier().getType());
     setIdentifier(typeAST.getIdentifier().getType());
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 
   public Node getTypeAST() {

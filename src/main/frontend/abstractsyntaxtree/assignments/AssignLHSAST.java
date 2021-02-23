@@ -1,7 +1,9 @@
 package frontend.abstractsyntaxtree.assignments;
 
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
+import java.util.List;
 
 public class AssignLHSAST extends Node {
 
@@ -23,4 +25,9 @@ public class AssignLHSAST extends Node {
 
   @Override
   public void check() {}
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
+  }
 }

@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.ArrayElemContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
@@ -50,5 +51,10 @@ public class ArrayElemAST extends Node {
       }
     }
     setIdentifier(currIdentifier);
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

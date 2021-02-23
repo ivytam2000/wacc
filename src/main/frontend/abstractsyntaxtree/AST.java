@@ -32,6 +32,11 @@ public class AST extends Node {
   public void check() {
   }
 
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
+  }
+
   public Map<String, List<Instr>> generateFunc() {
     //TODO
     return null;

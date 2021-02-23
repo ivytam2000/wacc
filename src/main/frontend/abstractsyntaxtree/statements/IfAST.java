@@ -1,10 +1,12 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.TypeID;
+import java.util.List;
 
 public class IfAST extends Node {
 
@@ -41,5 +43,10 @@ public class IfAST extends Node {
           exprCtx.getStart().getLine(),
           exprCtx.getStart().getCharPositionInLine());
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

@@ -2,11 +2,13 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.Exit_statContext;
 import antlr.WaccParser.ExprContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ExitID;
 import frontend.symboltable.IntID;
 import frontend.symboltable.TypeID;
+import java.util.List;
 
 public class ExitAST extends Node {
 
@@ -33,5 +35,10 @@ public class ExitAST extends Node {
       SemanticErrorCollector.addIncompatibleType(
           "int", exprType.getTypeName(), exprCtx.getText(), line, pos);
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 }

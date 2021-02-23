@@ -2,7 +2,7 @@ package frontend;
 
 import antlr.WaccLexer;
 import antlr.WaccParser;
-import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.AST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.errorlistener.SyntaxErrorListener;
 import org.antlr.v4.runtime.CharStream;
@@ -16,6 +16,8 @@ public class FrontEndAnalyser {
 
   private final WaccParser parser;
   private final SyntaxErrorListener syntaxErrorListener = new SyntaxErrorListener();
+
+  private AST ast;
 
   public FrontEndAnalyser(CharStream stream) {
     // Create a lexer that reads from the input stream
@@ -54,7 +56,7 @@ public class FrontEndAnalyser {
     // Semantic analysis
     SemanticErrorCollector.init();
     TreeVisitor treeVisitor = new TreeVisitor();
-    Node ast = treeVisitor.visit(tree);
+    ast = (AST) treeVisitor.visit(tree);
 
     // Semantic error check
     if (SemanticErrorCollector.getNumberOfSemanticErrors() > 0) {
@@ -65,5 +67,9 @@ public class FrontEndAnalyser {
     System.out.println("--- Parsing finished... ---");
 
     return 0;
+  }
+
+  public AST getAst() {
+    return ast;
   }
 }

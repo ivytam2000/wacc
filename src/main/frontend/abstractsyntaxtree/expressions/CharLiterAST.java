@@ -1,7 +1,9 @@
 package frontend.abstractsyntaxtree.expressions;
 
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
+import java.util.List;
 
 public class CharLiterAST extends Node {
 
@@ -14,4 +16,9 @@ public class CharLiterAST extends Node {
 
   @Override
   public void check() {}
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
+  }
 }

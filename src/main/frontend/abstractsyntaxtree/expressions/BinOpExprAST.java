@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.ExprContext;
+import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -10,6 +11,7 @@ import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import java.util.List;
 
 public class BinOpExprAST extends Node {
 
@@ -77,6 +79,11 @@ public class BinOpExprAST extends Node {
                 ctx.getStop().getCharPositionInLine());
       }
     }
+  }
+
+  @Override
+  public List<Instr> toAssembly() {
+    return null;
   }
 
 
