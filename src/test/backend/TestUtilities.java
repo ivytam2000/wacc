@@ -1,5 +1,6 @@
 package backend;
 
+import static frontend.TestUtilities.getTestNames;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -13,31 +14,26 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
 public class TestUtilities {
 
-  public static FrontEndAnalyser buildFrontEndAnalyser(String sourceFilePath) throws IOException {
-    CharStream source = CharStreams.fromStream(new FileInputStream(sourceFilePath));
+  // TODO: Rename for BackEndAnalyser
+  public static FrontEndAnalyser buildFrontEndAnalyser(String sourceFilePath)
+      throws IOException {
+    CharStream source = CharStreams
+        .fromStream(new FileInputStream(sourceFilePath));
     return new FrontEndAnalyser(source);
   }
 
-  private static List<String> getTestNames(String sourcesFolderPath) throws IOException {
-    return Files.list(Paths.get(sourcesFolderPath))
-        .filter(Files::isRegularFile)
-        .map(p -> p.getFileName().toString())
-        .filter(f -> f.endsWith(".wacc"))
-        .collect(Collectors.toList());
-  }
-
-  // Function that checks that the example compiles with a certain exit code
-  public static void exitsWith(String folderPath, int exitCode) throws IOException {
+  /**
+   * Checks that the example compiles with a certain exit code.
+   */
+  public static void exitsWith(String folderPath, int exitCode)
+      throws IOException {
     List<String> names = getTestNames(folderPath);
     for (String name : names) {
       String sourceFilePath = folderPath + name;
@@ -53,7 +49,8 @@ public class TestUtilities {
       }
 
       try {
-        assertTrue(checkFileOutputsMatchRefCompiler(sourceFilePath));
+        assertTrue(
+            executableFromOurCompilerMatchesReferenceCompiler(sourceFilePath));
       } catch (AssertionError e) {
         fail("Test " + name + " output did not match with reference compiler");
       } catch (IOException e) {
@@ -62,14 +59,20 @@ public class TestUtilities {
     }
   }
 
-  private static String getOutputFromProcess(ProcessBuilder builder) throws IOException {
-    // start process
+  /**
+   * Returns the standard output from a process containing terminal commands.
+   */
+  private static String getOutputFromProcess(ProcessBuilder builder)
+      throws IOException {
+    // Start process
     Process process = builder.start();
-    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    PrintStream out = new PrintStream(new BufferedOutputStream(process.getOutputStream()));
+    BufferedReader reader = new BufferedReader(
+        new InputStreamReader(process.getInputStream()));
+    PrintStream out = new PrintStream(
+        new BufferedOutputStream(process.getOutputStream()));
     out.close();
 
-    // get output from reference compiler
+    // Get output from reference compiler
     StringBuilder stringBuilder = new StringBuilder();
     String line;
     while ((line = reader.readLine()) != null) {
@@ -80,23 +83,30 @@ public class TestUtilities {
     return stringBuilder.toString();
   }
 
-
-  private static String getAssemblyFilepath(String filepath) throws IOException {
-    // make process to run terminal commands
+  /**
+   * Assembles a .wacc file and returns the file path to the resulting .s file.
+   */
+  private static String assembleFileWithOurCompiler(String filePath)
+      throws IOException {
+    // Bash command to use our compiler
     ProcessBuilder builder = new ProcessBuilder();
-    builder.command("./compile", filepath);
+    builder.command("./compile", filePath);
 
     getOutputFromProcess(builder);
 
-    return filepath.replace(".wacc", ".s");
+    return filePath.replace(".wacc", ".s");
   }
 
+  /**
+   * Compiles and emulates a .wacc file, returns the filtered standard output
+   * stream from the resulting executable compiled by our compiler.
+   */
+  private static List<String> getOurCompilerStdOut(String filePath)
+      throws IOException {
+    // Get assembly file path
+    String assemblyFilePath = assembleFileWithOurCompiler(filePath);
 
-  private static List<String> getOurCompilerOutputValue(String filepath) throws IOException {
-    // get assembly file path
-    String assemblyFilePath = getAssemblyFilepath(filepath);
-
-    // get reference emulator result
+    // Get standard output stream from reference emulator
     ProcessBuilder builder = new ProcessBuilder();
     builder.command("./refEmulate", assemblyFilePath);
     String output = getOutputFromProcess(builder);
@@ -105,17 +115,17 @@ public class TestUtilities {
     List<String> actualStdOuts = new ArrayList<>();
     boolean nextLineIsOutput = false;
 
-    for (String line: splitOutput) {
-      // checks if the next line is an Std output
+    for (String line : splitOutput) {
+      // Checks if the next line is unwanted output
       if (nextLineIsOutput) {
-        if (line.contains("-------")) {
+        if (line.contains("----")) {
           return actualStdOuts;
         } else {
           actualStdOuts.add(line);
         }
       }
 
-      // checks if its the emulation output
+      // Checks if the next line is wanted output from the compiled program
       if (line.contains("Emulation Output")) {
         nextLineIsOutput = true;
       }
@@ -123,59 +133,57 @@ public class TestUtilities {
     return actualStdOuts;
   }
 
-
-  private static String getReferenceCompilerOutput(String filepath)
+  /**
+   * Compiles and emulates a .wacc file, returns the filtered standard output
+   * stream from the resulting executable compiled by the reference compiler.
+   */
+  private static List<String> getReferenceCompilerStdOut(String filePath)
       throws IOException {
-    // get reference compiler result
+    // Get standard output stream from reference compiler and emulator
     ProcessBuilder builder = new ProcessBuilder();
-    builder.command("./refCompile", "-x", filepath);
-    return getOutputFromProcess(builder);
-  }
-
-
-  private static List<String> getReferenceCompilerExpectedValue(String filepath) throws IOException {
-    String output = getReferenceCompilerOutput(filepath);
+    builder.command("./refCompile", "-x", filePath);
+    String output = getOutputFromProcess(builder);
 
     String[] separatedOutputByLine = output.split("\n");
     boolean nextLineIsOutput = false;
     List<String> expectedStdOuts = new ArrayList<>();
 
-    for (String line: separatedOutputByLine) {
-      // next few lines might be expectedStdOuts
+    for (String line : separatedOutputByLine) {
+      // Next few lines might be expectedStdOuts
       if (nextLineIsOutput) {
-
         if (!line.isEmpty()) {
           if (line.charAt(0) == '=') {
-            // end of expectedStdOuts
+            // End of expectedStdOuts
             return expectedStdOuts;
           } else {
-            // continue adding StdOuts
+            // Continue adding StdOuts
             expectedStdOuts.add(line);
           }
         }
       }
 
-      // toggle for nextLineIsOutput to see if the next few lines are StdOuts
+      // Toggle nextLineIsOutput to guard if the next few lines are StdOuts
       if (!line.isEmpty()) {
         if (line.charAt(0) == '=') {
           nextLineIsOutput = !nextLineIsOutput;
         }
       }
     }
+
     return expectedStdOuts;
   }
 
-
-  public static boolean checkFileOutputsMatchRefCompiler(String testFilePath) throws IOException {
-    // checks if the output from our compiler is the same as the reference compiler's output
-    List<String> actualOutput = getOurCompilerOutputValue(testFilePath);
-    List<String> expectedOutput = getReferenceCompilerExpectedValue(testFilePath);
+  /**
+   * Separately compiles a .wacc file through our compiler and the reference
+   * compiler respectively, emulates two resulting executables through the
+   * reference emulator, checks if the standard output from the executables are
+   * equal.
+   */
+  public static boolean executableFromOurCompilerMatchesReferenceCompiler(
+      String filePath) throws IOException {
+    List<String> actualOutput = getOurCompilerStdOut(filePath);
+    List<String> expectedOutput = getReferenceCompilerStdOut(
+        filePath);
     return actualOutput.equals(expectedOutput);
   }
-
-
-  public static void main(String[] args) throws IOException {
-    System.out.println(getOurCompilerOutputValue("hello.wacc"));
-  }
-
 }

@@ -3,7 +3,6 @@ package frontend;
 import antlr.WaccLexer;
 import antlr.WaccParser;
 import frontend.abstractsyntaxtree.AST;
-import frontend.abstractsyntaxtree.Node;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
@@ -20,12 +19,19 @@ import static org.junit.Assert.fail;
 
 public class TestUtilities {
 
-  public static FrontEndAnalyser buildFrontEndAnalyser(String sourceFilePath) throws IOException {
-    CharStream source = CharStreams.fromStream(new FileInputStream(sourceFilePath));
+  public static FrontEndAnalyser buildFrontEndAnalyser(String sourceFilePath)
+      throws IOException {
+    CharStream source = CharStreams
+        .fromStream(new FileInputStream(sourceFilePath));
     return new FrontEndAnalyser(source);
   }
 
-  private static List<String> getTestNames(String sourcesFolderPath) throws IOException {
+  /**
+   * Returns a list of all the file names of example .wacc files from a given
+   * directory, to be used for tests.
+   */
+  public static List<String> getTestNames(String sourcesFolderPath)
+      throws IOException {
     return Files.list(Paths.get(sourcesFolderPath))
         .filter(Files::isRegularFile)
         .map(p -> p.getFileName().toString())
@@ -33,8 +39,11 @@ public class TestUtilities {
         .collect(Collectors.toList());
   }
 
-  // Function that checks that the example compiles with a certain exit code
-  public static void exitsWith(String folderPath, int exitCode) throws IOException {
+  /**
+   * Checks that the example compiles with a certain exit code.
+   */
+  public static void exitsWith(String folderPath, int exitCode)
+      throws IOException {
     List<String> names = getTestNames(folderPath);
     for (String name : names) {
       String sourceFilePath = folderPath + name;
@@ -50,11 +59,14 @@ public class TestUtilities {
     }
   }
 
-  // Only call on syntactically programs. Used to test semantics.
+  /**
+   * Only call on syntactically valid programs. Used to test semantics.
+   */
   private static final String baseDir = "src/test/examples/custom/";
 
   public static AST buildAST(String filename) throws IOException {
-    CharStream input = CharStreams.fromStream(new FileInputStream(baseDir + filename));
+    CharStream input = CharStreams
+        .fromStream(new FileInputStream(baseDir + filename));
 
     // Create a lexer that reads from the input stream
     WaccLexer lexer = new WaccLexer(input);
