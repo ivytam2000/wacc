@@ -9,7 +9,9 @@ import java.util.Map;
  */
 public class AST extends Node {
 
-  // A list of all the functions within the program scanned in the first pass
+  /**
+   * A list of all the functions within the program scanned in the first pass.
+   */
   private final List<Node> funcASTs;
   private final Node statAST;
 
@@ -19,7 +21,6 @@ public class AST extends Node {
     this.statAST = statAST;
   }
 
-  // For future use in code generation
   public List<Node> getFuncASTs() {
     return funcASTs;
   }
@@ -34,11 +35,6 @@ public class AST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
-  }
-
-  public Map<String, List<Instr>> generateFunc() {
-    //TODO
     return null;
   }
 }

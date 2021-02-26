@@ -1,53 +1,27 @@
 package backend;
 
 import static frontend.TestUtilities.getTestNames;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import frontend.FrontEndAnalyser;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 
 public class TestUtilities {
-
-  // TODO: Rename for BackEndAnalyser
-  public static FrontEndAnalyser buildFrontEndAnalyser(String sourceFilePath)
-      throws IOException {
-    CharStream source = CharStreams
-        .fromStream(new FileInputStream(sourceFilePath));
-    return new FrontEndAnalyser(source);
-  }
 
   /**
    * Checks that the example compiles with a certain exit code.
    */
-  public static void exitsWith(String folderPath, int exitCode)
-      throws IOException {
+  public static void executablesFromOurCompilerMatchesReferenceCompiler(
+      String folderPath) throws IOException {
     List<String> names = getTestNames(folderPath);
     for (String name : names) {
       String sourceFilePath = folderPath + name;
-      // Redirects standard output to prevent clogging up the CI pipeline
-      OutputStream os = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(os));
-      // TODO: BackEndAnalyser analyser = buildBackEndAnalyser(sourceFilePath);
-      FrontEndAnalyser analyser = buildFrontEndAnalyser(sourceFilePath);
-      try {
-        assertEquals(analyser.run(), exitCode);
-      } catch (AssertionError e) {
-        fail("Test " + name + " did not exit with exit code " + exitCode);
-      }
-
       try {
         assertTrue(
             executableFromOurCompilerMatchesReferenceCompiler(sourceFilePath));
@@ -118,7 +92,7 @@ public class TestUtilities {
     for (String line : splitOutput) {
       // Checks if the next line is unwanted output
       if (nextLineIsOutput) {
-        if (line.contains("----")) {
+        if (line.contains("---")) {
           return actualStdOuts;
         } else {
           actualStdOuts.add(line);
@@ -179,7 +153,7 @@ public class TestUtilities {
    * reference emulator, checks if the standard output from the executables are
    * equal.
    */
-  public static boolean executableFromOurCompilerMatchesReferenceCompiler(
+  private static boolean executableFromOurCompilerMatchesReferenceCompiler(
       String filePath) throws IOException {
     List<String> actualOutput = getOurCompilerStdOut(filePath);
     List<String> expectedOutput = getReferenceCompilerStdOut(
