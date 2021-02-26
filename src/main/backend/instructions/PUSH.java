@@ -1,13 +1,15 @@
 package backend.instructions;
 
 public class PUSH implements Instr {
-    private final String reg;
 
-    public PUSH(String reg) {
-        this.reg = reg;
-    }
+  private final String reg;
 
-    @Override public String getInstruction() {
-        return "PUSH {" + reg + "}";
-    }
+  public PUSH(String reg) {
+    this.reg = reg;
+  }
+
+  @Override
+  public String translateToArm() {
+    return "PUSH {" + reg + "}";
+  }
 }

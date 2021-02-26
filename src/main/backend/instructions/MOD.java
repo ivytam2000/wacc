@@ -2,9 +2,9 @@ package backend.instructions;
 
 public class MOD implements Instr {
 
-  //Modular arithmetic uses library functions
+  // Modular arithmetic uses library functions
   @Override
-  public String getInstruction() {
+  public String translateToArm() {
     return "BL __aeabi_idivmod";
   }
 }

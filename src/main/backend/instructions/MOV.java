@@ -11,7 +11,7 @@ public class MOV implements Instr {
         this.src = src;
     }
 
-    @Override public String getInstruction() {
+    @Override public String translateToArm() {
         return "MOV" + conditions + " " + dest + ", " + src;
     }
 }

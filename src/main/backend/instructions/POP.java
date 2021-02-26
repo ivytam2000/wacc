@@ -1,13 +1,15 @@
 package backend.instructions;
 
 public class POP implements Instr {
-    private final String reg;
 
-    public POP(String reg) {
-        this.reg = reg;
-    }
+  private final String reg;
 
-    @Override public String getInstruction() {
-        return "PUSH {" + reg + "}";
-    }
+  public POP(String reg) {
+    this.reg = reg;
+  }
+
+  @Override
+  public String translateToArm() {
+    return "PUSH {" + reg + "}";
+  }
 }

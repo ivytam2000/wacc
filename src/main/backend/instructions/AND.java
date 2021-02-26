@@ -1,6 +1,7 @@
 package backend.instructions;
 
 public class AND implements Instr {
+
   private final String dest; //Also first operand
   private final String operand2;
 
@@ -11,7 +12,7 @@ public class AND implements Instr {
 
   // AND dest, dest, operand
   @Override
-  public String getInstruction() {
-    return ("AND " + dest + ", "  + dest  + ", "  + operand2);
+  public String translateToArm() {
+    return ("AND " + dest + ", " + dest + ", " + operand2);
   }
 }

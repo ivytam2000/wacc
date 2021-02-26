@@ -84,7 +84,7 @@ public class BackEndGenerator {
     StringBuilder output = new StringBuilder();
     output.append(sectionName).append(":\n");
     for (Instr instruction : instructions) {
-      output.append("\t").append(instruction.getInstruction()).append("\n");
+      output.append("\t").append(instruction.translateToArm()).append("\n");
     }
     return output.toString();
   }

@@ -1,9 +1,10 @@
 package backend.instructions;
 
 public class SUB implements Instr {
-  private final boolean reverse; //For RSB instruction (negation)
+
+  private final boolean reverse; // For RSB instruction (negation)
   private final boolean setFlags;
-  private final String dest; //Also first operand
+  private final String dest; // Also first operand
   private final String operand2;
 
 
@@ -15,10 +16,10 @@ public class SUB implements Instr {
   }
 
 
-  //SUB{S} dest, dest, operand2
-  //RSBS dest, dest, operand2
+  // SUB{S} dest, dest, operand2
+  // RSBS dest, dest, operand2
   @Override
-  public String getInstruction() {
+  public String translateToArm() {
     String base = reverse ? "RSB" : "SUB";
     if (setFlags) {
       base += "S";

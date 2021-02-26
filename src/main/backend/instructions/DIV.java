@@ -4,7 +4,7 @@ public class DIV implements Instr {
 
   //Division uses library functions
   @Override
-  public String getInstruction() {
+  public String translateToArm() {
     return "BL __aeabi_idiv";
   }
 }
