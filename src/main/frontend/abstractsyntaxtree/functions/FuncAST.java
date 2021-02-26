@@ -1,17 +1,23 @@
 package frontend.abstractsyntaxtree.functions;
 
+import static backend.instructions.Instr.LR;
+import static backend.instructions.Instr.PC;
+
 import antlr.WaccParser.FuncContext;
 import backend.instructions.Instr;
+import backend.instructions.POP;
+import backend.instructions.PUSH;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FuncAST extends Node {
 
   private final String funcName;
-  private final ParamListAST params; // For code generation
+  private final ParamListAST params;
 
   private SymbolTable globalScope;
   private Node statements;
@@ -52,7 +58,13 @@ public class FuncAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instructions = new ArrayList<>();
+    instructions.add(new PUSH(LR));
+    instructions.addAll(statements.toAssembly());
+    // TODO: Link parameters with their addresses in the stack.
+    instructions.add(new POP(PC));
+    instructions.add(new POP(PC));
+    return instructions;
   }
 
   public void addFuncToGlobalScope() {
