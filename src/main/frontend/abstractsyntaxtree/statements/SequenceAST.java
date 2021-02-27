@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.statements;
 import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SequenceAST extends Node {
@@ -19,7 +20,11 @@ public class SequenceAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>();
+    for(Node stat : statements){
+      instrs.addAll(stat.toAssembly());
+    }
+    return instrs;
   }
 
   public List<Node> getStatements() {

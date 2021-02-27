@@ -70,11 +70,7 @@ public class VarDecAST extends Node {
     setIdentifier(typeAST.getIdentifier().getType());
   }
 
-  // TODO: add this to the printer at the start of the assembly
-  // make space on the stack with the number of variables sizes
-  /*  String varSize = "#" + symtab.getSize();
-      SUB spInstr = new SUB(false,false,Instr.SP, varSize);
-      instrs.add(spInstr);*/
+
 
   @Override
   public List<Instr> toAssembly() {
@@ -82,18 +78,7 @@ public class VarDecAST extends Node {
     TypeID decType = typeAST.getIdentifier().getType();
     int offset = symtab.getSmallestOffset() - decType.getBytes();
     symtab.addOffset(varName,offset);
-
-    // load the rhs into a register
-    // TODO: create the getAssignValue() function for assignRHS
-    // Note that if typeID of assignRHS is bool then we use #1 for true and
-    // #0 for false.
-    // If it is a char then we put a # in front of the char like #'a'.
-    // If it is a int or string then we put an = sign before the integer or
-    // string label name.
-
-    // LDR ldrInstr = new LDR(4,"",Instr.R4, assignRHS.getAssignValue());
-    // instrs.add(ldrInstr);
-
+    instrs.addAll(assignRHS.toAssembly());
     // stores the value
     STR strInstr = new STR(decType.getBytes(),"", Instr.R4, Instr.SP, offset);
     instrs.add(strInstr);

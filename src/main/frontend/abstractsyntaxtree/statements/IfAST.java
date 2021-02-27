@@ -1,12 +1,20 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
+import backend.BackEndGenerator;
+import backend.instructions.BRANCH;
+import backend.instructions.CMP;
 import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.TypeID;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingDeque;
+
+import static backend.BackEndGenerator.addToUsrDefFuncs;
 
 public class IfAST extends Node {
 
@@ -47,6 +55,15 @@ public class IfAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>(expr.toAssembly());
+    // TODO: Check if expr.toAssembly puts it into R4.
+    instrs.add(new CMP(Instr.R4,"#0"));
+    // TODO: need to keep track of L labels?
+    BRANCH beq = new BRANCH(false, "EQ", "L0");
+    // L0: elseStat.toAssembly()
+    addToUsrDefFuncs("L0", elseStat.toAssembly());
+    // TODO: L1 cleaning up routine?
+    instrs.add(new BRANCH(false, "", "L1"));
+    return instrs;
   }
 }

@@ -209,7 +209,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     currSymTab = new SymbolTable(encScope); // Create new scope
 
     Node stat = visit(ctx.stat());
-    BeginStatAST beginAST = new BeginStatAST(stat);
+    BeginStatAST beginAST = new BeginStatAST(stat, currSymTab);
 
     currSymTab = encScope; // Swap back to parent scope
 
