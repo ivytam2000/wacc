@@ -17,7 +17,6 @@ public class ADD implements Instr {
 
 
   // ADD{S} dest, dest, operand2
-  //ADD
   @Override
   public String translateToArm() {
     return "ADD" + (setFlags ? "S " : " ")
