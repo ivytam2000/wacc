@@ -97,10 +97,6 @@ public class SymbolTable {
 
     return innerOffset + temp.varOffsets.get(var);
   }
-  // This function determines whether the varOffsets map is empty or not
-  public boolean offsetEmpty(){
-    return varOffsets.isEmpty();
-  }
 
   public void addOffset(String var, int offset){
     varOffsets.put(var,offset);

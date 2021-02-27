@@ -15,7 +15,7 @@ public class BoolLiterAST extends Node {
   }
 
   public String getVal() {
-    return val ? "1": "0";
+    return val ? "#1": "#0";
   }
 
   @Override

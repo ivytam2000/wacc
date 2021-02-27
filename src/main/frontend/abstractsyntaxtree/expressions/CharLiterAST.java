@@ -15,7 +15,7 @@ public class CharLiterAST extends Node {
   }
 
   public String getVal() {
-    return val;
+    return "#" + "'" + val + "'" ;
   }
 
   @Override
