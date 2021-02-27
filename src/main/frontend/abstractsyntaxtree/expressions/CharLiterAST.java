@@ -14,6 +14,10 @@ public class CharLiterAST extends Node {
     this.val = val;
   }
 
+  public String getVal() {
+    return val;
+  }
+
   @Override
   public void check() {}
 

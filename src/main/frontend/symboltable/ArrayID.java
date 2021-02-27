@@ -17,4 +17,6 @@ public class ArrayID extends TypeID {
         return this;
     }
 
+    @Override public int getBytes() {return 4;}
+
 }

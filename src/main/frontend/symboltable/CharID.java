@@ -10,4 +10,6 @@ public class CharID extends TypeID {
   public TypeID getType() {
     return this;
   }
+
+  @Override public int getBytes() {return 1;}
 }

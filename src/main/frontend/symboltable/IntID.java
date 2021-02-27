@@ -10,4 +10,6 @@ public class IntID extends TypeID {
   public TypeID getType() {
     return this;
   }
+
+  @Override public int getBytes() {return 4;}
 }

@@ -14,4 +14,8 @@ public abstract class TypeID extends Identifier {
   public String getTypeName() {
     return this.typeName;
   }
+
+  public int getBytes() {
+    return 0;
+  }
 }
