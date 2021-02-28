@@ -17,20 +17,28 @@ public class Utils {
     }
   }
 
+  public static String getEffectiveAddr(String reg, int offset) {
+    StringBuilder output = new StringBuilder("[").append(reg);
+    String offsetTag =
+        offset == 0 ? "" : new StringBuilder(", #").append(offset).toString();
+    output.append(offsetTag).append("]");
+    return output.toString();
+  }
+
   // end-routine function - not sure if this is valid
   // ADD sp, sp, #stackSize
   // LDR r0 =0
   // POP {pc}
-  public static List<Instr> getEndRoutine(SymbolTable symtab){
+  public static List<Instr> getEndRoutine(SymbolTable symtab) {
     List<Instr> instrs = new ArrayList<>();
     String stackSize = "#" + symtab.getSize();
-    instrs.add(new ADD(false, Instr.SP,Instr.SP, stackSize));
-    instrs.add(new LDR(4,"", Instr.R0, "=0"));
+    instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
+    instrs.add(new LDR(4, "", Instr.R0, "=0"));
     instrs.add(new POP(Instr.PC));
     return instrs;
   }
 
-  public static BRANCH getPrintBranch(TypeID type){
+  public static BRANCH getPrintBranch(TypeID type) {
     BRANCH brInstr = null;
     if (type instanceof IntID) {
       brInstr = new BRANCH(true, "", "p_print_int");
