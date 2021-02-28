@@ -2,13 +2,12 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.Var_decl_statContext;
-import backend.instructions.Instr;
-import backend.instructions.LDR;
-import backend.instructions.STR;
-import backend.instructions.SUB;
+import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
+import frontend.abstractsyntaxtree.array.ArrayLiterAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
+import frontend.abstractsyntaxtree.expressions.PairLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
 
@@ -78,6 +77,10 @@ public class VarDecAST extends Node {
     TypeID decType = typeAST.getIdentifier().getType();
     int offset = symtab.getSmallestOffset() - decType.getBytes();
     symtab.addOffset(varName,offset);
+    if(typeAST instanceof ArrayLiterAST || typeAST instanceof PairLiterAST){
+      // add malloc branch to allocate memory for array and pairs
+      instrs.add(new BRANCH(true, "", "malloc"));
+    }
     instrs.addAll(assignRHS.toAssembly());
     // stores the value
     STR strInstr = new STR(decType.getBytes(),"", Instr.R4, Instr.SP, offset);

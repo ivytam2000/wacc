@@ -175,7 +175,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node expr = visit(ctx.expr());
     Node stat = visit(ctx.stat());
 
-    WhileAST whileAST = new WhileAST(expr, stat, ctx.expr());
+    WhileAST whileAST = new WhileAST(expr, stat, ctx.expr(), currSymTab);
     whileAST.check();
 
     currSymTab = encScope; // Swap back to parent scope

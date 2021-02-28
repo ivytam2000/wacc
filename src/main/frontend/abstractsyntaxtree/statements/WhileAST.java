@@ -1,12 +1,14 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
+import backend.Utils;
 import backend.instructions.BRANCH;
 import backend.instructions.CMP;
 import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
+import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
 
@@ -19,12 +21,15 @@ public class WhileAST extends Node {
   private final Node expr;
   private final Node stat;
   private final ExprContext exprCtx;
+  private final SymbolTable symtab;
 
-  public WhileAST(Node expr, Node stat, ExprContext exprCtx) {
+  public WhileAST(Node expr, Node stat, ExprContext exprCtx,
+      SymbolTable symtab) {
     super(expr.getIdentifier());
     this.expr = expr;
     this.stat = stat;
     this.exprCtx = exprCtx;
+    this.symtab = symtab;
   }
 
   public Node getStat() {
@@ -55,6 +60,7 @@ public class WhileAST extends Node {
     // TODO: need to keep track of L labels?
     BRANCH beq = new BRANCH(false, "EQ", "L1");
     whileOuterInstr.add(beq);
+    whileOuterInstr.addAll(Utils.getEndRoutine(symtab));
     // Add to functions
     addToUsrDefFuncs("L0", whileOuterInstr);
     addToUsrDefFuncs("L1", whileBodyInstr);
