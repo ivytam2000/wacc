@@ -2,11 +2,13 @@ package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.IdentExprContext;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.UnknownID;
+import java.util.ArrayList;
 import java.util.List;
 
 public class IdentExprAST extends Node {
@@ -41,6 +43,12 @@ public class IdentExprAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>();
+
+    // Get from stack and store into register r4
+    int offset = currsymtab.getStackOffset(getName());
+    instrs.add(new LDR(4, "", Instr.R4, Instr.SP, offset));
+
+    return instrs;
   }
 }
