@@ -34,6 +34,8 @@ public class Main {
     assFile.createNewFile();
 
     FileWriter assFileWriter = new FileWriter(assFilePath, false);
-    assFileWriter.write(backEndGenerator.run());
+    String output = backEndGenerator.run();
+    assFileWriter.write(output);
+    assFileWriter.close();
   }
 }
