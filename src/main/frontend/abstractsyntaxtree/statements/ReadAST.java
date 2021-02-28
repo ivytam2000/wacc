@@ -40,10 +40,7 @@ public class ReadAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-    // TODO: how to get the variable name ??
-    // offset = symtab.getStackOffset(expVarName)
-    //ADD addInstr = new ADD(false,Instr.R4,Instr.SP, offset);
+    List<Instr> instrs = new ArrayList<>(lhs.toAssembly());
     MOV movInstr = new MOV("", Instr.R0, Instr.R4);
     instrs.add(movInstr);
     String label = lhsType instanceof IntID ? "p_read_int" : "p_read_char";

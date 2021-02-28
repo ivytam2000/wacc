@@ -1,8 +1,5 @@
 package frontend.abstractsyntaxtree.functions;
 
-import static backend.instructions.Instr.LR;
-import static backend.instructions.Instr.PC;
-
 import antlr.WaccParser.FuncContext;
 import backend.instructions.Instr;
 import backend.instructions.POP;
@@ -59,11 +56,11 @@ public class FuncAST extends Node {
   @Override
   public List<Instr> toAssembly() {
     List<Instr> instructions = new ArrayList<>();
-    instructions.add(new PUSH(LR));
+    instructions.add(new PUSH(Instr.LR));
     instructions.addAll(statements.toAssembly());
-    // TODO: Link parameters with their addresses in the stack.
-    instructions.add(new POP(PC));
-    instructions.add(new POP(PC));
+    // TODO: MOV r0, r4?
+    instructions.add(new POP(Instr.PC));
+    instructions.add(new POP(Instr.PC));
     return instructions;
   }
 

@@ -21,6 +21,10 @@ public class StrLiterAST extends Node {
   @Override
   public void check() {}
 
+  public String getVal() {
+    return val;
+  }
+
   @Override
   public List<Instr> toAssembly() {
     List<Instr> instrs = new ArrayList<>();

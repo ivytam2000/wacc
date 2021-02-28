@@ -9,6 +9,7 @@ public class LDR extends Instr {
   private final String conditions;
   private final String src;
   private final String dest;
+  private boolean isValue;
   private int offset;
   private boolean noOffset;
 
@@ -21,6 +22,7 @@ public class LDR extends Instr {
     this.src = src;
     this.dest = dest;
     this.noOffset = true;
+    this.isValue = false;
   }
 
   public LDR(int bytes, String conditions, String dest, String src,
@@ -28,6 +30,29 @@ public class LDR extends Instr {
     this(bytes, conditions, dest, src);
     this.offset = offset;
     this.noOffset = false;
+    this.isValue = false;
+  }
+
+  public LDR(int bytes, String conditions, String dest, String src,
+      int offset, boolean isValue) {
+    this(bytes, conditions, dest, src);
+    this.offset = offset;
+    this.noOffset = false;
+    this.isValue = isValue;
+  }
+
+  public LDR(String dest, String src, int offset) {
+    this(0, "", dest, src);
+    this.offset = offset;
+    this.noOffset = false;
+    this.isValue = true;
+  }
+
+  public LDR(String dest, String src, boolean isValue) {
+    this(0, "", dest, src);
+    this.offset = 0;
+    this.noOffset = false;
+    this.isValue = isValue;
   }
 
   //TODO: Fix switch case
@@ -53,6 +78,9 @@ public class LDR extends Instr {
   }
 
   private String getSrc() {
+    if (isValue) {
+      return src;
+    }
     if (noOffset) {
       return " [" + src + "]";
     }

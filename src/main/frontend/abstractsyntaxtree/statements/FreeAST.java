@@ -4,6 +4,7 @@ import antlr.WaccParser.ExprContext;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.pairs.PairElemTypeAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.PairID;
@@ -23,6 +24,7 @@ public class FreeAST extends Node {
     super(expr.getIdentifier());
     this.expr = expr;
     this.ctx = ctx;
+
     this.symtab = symtab;
   }
 
@@ -42,12 +44,16 @@ public class FreeAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-    // load the offset
-    // TODO: how to get the variable name ??
-    // offset = symtab.getStackOffset(expVarName)
-    // LDR ldrInstr = new LDR(4, "", Instr.R4,Instr.SP, offset)
-    BRANCH brInstr = new BRANCH(true, "", "p_print_reference");
+    List<Instr> instrs = new ArrayList<>(expr.toAssembly());
+    TypeID exprType = expr.getIdentifier().getType();
+    String label;
+    if(exprType instanceof PairID){
+      label = "p_free_pair";
+    }else{
+      // expr is of type Array
+      label = "p_free_array";
+    }
+    BRANCH brInstr = new BRANCH(true, "", label);
     instrs.add(brInstr);
     return instrs;
   }

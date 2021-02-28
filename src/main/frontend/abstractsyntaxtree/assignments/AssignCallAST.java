@@ -1,7 +1,11 @@
 package frontend.abstractsyntaxtree.assignments;
 
 import antlr.WaccParser.Call_assignRHSContext;
+import backend.Utils;
+import backend.instructions.BRANCH;
 import backend.instructions.Instr;
+import backend.instructions.MOV;
+import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -10,6 +14,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AssignCallAST extends AssignRHSAST {
@@ -33,7 +38,7 @@ public class AssignCallAST extends AssignRHSAST {
     int line = ctx.getStart().getLine();
     int identPos = ctx.IDENT().getSymbol().getCharPositionInLine();
 
-    // function not defined yet
+    // Function not defined yet
     if (funcID == null) {
       SemanticErrorCollector.addFunctionUndefined(funcName, line, identPos);
     } else {
@@ -43,7 +48,7 @@ public class AssignCallAST extends AssignRHSAST {
         int paramSize = params.size();
         int argsSize = argsAST.size();
 
-        // if given number of arguments are not the same as the number of params
+        // If given number of arguments are not the same as the number of params
         if (paramSize != argsSize) {
           SemanticErrorCollector.addFuncInconsistentArgsError(
               line,
@@ -58,7 +63,7 @@ public class AssignCallAST extends AssignRHSAST {
             TypeID argType = currArg.getIdentifier().getType();
             if (!(argType instanceof NullID)) {
 
-              // if argument and param types don't match
+              // If argument and param types don't match
               if (currParam.getClass() != argType.getClass()) {
                 SemanticErrorCollector.addFuncInconsistentArgTypeError(
                     line,
@@ -72,7 +77,7 @@ public class AssignCallAST extends AssignRHSAST {
           }
         }
       } else {
-        // given function name is not actually a function type
+        // Given function name is not actually a function type
         SemanticErrorCollector.addIsNotFuncError(
             line, identPos, funcName, funcID.getType().getTypeName());
       }
@@ -81,6 +86,24 @@ public class AssignCallAST extends AssignRHSAST {
 
   @Override
   public List<Instr> toAssembly() {
+    List<Instr> instructions = new ArrayList<>();
+
+    String transferReg = Instr.getTargetReg();
+    for (int i = 0; i < args.getArguments().size(); i++) {
+      Node argNode = args.getArguments().get(i);
+      int argOffset = symtab.getStackOffset(argNode.getIdentifier().toString());
+      instructions.add(new MOV("", transferReg,
+          Utils.getEffectiveAddr(Instr.SP, argOffset)));
+
+      TypeID paramID = ((FuncID) getIdentifier()).getParams().get(i);
+      int paramOffset = symtab.getStackOffset(paramID.toString());
+      instructions.add(new STR(0, "", transferReg,
+          Utils.getEffectiveAddr(Instr.SP, paramOffset)));
+    }
+
+    instructions.add(new BRANCH(true, "", "f_" + funcName));
+
+    // TODO: How to move the return value back into the LHS?
     return null;
   }
 }

@@ -27,6 +27,19 @@ public class STR extends Instr {
     this.noOffset = false;
   }
 
+  public STR(String src, String dest, int offset) {
+    this(0, "", src, dest);
+    this.offset = offset;
+    this.noOffset = false;
+  }
+
+  public STR(String src, String dest) {
+    this(4, "", src, dest);
+    this.offset = 0;
+    this.noOffset = true;
+  }
+
+
   private String getStr() {
     String str = "STR" + conditions;
     switch (bytes) {
@@ -49,7 +62,7 @@ public class STR extends Instr {
     if (noOffset) {
       return " [" + dest + "]";
     }
-    return " [" + dest + ", " + offset + "]";
+    return " [" + dest + ", #" + offset + "]";
   }
 
   @Override
