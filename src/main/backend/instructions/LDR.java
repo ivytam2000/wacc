@@ -56,7 +56,7 @@ public class LDR extends Instr {
     if (noOffset) {
       return " [" + src + "]";
     }
-    return " [" + src + ", " + offset + "]";
+    return " [" + src + ", #" + offset + "]";
   }
 
   @Override
