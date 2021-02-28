@@ -1,7 +1,12 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.ExprContext;
+import backend.instructions.ADD;
+import backend.instructions.AND;
+import backend.instructions.CMP;
 import backend.instructions.Instr;
+import backend.instructions.MOV;
+import backend.instructions.ORR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -11,6 +16,7 @@ import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BinOpExprAST extends Node {
@@ -83,7 +89,58 @@ public class BinOpExprAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    String fstReg = Instr.getTargetReg();
+    List<Instr> instrs = new ArrayList<>(eL.toAssembly());
+
+    String sndReg = Instr.incDepth();
+    instrs.addAll(eR.toAssembly());
+    Instr.decDepth();
+
+    if (op.equals("&&")) {
+      instrs.add(new AND(fstReg, sndReg));
+      return instrs;
+    } else if (op.equals("||")) {
+      instrs.add(new ORR(false, fstReg, sndReg));
+      return instrs;
+    }
+
+    instrs.add(new CMP(fstReg, sndReg));
+    
+    String c1 = "";
+    String c2 = "";
+    switch (op) {
+      case ">":
+        c1 = "GT";
+        c2 = "LE";
+        break;
+      case ">=":
+        c1 = "GE";
+        c2 = "LT";
+        break;
+      case "<":
+        c1 = "LT";
+        c2 = "GE";
+        break;
+      case "<=":
+        c1 = "LE";
+        c2 = "GT";
+        break;
+      case "==":
+        c1 = "EQ";
+        c2 = "NE";
+        break;
+      case "!=":
+        c1 = "NE";
+        c2 = "EQ";
+        break;
+      default:
+        assert(false); //UNREACHABLE
+    }
+
+    instrs.add(new MOV(c1, fstReg, "#1"));
+    instrs.add(new MOV(c2, fstReg, "#0"));
+
+    return instrs;
   }
 
 
