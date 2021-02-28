@@ -1,8 +1,12 @@
 package frontend.abstractsyntaxtree.expressions;
 
+import backend.BackEndGenerator;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
+import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CharLiterAST extends Node {
@@ -23,6 +27,11 @@ public class CharLiterAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>();
+
+    // Move character into target register
+    instrs.add(new MOV("", Instr.getTargetReg(), getVal()));
+
+    return instrs;
   }
 }

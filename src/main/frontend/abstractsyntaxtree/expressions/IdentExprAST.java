@@ -45,9 +45,9 @@ public class IdentExprAST extends Node {
   public List<Instr> toAssembly() {
     List<Instr> instrs = new ArrayList<>();
 
-    // Get from stack and store into register r4
+    // Load from (SP + offset) into target register
     int offset = currsymtab.getStackOffset(getName());
-    instrs.add(new LDR(4, "", Instr.R4, Instr.SP, offset));
+    instrs.add(new LDR(4, "", Instr.getTargetReg(), Instr.SP, offset));
 
     return instrs;
   }
