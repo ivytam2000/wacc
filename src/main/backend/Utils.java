@@ -10,7 +10,7 @@ import java.util.List;
 public class Utils {
 
   public static String getAssignValue(Identifier identifier, String value) {
-    if (identifier instanceof IntID) {
+    if (identifier instanceof IntID || identifier instanceof StringID) {
       return "=" + value;
     } else {
       return "#" + value;
