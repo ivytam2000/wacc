@@ -1,7 +1,11 @@
 package backend;
 
 import backend.instructions.*;
-import frontend.abstractsyntaxtree.AST;
+import backend.instructions.ADD;
+import backend.instructions.Instr;
+import backend.instructions.LDR;
+import backend.instructions.POP;
+import backend.instructions.PUSH;
 import frontend.symboltable.*;
 
 import java.util.ArrayList;
@@ -30,7 +34,7 @@ public class Utils {
     return instrs;
   }
 
-  public static BRANCH getPrintBranch(TypeID type){
+  public static BRANCH getPrintBranch(TypeID type) {
     BRANCH brInstr = null;
     if (type instanceof IntID) {
       brInstr = new BRANCH(true, "", "p_print_int");
@@ -46,5 +50,14 @@ public class Utils {
     // brInstr should not be null
     return brInstr;
   }
+
+//  public static List<Instr> getPreDefFunc(String func) {
+//    List<Instr> instrs = new ArrayList<>();
+//    if (func.equals("p_print_string")) {
+//      instrs.add(new PUSH(Instr.LR));
+//      instrs.add(new POP(Instr.PC));
+//    }
+//    return instrs;
+//  }
 
 }

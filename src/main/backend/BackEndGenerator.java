@@ -32,6 +32,8 @@ public class BackEndGenerator {
   public String run() {
     StringBuilder output = new StringBuilder();
 
+    // TODO: Build instructions for pre def func so messages goes in data segment
+
     // Writes the data segment
     output.append(".data\n\n");
 
