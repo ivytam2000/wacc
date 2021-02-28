@@ -105,7 +105,7 @@ public class BinOpExprAST extends Node {
     }
 
     instrs.add(new CMP(fstReg, sndReg));
-    
+
     String c1 = "";
     String c2 = "";
     switch (op) {

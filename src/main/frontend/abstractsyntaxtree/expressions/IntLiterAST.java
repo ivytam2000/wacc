@@ -1,7 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import backend.instructions.Instr;
-import backend.instructions.MOV;
+import backend.instructions.LDR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
@@ -29,8 +29,8 @@ public class IntLiterAST extends Node {
   public List<Instr> toAssembly() {
     List<Instr> instrs = new ArrayList<>();
 
-    // Move value directly into target register
-    instrs.add(new MOV("", Instr.getTargetReg(), val));
+    // Load value directly into target register
+    instrs.add(new LDR(4, "", Instr.getTargetReg(), val));
 
     return instrs;
   }
