@@ -25,14 +25,14 @@ public abstract class Instr {
     return regs[regsDepth];
   }
 
-  public static void incDepth() {
-    ++regsDepth;
-    assert (regsDepth < regs.length);
+  public static String incDepth() {
+    assert (regsDepth < regs.length - 1);
+    return regs[++regsDepth];
   }
 
-  public static void decDepth() {
-    --regsDepth;
-    assert (regsDepth > -1);
+  public static String decDepth() {
+    assert (regsDepth > 0);
+    return regs[--regsDepth];
   }
 
   public abstract String translateToArm();
