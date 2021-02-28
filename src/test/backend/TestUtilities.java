@@ -95,7 +95,9 @@ public class TestUtilities {
         if (line.contains("---")) {
           return actualStdOuts;
         } else {
-          actualStdOuts.add(line);
+          if (!line.isEmpty()) {
+            actualStdOuts.add(line);
+          }
         }
       }
 
