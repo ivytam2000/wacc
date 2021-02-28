@@ -47,7 +47,8 @@ public class IdentExprAST extends Node {
 
     // Load from (SP + offset) into target register
     int offset = currsymtab.getStackOffset(getName());
-    instrs.add(new LDR(4, "", Instr.getTargetReg(), Instr.SP, offset));
+    instrs.add(new LDR(identifier.getType().getBytes(), "",
+        Instr.getTargetReg(), Instr.SP, offset));
 
     return instrs;
   }

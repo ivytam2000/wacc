@@ -12,6 +12,8 @@ public class LDR extends Instr {
   private int offset;
   private boolean noOffset;
 
+  //TODO: Signed bytes?
+
   // NOTE that for LDR: destination is lhs and source is rhs
   public LDR(int bytes, String conditions, String dest, String src) {
     this.bytes = bytes;
@@ -28,22 +30,26 @@ public class LDR extends Instr {
     this.noOffset = false;
   }
 
+  //TODO: Fix switch case
   private String getLdr() {
-    String ldr = "LDR" + conditions;
+    String ldr = "LDR";
     switch (bytes) {
-      //Byte
+      //Signed byte
       case 1:
-        return ldr + "B";
+        ldr += "SB";
+        break;
+      //Signed halfword
+      case -2:
+        ldr += "SH";
+        break;
       //Halfword
       case 2:
-        return ldr + "H";
-      //Doubleword
-      case 8:
-        return ldr + "D";
+        ldr += "H";
+        break;
       //Word
       default:
-        return ldr;
     }
+    return ldr + conditions;
   }
 
   private String getSrc() {
