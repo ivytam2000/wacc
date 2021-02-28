@@ -2,7 +2,7 @@ package frontend.abstractsyntaxtree.functions;
 
 import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArgListAST extends Node {
@@ -23,6 +23,10 @@ public class ArgListAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return Collections.emptyList();
+    List<Instr> instructions = new ArrayList<>();
+    for (Node expr: expressions) {
+      instructions.addAll(expr.toAssembly());
+    }
+    return instructions;
   }
 }
