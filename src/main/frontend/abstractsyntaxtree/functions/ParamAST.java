@@ -6,6 +6,7 @@ import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import java.util.Collections;
 import java.util.List;
 
 public class ParamAST extends Node {
@@ -36,6 +37,6 @@ public class ParamAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    return Collections.emptyList();
   }
 }

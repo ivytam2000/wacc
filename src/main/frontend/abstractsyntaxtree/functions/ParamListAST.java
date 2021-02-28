@@ -28,7 +28,7 @@ public class ParamListAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    return Collections.emptyList();
   }
 
   // Used in the visitor to convert ASTs to IDs
