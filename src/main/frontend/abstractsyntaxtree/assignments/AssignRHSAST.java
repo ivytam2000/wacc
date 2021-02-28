@@ -4,6 +4,7 @@ import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AssignRHSAST extends Node {
@@ -29,6 +30,10 @@ public class AssignRHSAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instructions = new ArrayList<>();
+    for (Node expr: children) {
+      instructions.addAll(expr.toAssembly());
+    }
+    return instructions;
   }
 }
