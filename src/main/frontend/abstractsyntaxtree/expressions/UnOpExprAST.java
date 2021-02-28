@@ -1,7 +1,12 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.UnaryOperContext;
+import backend.BackEndGenerator;
+import backend.instructions.BRANCH;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
+import backend.instructions.ORR;
+import backend.instructions.SUB;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
@@ -12,6 +17,7 @@ import frontend.symboltable.IntID;
 import frontend.symboltable.StringID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UnOpExprAST extends Node {
@@ -78,6 +84,27 @@ public class UnOpExprAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+
+    // Set up
+    List<Instr> instrs = new ArrayList<>(exprAST.toAssembly());
+
+    // UnOp
+    if (ctx.NOT() != null) {
+      // XOR
+      instrs.add(new ORR(true, Instr.getTargetReg(), "#1"));
+    } else if (ctx.MINUS() != null) {
+      // Revere subtract
+      instrs.add(new SUB(true, true, Instr.getTargetReg(), "#0"));
+      // Check for overflow
+      BackEndGenerator.addToPreDefFunc("p_throw_overflow_error");
+      instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
+    } else if (ctx.LEN() != null) {
+      // Length of array stored at its corresponding memory with 0 offset
+      instrs.add(new LDR(4, "", Instr.getTargetReg(), Instr.getTargetReg(), 0));
+    }
+
+    // ORD and CHR needs so additional instructions, only loading from stack
+
+    return instrs;
   }
 }
