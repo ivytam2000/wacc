@@ -2,9 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
 import backend.Utils;
-import backend.instructions.BRANCH;
-import backend.instructions.CMP;
-import backend.instructions.Instr;
+import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
@@ -54,18 +52,20 @@ public class WhileAST extends Node {
   @Override
   public List<Instr> toAssembly() {
     List<Instr> instrs = new ArrayList<>();
-    List<Instr> whileOuterInstr = new ArrayList<>(expr.toAssembly());
+    List<Instr> whileOuterInstr = new ArrayList<>();
     List<Instr> whileBodyInstr = new ArrayList<>(stat.toAssembly());
+    whileOuterInstr.add(new PUSH(Instr.LR));
+    whileOuterInstr.addAll(expr.toAssembly());
     whileOuterInstr.add(new CMP(Instr.R4,"#1"));
     // TODO: need to keep track of L labels?
     BRANCH beq = new BRANCH(false, "EQ", "L1");
     whileOuterInstr.add(beq);
-    whileOuterInstr.addAll(Utils.getEndRoutine(symtab));
+    whileOuterInstr.add(new POP(Instr.PC));
     // Add to functions
     addToUsrDefFuncs("L0", whileOuterInstr);
     addToUsrDefFuncs("L1", whileBodyInstr);
     //TODO: how to handle labels?
-    instrs.add(new BRANCH(false, "", "L0"));
+    instrs.add(new BRANCH(true, "", "L0"));
     return instrs;
   }
 }
