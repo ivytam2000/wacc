@@ -1,7 +1,7 @@
 package backend.instructions;
 
 // Very similar to STR
-public class LDR implements Instr {
+public class LDR extends Instr {
 
   // Number of bytes determines the type of str instruction
   // 4 bytes = word
@@ -12,6 +12,8 @@ public class LDR implements Instr {
   private boolean isValue;
   private int offset;
   private boolean noOffset;
+
+  //TODO: Signed bytes?
 
   // NOTE that for LDR: destination is lhs and source is rhs
   public LDR(int bytes, String conditions, String dest, String src) {
@@ -53,22 +55,26 @@ public class LDR implements Instr {
     this.isValue = isValue;
   }
 
-  private String getStr() {
-    String str = "STR" + conditions;
+  //TODO: Fix switch case
+  private String getLdr() {
+    String ldr = "LDR";
     switch (bytes) {
-      //Byte
+      //Signed byte
       case 1:
-        return str + "B";
+        ldr += "SB";
+        break;
+      //Signed halfword
+      case -2:
+        ldr += "SH";
+        break;
       //Halfword
       case 2:
-        return str + "H";
-      //Doubleword
-      case 8:
-        return str + "D";
+        ldr += "H";
+        break;
       //Word
       default:
-        return str;
     }
+    return ldr + conditions;
   }
 
   private String getSrc() {
@@ -83,6 +89,6 @@ public class LDR implements Instr {
 
   @Override
   public String translateToArm() {
-    return getStr() + " " + dest + getSrc();
+    return getLdr() + " " + dest + getSrc();
   }
 }

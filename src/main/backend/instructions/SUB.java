@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class SUB implements Instr {
+public class SUB extends Instr {
 
   private final boolean reverse; // For RSB instruction (negation)
   private final boolean setFlags;

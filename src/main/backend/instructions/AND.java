@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class AND implements Instr {
+public class AND extends Instr {
 
   private final String dest; //Also first operand
   private final String operand2;

@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class MUL implements Instr {
+public class MUL extends Instr {
 
   private final String regLow;  // Also first operand
   private final String regHigh; // Also second operand

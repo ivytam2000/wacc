@@ -3,13 +3,20 @@ package frontend.abstractsyntaxtree.expressions;
 import antlr.WaccParser.ArithOpExpr_1Context;
 import antlr.WaccParser.ArithOpExpr_2Context;
 import antlr.WaccParser.ExprContext;
+import backend.instructions.ADD;
+import backend.instructions.BRANCH;
+import backend.instructions.CMP;
 import backend.instructions.Instr;
+import backend.instructions.MOV;
+import backend.instructions.MUL;
+import backend.instructions.SUB;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArithOpExprAST extends Node {
@@ -59,6 +66,42 @@ public class ArithOpExprAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+
+    String fstReg = Instr.getTargetReg();
+    List<Instr> instrs = new ArrayList<>(eL.toAssembly());
+
+    String sndReg = Instr.incDepth();
+    instrs.addAll(eR.toAssembly());
+    Instr.decDepth();
+
+    switch (op) {
+      case "+":
+        instrs.add(new ADD(true, fstReg, fstReg, sndReg));
+        instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
+        break;
+      case "-":
+        instrs.add(new SUB(false, true, fstReg, sndReg));
+        instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
+        break;
+      case "*":
+        instrs.add(new MUL(fstReg, sndReg));
+        instrs.add(new CMP(sndReg, fstReg, "ASR #31"));
+        instrs.add(new BRANCH(true, "NE", "p_throw_overflow_error"));
+        break;
+      case "/":
+        instrs.add(new MOV("", Instr.R0, fstReg));
+        instrs.add(new MOV("", Instr.R1, sndReg));
+        instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
+        instrs.add(new BRANCH(true, "", "__aeabi_idiv"));
+        break;
+      case "%":
+        instrs.add(new MOV("", Instr.R0, fstReg));
+        instrs.add(new MOV("", Instr.R1, sndReg));
+        instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
+        instrs.add(new BRANCH(true, "", "__aeabi_idivmod"));
+        break;
+      default:
+    }
+    return instrs;
   }
 }

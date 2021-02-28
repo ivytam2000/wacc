@@ -76,11 +76,10 @@ public class BackEndGenerator {
   }
 
   /**
-   * Uses fileWriter to write a .text section of instructions, named
-   * sectionName, in assembly format.
+   * Uses fileWriter to write a .text section of instructions, named sectionName, in assembly
+   * format.
    */
-  private String writeTextSection(String sectionName,
-      List<Instr> instructions) {
+  private String writeTextSection(String sectionName, List<Instr> instructions) {
     StringBuilder output = new StringBuilder();
     output.append(sectionName).append(":\n");
     for (Instr instruction : instructions) {
@@ -96,5 +95,9 @@ public class BackEndGenerator {
 
   public static void addToPreDefFunc(String func) {
     preDefFuncs.add(func);
+  }
+
+  public static void addToUsrDefFuncs(String label, List<Instr> instrs) {
+    usrDefFuncs.put(label, instrs);
   }
 }

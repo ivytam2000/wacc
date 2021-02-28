@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class MOD implements Instr {
+public class MOD extends Instr {
 
   // Modular arithmetic uses library functions
   @Override

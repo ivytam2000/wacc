@@ -97,7 +97,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public PrintAST visitPrint_stat(Print_statContext ctx) {
     Node expr = visit(ctx.expr());
-    return new PrintAST(expr);
+    return new PrintAST(expr, currSymTab);
   }
 
   @Override
@@ -148,7 +148,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public FreeAST visitFree_stat(Free_statContext ctx) {
     Node expr = visit(ctx.expr());
 
-    FreeAST freeAST = new FreeAST(expr, ctx.expr());
+    FreeAST freeAST = new FreeAST(expr, ctx.expr(),currSymTab);
     freeAST.check();
 
     return freeAST;
@@ -175,7 +175,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node expr = visit(ctx.expr());
     Node stat = visit(ctx.stat());
 
-    WhileAST whileAST = new WhileAST(expr, stat, ctx.expr());
+    WhileAST whileAST = new WhileAST(expr, stat, ctx.expr(), currSymTab);
     whileAST.check();
 
     currSymTab = encScope; // Swap back to parent scope
@@ -209,7 +209,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     currSymTab = new SymbolTable(encScope); // Create new scope
 
     Node stat = visit(ctx.stat());
-    BeginStatAST beginAST = new BeginStatAST(stat);
+    BeginStatAST beginAST = new BeginStatAST(stat, currSymTab);
 
     currSymTab = encScope; // Swap back to parent scope
 

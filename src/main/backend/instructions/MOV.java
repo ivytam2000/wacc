@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class MOV implements Instr {
+public class MOV extends Instr {
     private final String conditions;
     private final String dest;
     private final String src; // can be an immediate

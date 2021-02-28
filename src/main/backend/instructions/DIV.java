@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class DIV implements Instr {
+public class DIV extends Instr {
 
   //Division uses library functions
   @Override

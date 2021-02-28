@@ -1,7 +1,11 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.ArrayElemContext;
+import backend.instructions.ADD;
+import backend.instructions.BRANCH;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
+import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
@@ -9,6 +13,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.IntID;
 import frontend.symboltable.StringID;
 import frontend.symboltable.SymbolTable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayElemAST extends Node {
@@ -53,8 +58,33 @@ public class ArrayElemAST extends Node {
     setIdentifier(currIdentifier);
   }
 
+  private String getOffset() {
+    int offset = symtab.getStackOffset(val);
+    return "#" + offset;
+  }
+
+  //TODO: Nested array?
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>();
+    String target = Instr.getTargetReg();
+    instrs.add(new ADD(false, target, Instr.SP, getOffset()));
+    for (Node e : exprs) {
+      String sndReg = Instr.incDepth();
+      instrs.addAll(e.toAssembly());
+      Instr.decDepth();
+      instrs.add(new LDR(4, "", target, target));
+      instrs.add(new MOV("", Instr.R0, sndReg));
+      instrs.add(new MOV("", Instr.R1, target));
+      instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
+      instrs.add(new ADD(false, target, target, "#4"));
+      if (e.getIdentifier().getType().getBytes() == 4) {
+        instrs.add(new ADD(false, target, target, sndReg, "LSL #2"));
+      } else {
+        instrs.add(new ADD(false, target, target, sndReg));
+      }
+    }
+    instrs.add(new LDR(4, "", target, target));
+    return instrs;
   }
 }

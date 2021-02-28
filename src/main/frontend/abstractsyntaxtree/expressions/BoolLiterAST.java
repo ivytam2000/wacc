@@ -1,8 +1,10 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import backend.instructions.Instr;
+import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BoolLiterAST extends Node {
@@ -15,7 +17,7 @@ public class BoolLiterAST extends Node {
   }
 
   public String getVal() {
-    return val ? "1": "0";
+    return val ? "#1": "#0";
   }
 
   @Override
@@ -24,6 +26,11 @@ public class BoolLiterAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>();
+
+    // Move character into target register
+    instrs.add(new MOV("", Instr.getTargetReg(), getVal()));
+
+    return instrs;
   }
 }

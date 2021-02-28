@@ -2,12 +2,18 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.Exit_statContext;
 import antlr.WaccParser.ExprContext;
+import backend.instructions.BRANCH;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
+import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.expressions.IntLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ExitID;
 import frontend.symboltable.IntID;
 import frontend.symboltable.TypeID;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExitAST extends Node {
@@ -39,6 +45,15 @@ public class ExitAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>();
+    // expr should be IntLiterAST if it passed semantic check
+    IntLiterAST intExpr = (IntLiterAST) expr;
+    LDR ldr = new LDR(4, "", Instr.R4, "=" + intExpr.getValue());
+    instrs.add(ldr);
+    MOV movInstr = new MOV("", Instr.R0, Instr.R4);
+    instrs.add(movInstr);
+    BRANCH brInstr = new BRANCH(true, "", "exit");
+    instrs.add(brInstr);
+    return instrs;
   }
 }

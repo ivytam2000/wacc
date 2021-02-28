@@ -1,8 +1,11 @@
 package frontend.abstractsyntaxtree.expressions;
 
+import backend.BackEndGenerator;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StrLiterAST extends Node {
@@ -24,6 +27,12 @@ public class StrLiterAST extends Node {
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>();
+
+    // Add string to data segment and load message directly into target register
+    int index = BackEndGenerator.addToDataSegment(val);
+    instrs.add(new LDR(4, "", Instr.getTargetReg(), "msg_" + index));
+
+    return instrs;
   }
 }

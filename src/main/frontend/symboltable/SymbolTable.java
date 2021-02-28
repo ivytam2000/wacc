@@ -1,14 +1,20 @@
 package frontend.symboltable;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SymbolTable {
 
   private final Map<String, Identifier> dictionary = new HashMap<>();
   private int size = 0;
-  private final Map<String, Integer> varOffsets = new HashMap<>();
+  private final Map<String, Integer> varOffsets = new LinkedHashMap<>();
   private final SymbolTable parent;
+
+  public int getSize() {
+    return size;
+  }
 
   public SymbolTable(SymbolTable parent) {
     this.parent = parent;
@@ -90,5 +96,16 @@ public class SymbolTable {
     }
 
     return innerOffset + temp.varOffsets.get(var);
+  }
+
+  public void addOffset(String var, int offset){
+    varOffsets.put(var,offset);
+  }
+
+  public int getSmallestOffset(){
+    if(varOffsets.isEmpty()){
+      return size;
+    }
+    return Collections.min(varOffsets.values());
   }
 }
