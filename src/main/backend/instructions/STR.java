@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class STR implements Instr {
+public class STR extends Instr {
 
   // Number of bytes determines the type of str instruction
   // 4 bytes = word

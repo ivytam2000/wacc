@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class ORR implements Instr {
+public class ORR extends Instr {
 
   private final String dest; // Also first operand
   private final String operand2;

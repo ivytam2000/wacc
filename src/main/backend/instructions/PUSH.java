@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class PUSH implements Instr {
+public class PUSH extends Instr {
 
   private final String reg;
 

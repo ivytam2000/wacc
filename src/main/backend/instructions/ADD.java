@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class ADD implements Instr {
+public class ADD extends Instr {
 
   private final boolean setFlags;
   private final String dest; //Also first operand

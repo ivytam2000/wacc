@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class CMP implements Instr {
+public class CMP extends Instr {
 
   private final String reg; // first operand
   private final String operand; // second operand

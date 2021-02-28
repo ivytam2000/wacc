@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class POP implements Instr {
+public class POP extends Instr {
 
   private final String reg;
 

@@ -1,6 +1,6 @@
 package backend.instructions;
 
-public class BRANCH implements Instr {
+public class BRANCH extends Instr {
 
   //bool indicating if its B or BL (branch with link
   private final boolean link;
