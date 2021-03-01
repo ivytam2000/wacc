@@ -14,6 +14,7 @@ public class LDR extends Instr {
   private boolean noOffset;
 
   //TODO: Signed bytes?
+  //TODO: Constructors are a mess
 
   // NOTE that for LDR: destination is lhs and source is rhs
   public LDR(int bytes, String conditions, String dest, String src) {
@@ -29,7 +30,7 @@ public class LDR extends Instr {
       int offset) {
     this(bytes, conditions, dest, src);
     this.offset = offset;
-    this.noOffset = false;
+    this.noOffset = offset == 0;
     this.isValue = false;
   }
 
@@ -82,13 +83,13 @@ public class LDR extends Instr {
       return src;
     }
     if (noOffset) {
-      return " [" + src + "]";
+      return "[" + src + "]";
     }
-    return " [" + src + ", #" + offset + "]";
+    return "[" + src + ", #" + offset + "]";
   }
 
   @Override
   public String translateToArm() {
-    return getLdr() + " " + dest + getSrc();
+    return getLdr() + " " + dest + ", " + getSrc();
   }
 }

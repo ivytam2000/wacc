@@ -59,14 +59,14 @@ public class STR extends Instr {
   }
 
   private String getDest() {
-    if (noOffset) {
-      return " [" + dest + "]";
+    if (noOffset || offset == 0) {
+      return "[" + dest + "]";
     }
-    return " [" + dest + ", #" + offset + "]";
+    return "[" + dest + ", #" + offset + "]";
   }
 
   @Override
   public String translateToArm() {
-    return getStr() + " " + src + getDest();
+    return getStr() + " " + src + ", " + getDest();
   }
 }
