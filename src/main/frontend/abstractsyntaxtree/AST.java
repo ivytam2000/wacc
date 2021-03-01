@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree;
 
 import backend.instructions.Instr;
+import frontend.symboltable.SymbolTable;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,13 @@ public class AST extends Node {
    */
   private final List<Node> funcASTs;
   private final Node statAST;
+  private final SymbolTable symtab;
 
-  public AST(List<Node> funcASTs, Node statAST) {
+  public AST(List<Node> funcASTs, Node statAST, SymbolTable symtab) {
     super();
     this.funcASTs = funcASTs;
     this.statAST = statAST;
+    this.symtab = symtab;
   }
 
   public List<Node> getFuncASTs() {
@@ -29,12 +32,16 @@ public class AST extends Node {
     return statAST;
   }
 
+  public SymbolTable getSymtab() {
+    return symtab;
+  }
+
   @Override
   public void check() {
   }
 
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    return statAST.toAssembly();
   }
 }

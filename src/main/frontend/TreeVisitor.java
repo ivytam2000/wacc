@@ -50,7 +50,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     // visit stat
     Node statAST = visit(ctx.stat());
 
-    return new AST(fs, statAST);
+    return new AST(fs, statAST, currSymTab);
   }
 
   // Sets up FuncAST and adds to global scope

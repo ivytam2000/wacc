@@ -5,16 +5,14 @@ import frontend.abstractsyntaxtree.AST;
 import frontend.abstractsyntaxtree.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class BackEndGenerator {
 
   private static final List<String> dataSegmentStrings = new ArrayList<>();
 
-  private static final Set<String> preDefFuncs = new HashSet<>();
+  private static final List<String> preDefFuncs = new ArrayList<>();
   private static Map<String, List<Instr>> usrDefFuncs;
   private static Map<String, List<Instr>> branchLabels = new HashMap<>();
 
@@ -32,19 +30,24 @@ public class BackEndGenerator {
   public String run() {
     StringBuilder output = new StringBuilder();
 
-    // Writes the data segment
-    output.append(".data\n\n");
+    Map<String, List<Instr>> preDefFuncInstrs = Utils.getPreDefFunc(preDefFuncs);
 
-    int msgIndex = 0;
-    for (String dataSegmentString : dataSegmentStrings) {
-      output.append("msg_").append(msgIndex).append(":\n");
-      output.append("\t.word ").append(dataSegmentString.length()).append("\n");
-      output.append("\t.ascii \"").append(dataSegmentString).append("\"\n");
-      msgIndex++;
+    // Writes the data segment
+
+    if (dataSegmentStrings.size() > 0) {
+      output.append(".data\n\n");
+      int msgIndex = 0;
+      for (String dataSegmentString : dataSegmentStrings) {
+        output.append("msg_").append(msgIndex).append(":\n");
+        output.append("\t.word ").append(dataSegmentString.length() - 1).append("\n");
+        output.append("\t.ascii \"").append(dataSegmentString).append("\"\n");
+        msgIndex++;
+      }
+      output.append("\n");
     }
 
     // Writes the text segment
-    output.append("\n.text\n\n.global main\n");
+    output.append(".text\n\n.global main\n");
 
     // Writes all the user-defined functions
     for (Map.Entry<String, List<Instr>> function : usrDefFuncs.entrySet()) {
@@ -56,7 +59,11 @@ public class BackEndGenerator {
     // Writes all the main instructions
     output.append(writeTextSection("main", mainInstructions));
 
-    // TODO: Write pre-defined functions.
+    for (Map.Entry<String, List<Instr>> pdf : preDefFuncInstrs.entrySet()) {
+      String pdfName = pdf.getKey();
+      List<Instr> pdfInstrs = pdf.getValue();
+      output.append(writeTextSection(pdfName, pdfInstrs));
+    }
 
     return output.toString();
   }
@@ -72,7 +79,11 @@ public class BackEndGenerator {
   }
 
   private List<Instr> generateMainInstructions() {
-    return ast.toAssembly();
+    List<Instr> instrs = new ArrayList<>(Utils.getStartRoutine(ast.getSymtab()));
+    instrs.addAll(ast.toAssembly());
+    //TODO: End routine not always here
+    instrs.addAll(Utils.getEndRoutine(ast.getSymtab()));
+    return instrs;
   }
 
   /**

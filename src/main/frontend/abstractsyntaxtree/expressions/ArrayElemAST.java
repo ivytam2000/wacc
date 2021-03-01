@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.ArrayElemContext;
+import backend.BackEndGenerator;
 import backend.instructions.ADD;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
@@ -66,6 +67,7 @@ public class ArrayElemAST extends Node {
   //TODO: Nested array?
   @Override
   public List<Instr> toAssembly() {
+    BackEndGenerator.addToPreDefFunc("p_check_array_bounds");
     List<Instr> instrs = new ArrayList<>();
     String target = Instr.getTargetReg();
     instrs.add(new ADD(false, target, Instr.SP, getOffset()));

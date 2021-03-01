@@ -10,6 +10,6 @@ public class POP extends Instr {
 
   @Override
   public String translateToArm() {
-    return "PUSH {" + reg + "}";
+    return "POP {" + reg + "}";
   }
 }

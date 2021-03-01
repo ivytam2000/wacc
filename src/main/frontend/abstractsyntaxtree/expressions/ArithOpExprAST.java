@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.expressions;
 import antlr.WaccParser.ArithOpExpr_1Context;
 import antlr.WaccParser.ArithOpExpr_2Context;
 import antlr.WaccParser.ExprContext;
+import backend.BackEndGenerator;
 import backend.instructions.ADD;
 import backend.instructions.BRANCH;
 import backend.instructions.CMP;
@@ -74,6 +75,7 @@ public class ArithOpExprAST extends Node {
     instrs.addAll(eR.toAssembly());
     Instr.decDepth();
 
+    boolean addOverflow = true;
     switch (op) {
       case "+":
         instrs.add(new ADD(true, fstReg, fstReg, sndReg));
@@ -89,19 +91,29 @@ public class ArithOpExprAST extends Node {
         instrs.add(new BRANCH(true, "NE", "p_throw_overflow_error"));
         break;
       case "/":
+        addOverflow = false;
         instrs.add(new MOV("", Instr.R0, fstReg));
         instrs.add(new MOV("", Instr.R1, sndReg));
         instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
         instrs.add(new BRANCH(true, "", "__aeabi_idiv"));
         break;
       case "%":
+        addOverflow = false;
         instrs.add(new MOV("", Instr.R0, fstReg));
         instrs.add(new MOV("", Instr.R1, sndReg));
         instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
         instrs.add(new BRANCH(true, "", "__aeabi_idivmod"));
         break;
       default:
+        assert(false); //UNREACHABLE
     }
+
+    if (addOverflow) {
+      BackEndGenerator.addToPreDefFunc("p_throw_overflow_error");
+    } else {
+      BackEndGenerator.addToPreDefFunc("p_check_divide_by_zero");
+    }
+
     return instrs;
   }
 }
