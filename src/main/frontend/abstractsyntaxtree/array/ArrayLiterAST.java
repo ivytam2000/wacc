@@ -53,6 +53,7 @@ public class ArrayLiterAST extends Node {
     }
   }
 
+  //TODO: If we had nested arrays, this fails
   @Override
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
