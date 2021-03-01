@@ -45,6 +45,11 @@ public abstract class Instr {
 
   public static void setCurLabel(String label) {
     curLabel = label;
+    /* Creates an entry in the labels if it is not there yet */
+    if(!labels.containsKey(curLabel)){
+      labels.put(curLabel, new ArrayList<>());
+    }
+
   }
 
   public static String getNextLabel() {
