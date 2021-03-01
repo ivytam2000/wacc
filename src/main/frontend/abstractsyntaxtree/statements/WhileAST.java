@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static backend.BackEndGenerator.addToUsrDefFuncs;
+import static backend.instructions.Instr.*;
 
 public class WhileAST extends Node {
   private final Node expr;
@@ -50,22 +51,34 @@ public class WhileAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-    List<Instr> whileOuterInstr = new ArrayList<>();
-    List<Instr> whileBodyInstr = new ArrayList<>(stat.toAssembly());
-    whileOuterInstr.add(new PUSH(Instr.LR));
-    whileOuterInstr.addAll(expr.toAssembly());
-    whileOuterInstr.add(new CMP(Instr.R4,"#1"));
-    // TODO: need to keep track of L labels?
-    BRANCH beq = new BRANCH(false, "EQ", "L1");
-    whileOuterInstr.add(beq);
-    whileOuterInstr.add(new POP(Instr.PC));
-    // Add to functions
-    addToUsrDefFuncs("L0", whileOuterInstr);
-    addToUsrDefFuncs("L1", whileBodyInstr);
-    //TODO: how to handle labels?
-    instrs.add(new BRANCH(true, "", "L0"));
-    return instrs;
+  public void toAssembly() {
+    /* Create a new label for nextStat which will include the evaluation of the
+     * while condition expression and the instructions after the while loop */
+    String nextStatLabel = getNextLabel();
+    /* Create a new label fo the body of the loop */
+    String bodyLabel = getNextLabel();
+
+    /* Branch to this the nextStat label */
+    addToCurLabel(new BRANCH(false, "", nextStatLabel));
+
+    /* Set CurLabel to nextStat label */
+    setCurLabel(nextStatLabel);
+    expr.toAssembly();
+    /* Test if the expression is true if it is we branch to a new label which
+       will include the instructions for the body of the while loop */
+    addToCurLabel(new CMP(Instr.R4,"#1"));
+    addToCurLabel(new BRANCH(false, "EQ", bodyLabel));
+
+    /* Set current label to the body label */
+    setCurLabel(bodyLabel);
+    // Add body label to label order list as it should be printed before the
+    // nextStat label
+    addToLabelOrder(bodyLabel);
+    stat.toAssembly();
+
+    /*Set current label back to the nextStat label and add it to the label
+     * order */
+    setCurLabel(nextStatLabel);
+    addToLabelOrder(nextStatLabel);
   }
 }

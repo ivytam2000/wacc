@@ -29,7 +29,7 @@ public abstract class Node {
 
   public abstract void check();
 
-  public abstract List<Instr> toAssembly();
+  public abstract void toAssembly();
 
   public String getValue(){
     return null;

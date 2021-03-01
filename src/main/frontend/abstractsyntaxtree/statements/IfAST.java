@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.concurrent.BlockingDeque;
 
 import static backend.BackEndGenerator.addToUsrDefFuncs;
+import static backend.instructions.Instr.*;
 
 public class IfAST extends Node {
 
@@ -54,16 +55,34 @@ public class IfAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    List<Instr> instrs = new ArrayList<>(expr.toAssembly());
-    // TODO: Check if expr.toAssembly puts it into R4.
-    instrs.add(new CMP(Instr.R4,"#0"));
-    // TODO: need to keep track of L labels?
-    BRANCH beq = new BRANCH(false, "EQ", "L0");
-    // L0: elseStat.toAssembly()
-    addToUsrDefFuncs("L0", elseStat.toAssembly());
-    // TODO: L1 cleaning up routine?
-    instrs.add(new BRANCH(false, "", "L1"));
-    return instrs;
+  public void toAssembly() {
+    /* Evaluate the boolean expression */
+    expr.toAssembly();
+
+    /* This ensures that the nextStatLabel is always after the elseStatLabel */
+    String elseStatLabel = getNextLabel();
+    String nextStatLabel = getNextLabel();
+
+    /* Test the boolean expression if it evaluates to false jump to elseStat
+    label */
+    addToCurLabel(new CMP(Instr.R4,"#0"));
+    addToCurLabel(new BRANCH(false, "EQ", elseStatLabel));
+
+    /* Evaluate thenStat (true) body in current label */
+    thenStat.toAssembly();
+    // branch to the nextStatLabel to skip over the elseStatlabel (false body)
+    addToCurLabel(new BRANCH(false, "", nextStatLabel));
+
+    /* Evaluate the elseStat (false body) in a new label (elseStatLabel) */
+    setCurLabel(elseStatLabel);
+    elseStat.toAssembly();
+
+    /* Create and set a new label for the next statements after the ifAST */
+    setCurLabel(nextStatLabel);
+
+    /* Add elseStatLabel and then nextStatLabel to labelOrder list
+     * elseStatLabel must be before nextStatLabel so that it falls through */
+    addToLabelOrder(elseStatLabel);
+    addToLabelOrder(nextStatLabel);
   }
 }
