@@ -15,8 +15,7 @@ public class ParamAST extends Node {
   private final SymbolTable symtab;
   private final ParamContext ctx;
 
-  public ParamAST(Identifier identifier, SymbolTable symtab, String varName,
-      ParamContext ctx) {
+  public ParamAST(Identifier identifier, SymbolTable symtab, String varName, ParamContext ctx) {
     super(identifier);
     this.symtab = symtab;
     this.varName = varName;
@@ -28,15 +27,12 @@ public class ParamAST extends Node {
     Identifier v = symtab.lookup(varName);
     if (v != null) {
       SemanticErrorCollector.addSymbolAlreadyDefined(
-          varName, ctx.getStart().getLine(),
-          ctx.getStart().getCharPositionInLine());
+          varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
       return;
     }
     symtab.add(varName, identifier);
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    return Collections.emptyList();
-  }
+  public void toAssembly() {}
 }

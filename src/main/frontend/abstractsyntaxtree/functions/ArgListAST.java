@@ -22,11 +22,9 @@ public class ArgListAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    List<Instr> instructions = new ArrayList<>();
+  public void toAssembly() {
     for (Node expr: expressions) {
-      instructions.addAll(expr.toAssembly());
+      expr.toAssembly();
     }
-    return instructions;
   }
 }

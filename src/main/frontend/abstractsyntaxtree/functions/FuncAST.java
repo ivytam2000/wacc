@@ -11,6 +11,8 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class FuncAST extends Node {
 
   private final String funcName;
@@ -54,14 +56,14 @@ public class FuncAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
     instructions.add(new PUSH(Instr.LR));
-    instructions.addAll(statements.toAssembly());
+    statements.toAssembly();
     // TODO: MOV r0, r4?
     instructions.add(new POP(Instr.PC));
     instructions.add(new POP(Instr.PC));
-    return instructions;
+    addToCurLabel(instructions);
   }
 
   public void addFuncToGlobalScope() {
