@@ -43,10 +43,10 @@ public class LDR extends Instr {
   }
 
   public LDR(String dest, String src, int offset) {
-    this(0, "", dest, src);
+    this(4, "", dest, src);
     this.offset = offset;
-    this.noOffset = false;
-    this.isValue = true;
+    this.noOffset = offset == 0;
+    this.isValue = !noOffset;
   }
 
   public LDR(String dest, String src, boolean isValue) {
