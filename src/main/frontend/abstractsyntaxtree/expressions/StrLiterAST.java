@@ -33,7 +33,7 @@ public class StrLiterAST extends Node {
 
     // Add string to data segment and load message directly into target register
     int index = BackEndGenerator.addToDataSegment(val);
-    instrs.add(new LDR(4, "", Instr.getTargetReg(), "msg_" + index));
+    instrs.add(new LDR(Instr.getTargetReg(), "msg_" + index));
 
     addToCurLabel(instrs);
   }

@@ -17,44 +17,33 @@ public class LDR extends Instr {
   //TODO: Constructors are a mess
 
   // NOTE that for LDR: destination is lhs and source is rhs
-  public LDR(int bytes, String conditions, String dest, String src) {
+  public LDR(int bytes, String conditions, String dest, String src, int offset) {
     this.bytes = bytes;
     this.conditions = conditions;
     this.src = src;
     this.dest = dest;
-    this.noOffset = true;
-    this.isValue = false;
-  }
-
-  public LDR(int bytes, String conditions, String dest, String src,
-      int offset) {
-    this(bytes, conditions, dest, src);
     this.offset = offset;
     this.noOffset = offset == 0;
     this.isValue = false;
   }
 
-  public LDR(int bytes, String conditions, String dest, String src,
-      int offset, boolean isValue) {
-    this(bytes, conditions, dest, src);
-    this.offset = offset;
-    this.noOffset = false;
-    this.isValue = isValue;
+  // LDR without offset, isValue determines if src is a value
+  public LDR(int bytes, String conditions, String dest, String value) {
+    this(bytes, conditions, dest, value, 0);
+    this.isValue = true;
   }
 
+  // default bytes with offset
   public LDR(String dest, String src, int offset) {
-    this(4, "", dest, src);
-    this.offset = offset;
-    this.noOffset = offset == 0;
-    this.isValue = !noOffset;
+    this(4, "", dest, src, offset);
   }
 
-  public LDR(String dest, String src, boolean isValue) {
-    this(0, "", dest, src);
-    this.offset = 0;
-    this.noOffset = false;
-    this.isValue = isValue;
+  // default bytes for value
+  public LDR(String dest, String value) {
+    this(4, "", dest, value);
+    this.isValue = true;
   }
+
 
   //TODO: Fix switch case
   private String getLdr() {
@@ -80,7 +69,7 @@ public class LDR extends Instr {
 
   private String getSrc() {
     if (isValue) {
-      return src;
+      return "=" + src;
     }
     if (noOffset) {
       return "[" + src + "]";

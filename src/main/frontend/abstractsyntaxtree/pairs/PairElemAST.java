@@ -102,7 +102,7 @@ public class PairElemAST extends Node {
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
-    instructions.add(new STR(1, "", Instr.R5, Instr.R0));
+    instructions.add(new STR(1, "", Instr.R5, Instr.R0, 0));
     instructions.add(new STR(Instr.R0, Instr.R4, 4));
     // use symbol table to get offset and then add the extra inner offset
     int stackPointerOffset = symtab.getStackOffset(identName);
@@ -117,13 +117,13 @@ public class PairElemAST extends Node {
     BackEndGenerator.addToPreDefFunc("p_check_null_pointer");
 
     if (first) {
-      instructions.add(new LDR(4, "", Instr.R4, Instr.R4));
+      instructions.add(new LDR(Instr.R4, Instr.R4, 0));
     } else {
       instructions.add(new LDR(Instr.R4, Instr.R4, 4));
     }
 
-    instructions.add(new LDR(childIdentifier.getType().getBytes(), "", Instr.R4, Instr.R4));
-    instructions.add(new STR(Instr.R4, Instr.SP));
+    instructions.add(new LDR(childIdentifier.getType().getBytes(), "", Instr.R4, Instr.R4, 0));
+    instructions.add(new STR(Instr.R4, Instr.SP, 0));
 
     addToCurLabel(instructions);
   }
