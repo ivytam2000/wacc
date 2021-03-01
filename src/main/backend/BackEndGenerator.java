@@ -17,7 +17,7 @@ public class BackEndGenerator {
   private static final List<String> preDefFuncs = new ArrayList<>();
   private static Map<String, List<Instr>> usrDefFuncs;
 
- // private static List<Instr> mainInstructions;
+  // private static List<Instr> mainInstructions;
   private final AST ast;
 
   public BackEndGenerator(AST ast) {
@@ -25,16 +25,17 @@ public class BackEndGenerator {
     dataSegmentStrings.clear();
     preDefFuncs.clear();
     usrDefFuncs = new HashMap<>();
-   // mainInstructions = generateMainInstructions();
+    // mainInstructions = generateMainInstructions();
   }
 
   public String run() {
     StringBuilder output = new StringBuilder();
+    // generates the main body of instructions (main, L0, L1 etc)
+    generateMainInstructions();
 
     Map<String, List<Instr>> preDefFuncInstrs = Utils.getPreDefFunc(preDefFuncs);
 
     // Writes the data segment
-
     if (dataSegmentStrings.size() > 0) {
       output.append(".data\n\n");
       int msgIndex = 0;
@@ -57,14 +58,12 @@ public class BackEndGenerator {
       output.append(writeTextSection(sectionName, sectionInstructions));
     }
 
-    generateMainInstructions();
-
     // Writes all the labels
-    for(String label : Instr.getLabelOrder()){
+    for (String label : Instr.getLabelOrder()) {
       output.append(writeTextSection(label, Instr.getLabels().get(label)));
     }
 
-    //output.append(writeTextSection("main", mainInstructions));
+    // output.append(writeTextSection("main", mainInstructions));
 
     for (Map.Entry<String, List<Instr>> pdf : preDefFuncInstrs.entrySet()) {
       String pdfName = pdf.getKey();
@@ -75,7 +74,7 @@ public class BackEndGenerator {
     return output.toString();
   }
 
-/*  private Map<String, List<Instr>> generateFuncInstructions() {
+  /*  private Map<String, List<Instr>> generateFuncInstructions() {
     Map<String, List<Instr>> defFunc = new HashMap<>();
 
     for (Node funcAST : ast.getFuncASTs()) {
@@ -116,5 +115,4 @@ public class BackEndGenerator {
   public static void addToUsrDefFuncs(String label, List<Instr> instrs) {
     usrDefFuncs.put(label, instrs);
   }
-
 }
