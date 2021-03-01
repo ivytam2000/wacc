@@ -25,8 +25,7 @@ public abstract class Instr {
   private static int nextLabelNumber = 0;
   private static String curLabel = "main";
   // list of labels to keep track of the order to print the labels
-  private static List<String>  labelOrder = new ArrayList<>(
-      Collections.singletonList("main"));
+  private static List<String> labelOrder = new ArrayList<>(Collections.singletonList("main"));
 
   private static Map<String, List<Instr>> labels = new HashMap<>();
 
@@ -44,29 +43,35 @@ public abstract class Instr {
     return regs[--regsDepth];
   }
 
-  public static void setCurLabel(String label){
+  public static void setCurLabel(String label) {
     curLabel = label;
   }
 
-  public static String getNextLabel(){
+  public static String getNextLabel() {
     String nextLabel = "L" + nextLabelNumber;
-    nextLabelNumber ++;
+    nextLabelNumber++;
     return nextLabel;
   }
   // Adds to the label order meaning that label should be printed next
-  public static void addToLabelOrder(String label){
+  public static void addToLabelOrder(String label) {
     labelOrder.add(label);
   }
 
-  public static void addToCurLabel(List<Instr> instrs){
-    // Updates current label's instrs by adding instrs to it.
-    List<Instr> curInstrs = labels.get(curLabel);
-    curInstrs.addAll(instrs);
-    labels.put(curLabel, curInstrs);
+  public static void addToCurLabel(List<Instr> instrs) {
+    // Updates current label's instrs by adding instrs to it if label is a
+    // key in labels
+    if (labels.containsKey(curLabel)) {
+      List<Instr> curInstrs = labels.get(curLabel);
+      curInstrs.addAll(instrs);
+      labels.put(curLabel, curInstrs);
+    } else {
+      labels.put(curLabel, instrs);
+    }
   }
 
-  public static void addToCurLabel(Instr instr){
-    List<Instr> curInstrs = labels.get(curLabel);
+  public static void addToCurLabel(Instr instr) {
+    List<Instr> curInstrs = labels.containsKey(curLabel) ?
+        labels.get(curLabel) : new ArrayList<>();
     curInstrs.add(instr);
     labels.put(curLabel, curInstrs);
   }

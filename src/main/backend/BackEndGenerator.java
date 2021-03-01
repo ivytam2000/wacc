@@ -57,9 +57,11 @@ public class BackEndGenerator {
       output.append(writeTextSection(sectionName, sectionInstructions));
     }
 
+    generateMainInstructions();
+
     // Writes all the labels
     for(String label : Instr.getLabelOrder()){
-      writeTextSection(label, Instr.getLabels().get(label));
+      output.append(writeTextSection(label, Instr.getLabels().get(label)));
     }
 
     //output.append(writeTextSection("main", mainInstructions));
