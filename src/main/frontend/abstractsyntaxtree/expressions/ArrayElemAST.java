@@ -17,6 +17,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class ArrayElemAST extends Node {
 
   private Identifier currIdentifier;
@@ -66,14 +68,14 @@ public class ArrayElemAST extends Node {
 
   //TODO: Nested array?
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     BackEndGenerator.addToPreDefFunc("p_check_array_bounds");
     List<Instr> instrs = new ArrayList<>();
     String target = Instr.getTargetReg();
     instrs.add(new ADD(false, target, Instr.SP, getOffset()));
     for (Node e : exprs) {
       String sndReg = Instr.incDepth();
-      instrs.addAll(e.toAssembly());
+      e.toAssembly();
       Instr.decDepth();
       instrs.add(new LDR(4, "", target, target));
       instrs.add(new MOV("", Instr.R0, sndReg));
@@ -87,6 +89,6 @@ public class ArrayElemAST extends Node {
       }
     }
     instrs.add(new LDR(4, "", target, target));
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

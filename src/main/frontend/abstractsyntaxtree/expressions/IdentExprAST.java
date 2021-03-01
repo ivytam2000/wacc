@@ -11,6 +11,8 @@ import frontend.symboltable.UnknownID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class IdentExprAST extends Node {
 
   private final SymbolTable currsymtab;
@@ -42,7 +44,7 @@ public class IdentExprAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
 
     // Load from (SP + offset) into target register
@@ -50,6 +52,6 @@ public class IdentExprAST extends Node {
     instrs.add(new LDR(identifier.getType().getBytes(), "",
         Instr.getTargetReg(), Instr.SP, offset));
 
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

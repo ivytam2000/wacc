@@ -7,6 +7,8 @@ import frontend.symboltable.NullID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class PairLiterAST extends Node {
 
   public PairLiterAST() {
@@ -17,10 +19,10 @@ public class PairLiterAST extends Node {
   public void check() {}
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     //TODO: MOV or LDR?
     instrs.add(new MOV("", Instr.getTargetReg(), "#0"));
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

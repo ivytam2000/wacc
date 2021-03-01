@@ -20,6 +20,8 @@ import frontend.symboltable.UnknownID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class ArithOpExprAST extends Node {
 
   private final String op;
@@ -66,13 +68,14 @@ public class ArithOpExprAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
 
     String fstReg = Instr.getTargetReg();
-    List<Instr> instrs = new ArrayList<>(eL.toAssembly());
+    eL.toAssembly();
+    List<Instr> instrs = new ArrayList<>();
 
     String sndReg = Instr.incDepth();
-    instrs.addAll(eR.toAssembly());
+    eR.toAssembly();
     Instr.decDepth();
 
     boolean addOverflow = true;
@@ -114,6 +117,6 @@ public class ArithOpExprAST extends Node {
       BackEndGenerator.addToPreDefFunc("p_check_divide_by_zero");
     }
 
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

@@ -19,6 +19,8 @@ import frontend.symboltable.UnknownID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class BinOpExprAST extends Node {
 
   private final String op;
@@ -88,20 +90,21 @@ public class BinOpExprAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     String fstReg = Instr.getTargetReg();
-    List<Instr> instrs = new ArrayList<>(eL.toAssembly());
+    eL.toAssembly();
+    List<Instr> instrs = new ArrayList<>();
 
     String sndReg = Instr.incDepth();
-    instrs.addAll(eR.toAssembly());
+    eR.toAssembly();
     Instr.decDepth();
 
     if (op.equals("&&")) {
       instrs.add(new AND(fstReg, sndReg));
-      return instrs;
+      return ;
     } else if (op.equals("||")) {
       instrs.add(new ORR(false, fstReg, sndReg));
-      return instrs;
+      return ;
     }
 
     instrs.add(new CMP(fstReg, sndReg));
@@ -140,7 +143,7 @@ public class BinOpExprAST extends Node {
     instrs.add(new MOV(c1, fstReg, "#1"));
     instrs.add(new MOV(c2, fstReg, "#0"));
 
-    return instrs;
+    addToCurLabel(instrs);
   }
 
 

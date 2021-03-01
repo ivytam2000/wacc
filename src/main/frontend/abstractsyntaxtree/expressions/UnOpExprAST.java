@@ -20,6 +20,8 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class UnOpExprAST extends Node {
 
   private final SymbolTable symbtab;
@@ -83,10 +85,11 @@ public class UnOpExprAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
 
     // Set up
-    List<Instr> instrs = new ArrayList<>(exprAST.toAssembly());
+    exprAST.toAssembly();
+    List<Instr> instrs = new ArrayList<>();
 
     // UnOp
     if (ctx.NOT() != null) {
@@ -105,6 +108,6 @@ public class UnOpExprAST extends Node {
 
     // ORD and CHR needs so additional instructions, only loading from stack
 
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

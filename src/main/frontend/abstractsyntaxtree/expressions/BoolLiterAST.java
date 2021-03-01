@@ -7,6 +7,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class BoolLiterAST extends Node {
 
   private final boolean val; //For backend
@@ -25,12 +27,12 @@ public class BoolLiterAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
 
     // Move character into target register
     instrs.add(new MOV("", Instr.getTargetReg(), getVal()));
 
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

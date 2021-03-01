@@ -8,6 +8,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class StrLiterAST extends Node {
 
   private final String val; //For backend
@@ -26,13 +28,13 @@ public class StrLiterAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
 
     // Add string to data segment and load message directly into target register
     int index = BackEndGenerator.addToDataSegment(val);
     instrs.add(new LDR(4, "", Instr.getTargetReg(), "msg_" + index));
 
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

@@ -9,6 +9,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class CharLiterAST extends Node {
 
   private final String val; //For backend
@@ -26,12 +28,12 @@ public class CharLiterAST extends Node {
   public void check() {}
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
 
     // Move character into target register
     instrs.add(new MOV("", Instr.getTargetReg(), getVal()));
 
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

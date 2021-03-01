@@ -7,6 +7,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class IntLiterAST extends Node {
 
   private final String val; //For backend
@@ -26,12 +28,12 @@ public class IntLiterAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
 
     // Load value directly into target register
     instrs.add(new LDR(Instr.getTargetReg(), val, true));
 
-    return instrs;
+    addToCurLabel(instrs);
   }
 }
