@@ -27,7 +27,5 @@ public class AssignLHSAST extends Node {
   public void check() {}
 
   @Override
-  public List<Instr> toAssembly() {
-    return null;
-  }
+  public void toAssembly() {}
 }

@@ -7,6 +7,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class AssignRHSAST extends Node {
 
   protected final SymbolTable symtab;
@@ -29,11 +31,9 @@ public class AssignRHSAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    List<Instr> instructions = new ArrayList<>();
+  public void toAssembly() {
     for (Node expr: children) {
-      instructions.addAll(expr.toAssembly());
+      expr.toAssembly();
     }
-    return instructions;
   }
 }

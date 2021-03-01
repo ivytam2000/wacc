@@ -17,6 +17,8 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class AssignCallAST extends AssignRHSAST {
 
   private final String funcName;
@@ -85,7 +87,7 @@ public class AssignCallAST extends AssignRHSAST {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
     String transferReg = Instr.getTargetReg();
@@ -104,6 +106,6 @@ public class AssignCallAST extends AssignRHSAST {
     instructions.add(new BRANCH(true, "", "f_" + funcName));
 
     // TODO: How to move the return value back into the LHS?
-    return null;
+    addToCurLabel(instructions);;
   }
 }
