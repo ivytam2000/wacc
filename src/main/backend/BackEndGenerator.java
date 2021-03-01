@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class BackEndGenerator {
 
   private static final List<String> dataSegmentStrings = new ArrayList<>();
@@ -15,15 +17,15 @@ public class BackEndGenerator {
   private static final List<String> preDefFuncs = new ArrayList<>();
   private static Map<String, List<Instr>> usrDefFuncs;
 
-  private static List<Instr> mainInstructions;
+ // private static List<Instr> mainInstructions;
   private final AST ast;
 
   public BackEndGenerator(AST ast) {
     this.ast = ast;
     dataSegmentStrings.clear();
     preDefFuncs.clear();
-    usrDefFuncs = generateFuncInstructions();
-    mainInstructions = generateMainInstructions();
+    usrDefFuncs = new HashMap<>();
+   // mainInstructions = generateMainInstructions();
   }
 
   public String run() {
@@ -55,8 +57,12 @@ public class BackEndGenerator {
       output.append(writeTextSection(sectionName, sectionInstructions));
     }
 
-    // Writes all the main instructions
-    output.append(writeTextSection("main", mainInstructions));
+    // Writes all the labels
+    for(String label : Instr.getLabelOrder()){
+      writeTextSection(label, Instr.getLabels().get(label));
+    }
+
+    //output.append(writeTextSection("main", mainInstructions));
 
     for (Map.Entry<String, List<Instr>> pdf : preDefFuncInstrs.entrySet()) {
       String pdfName = pdf.getKey();
@@ -67,7 +73,7 @@ public class BackEndGenerator {
     return output.toString();
   }
 
-  private Map<String, List<Instr>> generateFuncInstructions() {
+/*  private Map<String, List<Instr>> generateFuncInstructions() {
     Map<String, List<Instr>> defFunc = new HashMap<>();
 
     for (Node funcAST : ast.getFuncASTs()) {
@@ -75,14 +81,12 @@ public class BackEndGenerator {
     }
 
     return defFunc;
-  }
+  }*/
 
-  private List<Instr> generateMainInstructions() {
-    List<Instr> instrs = new ArrayList<>(Utils.getStartRoutine(ast.getSymtab()));
-    instrs.addAll(ast.toAssembly());
-    //TODO: End routine not always here
-    instrs.addAll(Utils.getEndRoutine(ast.getSymtab()));
-    return instrs;
+  private void generateMainInstructions() {
+    addToCurLabel(Utils.getStartRoutine(ast.getSymtab()));
+    ast.toAssembly();
+    addToCurLabel(Utils.getEndRoutine(ast.getSymtab()));
   }
 
   /**

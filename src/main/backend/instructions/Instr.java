@@ -70,5 +70,14 @@ public abstract class Instr {
     curInstrs.add(instr);
     labels.put(curLabel, curInstrs);
   }
+
+  public static List<String> getLabelOrder() {
+    return labelOrder;
+  }
+
+  public static Map<String, List<Instr>> getLabels() {
+    return labels;
+  }
+
   public abstract String translateToArm();
 }
