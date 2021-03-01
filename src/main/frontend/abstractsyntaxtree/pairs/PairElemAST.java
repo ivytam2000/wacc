@@ -51,6 +51,10 @@ public class PairElemAST extends Node {
     return identName;
   }
 
+  public boolean getFirst() {
+    return first;
+  }
+
   @Override
   public void check() {
     // Checking expr has compatible type
@@ -113,8 +117,8 @@ public class PairElemAST extends Node {
     instructions.add(new LDR(Instr.R4, Instr.SP, stackPointerOffset));
 
     instructions.add(new MOV("", Instr.R0, Instr.R4));
-    instructions.add(new BRANCH(true, "", "p_check_null_pointer"));
     BackEndGenerator.addToPreDefFunc("p_check_null_pointer");
+    instructions.add(new BRANCH(true, "", "p_check_null_pointer"));
 
     if (first) {
       instructions.add(new LDR(Instr.R4, Instr.R4, 0));

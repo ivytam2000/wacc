@@ -17,7 +17,7 @@ public class StrLiterAST extends Node {
   public StrLiterAST(SymbolTable symtab, String val) {
     super(symtab.lookupAll("string"));
     assert (super.identifier != null);
-    this.val = val;
+    this.val = val.substring(1, val.length() - 1);
   }
 
   @Override
