@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class PairElemAST extends Node {
 
   private final SymbolTable symtab;
@@ -97,7 +99,7 @@ public class PairElemAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
     instructions.add(new STR(1, "", Instr.R5, Instr.R0));
@@ -123,7 +125,7 @@ public class PairElemAST extends Node {
     instructions.add(new LDR(childIdentifier.getType().getBytes(), "", Instr.R4, Instr.R4));
     instructions.add(new STR(Instr.R4, Instr.SP));
 
-    return instructions;
+    addToCurLabel(instructions);
   }
 
 

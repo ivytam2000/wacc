@@ -12,11 +12,8 @@ public class PairElemTypeAST extends Node {
   }
 
   @Override
-  public void check() {
-  }
+  public void check() {}
 
   @Override
-  public List<Instr> toAssembly() {
-    return null;
-  }
+  public void toAssembly() {}
 }
