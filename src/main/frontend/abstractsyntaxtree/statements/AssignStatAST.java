@@ -2,22 +2,29 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.AssignLHSContext;
+import backend.BackEndGenerator;
 import backend.instructions.Instr;
+import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
+import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
+import frontend.abstractsyntaxtree.pairs.PairElemAST;
 import frontend.errorlistener.SemanticErrorCollector;
+import frontend.symboltable.ArrayID;
 import frontend.symboltable.Identifier;
+import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AssignStatAST extends Node {
 
   private final AssignRHSAST rhs;
   private final AssignLHSAST lhs;
-  private SymbolTable symtab;
+  private final SymbolTable symtab;
   private final AssignRHSContext rhsCtx;
   private final AssignLHSContext lhsCtx;
 
@@ -55,8 +62,18 @@ public class AssignStatAST extends Node {
     }
   }
 
+  //TODO: Can we somehow collapse ArrayElem and PairElem case?
   @Override
   public List<Instr> toAssembly() {
-    return null;
+    List<Instr> instrs = new ArrayList<>(rhs.toAssembly());
+    if (lhs.getAssignNode() instanceof ArrayElemAST || lhs.getAssignNode() instanceof PairElemAST) {
+      String sndReg = Instr.incDepth();
+      instrs.addAll(lhs.toAssembly());
+      String fstReg = Instr.decDepth();
+      instrs.add(new STR(fstReg, sndReg));
+    } else { // Regular variable
+      instrs.add(new STR(Instr.R4, Instr.SP, symtab.getStackOffset(lhs.getIdentName())));
+    }
+    return instrs;
   }
 }

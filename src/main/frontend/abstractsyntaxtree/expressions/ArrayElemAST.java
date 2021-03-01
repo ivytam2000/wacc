@@ -11,7 +11,6 @@ import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.Identifier;
-import frontend.symboltable.IntID;
 import frontend.symboltable.StringID;
 import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
@@ -37,6 +36,10 @@ public class ArrayElemAST extends Node {
 
   public String getName() {
     return this.val;
+  }
+
+  public List<Node> getExprs() {
+    return exprs;
   }
 
   @Override
@@ -79,12 +82,9 @@ public class ArrayElemAST extends Node {
       instrs.add(new MOV("", Instr.R0, sndReg));
       instrs.add(new MOV("", Instr.R1, target));
       instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
-      instrs.add(new ADD(false, target, target, "#4"));
-      if (e.getIdentifier().getType().getBytes() == 4) {
-        instrs.add(new ADD(false, target, target, sndReg, "LSL #2"));
-      } else {
-        instrs.add(new ADD(false, target, target, sndReg));
-      }
+      int size = e.getIdentifier().getType().getBytes();
+      instrs.add(new ADD(false, target, target, "#" + size));
+      instrs.add(new ADD(false, target, target, sndReg, size > 1 ? "LSL #" + size / 2 : ""));
     }
     instrs.add(new LDR(4, "", target, target));
     return instrs;
