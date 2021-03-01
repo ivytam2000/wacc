@@ -47,8 +47,9 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     String stackSize = "#" + symtab.getSize();
     instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
-    instrs.add(new LDR(4, "", Instr.R0, "=0"));
+    instrs.add(new LDR(Instr.R0, "=0", true));
     instrs.add(new POP(Instr.PC));
+    instrs.add(new LTORG());
     return instrs;
   }
 

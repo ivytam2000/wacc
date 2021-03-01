@@ -78,6 +78,8 @@ public class BackEndGenerator {
   private List<Instr> generateMainInstructions() {
     List<Instr> instrs = new ArrayList<>(Utils.getStartRoutine(ast.getSymtab()));
     instrs.addAll(ast.toAssembly());
+    //TODO: End routine not always here
+    instrs.addAll(Utils.getEndRoutine(ast.getSymtab()));
     return instrs;
   }
 

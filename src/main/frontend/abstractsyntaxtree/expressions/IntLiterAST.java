@@ -13,7 +13,7 @@ public class IntLiterAST extends Node {
 
   public IntLiterAST(SymbolTable symtab, boolean positive, String val) {
     super(symtab.lookupAll("int"));
-    this.val = (positive ? "" : "-") + val;
+    this.val = (positive ? "=" : "=-") + val;
   }
 
   public String getVal() {
@@ -30,7 +30,7 @@ public class IntLiterAST extends Node {
     List<Instr> instrs = new ArrayList<>();
 
     // Load value directly into target register
-    instrs.add(new LDR(4, "", Instr.getTargetReg(), val));
+    instrs.add(new LDR(Instr.getTargetReg(), val, true));
 
     return instrs;
   }
