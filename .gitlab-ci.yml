@@ -1,7 +1,7 @@
 default:
   image: gradle:6.8.1-jdk11
   before_script:
-    - apt-get update && apt-get install -y make && apt-get install -y ruby && apt-get install -y ruby-dev
+    - apt-get update && apt-get install -y make && apt-get install -y ruby && apt-get install -y ruby-dev && apt-get install -y gcc
     - gem update && gem install rest-client
 
 stages:
