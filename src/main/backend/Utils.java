@@ -21,6 +21,8 @@ public class Utils {
   private static final String FALSE_MSG = "false\\0";
   private static final String OVERFLOW_MSG
       = "OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n";
+  private static final String DIV_BY_ZERO_MSG
+      = "DivideByZeroError: divide or modulo by zero\\n\\0";
 
   public static String getAssignValue(Identifier identifier, String value) {
     if (identifier instanceof IntID || identifier instanceof StringID) {
@@ -121,7 +123,7 @@ public class Utils {
     instrs.add(new LDR(Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(STRING_MSG), true));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, "#4"));
+    instrs.add(new MOV("", Instr.R0, "#0"));
     instrs.add(new BRANCH(true, "", "fflush"));
     instrs.add(new POP(Instr.PC));
 
@@ -187,6 +189,18 @@ public class Utils {
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_print_bool", instrs);
+  }
+
+  private static void p_check_divide_by_zero(Map<String, List<Instr>> pdf) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+    instrs.add(new CMP(Instr.R1, "#0"));
+    instrs.add(new LDR(4, "EQ", Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG), 0, true));
+    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
+    instrs.add(new POP(Instr.PC));
+
+    pdf.put("p_check_divide_by_zero", instrs);
   }
 
 }
