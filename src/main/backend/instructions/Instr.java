@@ -1,5 +1,7 @@
 package backend.instructions;
 
+import java.util.*;
+
 public abstract class Instr {
 
   public static final String R0 = "r0";
@@ -20,7 +22,13 @@ public abstract class Instr {
 
   private static final String[] regs = {R4, R5, R6, R7, R8, R9, R10, R11};
   private static int regsDepth = 0;
-  private static int labelsDepth = 0;
+  private static int nextLabelNumber = 0;
+  private static String curLabel = "main";
+  // list of labels to keep track of the order to print the labels
+  private static List<String>  labelOrder = new ArrayList<>(
+      Collections.singletonList("main"));
+
+  private static Map<String, List<Instr>> labels = new HashMap<>();
 
   public static String getTargetReg() {
     return regs[regsDepth];
@@ -36,13 +44,31 @@ public abstract class Instr {
     return regs[--regsDepth];
   }
 
-  public static void incLabelsDepth(){
-    labelsDepth ++;
+  public static void setCurLabel(String label){
+    curLabel = label;
   }
 
-  public static int getLabelsDepth(){
-    return labelsDepth;
+  public static String getNextLabel(){
+    String nextLabel = "L" + nextLabelNumber;
+    nextLabelNumber ++;
+    return nextLabel;
+  }
+  // Adds to the label order meaning that label should be printed next
+  public static void addToLabelOrder(String label){
+    labelOrder.add(label);
   }
 
+  public static void addToCurLabel(List<Instr> instrs){
+    // Updates current label's instrs by adding instrs to it.
+    List<Instr> curInstrs = labels.get(curLabel);
+    curInstrs.addAll(instrs);
+    labels.put(curLabel, curInstrs);
+  }
+
+  public static void addToCurLabel(Instr instr){
+    List<Instr> curInstrs = labels.get(curLabel);
+    curInstrs.add(instr);
+    labels.put(curLabel, curInstrs);
+  }
   public abstract String translateToArm();
 }

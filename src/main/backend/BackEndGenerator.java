@@ -14,7 +14,6 @@ public class BackEndGenerator {
 
   private static final List<String> preDefFuncs = new ArrayList<>();
   private static Map<String, List<Instr>> usrDefFuncs;
-  private static Map<String, List<Instr>> branchLabels = new HashMap<>();
 
   private static List<Instr> mainInstructions;
   private final AST ast;
@@ -112,11 +111,4 @@ public class BackEndGenerator {
     usrDefFuncs.put(label, instrs);
   }
 
-  public static void addToBranchLabels(String label, List<Instr> instrs) {
-    branchLabels.put(label, instrs);
-  }
-
-  public List<Instr> getLabelInstrs(String label){
-    return branchLabels.get(label);
-  }
 }
