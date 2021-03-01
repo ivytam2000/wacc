@@ -29,13 +29,15 @@ public class Main {
     // Initialises and runs the code generator
     BackEndGenerator backEndGenerator = new BackEndGenerator(
         frontEndAnalyser.getAst());
-    String assFilePath = srcFilePath.replace(".wacc", ".s");
-    File assFile = new File(assFilePath);
-    assFile.createNewFile();
+    String armFilePath = srcFilePath.replace(".wacc", ".s");
+    File armFile = new File(armFilePath);
+    if (armFile.createNewFile()) {
+      System.out.println("File created: " + armFile.getName());
+    }
 
-    FileWriter assFileWriter = new FileWriter(assFilePath, false);
+    FileWriter armFileWriter = new FileWriter(armFilePath, false);
     String output = backEndGenerator.run();
-    assFileWriter.write(output);
-    assFileWriter.close();
+    armFileWriter.write(output);
+    armFileWriter.close();
   }
 }
