@@ -96,6 +96,7 @@ public class ArithOpExprAST extends Node {
         instrs.add(new MOV("", Instr.R1, sndReg));
         instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
         instrs.add(new BRANCH(true, "", "__aeabi_idiv"));
+        instrs.add(new MOV("", Instr.R4, Instr.R0));
         break;
       case "%":
         addOverflow = false;
@@ -103,6 +104,7 @@ public class ArithOpExprAST extends Node {
         instrs.add(new MOV("", Instr.R1, sndReg));
         instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
         instrs.add(new BRANCH(true, "", "__aeabi_idivmod"));
+        instrs.add(new MOV("", Instr.R4, Instr.R1));
         break;
       default:
         assert(false); //UNREACHABLE
