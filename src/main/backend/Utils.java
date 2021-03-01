@@ -197,7 +197,7 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R1, "#0"));
-    instrs.add(new LDR(4, "EQ", Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG), 0, true));
+    instrs.add(new LDR(4, "EQ", Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG)));
     BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
     instrs.add(new POP(Instr.PC));
