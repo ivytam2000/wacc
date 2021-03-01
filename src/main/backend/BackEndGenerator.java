@@ -16,13 +16,13 @@ public class BackEndGenerator {
 
   private static final Set<String> preDefFuncs = new HashSet<>();
   private static Map<String, List<Instr>> usrDefFuncs;
+  private static Map<String, List<Instr>> branchLabels = new HashMap<>();
 
   private static List<Instr> mainInstructions;
   private final AST ast;
 
   public BackEndGenerator(AST ast) {
     this.ast = ast;
-
     dataSegmentStrings.clear();
     preDefFuncs.clear();
     usrDefFuncs = generateFuncInstructions();
@@ -99,5 +99,13 @@ public class BackEndGenerator {
 
   public static void addToUsrDefFuncs(String label, List<Instr> instrs) {
     usrDefFuncs.put(label, instrs);
+  }
+
+  public static void addToBranchLabels(String label, List<Instr> instrs) {
+    branchLabels.put(label, instrs);
+  }
+
+  public List<Instr> getLabelInstrs(String label){
+    return branchLabels.get(label);
   }
 }
