@@ -33,8 +33,6 @@ public class BeginStatAST extends Node {
       stat.toAssembly();
       instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
     }
-    instrs.add(new LDR(Instr.R0, "0"));
-    instrs.add(new POP(Instr.PC));
     addToCurLabel(instrs);
   }
 
