@@ -29,6 +29,16 @@ public class Utils {
     return output.toString();
   }
 
+  public static List<Instr> getStartRoutine(SymbolTable symtab) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+    int size = symtab.getSize();
+    if (size > 0) {
+      instrs.add(new SUB(false, false, Instr.SP, "#" + size));
+    }
+    return instrs;
+  }
+
   // end-routine function - not sure if this is valid
   // ADD sp, sp, #stackSize
   // LDR r0 =0

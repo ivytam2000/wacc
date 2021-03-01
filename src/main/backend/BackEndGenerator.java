@@ -35,18 +35,20 @@ public class BackEndGenerator {
     // TODO: Build instructions for pre def func so messages goes in data segment
 
     // Writes the data segment
-    output.append(".data\n\n");
 
-    int msgIndex = 0;
-    for (String dataSegmentString : dataSegmentStrings) {
-      output.append("msg_").append(msgIndex).append(":\n");
-      output.append("\t.word ").append(dataSegmentString.length()).append("\n");
-      output.append("\t.ascii \"").append(dataSegmentString).append("\"\n");
-      msgIndex++;
+    if (dataSegmentStrings.size() > 0) {
+      output.append(".data\n\n");
+      int msgIndex = 0;
+      for (String dataSegmentString : dataSegmentStrings) {
+        output.append("msg_").append(msgIndex).append(":\n");
+        output.append("\t.word ").append(dataSegmentString.length()).append("\n");
+        output.append("\t.ascii \"").append(dataSegmentString).append("\"\n");
+        msgIndex++;
+      }
     }
 
     // Writes the text segment
-    output.append("\n.text\n\n.global main\n");
+    output.append(".text\n\n.global main\n");
 
     // Writes all the user-defined functions
     for (Map.Entry<String, List<Instr>> function : usrDefFuncs.entrySet()) {
@@ -74,7 +76,9 @@ public class BackEndGenerator {
   }
 
   private List<Instr> generateMainInstructions() {
-    return ast.toAssembly();
+    List<Instr> instrs = new ArrayList<>(Utils.getStartRoutine(ast.getSymtab()));
+    instrs.addAll(ast.toAssembly());
+    return instrs;
   }
 
   /**
