@@ -75,7 +75,7 @@ public class ArrayElemAST extends Node {
       String sndReg = Instr.incDepth();
       instrs.addAll(e.toAssembly());
       Instr.decDepth();
-      instrs.add(new LDR(4, "", target, target));
+      instrs.add(new LDR(target, target, 0));
       instrs.add(new MOV("", Instr.R0, sndReg));
       instrs.add(new MOV("", Instr.R1, target));
       instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
@@ -86,7 +86,7 @@ public class ArrayElemAST extends Node {
         instrs.add(new ADD(false, target, target, sndReg));
       }
     }
-    instrs.add(new LDR(4, "", target, target));
+    instrs.add(new LDR(target, target, 0));
     return instrs;
   }
 }

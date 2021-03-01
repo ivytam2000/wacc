@@ -54,7 +54,7 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     String stackSize = "#" + symtab.getSize();
     instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
-    instrs.add(new LDR(Instr.R0, "=0", true));
+    instrs.add(new LDR(Instr.R0, "0"));
     instrs.add(new POP(Instr.PC));
     instrs.add(new LTORG());
     return instrs;
@@ -116,7 +116,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new LDR(Instr.R1, Instr.R0, 0));
     instrs.add(new ADD(false, Instr.R2, Instr.R0, "#4"));
-    instrs.add(new LDR(Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(STRING_MSG), true));
+    instrs.add(new LDR(Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(STRING_MSG)));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
     instrs.add(new MOV("", Instr.R0, "#4"));
@@ -128,7 +128,7 @@ public class Utils {
 
   private static void p_throw_overflow_error(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
-    instrs.add(new LDR(Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(OVERFLOW_MSG), true));
+    instrs.add(new LDR(Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(OVERFLOW_MSG)));
     BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "", "p_throw_runtime_error"));
 
@@ -149,7 +149,7 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new MOV("", Instr.R1, Instr.R0));
-    instrs.add(new LDR(Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(INT_MSG), true));
+    instrs.add(new LDR(Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(INT_MSG)));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
     instrs.add(new MOV("", Instr.R0, "#0"));
@@ -162,7 +162,7 @@ public class Utils {
   private static void p_print_ln(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new LDR(Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(LN_MSG), true));
+    instrs.add(new LDR(Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(LN_MSG)));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "puts"));
     instrs.add(new MOV("", Instr.R0, "#0"));

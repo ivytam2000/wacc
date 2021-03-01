@@ -12,31 +12,18 @@ public class STR extends Instr {
   private boolean noOffset;
 
   // NOTE that for STR: source is lhs and destination is rhs
-  public STR(int bytes, String conditions, String src, String dest) {
+  public STR(int bytes, String conditions, String src, String dest, int offset) {
     this.bytes = bytes;
     this.conditions = conditions;
     this.src = src;
     this.dest = dest;
-    this.noOffset = true;
-  }
-
-  public STR(int bytes, String conditions, String src, String dest,
-      int offset) {
-    this(bytes, conditions, src, dest);
     this.offset = offset;
-    this.noOffset = false;
+    this.noOffset = offset == 0;
   }
 
+  // without byte and condition
   public STR(String src, String dest, int offset) {
-    this(0, "", src, dest);
-    this.offset = offset;
-    this.noOffset = false;
-  }
-
-  public STR(String src, String dest) {
-    this(4, "", src, dest);
-    this.offset = 0;
-    this.noOffset = true;
+    this(4, "", src, dest, offset);
   }
 
 
@@ -59,7 +46,7 @@ public class STR extends Instr {
   }
 
   private String getDest() {
-    if (noOffset || offset == 0) {
+    if (noOffset) {
       return "[" + dest + "]";
     }
     return "[" + dest + ", #" + offset + "]";

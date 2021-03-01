@@ -59,7 +59,7 @@ public class ArrayLiterAST extends Node {
     Identifier childrenType = children.get(0).getIdentifier();
     int bytesNeeded = childrenType.getType().getBytes();
     String byteOfArray = "=" + (4 + children.size() * bytesNeeded);
-    instructions.add(new LDR(Instr.R0, byteOfArray, true));
+    instructions.add(new LDR(Instr.R0, byteOfArray));
 
     // add malloc branch to allocate memory, should be called in var dec
     instructions.add(new BRANCH(true, "", "malloc"));
@@ -89,13 +89,13 @@ public class ArrayLiterAST extends Node {
         value = Integer.toString(symtab.getStackOffset(identName));
       }
       value = Utils.getAssignValue(curr_ident, value);
-      instructions.add(new LDR(curr_ident.getType().getBytes(), "", Instr.R5, value, 0,true));
+      instructions.add(new LDR(curr_ident.getType().getBytes(), "", Instr.R5, value));
       int offset = (i + 1) * bytesNeeded;
       instructions.add(new STR(curr_ident.getType().getBytes(), "", Instr.R5, Instr.R4, offset));
     }
 
-    instructions.add(new LDR(Instr.R5, lengthOfArray, true));
-    instructions.add(new STR(Instr.R5, Instr.R4));
+    instructions.add(new LDR(Instr.R5, lengthOfArray));
+    instructions.add(new STR(Instr.R5, Instr.R4, 0));
 
     return instructions;
   }

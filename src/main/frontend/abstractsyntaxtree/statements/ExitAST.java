@@ -48,7 +48,7 @@ public class ExitAST extends Node {
     List<Instr> instrs = new ArrayList<>();
     // expr should be IntLiterAST if it passed semantic check
     IntLiterAST intExpr = (IntLiterAST) expr;
-    LDR ldr = new LDR(4, "", Instr.R4, "=" + intExpr.getValue());
+    LDR ldr = new LDR(Instr.R4, intExpr.getValue());
     instrs.add(ldr);
     MOV movInstr = new MOV("", Instr.R0, Instr.R4);
     instrs.add(movInstr);

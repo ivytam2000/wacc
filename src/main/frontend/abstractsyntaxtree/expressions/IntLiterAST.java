@@ -30,7 +30,7 @@ public class IntLiterAST extends Node {
     List<Instr> instrs = new ArrayList<>();
 
     // Load value directly into target register
-    instrs.add(new LDR(Instr.getTargetReg(), val, true));
+    instrs.add(new LDR(Instr.getTargetReg(), val));
 
     return instrs;
   }

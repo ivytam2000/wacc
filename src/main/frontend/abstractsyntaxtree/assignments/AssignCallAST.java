@@ -97,8 +97,7 @@ public class AssignCallAST extends AssignRHSAST {
 
       TypeID paramID = ((FuncID) getIdentifier()).getParams().get(i);
       int paramOffset = symtab.getStackOffset(paramID.toString());
-      instructions.add(new STR(0, "", transferReg,
-          Utils.getEffectiveAddr(Instr.SP, paramOffset)));
+      instructions.add(new STR(transferReg, Utils.getEffectiveAddr(Instr.SP, paramOffset), 0));
     }
 
     instructions.add(new BRANCH(true, "", "f_" + funcName));

@@ -32,7 +32,7 @@ public class BeginStatAST extends Node {
       // TODO: what about in the while case because we terminate in a branch?
       instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
     }
-    instrs.add(new LDR(4,"", Instr.R0, "=0"));
+    instrs.add(new LDR(Instr.R0, "0"));
     instrs.add(new POP(Instr.PC));
     return instrs;
   }
