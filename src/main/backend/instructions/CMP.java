@@ -19,7 +19,7 @@ public class CMP extends Instr {
   @Override
   public String translateToArm() {
     String instr = "CMP " + reg + ", " + operand;
-    if (shift != null) {
+    if (!shift.equals("")) {
       instr += (", " + shift);
     }
     return instr;
