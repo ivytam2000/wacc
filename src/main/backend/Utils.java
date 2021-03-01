@@ -54,8 +54,10 @@ public class Utils {
   // POP {pc}
   public static List<Instr> getEndRoutine(SymbolTable symtab) {
     List<Instr> instrs = new ArrayList<>();
-    String stackSize = "#" + symtab.getSize();
-    instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
+    int stackSize = symtab.getSize();
+    if (stackSize > 0) {
+      instrs.add(new ADD(false, Instr.SP, Instr.SP, "#" + stackSize));
+    }
     instrs.add(new LDR(Instr.R0, "0"));
     instrs.add(new POP(Instr.PC));
     instrs.add(new LTORG());

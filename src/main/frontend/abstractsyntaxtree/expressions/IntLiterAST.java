@@ -15,7 +15,7 @@ public class IntLiterAST extends Node {
 
   public IntLiterAST(SymbolTable symtab, boolean positive, String val) {
     super(symtab.lookupAll("int"));
-    this.val = (positive ? "=" : "=-") + val;
+    this.val = (positive ? "" : "-") + val;
   }
 
   public String getVal() {
