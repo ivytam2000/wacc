@@ -41,7 +41,7 @@ public class AST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    return statAST.toAssembly();
+  public void toAssembly() {
+     statAST.toAssembly();
   }
 }

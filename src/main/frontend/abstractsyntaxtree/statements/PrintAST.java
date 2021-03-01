@@ -10,6 +10,8 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class PrintAST extends Node {
 
   private final Node expr;
@@ -29,15 +31,16 @@ public class PrintAST extends Node {
   public void check() {}
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     // assumes that the expr.toAssembly() will load or mov the expr's value into
     // R4.
-    List<Instr> instrs = new ArrayList<>(expr.toAssembly());
+    expr.toAssembly();
+    List<Instr> instrs = new ArrayList<>();
     MOV movInstr = new MOV("", Instr.R0, Instr.R4);
     instrs.add(movInstr);
     BRANCH brInstr = Utils.getPrintBranch(expr.getIdentifier().getType());
     instrs.add(brInstr);
-    return instrs;
+    addToCurLabel(instrs);
   }
 
 

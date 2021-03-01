@@ -7,6 +7,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class BeginStatAST extends Node {
 
   private final Node stat;
@@ -22,19 +24,18 @@ public class BeginStatAST extends Node {
   public void check() {}
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     // make space on the stack with the number of variables sizes
     if (symtab.getSize() > 0) {
       String stackSize = "#" + symtab.getSize();
       instrs.add(new SUB(false, false, Instr.SP, stackSize));
-      instrs.addAll(stat.toAssembly());
-      // TODO: what about in the while case because we terminate in a branch?
+      stat.toAssembly();
       instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
     }
     instrs.add(new LDR(4,"", Instr.R0, "=0"));
     instrs.add(new POP(Instr.PC));
-    return instrs;
+    addToCurLabel(instrs);
   }
 
   public Node getStat() {

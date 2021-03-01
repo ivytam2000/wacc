@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static backend.Utils.getPrintBranch;
+import static backend.instructions.Instr.addToCurLabel;
 
 public class PrintlnAST extends Node {
 
@@ -30,15 +31,16 @@ public class PrintlnAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly(){
+  public void toAssembly(){
     // assumes that the expr.toAssembly() will load or mov the expr's value into
     // R4.
-    List<Instr> instrs = new ArrayList<>(expr.toAssembly());
+    expr.toAssembly();
+    List<Instr> instrs = new ArrayList<>();
     MOV movInstr = new MOV("", Instr.R0, Instr.R4);
     instrs.add(movInstr);
     instrs.add(getPrintBranch(expr.getIdentifier().getType()));
     BackEndGenerator.addToPreDefFunc("p_print_ln");
     instrs.add(new BRANCH(true, "", "p_print_ln"));
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

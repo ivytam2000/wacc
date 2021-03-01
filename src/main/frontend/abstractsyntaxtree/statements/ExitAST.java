@@ -16,6 +16,8 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class ExitAST extends Node {
 
   Exit_statContext ctx;
@@ -44,7 +46,7 @@ public class ExitAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     // expr should be IntLiterAST if it passed semantic check
     IntLiterAST intExpr = (IntLiterAST) expr;
@@ -54,6 +56,6 @@ public class ExitAST extends Node {
     instrs.add(movInstr);
     BRANCH brInstr = new BRANCH(true, "", "exit");
     instrs.add(brInstr);
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

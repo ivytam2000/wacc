@@ -14,6 +14,8 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class FreeAST extends Node {
 
   private final Node expr;
@@ -43,12 +45,13 @@ public class FreeAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    List<Instr> instrs = new ArrayList<>(expr.toAssembly());
+  public void toAssembly() {
+    expr.toAssembly();
+    List<Instr> instrs = new ArrayList<>();
     TypeID exprType = expr.getIdentifier().getType();
     String label = exprType instanceof PairID ? "p_free_pair" : "p_free_array";
     BRANCH brInstr = new BRANCH(true, "", label);
     instrs.add(brInstr);
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

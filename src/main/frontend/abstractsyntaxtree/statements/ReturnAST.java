@@ -27,13 +27,11 @@ public class ReturnAST extends Node {
   @Override
   public void check() {
     if (symtab.isTopLevel()) {
-      SemanticErrorCollector.addGlobalReturnError(ctx.getStart().getLine(),
-          ctx.getStart().getCharPositionInLine());
+      SemanticErrorCollector.addGlobalReturnError(
+          ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
     }
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    return null;
-  }
+  public void toAssembly() {}
 }

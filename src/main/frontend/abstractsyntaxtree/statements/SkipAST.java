@@ -6,16 +6,12 @@ import java.util.List;
 
 public class SkipAST extends Node {
 
-  public SkipAST() {
-  }
+  public SkipAST() {}
 
   // No need to check as it is a terminal node
   @Override
-  public void check() {
-  }
+  public void check() {}
 
   @Override
-  public List<Instr> toAssembly() {
-    return null;
-  }
+  public void toAssembly() {}
 }

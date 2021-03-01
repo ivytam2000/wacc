@@ -13,6 +13,8 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class ReadAST extends Node {
 
   private final AssignLHSAST lhs;
@@ -39,13 +41,13 @@ public class ReadAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>(lhs.toAssembly());
     MOV movInstr = new MOV("", Instr.R0, Instr.R4);
     instrs.add(movInstr);
     String label = lhsType instanceof IntID ? "p_read_int" : "p_read_char";
     BRANCH brInstr = new BRANCH(true, "", label);
     instrs.add(brInstr);
-    return instrs;
+    addToCurLabel(instrs);
   }
 }

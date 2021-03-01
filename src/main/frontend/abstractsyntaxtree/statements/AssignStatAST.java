@@ -56,7 +56,6 @@ public class AssignStatAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    return null;
+  public void toAssembly() {
   }
 }

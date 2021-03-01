@@ -19,12 +19,10 @@ public class SequenceAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
+  public void toAssembly() {
     for(Node stat : statements){
-      instrs.addAll(stat.toAssembly());
+      stat.toAssembly();
     }
-    return instrs;
   }
 
   public List<Node> getStatements() {

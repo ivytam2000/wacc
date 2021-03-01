@@ -14,6 +14,8 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class VarDecAST extends Node {
 
   private final SymbolTable symtab;
@@ -72,7 +74,7 @@ public class VarDecAST extends Node {
 
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     TypeID decType = typeAST.getIdentifier().getType();
     int offset = symtab.getSmallestOffset() - decType.getBytes();
@@ -81,7 +83,7 @@ public class VarDecAST extends Node {
     // stores the value
     STR strInstr = new STR(decType.getBytes(),"", Instr.R4, Instr.SP, offset);
     instrs.add(strInstr);
-    return instrs;
+    addToCurLabel(instrs);
   }
 
   public Node getTypeAST() {
