@@ -20,6 +20,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 public class ArrayLiterAST extends Node {
 
   private final List<Node> children;
@@ -52,7 +54,7 @@ public class ArrayLiterAST extends Node {
   }
 
   @Override
-  public List<Instr> toAssembly() {
+  public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
     String lengthOfArray = "=" + children.size();
@@ -97,6 +99,6 @@ public class ArrayLiterAST extends Node {
     instructions.add(new LDR(Instr.R5, lengthOfArray, true));
     instructions.add(new STR(Instr.R5, Instr.R4));
 
-    return instructions;
+    addToCurLabel(instructions);;
   }
 }

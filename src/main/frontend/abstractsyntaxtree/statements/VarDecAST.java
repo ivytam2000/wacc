@@ -79,7 +79,7 @@ public class VarDecAST extends Node {
     TypeID decType = typeAST.getIdentifier().getType();
     int offset = symtab.getSmallestOffset() - decType.getBytes();
     symtab.addOffset(varName,offset);
-    instrs.addAll(assignRHS.toAssembly());
+    assignRHS.toAssembly();
     // stores the value
     STR strInstr = new STR(decType.getBytes(),"", Instr.R4, Instr.SP, offset);
     instrs.add(strInstr);

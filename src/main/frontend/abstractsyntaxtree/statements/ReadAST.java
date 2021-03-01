@@ -42,7 +42,8 @@ public class ReadAST extends Node {
 
   @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>(lhs.toAssembly());
+    lhs.toAssembly();
+    List<Instr> instrs = new ArrayList<>();
     MOV movInstr = new MOV("", Instr.R0, Instr.R4);
     instrs.add(movInstr);
     String label = lhsType instanceof IntID ? "p_read_int" : "p_read_char";

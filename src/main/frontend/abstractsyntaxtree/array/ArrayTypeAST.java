@@ -14,18 +14,14 @@ public class ArrayTypeAST extends Node {
     this.dimensions = dimensions;
   }
 
-  //For future use in code generation
+  // For future use in code generation
   public int getDimensions() {
     return dimensions;
   }
 
   @Override
-  public void check() {
-
-  }
+  public void check() {}
 
   @Override
-  public List<Instr> toAssembly() {
-    return null;
-  }
+  public void toAssembly() {}
 }
