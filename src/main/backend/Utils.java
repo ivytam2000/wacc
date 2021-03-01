@@ -17,6 +17,8 @@ public class Utils {
   private static final String INT_MSG = "%d\\0";
   private static final String STRING_MSG = "%.*s\\0";
   private static final String LN_MSG = "\\0";
+  private static final String TRUE_MSG = "true\\0";
+  private static final String FALSE_MSG = "false\\0";
   private static final String OVERFLOW_MSG
       = "OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n";
 
@@ -170,6 +172,21 @@ public class Utils {
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_print_ln", instrs);
+  }
+
+  private static void p_print_bool(Map<String, List<Instr>> pdf) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+    instrs.add(new CMP(Instr.R0, "#0"));
+    instrs.add(new LDR(4, "NE", Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(TRUE_MSG), 0, true));
+    instrs.add(new LDR(4, "EQ", Instr.R0, "=msg_" + BackEndGenerator.addToDataSegment(FALSE_MSG), 0, true));
+    instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
+    instrs.add(new BRANCH(true, "", "printf"));
+    instrs.add(new MOV("", Instr.R0, "#0"));
+    instrs.add(new BRANCH(true, "", "fflush"));
+    instrs.add(new POP(Instr.PC));
+
+    pdf.put("p_print_bool", instrs);
   }
 
 }
