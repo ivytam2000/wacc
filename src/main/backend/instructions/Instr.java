@@ -20,6 +20,7 @@ public abstract class Instr {
 
   private static final String[] regs = {R4, R5, R6, R7, R8, R9, R10, R11};
   private static int regsDepth = 0;
+  private static int labelsDepth = 0;
 
   public static String getTargetReg() {
     return regs[regsDepth];
@@ -33,6 +34,14 @@ public abstract class Instr {
   public static String decDepth() {
     assert (regsDepth > 0);
     return regs[--regsDepth];
+  }
+
+  public static void incLabelsDepth(){
+    labelsDepth ++;
+  }
+
+  public static int getLabelsDepth(){
+    return labelsDepth;
   }
 
   public abstract String translateToArm();

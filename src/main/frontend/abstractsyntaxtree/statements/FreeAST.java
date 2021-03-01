@@ -46,13 +46,7 @@ public class FreeAST extends Node {
   public List<Instr> toAssembly() {
     List<Instr> instrs = new ArrayList<>(expr.toAssembly());
     TypeID exprType = expr.getIdentifier().getType();
-    String label;
-    if(exprType instanceof PairID){
-      label = "p_free_pair";
-    }else{
-      // expr is of type Array
-      label = "p_free_array";
-    }
+    String label = exprType instanceof PairID ? "p_free_pair" : "p_free_array";
     BRANCH brInstr = new BRANCH(true, "", label);
     instrs.add(brInstr);
     return instrs;
