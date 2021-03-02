@@ -77,7 +77,6 @@ public class ValidTests {
         validFolderPath + "pairs/");
   }
 
-  @Ignore
   @Test
   public void validRuntimeErrTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
