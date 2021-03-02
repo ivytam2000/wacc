@@ -101,9 +101,11 @@ public class BinOpExprAST extends Node {
 
     if (op.equals("&&")) {
       instrs.add(new AND(fstReg, sndReg));
+      addToCurLabel(instrs);
       return ;
     } else if (op.equals("||")) {
       instrs.add(new ORR(false, fstReg, sndReg));
+      addToCurLabel(instrs);
       return ;
     }
 
