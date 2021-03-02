@@ -36,11 +36,15 @@ public class TestUtilities {
       String textFilePath = getTextFilePath(folderPath, name);
       try {
         assertTrue(
-            executableFromOurCompilerMatchesReferenceCompiler(sourceFilePath, textFilePath));
+            executableFromOurCompilerMatchesReferenceCompiler(sourceFilePath,
+                textFilePath));
       } catch (AssertionError e) {
-        StringBuilder errorMsg = new StringBuilder("Test " + name + " output did not match with reference compiler.\n");
-        errorMsg.append("Expected output: ").append(getReferenceCompilerStdOut(textFilePath)).append("\n");
-        errorMsg.append("Actual output: ").append(getOurCompilerStdOut(sourceFilePath)).append("\n");
+        StringBuilder errorMsg = new StringBuilder(name)
+            .append(": Output did not match with reference compiler.\n");
+        errorMsg.append("Expected output: ")
+            .append(getReferenceCompilerStdOut(textFilePath)).append("\n");
+        errorMsg.append("Actual output: ")
+            .append(getOurCompilerStdOut(sourceFilePath)).append("\n");
         fail(errorMsg.toString());
       } catch (IOException e) {
         fail("Process Builder failed to start!");
@@ -93,15 +97,19 @@ public class TestUtilities {
   private static List<String> getOurCompilerStdOut(String filePath)
       throws IOException {
     // Get assembly file path
-    String assemblyFilePath = assembleFileWithOurCompiler(filePath);
-    String exeName = assemblyFilePath.replace(".s", "");
+    String assFilePath = assembleFileWithOurCompiler(filePath);
+    String exeFilePath = assFilePath.replace(".s", "");
 
     // Get standard output stream from reference emulator
     ProcessBuilder builder = new ProcessBuilder();
-    builder.command("arm-linux-gnueabi-gcc", "-o", exeName, "-mcpu=arm1176jzf-s", "-mtune=arm1176jzf-s", assemblyFilePath);
-    builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeName);
+    builder
+        .command("arm-linux-gnueabi-gcc", "-o", exeFilePath,
+            "-mcpu=arm1176jzf-s",
+            "-mtune=arm1176jzf-s", assFilePath);
+    builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeFilePath);
     String output = getOutputFromProcess(builder);
-    String[] splitOutput = output.equals("") ? new String[0] : output.split("\n");
+    String[] splitOutput =
+        output.equals("") ? new String[0] : output.split("\n");
     return Arrays.asList(splitOutput.clone());
   }
 
@@ -130,10 +138,10 @@ public class TestUtilities {
    * equal.
    */
   private static boolean executableFromOurCompilerMatchesReferenceCompiler(
-      String filePath, String txtFilePath) throws IOException {
-    List<String> actualOutput = getOurCompilerStdOut(filePath);
+      String sourceFilePath, String textFilePath) throws IOException {
+    List<String> actualOutput = getOurCompilerStdOut(sourceFilePath);
     List<String> expectedOutput = getReferenceCompilerStdOut(
-        txtFilePath);
+        textFilePath);
     return actualOutput.equals(expectedOutput);
   }
 }

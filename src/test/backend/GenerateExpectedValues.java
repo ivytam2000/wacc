@@ -15,16 +15,16 @@ public class GenerateExpectedValues {
 
   static String validFolderPath = "src/test/examples/expectedOutputs";
 
-  /*
-    Iterates through the examples/valid folder and makes all test directories with their expected test outputs in txt.
+  /**
+   * Iterates through the examples/valid folder and makes all test directories
+   * with their expected test outputs in txt.
    */
   public static void storeExpectedValues(String folderPath) throws IOException {
-
     Files.createDirectories(Paths.get(validFolderPath));
 
     List<String> folderNames = getFolderNames(folderPath);
 
-    for (String folder: folderNames) {
+    for (String folder : folderNames) {
       String textTestFolderPath = getTextFilePath(folderPath, folder);
       String folderTestPath = folderPath + folder;
 
@@ -38,7 +38,7 @@ public class GenerateExpectedValues {
         storeExpectedValues(folderTestPath + "/");
       }
 
-      for (String name: names) {
+      for (String name : names) {
         System.out.println("Getting expected output from test " + name);
         String filepath = folderTestPath + "/" + name;
         List<String> expectedValues = generateExpectedValues(filepath);
@@ -48,22 +48,24 @@ public class GenerateExpectedValues {
     }
   }
 
-  /*
-    Writes expected values into the specified file path
+  /**
+   * Writes expected values into the specified file path.
    */
-  private static void writeInFile(String filepath, List<String> expectedValues) throws IOException {
+  private static void writeInFile(String filepath, List<String> expectedValues)
+      throws IOException {
     FileWriter txtWriter = new FileWriter(filepath, false);
-    for (String expectedValue: expectedValues) {
+    for (String expectedValue : expectedValues) {
       txtWriter.write(expectedValue);
       txtWriter.write('\n');
     }
     txtWriter.close();
   }
 
-  /*
-    Generates expected output from filepath
+  /**
+   * Generates expected output from filePath.
    */
-  public static List<String> generateExpectedValues(String filePath) throws IOException {
+  public static List<String> generateExpectedValues(String filePath)
+      throws IOException {
     // Get standard output stream from reference compiler and emulator
     ProcessBuilder builder = new ProcessBuilder();
     builder.command("./refCompile", "-x", filePath);
@@ -77,7 +79,8 @@ public class GenerateExpectedValues {
       // Next few lines might be expectedStdOuts
       if (nextLineIsOutput) {
         if (!line.isEmpty()) {
-          if (line.equals("===========================================================")) {
+          if (line.equals(
+              "===========================================================")) {
             // End of expectedStdOuts
             return expectedStdOuts;
           } else {
@@ -89,7 +92,8 @@ public class GenerateExpectedValues {
 
       // Toggle nextLineIsOutput to guard if the next few lines are StdOuts
       if (!line.isEmpty()) {
-        if (line.equals("===========================================================")) {
+        if (line.equals(
+            "===========================================================")) {
           nextLineIsOutput = !nextLineIsOutput;
         }
       }
@@ -98,9 +102,11 @@ public class GenerateExpectedValues {
     return expectedStdOuts;
   }
 
-
+  /**
+   * Run this to generate the src/test/examples/expectedOutput directory for
+   * tests. This is not to be an automated process.
+   */
   public static void main(String[] args) throws IOException {
     storeExpectedValues("src/test/examples/valid/");
   }
-
 }
