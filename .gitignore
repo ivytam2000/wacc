@@ -19,7 +19,6 @@ src/.DS_Store
 src/.bsp/sbt.json
 src/test/examples/**/*.s
 
-
 # Ignore Gradle project-specific cache directory
 .gradle
 
