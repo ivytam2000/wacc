@@ -21,6 +21,7 @@ src/test/examples/**/*
 !src/test/examples/**/*.wacc
 !src/test/examples/**/*.txt
 *.s
+*.exe
 
 # Ignore Gradle project-specific cache directory
 .gradle
