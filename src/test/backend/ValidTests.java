@@ -63,6 +63,7 @@ public class ValidTests {
     executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "if/");
   }
 
+  @Ignore
   @Test
   public void validIOTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "IO/");
