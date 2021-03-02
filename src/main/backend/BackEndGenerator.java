@@ -42,7 +42,15 @@ public class BackEndGenerator {
       for (String dataSegmentString : dataSegmentStrings) {
         output.append("msg_").append(msgIndex).append(":\n");
         //TODO: Length wrong when ending w \n and/or \0
-        output.append("\t.word ").append(dataSegmentString.length()).append("\n");
+        int len = dataSegmentString.length();
+        for (int i = 0; i < len;) {
+          if (dataSegmentString.charAt(i) == '\\') {
+            len--;
+            i++;
+          }
+          i++;
+        }
+        output.append("\t.word ").append(len).append("\n");
         output.append("\t.ascii \"").append(dataSegmentString).append("\"\n");
         msgIndex++;
       }

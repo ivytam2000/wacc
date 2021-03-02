@@ -106,14 +106,14 @@ public class PairElemAST extends Node {
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
-    instructions.add(new STR(1, "", Instr.R5, Instr.R0, 0));
-    instructions.add(new STR(Instr.R0, Instr.R4, 4));
-    // use symbol table to get offset and then add the extra inner offset
+//    instructions.add(new STR(1, "", Instr.R5, Instr.R0, 0));
+//    instructions.add(new STR(Instr.R0, Instr.R4, 4));
+//    // use symbol table to get offset and then add the extra inner offset
     int stackPointerOffset = symtab.getStackOffset(identName);
-
-    stackPointerOffset += childIdentifier.getType().getBytes();
-
-    instructions.add(new STR(Instr.R4, Instr.SP, stackPointerOffset));
+//
+//    stackPointerOffset += childIdentifier.getType().getBytes();
+//
+//    instructions.add(new STR(Instr.R4, Instr.SP, stackPointerOffset));
     instructions.add(new LDR(Instr.R4, Instr.SP, stackPointerOffset));
 
     instructions.add(new MOV("", Instr.R0, Instr.R4));
@@ -127,7 +127,7 @@ public class PairElemAST extends Node {
     }
 
     instructions.add(new LDR(childIdentifier.getType().getBytes(), "", Instr.R4, Instr.R4, 0));
-    instructions.add(new STR(Instr.R4, Instr.SP, 0));
+//    instructions.add(new STR(Instr.R4, Instr.SP, 0));
 
     addToCurLabel(instructions);
   }

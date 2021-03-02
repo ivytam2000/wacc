@@ -1,8 +1,10 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
+import backend.BackEndGenerator;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
+import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.pairs.PairElemTypeAST;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -49,7 +51,9 @@ public class FreeAST extends Node {
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
     TypeID exprType = expr.getIdentifier().getType();
+    instrs.add(new MOV("", Instr.R0, Instr.R4));
     String label = exprType instanceof PairID ? "p_free_pair" : "p_free_array";
+    BackEndGenerator.addToPreDefFunc(label);
     BRANCH brInstr = new BRANCH(true, "", label);
     instrs.add(brInstr);
     addToCurLabel(instrs);

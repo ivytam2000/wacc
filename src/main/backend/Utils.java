@@ -23,6 +23,12 @@ public class Utils {
       = "OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n";
   private static final String DIV_BY_ZERO_MSG
       = "DivideByZeroError: divide or modulo by zero\\n\\0";
+  private static final String NEG_INDEX_MSG
+      = "ArrayIndexOutOfBoundsError: negative index\\n\\0";
+  private static final String BIG_INDEX_MSG
+      = "ArrayIndexOutOfBoundsError: index too large\\n\\0";
+  private static final String NULL_MSG
+      = "NullReferenceError: dereference a null reference\\n\\0";
 
   public static String getAssignValue(Identifier identifier, String value) {
     if (identifier instanceof IntID || identifier instanceof StringID) {
@@ -203,6 +209,66 @@ public class Utils {
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_check_divide_by_zero", instrs);
+  }
+
+  private static void p_check_array_bounds(Map<String, List<Instr>> pdf) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+    instrs.add(new CMP(Instr.R0, "#0"));
+    instrs.add(new LDR(4, "LT", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(NEG_INDEX_MSG)));
+    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    instrs.add(new BRANCH(true,"LT", "p_throw_runtime_error"));
+    instrs.add(new LDR(Instr.R1, Instr.R1,0));
+    instrs.add(new CMP(Instr.R0, Instr.R1));
+    instrs.add(new LDR(4, "CS", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(BIG_INDEX_MSG)));
+    instrs.add(new BRANCH(true,"CS", "p_throw_runtime_error"));
+    instrs.add(new POP(Instr.PC));
+
+    pdf.put("p_check_array_bounds", instrs);
+  }
+
+  private static void p_check_null_pointer(Map<String, List<Instr>> pdf) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+    instrs.add(new CMP(Instr.R0, "#0"));
+    instrs.add(new LDR(4, "EQ", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(NULL_MSG)));
+    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    instrs.add(new BRANCH(true,"EQ", "p_throw_runtime_error"));
+    instrs.add(new POP(Instr.PC));
+
+    pdf.put("p_check_null_pointer", instrs);
+  }
+
+  private static void p_read_int(Map<String, List<Instr>> pdf) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+    instrs.add(new MOV("", Instr.R1, Instr.R0));
+    instrs.add(new LDR(Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(INT_MSG)));
+    instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
+    instrs.add(new BRANCH(true,"", "scanf"));
+    instrs.add(new POP(Instr.PC));
+
+    pdf.put("p_read_int", instrs);
+  }
+
+  private static void p_free_pair(Map<String, List<Instr>> pdf) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+    instrs.add(new CMP(Instr.R0, "#0"));
+    instrs.add(new LDR(4, "EQ", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(NULL_MSG)));
+    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
+    instrs.add(new PUSH(Instr.R0));
+    instrs.add(new LDR(Instr.R0, Instr.R0, 0));
+    instrs.add(new BRANCH(true,"", "free"));
+    instrs.add(new LDR(Instr.R0, Instr.SP, 0));
+    instrs.add(new LDR(Instr.R0, Instr.R0, 4));
+    instrs.add(new BRANCH(true,"", "free"));
+    instrs.add(new POP(Instr.R0));
+    instrs.add(new BRANCH(true,"", "free"));
+    instrs.add(new POP(Instr.PC));
+
+    pdf.put("p_free_pair", instrs);
   }
 
 }

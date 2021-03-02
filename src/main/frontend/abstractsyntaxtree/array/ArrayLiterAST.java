@@ -49,33 +49,31 @@ public class ArrayLiterAST extends Node {
   //TODO: If we had nested arrays, this fails
   @Override
   public void toAssembly() {
-    List<Instr> instructions = new ArrayList<>();
-
-    String lengthOfArray = "=" + children.size();
+    String lengthOfArray = "" + children.size();
     Identifier childrenType = children.get(0).getIdentifier();
     int bytesNeeded = childrenType.getType().getBytes();
-    String byteOfArray = "=" + (4 + children.size() * bytesNeeded);
-    instructions.add(new LDR(Instr.R0, byteOfArray));
+    String byteOfArray = "" + (4 + children.size() * bytesNeeded);
+    addToCurLabel(new LDR(Instr.R0, byteOfArray));
 
     // add malloc branch to allocate memory, should be called in var dec
-    instructions.add(new BRANCH(true, "", "malloc"));
+    addToCurLabel(new BRANCH(true, "", "malloc"));
 
     // mov r4 to r0
-    instructions.add(new MOV("", Instr.R4, Instr.R0));
+    addToCurLabel(new MOV("", Instr.R4, Instr.R0));
 
     for (int i = 0; i < children.size(); i++) {
       Node curr_expr = children.get(i);
       Identifier curr_ident = curr_expr.getIdentifier();
 
+      String sndReg = Instr.incDepth();
       curr_expr.toAssembly();
+      String fstReg = Instr.decDepth();
 
       int offset = (i + 1) * bytesNeeded;
-      instructions.add(new STR(curr_ident.getType().getBytes(), "", Instr.R5, Instr.R4, offset));
+      addToCurLabel(new STR(curr_ident.getType().getBytes(), "", sndReg, fstReg, offset));
     }
 
-    instructions.add(new LDR(Instr.R5, lengthOfArray));
-    instructions.add(new STR(Instr.R5, Instr.R4, 0));
-
-    addToCurLabel(instructions);;
+    addToCurLabel(new LDR(Instr.R5, lengthOfArray));
+    addToCurLabel(new STR(Instr.R5, Instr.R4, 0));
   }
 }
