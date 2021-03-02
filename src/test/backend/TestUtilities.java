@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TestUtilities {
@@ -37,7 +38,10 @@ public class TestUtilities {
         assertTrue(
             executableFromOurCompilerMatchesReferenceCompiler(sourceFilePath, textFilePath));
       } catch (AssertionError e) {
-        fail("Test " + name + " output did not match with reference compiler");
+        StringBuilder errorMsg = new StringBuilder("Test " + name + " output did not match with reference compiler.\n");
+        errorMsg.append("Expected output: ").append(getReferenceCompilerStdOut(textFilePath)).append("\n");
+        errorMsg.append("Actual output: ").append(getOurCompilerStdOut(sourceFilePath)).append("\n");
+        fail(errorMsg.toString());
       } catch (IOException e) {
         fail("Process Builder failed to start!");
       }
@@ -90,34 +94,15 @@ public class TestUtilities {
       throws IOException {
     // Get assembly file path
     String assemblyFilePath = assembleFileWithOurCompiler(filePath);
+    String exeName = assemblyFilePath.replace(".s", "");
 
     // Get standard output stream from reference emulator
     ProcessBuilder builder = new ProcessBuilder();
-    builder.command("./refEmulate", assemblyFilePath);
+    builder.command("arm-linux-gnueabi-gcc", "-o", exeName, "-mcpu=arm1176jzf-s", "-mtune=arm1176jzf-s", assemblyFilePath);
+    builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeName);
     String output = getOutputFromProcess(builder);
-    String[] splitOutput = output.split("\n");
-
-    List<String> actualStdOuts = new ArrayList<>();
-    boolean nextLineIsOutput = false;
-
-    for (String line : splitOutput) {
-      // Checks if the next line is unwanted output
-      if (nextLineIsOutput) {
-        if (line.contains("---")) {
-          return actualStdOuts;
-        } else {
-          if (!line.isEmpty()) {
-            actualStdOuts.add(line);
-          }
-        }
-      }
-
-      // Checks if the next line is wanted output from the compiled program
-      if (line.contains("Emulation Output")) {
-        nextLineIsOutput = true;
-      }
-    }
-    return actualStdOuts;
+    String[] splitOutput = output.equals("") ? new String[0] : output.split("\n");
+    return Arrays.asList(splitOutput.clone());
   }
 
   /**
