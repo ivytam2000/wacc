@@ -1,8 +1,13 @@
 package frontend.abstractsyntaxtree.assignments;
 
+import backend.instructions.BRANCH;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
+import backend.instructions.MOV;
+import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.Identifier;
+import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +36,30 @@ public class AssignRHSAST extends Node {
   @Override
   public List<Instr> toAssembly() {
     List<Instr> instructions = new ArrayList<>();
-    for (Node expr: children) {
-      instructions.addAll(expr.toAssembly());
+    if (identifier instanceof PairID) {
+      // malloc pair struct
+      instructions.add(new LDR(Instr.R0, "8"));
+      instructions.add(new BRANCH(true, "", "malloc"));
+      instructions.add(new MOV("", Instr.R4, Instr.R0));
+
+      // first pair elem
+      instructions.addAll(children.get(0).toAssembly());
+      instructions.add(new LDR(Instr.R0, "4"));
+      instructions.add(new BRANCH(true, "", "malloc"));
+      instructions.add(new STR(Instr.R5, Instr.R0, 0));
+      instructions.add(new STR(Instr.R0, Instr.R4, 0));
+
+      // second pair elem
+      instructions.addAll(children.get(1).toAssembly());
+      instructions.add(new LDR(Instr.R0, "4"));
+      instructions.add(new BRANCH(true, "", "malloc"));
+      instructions.add(new STR(Instr.R5, Instr.R0, 0));
+      instructions.add(new STR(Instr.R0, Instr.R4, 4));
+
+    } else {
+      for (Node expr: children) {
+        instructions.addAll(expr.toAssembly());
+      }
     }
     return instructions;
   }

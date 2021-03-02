@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -15,6 +16,15 @@ import java.util.List;
 public class TestUtilities {
 
   /**
+   * Gets text file path of .wacc file
+   */
+  static String getTextFilePath(String folderPath, String name) {
+    name = name.replace(".wacc", ".txt");
+    folderPath = folderPath.replace("valid", "expectedOutputs");
+    return folderPath + name;
+  }
+
+  /**
    * Checks that the example compiles with a certain exit code.
    */
   public static void executablesFromOurCompilerMatchesReferenceCompiler(
@@ -22,9 +32,10 @@ public class TestUtilities {
     List<String> names = getTestNames(folderPath);
     for (String name : names) {
       String sourceFilePath = folderPath + name;
+      String textFilePath = getTextFilePath(folderPath, name);
       try {
         assertTrue(
-            executableFromOurCompilerMatchesReferenceCompiler(sourceFilePath));
+            executableFromOurCompilerMatchesReferenceCompiler(sourceFilePath, textFilePath));
       } catch (AssertionError e) {
         fail("Test " + name + " output did not match with reference compiler");
       } catch (IOException e) {
@@ -36,7 +47,7 @@ public class TestUtilities {
   /**
    * Returns the standard output from a process containing terminal commands.
    */
-  private static String getOutputFromProcess(ProcessBuilder builder)
+  static String getOutputFromProcess(ProcessBuilder builder)
       throws IOException {
     // Start process
     Process process = builder.start();
@@ -116,37 +127,15 @@ public class TestUtilities {
   private static List<String> getReferenceCompilerStdOut(String filePath)
       throws IOException {
     // Get standard output stream from reference compiler and emulator
-    ProcessBuilder builder = new ProcessBuilder();
-    builder.command("./refCompile", "-x", filePath);
-    String output = getOutputFromProcess(builder);
+    BufferedReader br = new BufferedReader(new FileReader(filePath));
+    List<String> expectedValues = new ArrayList<>();
 
-    String[] separatedOutputByLine = output.split("\n");
-    boolean nextLineIsOutput = false;
-    List<String> expectedStdOuts = new ArrayList<>();
-
-    for (String line : separatedOutputByLine) {
-      // Next few lines might be expectedStdOuts
-      if (nextLineIsOutput) {
-        if (!line.isEmpty()) {
-          if (line.charAt(0) == '=') {
-            // End of expectedStdOuts
-            return expectedStdOuts;
-          } else {
-            // Continue adding StdOuts
-            expectedStdOuts.add(line);
-          }
-        }
-      }
-
-      // Toggle nextLineIsOutput to guard if the next few lines are StdOuts
-      if (!line.isEmpty()) {
-        if (line.charAt(0) == '=') {
-          nextLineIsOutput = !nextLineIsOutput;
-        }
-      }
+    String line;
+    while ((line = br.readLine()) != null) {
+      expectedValues.add(line);
     }
 
-    return expectedStdOuts;
+    return expectedValues;
   }
 
   /**
@@ -156,10 +145,10 @@ public class TestUtilities {
    * equal.
    */
   private static boolean executableFromOurCompilerMatchesReferenceCompiler(
-      String filePath) throws IOException {
+      String filePath, String txtFilePath) throws IOException {
     List<String> actualOutput = getOurCompilerStdOut(filePath);
     List<String> expectedOutput = getReferenceCompilerStdOut(
-        filePath);
+        txtFilePath);
     return actualOutput.equals(expectedOutput);
   }
 }

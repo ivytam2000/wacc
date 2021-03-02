@@ -18,6 +18,7 @@ out/
 src/.DS_Store
 src/.bsp/sbt.json
 src/test/examples/**/*.s
+src/test/examples/expectedOutputs/*
 
 
 # Ignore Gradle project-specific cache directory

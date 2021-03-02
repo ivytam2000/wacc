@@ -40,6 +40,16 @@ public class TestUtilities {
   }
 
   /**
+   * Returns a list of all the folder names
+   */
+  public static List<String> getFolderNames(String folderPath) throws IOException {
+    return Files.list(Paths.get(folderPath))
+        .filter(Files::isDirectory)
+        .map(p -> p.getFileName().toString())
+        .collect(Collectors.toList());
+  }
+
+  /**
    * Checks that the example compiles with a certain exit code.
    */
   public static void exitsWith(String folderPath, int exitCode)

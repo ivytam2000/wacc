@@ -1,19 +1,12 @@
 package frontend.abstractsyntaxtree.array;
 
 import antlr.WaccParser.ArrayLiterContext;
-import backend.BackEndGenerator;
-import backend.Utils;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
 import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.expressions.BoolLiterAST;
-import frontend.abstractsyntaxtree.expressions.CharLiterAST;
-import frontend.abstractsyntaxtree.expressions.IdentExprAST;
-import frontend.abstractsyntaxtree.expressions.IntLiterAST;
-import frontend.abstractsyntaxtree.expressions.StrLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
@@ -71,25 +64,8 @@ public class ArrayLiterAST extends Node {
       Node curr_expr = children.get(i);
       Identifier curr_ident = curr_expr.getIdentifier();
 
-      String value = "";
-      if (curr_expr instanceof IntLiterAST) {
-        value = ((IntLiterAST) curr_expr).getVal();
-      } else if (curr_expr instanceof CharLiterAST) {
-        value = ((CharLiterAST) curr_expr).getVal();
-      } else if (curr_expr instanceof StrLiterAST) {
-        curr_expr.toAssembly();
-        int messageIndex = BackEndGenerator.addToDataSegment(((StrLiterAST) curr_expr).getVal());
-        value = "msg" + messageIndex;
-      } else if (curr_expr instanceof BoolLiterAST) {
-        value = ((BoolLiterAST) curr_expr).getVal();
-      } else if (curr_expr instanceof IdentExprAST) {
-        // contains array and pairs
-        String identName = ((IdentExprAST) curr_expr).getName();
-        // get stack offset from symbol table
-        value = Integer.toString(symtab.getStackOffset(identName));
-      }
-      value = Utils.getAssignValue(curr_ident, value);
-      instructions.add(new LDR(curr_ident.getType().getBytes(), "", Instr.R5, value));
+      instructions.addAll(curr_expr.toAssembly());
+
       int offset = (i + 1) * bytesNeeded;
       instructions.add(new STR(curr_ident.getType().getBytes(), "", Instr.R5, Instr.R4, offset));
     }
