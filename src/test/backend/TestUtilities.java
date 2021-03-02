@@ -43,7 +43,7 @@ public class TestUtilities {
       String textFilePath = getTextFilePath(folderPath, name);
       try {
         assertTrue(
-            executableFromOurCompilerMatchesReferenceCompiler(sourceFilePath,
+            valuesFromOurCompilerMatchesReferenceCompiler(sourceFilePath,
                 textFilePath));
       } catch (AssertionError e) {
         StringBuilder errorMsg = new StringBuilder(name)
@@ -114,26 +114,62 @@ public class TestUtilities {
 
     // Get standard output stream from reference emulator
     ProcessBuilder builder = new ProcessBuilder();
-    builder
-        .command("arm-linux-gnueabi-gcc", "-o", exeFilePath,
-            "-mcpu=arm1176jzf-s",
-            "-mtune=arm1176jzf-s", assFilePath);
-    Process process = builder.start();
-    try {
-      process.waitFor();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
+    String os = System.getProperty("os.name").toLowerCase();
+
+    if (os.contains("mac")) {
+      // uses ref emulate to send http request to retrieve assembly outputs
+      // if you want to run the pipeline tests, build docker image from dockerfile and run the image
+      builder.command("./refEmulate", assFilePath);
+
+      // gets output in command line
+      String output = getOutputFromProcess(builder);
+      String[] splitOutput = output.split("\n");
+
+      List<String> actualStdOuts = new ArrayList<>();
+      boolean nextLineIsOutput = false;
+
+      for (String line : splitOutput) {
+        // Checks if the next line is unwanted output
+        if (nextLineIsOutput) {
+          if (line.equals("---------------------------------------------------------------")) {
+            return actualStdOuts;
+          } else {
+            if (!line.equals(" ") && !line.isEmpty()) {
+              actualStdOuts.add(line);
+            }
+          }
+        }
+
+        // Checks if the next line is wanted output from the compiled program
+        if (line.contains("Emulation Output")) {
+          nextLineIsOutput = true;
+        }
+      }
+      return actualStdOuts;
+
+    } else {
+      // for linux and pipeline, uses linux gcc and qemu to retrieve assembly output
+      builder
+          .command("arm-linux-gnueabi-gcc", "-o", exeFilePath,
+              "-mcpu=arm1176jzf-s",
+              "-mtune=arm1176jzf-s", assFilePath);
+      Process process = builder.start();
+      try {
+        process.waitFor();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeFilePath);
+      String output = getOutputFromProcess(builder);
+      String[] splitOutput =
+          output.equals("") ? new String[0] : output.split("\n");
+      return Arrays.asList(splitOutput.clone());
     }
-    builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeFilePath);
-    String output = getOutputFromProcess(builder);
-    String[] splitOutput =
-        output.equals("") ? new String[0] : output.split("\n");
-    return Arrays.asList(splitOutput.clone());
   }
 
   /**
-   * Compiles and emulates a .wacc file, returns the filtered standard output
-   * stream from the resulting executable compiled by the reference compiler.
+   * Retrieves cached expected values of the .wacc file and returns the filtered standard output
+   * stream stored in the file.
    */
   private static List<String> getReferenceCompilerStdOut(String filePath)
       throws IOException {
@@ -155,7 +191,7 @@ public class TestUtilities {
    * reference emulator, checks if the standard output from the executables are
    * equal.
    */
-  private static boolean executableFromOurCompilerMatchesReferenceCompiler(
+  private static boolean valuesFromOurCompilerMatchesReferenceCompiler(
       String sourceFilePath, String textFilePath) throws IOException {
     List<String> actualOutput = getOurCompilerStdOut(sourceFilePath);
     List<String> expectedOutput = getReferenceCompilerStdOut(
