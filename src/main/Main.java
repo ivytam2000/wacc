@@ -30,6 +30,8 @@ public class Main {
     BackEndGenerator backEndGenerator = new BackEndGenerator(
         frontEndAnalyser.getAst());
     String armFilePath = srcFilePath.replace(".wacc", ".s");
+    String[] splitPaths = armFilePath.split("/");
+    armFilePath = splitPaths[splitPaths.length - 1];
     File armFile = new File(armFilePath);
     if (armFile.createNewFile()) {
       System.out.println("File created: " + armFile.getName());

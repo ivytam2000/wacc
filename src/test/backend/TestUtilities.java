@@ -99,6 +99,8 @@ public class TestUtilities {
 
     getOutputFromProcess(builder);
 
+    String[] splitPaths = filePath.split("/");
+    filePath = splitPaths[splitPaths.length - 1];
     return filePath.replace(".wacc", ".s");
   }
 
