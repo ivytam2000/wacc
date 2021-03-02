@@ -41,7 +41,6 @@ public class BackEndGenerator {
       int msgIndex = 0;
       for (String dataSegmentString : dataSegmentStrings) {
         output.append("msg_").append(msgIndex).append(":\n");
-        //TODO: Length wrong when ending w \n and/or \0
         int len = dataSegmentString.length();
         for (int i = 0; i < len;) {
           if (dataSegmentString.charAt(i) == '\\') {

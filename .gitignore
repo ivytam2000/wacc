@@ -20,6 +20,7 @@ src/.bsp/sbt.json
 src/test/examples/**/*
 !src/test/examples/**/*.wacc
 !src/test/examples/**/*.txt
+*.s
 
 # Ignore Gradle project-specific cache directory
 .gradle

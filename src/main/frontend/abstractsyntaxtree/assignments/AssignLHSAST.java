@@ -28,6 +28,7 @@ public class AssignLHSAST extends Node {
 
   public AssignLHSAST(SymbolTable symtab, String assignName) {
     super(symtab.lookupAll(assignName));
+    this.symtab = symtab;
     this.assignName = assignName;
   }
 
@@ -44,8 +45,13 @@ public class AssignLHSAST extends Node {
 
   @Override
   public void toAssembly() {
-    assert (assignNode != null);
     assert (symtab != null);
+
+    if (assignNode == null) { //Variable
+      Instr.addToCurLabel(new ADD(false, Instr.R4, Instr.SP, "#" + symtab.getStackOffset(assignName)));
+      Instr.addToCurLabel(new MOV("", Instr.R0, Instr.R4));
+      return;
+    }
 
     List<Instr> instrs = new ArrayList<>();
     if (assignNode instanceof ArrayElemAST) {

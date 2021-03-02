@@ -112,7 +112,7 @@ public class TestUtilities {
       throws IOException {
     // Get assembly file path
     String assFilePath = assembleFileWithOurCompiler(filePath);
-    String exeFilePath = assFilePath.replace(".s", "");
+    String exeFilePath = assFilePath.replace(".s", ".exe");
 
     // Get standard output stream from reference emulator
     ProcessBuilder builder = new ProcessBuilder();
