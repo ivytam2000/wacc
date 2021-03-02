@@ -17,7 +17,9 @@ target/
 out/
 src/.DS_Store
 src/.bsp/sbt.json
-src/test/examples/**/*.s
+src/test/examples/**/*
+!src/test/examples/**/*.wacc
+!src/test/examples/**/*.txt
 
 # Ignore Gradle project-specific cache directory
 .gradle

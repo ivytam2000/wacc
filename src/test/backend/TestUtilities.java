@@ -71,6 +71,11 @@ public class TestUtilities {
     PrintStream out = new PrintStream(
         new BufferedOutputStream(process.getOutputStream()));
     out.close();
+    try {
+      process.waitFor();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     // Get output from reference compiler
     StringBuilder stringBuilder = new StringBuilder();
@@ -113,6 +118,12 @@ public class TestUtilities {
         .command("arm-linux-gnueabi-gcc", "-o", exeFilePath,
             "-mcpu=arm1176jzf-s",
             "-mtune=arm1176jzf-s", assFilePath);
+    Process process = builder.start();
+    try {
+      process.waitFor();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeFilePath);
     String output = getOutputFromProcess(builder);
     String[] splitOutput =
@@ -149,6 +160,14 @@ public class TestUtilities {
     List<String> actualOutput = getOurCompilerStdOut(sourceFilePath);
     List<String> expectedOutput = getReferenceCompilerStdOut(
         textFilePath);
-    return actualOutput.equals(expectedOutput);
+    if (actualOutput.size() != expectedOutput.size()) {
+      return false;
+    }
+    for (int i = 0; i < actualOutput.size(); i++) {
+      if (!actualOutput.get(i).equals(expectedOutput.get(i))) {
+        return false;
+      }
+    }
+    return true;
   }
 }
