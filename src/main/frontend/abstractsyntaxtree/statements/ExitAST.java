@@ -48,10 +48,7 @@ public class ExitAST extends Node {
   @Override
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
-    // expr should be IntLiterAST if it passed semantic check
-    IntLiterAST intExpr = (IntLiterAST) expr;
-    LDR ldr = new LDR(Instr.R4, intExpr.getValue());
-    instrs.add(ldr);
+    expr.toAssembly();
     MOV movInstr = new MOV("", Instr.R0, Instr.R4);
     instrs.add(movInstr);
     BRANCH brInstr = new BRANCH(true, "", "exit");
