@@ -82,7 +82,7 @@ public class ValidTests {
         validFolderPath + "runtimeErr/");
   }
 
-  @Ignore
+ @Ignore
   @Test
   public void validScopeTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
@@ -103,7 +103,6 @@ public class ValidTests {
         validFolderPath + "variables/");
   }
 
-  @Ignore
   @Test
   public void validWhileTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
