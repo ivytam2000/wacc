@@ -73,16 +73,16 @@ public class IfAST extends Node {
     // branch to the nextStatLabel to skip over the elseStatlabel (false body)
     addToCurLabel(new BRANCH(false, "", nextStatLabel));
 
+    /* Add elseStatLabel before evaluating elseStat */
+    addToLabelOrder(elseStatLabel);
+
     /* Evaluate the elseStat (false body) in a new label (elseStatLabel) */
     setCurLabel(elseStatLabel);
     elseStat.toAssembly();
 
     /* Create and set a new label for the next statements after the ifAST */
     setCurLabel(nextStatLabel);
-
-    /* Add elseStatLabel and then nextStatLabel to labelOrder list
-     * elseStatLabel must be before nextStatLabel so that it falls through */
-    addToLabelOrder(elseStatLabel);
+    
     addToLabelOrder(nextStatLabel);
   }
 }
