@@ -1,5 +1,6 @@
 package backend;
 
+import static frontend.TestUtilities.getFolderNames;
 import static frontend.TestUtilities.getTestNames;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -31,6 +32,12 @@ public class TestUtilities {
   public static void executablesFromOurCompilerMatchesReferenceCompiler(
       String folderPath) throws IOException {
     List<String> names = getTestNames(folderPath);
+    List<String> folderNames = getFolderNames(folderPath);
+
+    for (String folder: folderNames) {
+      executablesFromOurCompilerMatchesReferenceCompiler(folderPath + folder + "/");
+    }
+
     for (String name : names) {
       String sourceFilePath = folderPath + name;
       String textFilePath = getTextFilePath(folderPath, name);

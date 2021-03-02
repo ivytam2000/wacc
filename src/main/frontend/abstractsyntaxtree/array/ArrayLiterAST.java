@@ -67,7 +67,7 @@ public class ArrayLiterAST extends Node {
       Node curr_expr = children.get(i);
       Identifier curr_ident = curr_expr.getIdentifier();
 
-      instructions.addAll(curr_expr.toAssembly());
+      curr_expr.toAssembly();
 
       int offset = (i + 1) * bytesNeeded;
       instructions.add(new STR(curr_ident.getType().getBytes(), "", Instr.R5, Instr.R4, offset));
