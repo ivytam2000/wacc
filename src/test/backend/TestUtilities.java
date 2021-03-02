@@ -98,10 +98,7 @@ public class TestUtilities {
     ProcessBuilder builder = new ProcessBuilder();
     builder.command("./compile", filePath);
 
-    String output = getOutputFromProcess(builder.redirectErrorStream(true));
-    if (!output.isEmpty()) {
-      fail("Could not compile .wacc file.\n" + output);
-    }
+    getOutputFromProcess(builder);
 
     String[] splitPaths = filePath.split("/");
     filePath = splitPaths[splitPaths.length - 1];
