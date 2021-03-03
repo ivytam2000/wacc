@@ -14,6 +14,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TestUtilities {
 
@@ -204,11 +206,31 @@ public class TestUtilities {
     if (actualOutput.size() != expectedOutput.size()) {
       return false;
     }
-    for (int i = 0; i < actualOutput.size(); i++) {
-      if (!actualOutput.get(i).equals(expectedOutput.get(i))) {
+    return outputMatches(actualOutput, expectedOutput);
+  }
+
+  private static boolean outputMatches(List<String> actual, List<String> expected) {
+    for (int i = 0; i < actual.size(); i++) {
+      if (!stringMatches(actual.get(i), expected.get(i))) {
         return false;
       }
     }
     return true;
+  }
+
+  private static boolean stringMatches(String actual, String expected) {
+    if (actual.equals(expected)) {
+      return true;
+    }
+
+    // Match addresses
+    Pattern p = Pattern.compile("0x[0-9]+");
+    Matcher matcher = p.matcher(actual);
+    if (matcher.find()) {
+      String actualSub = actual.substring(matcher.end());
+      String expectedSub = expected.substring(matcher.end());
+       return stringMatches(actualSub, expectedSub);
+    }
+    return false;
   }
 }
