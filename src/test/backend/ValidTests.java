@@ -89,7 +89,7 @@ public class ValidTests {
         validFolderPath + "scope/");
   }
 
-  @Ignore
+
   @Test
   public void validSequenceTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
@@ -103,6 +103,8 @@ public class ValidTests {
         validFolderPath + "variables/");
   }
 
+
+  @Ignore
   @Test
   public void validWhileTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(

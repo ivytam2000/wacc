@@ -11,7 +11,7 @@ import static backend.instructions.Instr.addToCurLabel;
 
 public class IntLiterAST extends Node {
 
-  private final String val; //For backend
+  private String val; //For backend
 
   public IntLiterAST(SymbolTable symtab, boolean positive, String val) {
     super(symtab.lookupAll("int"));
@@ -30,6 +30,20 @@ public class IntLiterAST extends Node {
   @Override
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
+
+    // Remove leading zeros
+    if (!val.equals("0")) {
+      boolean zero = false;
+      int i = 0;
+      while (i < val.length() && val.charAt(i) == '0') {
+        i++;
+        if (i == val.length()) {
+          zero = true;
+          break;
+        }
+      }
+      val = zero ? "0" : val.substring(i);
+    }
 
     // Load value directly into target register
     instrs.add(new LDR(Instr.getTargetReg(), val));
