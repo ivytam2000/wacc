@@ -74,7 +74,7 @@ public class ArrayLiterAST extends Node {
       curr_expr.toAssembly();
       String fstReg = Instr.decDepth();
 
-      int offset = (i + 1) * bytesNeeded;
+      int offset = i * bytesNeeded + 4;
       addToCurLabel(new STR(curr_ident.getType().getBytes(), "", sndReg, fstReg, offset));
     }
 

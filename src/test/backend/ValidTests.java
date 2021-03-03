@@ -18,7 +18,6 @@ public class ValidTests {
         validFolderPath + "advanced/");
   }
 
-  @Ignore
   @Test
   public void validArrayTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(

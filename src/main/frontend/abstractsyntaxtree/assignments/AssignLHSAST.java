@@ -9,6 +9,7 @@ import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.pairs.PairElemAST;
+import frontend.symboltable.CharID;
 import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class AssignLHSAST extends Node {
     if (assignNode instanceof ArrayElemAST) {
       String fstReg = Instr.getTargetReg();
       // Get pointer to array
-      instrs.add(new ADD(false, fstReg, Instr.SP, "#" + symtab.getStackOffset(assignName)));
+      Instr.addToCurLabel(new ADD(false, fstReg, Instr.SP, "#" + symtab.getStackOffset(assignName)));
       String sndReg = Instr.incDepth();
 
       List<Node> exprs = ((ArrayElemAST) assignNode).getExprs();
@@ -71,7 +72,16 @@ public class AssignLHSAST extends Node {
         BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
         instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
         // Go to first element (0th element is size)
-        int size = assignNode.getIdentifier().getType().getBytes();
+        int size;
+        if (assignNode instanceof ArrayElemAST) {
+          if (assignNode.getIdentifier().getType() instanceof CharID) {
+            size = 4;
+          } else {
+            size = assignNode.getIdentifier().getType().getBytes();
+          }
+        } else {
+          size = assignNode.getIdentifier().getType().getBytes();
+        }
         instrs.add(new ADD(false, fstReg, fstReg, "#" + size));
         // Index to the target element
         instrs.add(new ADD(false, fstReg, fstReg, sndReg, size > 1 ? "LSL #" + size / 2 : ""));
