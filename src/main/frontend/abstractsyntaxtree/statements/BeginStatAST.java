@@ -7,6 +7,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.Utils.getEndRoutine;
+import static backend.Utils.getStartRoutine;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class BeginStatAST extends Node {
@@ -26,13 +28,8 @@ public class BeginStatAST extends Node {
   @Override
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
-    // make space on the stack with the number of variables sizes
-    if (symtab.getSize() > 0) {
-      String stackSize = "#" + symtab.getSize();
-      instrs.add(new SUB(false, false, Instr.SP, stackSize));
-      stat.toAssembly();
-      instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
-    }
+    instrs.addAll(getStartRoutine(symtab));
+    instrs.addAll(getEndRoutine(symtab));
     addToCurLabel(instrs);
   }
 
