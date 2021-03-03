@@ -69,7 +69,6 @@ public class ValidTests {
     executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "IO/");
   }
 
-  @Ignore
   @Test
   public void validPairsTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
@@ -82,7 +81,6 @@ public class ValidTests {
         validFolderPath + "runtimeErr/");
   }
 
-  @Ignore
   @Test
   public void validScopeTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
@@ -102,7 +100,6 @@ public class ValidTests {
         validFolderPath + "variables/");
   }
 
-  @Ignore
   @Test
   public void validWhileTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
