@@ -20,12 +20,16 @@ public abstract class Instr {
   public static final String LR = "lr";
   public static final String PC = "pc";
 
+  public static final String mainLabelName = "main";
+
   private static final String[] regs = {R4, R5, R6, R7, R8, R9, R10, R11};
   private static int regsDepth = 0;
+
   private static int nextLabelNumber = 0;
-  private static String curLabel = "main";
-  // list of labels to keep track of the order to print the labels
-  private static List<String> labelOrder = new ArrayList<>(Collections.singletonList("main"));
+  private static String curLabel = "";
+  // List of labels to keep track of the order to print the labels
+  private static List<String> labelOrder = new ArrayList<>(
+      Collections.emptyList());
 
   private static Map<String, List<Instr>> labels = new HashMap<>();
 
@@ -57,11 +61,10 @@ public abstract class Instr {
 
   public static void setCurLabel(String label) {
     curLabel = label;
-    /* Creates an entry in the labels if it is not there yet */
-    if(!labels.containsKey(curLabel)){
+    // Creates an entry in the labels if it is not there yet
+    if (!labels.containsKey(curLabel)) {
       labels.put(curLabel, new ArrayList<>());
     }
-
   }
 
   public static String getNextLabel() {
@@ -69,14 +72,14 @@ public abstract class Instr {
     nextLabelNumber++;
     return nextLabel;
   }
+
   // Adds to the label order meaning that label should be printed next
   public static void addToLabelOrder(String label) {
     labelOrder.add(label);
   }
 
   public static void addToCurLabel(List<Instr> instrs) {
-    // Updates current label's instrs by adding instrs to it if label is a
-    // key in labels
+    // Updates current label's instrs by adding instrs to it if label is a key in labels
     if (labels.containsKey(curLabel)) {
       List<Instr> curInstrs = labels.get(curLabel);
       curInstrs.addAll(instrs);

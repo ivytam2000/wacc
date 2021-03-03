@@ -1,10 +1,14 @@
 package frontend.abstractsyntaxtree.statements;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 import antlr.WaccParser.Return_statContext;
 import backend.instructions.Instr;
+import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.SymbolTable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReturnAST extends Node {
@@ -33,5 +37,10 @@ public class ReturnAST extends Node {
   }
 
   @Override
-  public void toAssembly() {}
+  public void toAssembly() {
+    List<Instr> instructions = new ArrayList<>();
+    expr.toAssembly();
+    instructions.add(new MOV("", Instr.R0, Instr.getTargetReg()));
+    addToCurLabel(instructions);
+  }
 }

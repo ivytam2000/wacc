@@ -1,5 +1,9 @@
 package frontend.abstractsyntaxtree;
 
+import static backend.instructions.Instr.addToLabelOrder;
+import static backend.instructions.Instr.mainLabelName;
+import static backend.instructions.Instr.setCurLabel;
+
 import backend.instructions.Instr;
 import frontend.symboltable.SymbolTable;
 import java.util.List;
@@ -45,6 +49,9 @@ public class AST extends Node {
     for (Node funcAST : getFuncASTs()) {
       funcAST.toAssembly();
     }
+
+    setCurLabel(mainLabelName);
+    addToLabelOrder(mainLabelName);
     getStatAST().toAssembly();
   }
 }

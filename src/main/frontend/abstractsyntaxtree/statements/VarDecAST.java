@@ -78,9 +78,9 @@ public class VarDecAST extends Node {
     List<Instr> instrs = new ArrayList<>();
     TypeID decType = typeAST.getIdentifier().getType();
     int offset = symtab.getSmallestOffset() - decType.getBytes();
-    symtab.addOffset(varName,offset);
+    symtab.addOffset(varName, offset);
     assignRHS.toAssembly();
-    // stores the value
+    // Stores the value in the offset stack address
     STR strInstr = new STR(decType.getBytes(),"", Instr.R4, Instr.SP, offset);
     instrs.add(strInstr);
     addToCurLabel(instrs);

@@ -22,6 +22,10 @@ public class ParamAST extends Node {
     this.ctx = ctx;
   }
 
+  public String getName() {
+    return varName;
+  }
+
   @Override
   public void check() {
     Identifier v = symtab.lookup(varName);

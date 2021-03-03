@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import static backend.instructions.Instr.addToCurLabel;
+import static backend.instructions.Instr.addToLabelOrder;
+import static backend.instructions.Instr.mainLabelName;
+import static backend.instructions.Instr.setCurLabel;
 
 public class BackEndGenerator {
 
@@ -31,7 +34,16 @@ public class BackEndGenerator {
     // Generates the main body of instructions, e.g.: main, L0, L1 etc.
     generateMainInstructions();
 
-    Map<String, List<Instr>> preDefFuncInstrs = Utils.getPreDefFunc(preDefFuncs);
+    Map<String, List<Instr>> preDefFuncInstrs = Utils
+        .getPreDefFunc(preDefFuncs);
+    for (Map.Entry<String, List<Instr>> pdf : preDefFuncInstrs.entrySet()) {
+      String pdfName = pdf.getKey();
+      List<Instr> pdfInstrs = pdf.getValue();
+
+      setCurLabel(pdfName);
+      addToLabelOrder(pdfName);
+      addToCurLabel(pdfInstrs);
+    }
 
     // Writes the data segment
     if (dataSegmentStrings.size() > 0) {
@@ -40,7 +52,7 @@ public class BackEndGenerator {
       for (String dataSegmentString : dataSegmentStrings) {
         output.append("msg_").append(msgIndex).append(":\n");
         int len = dataSegmentString.length();
-        for (int i = 0; i < len;) {
+        for (int i = 0; i < len; ) {
           if (dataSegmentString.charAt(i) == '\\') {
             len--;
             i++;
@@ -57,38 +69,31 @@ public class BackEndGenerator {
     // Writes the text segment
     output.append(".text\n\n.global main\n");
 
-    // Writes all the user-defined functions
-    for (Map.Entry<String, List<Instr>> function : usrDefFuncs.entrySet()) {
-      String sectionName = function.getKey();
-      List<Instr> sectionInstructions = function.getValue();
-      output.append(writeTextSection(sectionName, sectionInstructions));
-    }
-
-    // Writes all the labels
+    // Writes every labelled section and their corresponding instructions
+    // Sections include user-defined functions, main etc.
     for (String label : Instr.getLabelOrder()) {
       output.append(writeTextSection(label, Instr.getLabels().get(label)));
-    }
-
-    for (Map.Entry<String, List<Instr>> pdf : preDefFuncInstrs.entrySet()) {
-      String pdfName = pdf.getKey();
-      List<Instr> pdfInstrs = pdf.getValue();
-      output.append(writeTextSection(pdfName, pdfInstrs));
     }
 
     return output.toString();
   }
 
   private void generateMainInstructions() {
+    setCurLabel(mainLabelName);
     addToCurLabel(Utils.getStartRoutine(ast.getSymtab()));
+
     ast.toAssembly();
+
+    setCurLabel(mainLabelName);
     addToCurLabel(Utils.getEndRoutine(ast.getSymtab()));
   }
 
   /**
-   * Uses fileWriter to write a .text section of instructions, named sectionName, in assembly
-   * format.
+   * Uses fileWriter to write a .text section of instructions, named
+   * sectionName, in assembly format.
    */
-  private String writeTextSection(String sectionName, List<Instr> instructions) {
+  private String writeTextSection(String sectionName,
+      List<Instr> instructions) {
     StringBuilder output = new StringBuilder();
     output.append(sectionName).append(":\n");
     for (Instr instruction : instructions) {

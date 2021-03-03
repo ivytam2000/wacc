@@ -15,6 +15,8 @@ import java.util.List;
 
 import static backend.BackEndGenerator.addToUsrDefFuncs;
 import static backend.instructions.Instr.addToCurLabel;
+import static backend.instructions.Instr.addToLabelOrder;
+import static backend.instructions.Instr.setCurLabel;
 
 public class FuncAST extends Node {
 
@@ -60,14 +62,25 @@ public class FuncAST extends Node {
 
   @Override
   public void toAssembly() {
+    String labelName = "f_" + funcName;
+    setCurLabel(labelName);
+    addToLabelOrder(labelName);
+
+    int offset = 0;
+    for (Node paramAST : params.paramASTs) {
+      String varName = ((ParamAST) paramAST).getName();
+      offset += paramAST.getIdentifier().getType().getBytes();
+      globalScope.addOffset(varName, offset);
+    }
+
     List<Instr> instructions = new ArrayList<>();
     instructions.add(new PUSH(Instr.LR));
+
     statements.toAssembly();
-    instructions.add(new MOV("", Instr.R0, Instr.getTargetReg()));
     instructions.add(new POP(Instr.PC));
     instructions.add(new POP(Instr.PC));
     instructions.add(new LTORG());
-    addToUsrDefFuncs("f_" + funcName, instructions);
+    addToCurLabel(instructions);
   }
 
   public void addFuncToGlobalScope() {

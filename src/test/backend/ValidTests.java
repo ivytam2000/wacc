@@ -37,6 +37,7 @@ public class ValidTests {
         validFolderPath + "basic/skip/");
   }
 
+  @Ignore
   @Test
   public void validExprTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
@@ -102,6 +103,7 @@ public class ValidTests {
         validFolderPath + "variables/");
   }
 
+  @Ignore
   @Test
   public void validWhileTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
