@@ -305,7 +305,8 @@ public class Utils {
   private static void p_print_reference(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new LDR(Instr.R1, Instr.R0, 0));
+    instrs.add(new MOV("", Instr.R1, Instr.R0));
+    //instrs.add(new LDR(Instr.R1, Instr.R0, 0));
     instrs.add(new LDR(Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(PTR_MSG)));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
