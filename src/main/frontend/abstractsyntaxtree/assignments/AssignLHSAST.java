@@ -49,7 +49,6 @@ public class AssignLHSAST extends Node {
 
     if (assignNode == null) { //Variable
       Instr.addToCurLabel(new ADD(false, Instr.R4, Instr.SP, "#" + symtab.getStackOffset(assignName)));
-      Instr.addToCurLabel(new MOV("", Instr.R0, Instr.R4));
       return;
     }
 

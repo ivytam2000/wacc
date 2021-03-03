@@ -29,6 +29,8 @@ public class Utils {
       = "ArrayIndexOutOfBoundsError: index too large\\n\\0";
   private static final String NULL_MSG
       = "NullReferenceError: dereference a null reference\\n\\0";
+  private static final String CHAR_MSG
+      = " %c\\0";
 
   public static String getAssignValue(Identifier identifier, String value) {
     if (identifier instanceof IntID || identifier instanceof StringID) {
@@ -81,7 +83,6 @@ public class Utils {
       BackEndGenerator.addToPreDefFunc("p_print_bool");
       brInstr = new BRANCH(true, "", "p_print_bool");
     } else if (type instanceof CharID) {
-      BackEndGenerator.addToPreDefFunc("putchar");
       brInstr = new BRANCH(true, "", "putchar");
     } else if (type instanceof StringID) {
       BackEndGenerator.addToPreDefFunc("p_print_string");
@@ -269,6 +270,18 @@ public class Utils {
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_free_pair", instrs);
+  }
+
+  private static void p_read_char(Map<String, List<Instr>> pdf) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+    instrs.add(new MOV("", Instr.R1, Instr.R0));
+    instrs.add(new LDR(Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(CHAR_MSG)));
+    instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
+    instrs.add(new BRANCH(true,"", "scanf"));
+    instrs.add(new POP(Instr.PC));
+
+    pdf.put("p_read_char", instrs);
   }
 
 }
