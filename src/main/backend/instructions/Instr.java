@@ -30,17 +30,29 @@ public abstract class Instr {
   private static Map<String, List<Instr>> labels = new HashMap<>();
 
   public static String getTargetReg() {
-    return regs[regsDepth];
+    return regsDepth >= 6 ? R10 : regs[regsDepth];
   }
 
   public static String incDepth() {
-    assert (regsDepth < regs.length - 1);
-    return regs[++regsDepth];
+    if (++regsDepth >= 7) {
+      addToCurLabel(new PUSH(R10));
+      return R10;
+    }
+    return regs[regsDepth];
   }
 
   public static String decDepth() {
     assert (regsDepth > 0);
-    return regs[--regsDepth];
+    if (--regsDepth >= 6) {
+      addToCurLabel(new POP(R11));
+      return R11;
+    }
+    return regs[regsDepth];
+  }
+
+  // Called after decreasing depth to see if stack was used to store reg values
+  public static boolean regsOnStack() {
+    return regsDepth >= 6;
   }
 
   public static void setCurLabel(String label) {

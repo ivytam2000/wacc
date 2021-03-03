@@ -5,13 +5,15 @@ public class SUB extends Instr {
   private final boolean reverse; // For RSB instruction (negation)
   private final boolean setFlags;
   private final String dest; // Also first operand
+  private final String operand1;
   private final String operand2;
 
 
-  public SUB(boolean reverse, boolean setFlags, String dest, String operand2) {
+  public SUB(boolean reverse, boolean setFlags, String dest, String operand1, String operand2) {
     this.reverse = reverse;
     this.setFlags = setFlags;
     this.dest = dest;
+    this.operand1 = operand1;
     this.operand2 = operand2;
   }
 
@@ -25,6 +27,6 @@ public class SUB extends Instr {
       base += "S";
     }
     base += " ";
-    return (base + dest + ", " + dest + ", " + operand2);
+    return (base + dest + ", " + operand1 + ", " + operand2);
   }
 }

@@ -29,7 +29,7 @@ public class BeginStatAST extends Node {
     // make space on the stack with the number of variables sizes
     if (symtab.getSize() > 0) {
       String stackSize = "#" + symtab.getSize();
-      instrs.add(new SUB(false, false, Instr.SP, stackSize));
+      instrs.add(new SUB(false, false, Instr.SP, Instr.SP, stackSize));
       stat.toAssembly();
       instrs.add(new ADD(false, Instr.SP, Instr.SP, stackSize));
     }

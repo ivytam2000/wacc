@@ -53,7 +53,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     int size = symtab.getSize();
     if (size > 0) {
-      instrs.add(new SUB(false, false, Instr.SP, "#" + size));
+      instrs.add(new SUB(false, false, Instr.SP, Instr.SP,"#" + size));
     }
     return instrs;
   }

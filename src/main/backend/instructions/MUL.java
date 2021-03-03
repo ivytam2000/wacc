@@ -5,9 +5,9 @@ public class MUL extends Instr {
   private final String regLow;  // Also first operand
   private final String regHigh; // Also second operand
 
-  public MUL(String regLow, String regHigh) {
-    this.regLow = regLow;
-    this.regHigh = regHigh;
+  public MUL(String regLow, String regHigh, boolean flip) {
+    this.regLow = flip ? regHigh : regLow;
+    this.regHigh = flip ? regLow : regHigh;
   }
 
   // SMULL regLow, regHigh, regLow, regHigh

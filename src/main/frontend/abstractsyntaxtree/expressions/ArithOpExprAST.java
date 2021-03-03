@@ -70,27 +70,34 @@ public class ArithOpExprAST extends Node {
   @Override
   public void toAssembly() {
 
-    String fstReg = Instr.getTargetReg();
     eL.toAssembly();
-    List<Instr> instrs = new ArrayList<>();
 
     String sndReg = Instr.incDepth();
     eR.toAssembly();
-    Instr.decDepth();
+    String fstReg = Instr.decDepth();
+
+    boolean regsOnStack = Instr.regsOnStack();
+    String targetReg = regsOnStack ? sndReg : fstReg;
+
+    List<Instr> instrs = new ArrayList<>();
 
     boolean addOverflow = true;
     switch (op) {
       case "+":
-        instrs.add(new ADD(true, fstReg, fstReg, sndReg));
+        instrs.add(new ADD(true, targetReg, fstReg, sndReg));
         instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
         break;
       case "-":
-        instrs.add(new SUB(false, true, fstReg, sndReg));
+        instrs.add(new SUB(false, true, targetReg, fstReg, sndReg));
         instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
         break;
       case "*":
-        instrs.add(new MUL(fstReg, sndReg));
-        instrs.add(new CMP(sndReg, fstReg, "ASR #31"));
+        instrs.add(new MUL(fstReg, sndReg, regsOnStack));
+        if (regsOnStack) {
+          instrs.add(new CMP(fstReg, sndReg, "ASR #31"));
+        } else {
+          instrs.add(new CMP(sndReg, fstReg, "ASR #31"));
+        }
         instrs.add(new BRANCH(true, "NE", "p_throw_overflow_error"));
         break;
       case "/":
