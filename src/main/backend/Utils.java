@@ -14,6 +14,7 @@ import java.util.Set;
 
 public class Utils {
 
+  private static final int TEN_BITS = 1024;
   private static final String INT_MSG = "%d\\0";
   private static final String STRING_MSG = "%.*s\\0";
   private static final String LN_MSG = "\\0";
@@ -51,6 +52,11 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     int size = symtab.getSize();
     if (size > 0) {
+      // if greater than 10 bits
+      while (size > TEN_BITS) {
+        size = size - TEN_BITS;
+        instrs.add(new SUB(false, false, Instr.SP, "#" + TEN_BITS));
+      }
       instrs.add(new SUB(false, false, Instr.SP, "#" + size));
     }
     return instrs;
@@ -64,6 +70,11 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     int stackSize = symtab.getSize();
     if (stackSize > 0) {
+      // if greater than 10 bits
+      while (stackSize > TEN_BITS ) {
+        stackSize = stackSize - TEN_BITS;
+        instrs.add(new ADD(false, Instr.SP, Instr.SP, "#" + TEN_BITS));
+      }
       instrs.add(new ADD(false, Instr.SP, Instr.SP, "#" + stackSize));
     }
     instrs.add(new LDR(Instr.R0, "0"));
