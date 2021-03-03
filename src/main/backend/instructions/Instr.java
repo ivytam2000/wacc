@@ -26,10 +26,10 @@ public abstract class Instr {
   private static int regsDepth = 0;
 
   private static int nextLabelNumber = 0;
-  private static String curLabel = "";
+  private static String curLabel = "main";
   // List of labels to keep track of the order to print the labels
   private static List<String> labelOrder = new ArrayList<>(
-      Collections.emptyList());
+      Collections.singletonList("main"));
 
   private static Map<String, List<Instr>> labels = new HashMap<>();
 

@@ -37,7 +37,7 @@ public class ValidTests {
         validFolderPath + "basic/skip/");
   }
 
-  @Ignore
+
   @Test
   public void validExprTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(

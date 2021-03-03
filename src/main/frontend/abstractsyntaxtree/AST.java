@@ -49,9 +49,6 @@ public class AST extends Node {
     for (Node funcAST : getFuncASTs()) {
       funcAST.toAssembly();
     }
-
-    setCurLabel(mainLabelName);
-    addToLabelOrder(mainLabelName);
     getStatAST().toAssembly();
   }
 }
