@@ -73,11 +73,12 @@ public class ArrayElemAST extends Node {
   @Override
   public void toAssembly() {
     BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
-    List<Instr> instrs = new ArrayList<>();
     String target = Instr.getTargetReg();
-    instrs.add(new ADD(false, target, Instr.SP, getOffset()));
+    addToCurLabel(new ADD(false, target, Instr.SP, getOffset()));
     for (Node e : exprs) {
+      List<Instr> instrs = new ArrayList<>();
       String sndReg = Instr.incDepth();
+      // adds extra stuff to nested array?
       e.toAssembly();
       Instr.decDepth();
       instrs.add(new LDR(target, target, 0));
@@ -87,9 +88,8 @@ public class ArrayElemAST extends Node {
       int size = e.getIdentifier().getType().getBytes();
       instrs.add(new ADD(false, target, target, "#" + size));
       instrs.add(new ADD(false, target, target, sndReg, size > 1 ? "LSL #" + size / 2 : ""));
+      addToCurLabel(instrs);
     }
-    instrs.add(new LDR(target, target, 0));
-    addToCurLabel(instrs);
-
+    addToCurLabel(new LDR(target, target, 0));
   }
 }
