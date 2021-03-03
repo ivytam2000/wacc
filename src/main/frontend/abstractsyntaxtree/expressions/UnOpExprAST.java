@@ -99,7 +99,7 @@ public class UnOpExprAST extends Node {
       // Revere subtract
       instrs.add(new SUB(true, true, Instr.getTargetReg(), "#0"));
       // Check for overflow
-      BackEndGenerator.addToPreDefFunc("p_throw_overflow_error");
+      BackEndGenerator.addToPreDefFuncs("p_throw_overflow_error");
       instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
     } else if (ctx.LEN() != null) {
       // Length of array stored at its corresponding memory with 0 offset

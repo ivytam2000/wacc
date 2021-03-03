@@ -6,7 +6,6 @@ import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.pairs.PairElemTypeAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.PairID;
@@ -53,7 +52,7 @@ public class FreeAST extends Node {
     TypeID exprType = expr.getIdentifier().getType();
     instrs.add(new MOV("", Instr.R0, Instr.R4));
     String label = exprType instanceof PairID ? "p_free_pair" : "p_free_array";
-    BackEndGenerator.addToPreDefFunc(label);
+    BackEndGenerator.addToPreDefFuncs(label);
     BRANCH brInstr = new BRANCH(true, "", label);
     instrs.add(brInstr);
     addToCurLabel(instrs);

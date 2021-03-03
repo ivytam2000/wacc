@@ -63,17 +63,19 @@ public class AssignStatAST extends Node {
   @Override
   public void toAssembly() {
     rhs.toAssembly();
-    if (lhs.getAssignNode() instanceof ArrayElemAST || lhs.getAssignNode() instanceof PairElemAST) {
+    if (lhs.getAssignNode() instanceof ArrayElemAST || lhs
+        .getAssignNode() instanceof PairElemAST) {
       String sndReg = Instr.incDepth();
       lhs.toAssembly();
       String fstReg = Instr.decDepth();
       Instr.addToCurLabel(new STR(fstReg, sndReg, 0));
     } else { // Regular variable
       int bytes = 4;
-      if(lhs.getIdentifier().getType() instanceof CharID || lhs.getIdentifier().getType() instanceof BoolID){
+      if (lhs.getIdentifier().getType() instanceof CharID || lhs.getIdentifier()
+          .getType() instanceof BoolID) {
         bytes = 1;
       }
-      Instr.addToCurLabel(new STR(bytes, "",Instr.R4, Instr.SP,
+      Instr.addToCurLabel(new STR(bytes, "", Instr.R4, Instr.SP,
           symtab.getStackOffset(lhs.getIdentName())));
     }
   }

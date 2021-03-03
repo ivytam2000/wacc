@@ -75,19 +75,19 @@ public class Utils {
   public static BRANCH getPrintBranch(TypeID type) {
     BRANCH brInstr = null;
     if (type instanceof IntID) {
-      BackEndGenerator.addToPreDefFunc("p_print_int");
+      BackEndGenerator.addToPreDefFuncs("p_print_int");
       brInstr = new BRANCH(true, "", "p_print_int");
     } else if (type instanceof BoolID) {
-      BackEndGenerator.addToPreDefFunc("p_print_bool");
+      BackEndGenerator.addToPreDefFuncs("p_print_bool");
       brInstr = new BRANCH(true, "", "p_print_bool");
     } else if (type instanceof CharID) {
-      BackEndGenerator.addToPreDefFunc("putchar");
+      BackEndGenerator.addToPreDefFuncs("putchar");
       brInstr = new BRANCH(true, "", "putchar");
     } else if (type instanceof StringID) {
-      BackEndGenerator.addToPreDefFunc("p_print_string");
+      BackEndGenerator.addToPreDefFuncs("p_print_string");
       brInstr = new BRANCH(true, "", "p_print_string");
     } else if (type instanceof PairID || type instanceof ArrayID) {
-      BackEndGenerator.addToPreDefFunc("p_print_reference");
+      BackEndGenerator.addToPreDefFuncs("p_print_reference");
       brInstr = new BRANCH(true, "", "p_print_reference");
     }
     // brInstr should not be null
@@ -141,7 +141,7 @@ public class Utils {
   private static void p_throw_overflow_error(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new LDR(Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(OVERFLOW_MSG)));
-    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "", "p_throw_runtime_error"));
 
     pdf.put("p_throw_overflow_error", instrs);
@@ -149,7 +149,7 @@ public class Utils {
 
   private static void p_throw_runtime_error(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
-    BackEndGenerator.addToPreDefFunc("p_print_string");
+    BackEndGenerator.addToPreDefFuncs("p_print_string");
     instrs.add(new BRANCH(true, "", "p_print_string"));
     instrs.add(new MOV("", Instr.R0, "#-1"));
     instrs.add(new BRANCH(true, "", "exit"));
@@ -204,7 +204,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R1, "#0"));
     instrs.add(new LDR(4, "EQ", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG)));
-    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
     instrs.add(new POP(Instr.PC));
 
@@ -216,7 +216,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
     instrs.add(new LDR(4, "LT", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(NEG_INDEX_MSG)));
-    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true,"LT", "p_throw_runtime_error"));
     instrs.add(new LDR(Instr.R1, Instr.R1,0));
     instrs.add(new CMP(Instr.R0, Instr.R1));
@@ -232,7 +232,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
     instrs.add(new LDR(4, "EQ", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(NULL_MSG)));
-    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true,"EQ", "p_throw_runtime_error"));
     instrs.add(new POP(Instr.PC));
 
@@ -256,7 +256,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
     instrs.add(new LDR(4, "EQ", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(NULL_MSG)));
-    BackEndGenerator.addToPreDefFunc("p_throw_runtime_error");
+    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
     instrs.add(new PUSH(Instr.R0));
     instrs.add(new LDR(Instr.R0, Instr.R0, 0));
