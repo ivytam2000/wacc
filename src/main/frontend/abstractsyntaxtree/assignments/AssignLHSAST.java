@@ -84,7 +84,8 @@ public class AssignLHSAST extends Node {
       instrs.add(new MOV("", Instr.R0, reg));
       BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
       instrs.add(new BRANCH(true, "", "p_check_null_pointer"));
-      instrs.add(new LDR(reg, reg, ((PairElemAST) assignNode).getFirst() ? 0 : assignNode.getIdentifier().getType().getBytes()));
+      instrs.add(new LDR(reg, reg, ((PairElemAST) assignNode).getFirst() ? 0
+          : 4));
     }
     Instr.addToCurLabel(instrs);
   }
