@@ -106,7 +106,7 @@ public class Utils {
     } else if (type instanceof StringID) {
       BackEndGenerator.addToPreDefFuncs("p_print_string");
       brInstr = new BRANCH(true, "", "p_print_string");
-    } else if (type instanceof PairID || type instanceof ArrayID) {
+    } else if (type instanceof OptionalPairID || type instanceof ArrayID) {
       BackEndGenerator.addToPreDefFuncs("p_print_reference");
       brInstr = new BRANCH(true, "", "p_print_reference");
     }
