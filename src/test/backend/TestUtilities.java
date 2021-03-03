@@ -138,7 +138,9 @@ public class TestUtilities {
               "---------------------------------------------------------------")) {
             return actualStdOuts;
           } else {
-            if (!line.equals(" ") && !line.isEmpty()) {
+            if (actualStdOuts.isEmpty() && line.isEmpty()) {
+              continue;
+            } else {
               actualStdOuts.add(line);
             }
           }

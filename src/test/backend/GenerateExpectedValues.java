@@ -16,8 +16,8 @@ public class GenerateExpectedValues {
   static String validFolderPath = "src/test/examples/expectedOutputs";
 
   /**
-   * Iterates through the examples/valid folder and makes all test directories
-   * with their expected test outputs in txt.
+   * Iterates through the examples/valid folder and makes all test directories with their expected
+   * test outputs in txt.
    */
   public static void storeExpectedValues(String folderPath) throws IOException {
     Files.createDirectories(Paths.get(validFolderPath));
@@ -78,33 +78,35 @@ public class GenerateExpectedValues {
     for (String line : separatedOutputByLine) {
       // Next few lines might be expectedStdOuts
       if (nextLineIsOutput) {
-        if (!line.isEmpty()) {
-          if (line.equals(
-              "===========================================================")) {
-            // End of expectedStdOuts
-            return expectedStdOuts;
+        if (line.equals(
+            "===========================================================")) {
+          // End of expectedStdOuts
+          return expectedStdOuts;
+        } else {
+          // Continue adding StdOuts
+          if (expectedStdOuts.isEmpty() && line.isEmpty()) {
+            continue;
           } else {
-            // Continue adding StdOuts
             expectedStdOuts.add(line);
           }
         }
-      }
+      } else {
 
-      // Toggle nextLineIsOutput to guard if the next few lines are StdOuts
-      if (!line.isEmpty()) {
+        // Toggle nextLineIsOutput to guard if the next few lines are StdOuts
         if (line.equals(
             "===========================================================")) {
-          nextLineIsOutput = !nextLineIsOutput;
+          nextLineIsOutput = true;
         }
       }
+
     }
 
     return expectedStdOuts;
   }
 
   /**
-   * Run this to generate the src/test/examples/expectedOutput directory for
-   * tests. This is not to be an automated process.
+   * Run this to generate the src/test/examples/expectedOutput directory for tests. This is not to
+   * be an automated process.
    */
   public static void main(String[] args) throws IOException {
     storeExpectedValues("src/test/examples/valid/");
