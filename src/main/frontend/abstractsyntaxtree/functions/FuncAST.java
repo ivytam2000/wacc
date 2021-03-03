@@ -74,13 +74,15 @@ public class FuncAST extends Node {
     }
 
     List<Instr> instructions = new ArrayList<>();
-    instructions.add(new PUSH(Instr.LR));
+    addToCurLabel(new PUSH(Instr.LR));
 
     statements.toAssembly();
+
     instructions.add(new POP(Instr.PC));
     instructions.add(new POP(Instr.PC));
     instructions.add(new LTORG());
     addToCurLabel(instructions);
+    setCurLabel("main");
   }
 
   public void addFuncToGlobalScope() {
