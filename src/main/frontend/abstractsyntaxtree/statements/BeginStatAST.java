@@ -27,10 +27,9 @@ public class BeginStatAST extends Node {
 
   @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-    instrs.addAll(getStartRoutine(symtab));
-    instrs.addAll(getEndRoutine(symtab));
-    addToCurLabel(instrs);
+    addToCurLabel(getStartRoutine(symtab, true));
+    stat.toAssembly();
+    addToCurLabel(getEndRoutine(symtab,true));
   }
 
   public Node getStat() {

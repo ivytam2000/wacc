@@ -52,7 +52,11 @@ public class AssignRHSAST extends Node {
       instructions.add(new STR(Instr.R0, Instr.R4, 0));
 
       // second pair elem
-      children.get(1).toAssembly();
+      // if children is NOT an array of pairs elem
+      if(children.size() == 2){
+        children.get(1).toAssembly();
+      }
+
       instructions.add(new LDR(Instr.R0, "4"));
       instructions.add(new BRANCH(true, "", "malloc"));
       instructions.add(new STR(Instr.R5, Instr.R0, 0));

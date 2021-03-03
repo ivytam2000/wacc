@@ -51,9 +51,12 @@ public class Utils {
     return output.toString();
   }
 
-  public static List<Instr> getStartRoutine(SymbolTable symtab) {
+  public static List<Instr> getStartRoutine(SymbolTable symtab,
+      boolean beginStat) {
     List<Instr> instrs = new ArrayList<>();
-    instrs.add(new PUSH(Instr.LR));
+    if (!beginStat) {
+      instrs.add(new PUSH(Instr.LR));
+    }
     int size = symtab.getSize();
     if (size > 0) {
       // if greater than 10 bits
@@ -70,7 +73,8 @@ public class Utils {
   // ADD sp, sp, #stackSize
   // LDR r0 =0
   // POP {pc}
-  public static List<Instr> getEndRoutine(SymbolTable symtab) {
+  public static List<Instr> getEndRoutine(SymbolTable symtab,
+      boolean beginStat) {
     List<Instr> instrs = new ArrayList<>();
     int stackSize = symtab.getSize();
     if (stackSize > 0) {
@@ -81,9 +85,11 @@ public class Utils {
       }
       instrs.add(new ADD(false, Instr.SP, Instr.SP, "#" + stackSize));
     }
-    instrs.add(new LDR(Instr.R0, "0"));
-    instrs.add(new POP(Instr.PC));
-    instrs.add(new LTORG());
+    if (!beginStat) {
+      instrs.add(new LDR(Instr.R0, "0"));
+      instrs.add(new POP(Instr.PC));
+      instrs.add(new LTORG());
+    }
     return instrs;
   }
 

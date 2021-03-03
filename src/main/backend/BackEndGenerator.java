@@ -79,9 +79,9 @@ public class BackEndGenerator {
   }
 
   private void generateMainInstructions() {
-    addToCurLabel(Utils.getStartRoutine(ast.getSymtab()));
+    addToCurLabel(Utils.getStartRoutine(ast.getSymtab(),false));
     ast.toAssembly();
-    addToCurLabel(Utils.getEndRoutine(ast.getSymtab()));
+    addToCurLabel(Utils.getEndRoutine(ast.getSymtab(),false));
   }
 
   /**
