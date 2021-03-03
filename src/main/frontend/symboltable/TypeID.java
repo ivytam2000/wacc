@@ -15,7 +15,8 @@ public abstract class TypeID extends Identifier {
     return this.typeName;
   }
 
+  // size of word by default
   public int getBytes() {
-    return 0;
+    return 4;
   }
 }

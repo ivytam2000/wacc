@@ -20,17 +20,20 @@ public class AssignRHSAST extends Node {
 
   protected final SymbolTable symtab;
   protected List<Node> children;
+  private final boolean isNewpair;
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab,
-      List<Node> children) {
+      List<Node> children, boolean isNewpair) {
     super(identifier);
     this.symtab = symtab;
     this.children = children;
+    this.isNewpair = isNewpair;
   }
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab) {
     super(identifier);
     this.symtab = symtab;
+    this.isNewpair = false;
   }
 
   @Override
@@ -41,30 +44,41 @@ public class AssignRHSAST extends Node {
   public void toAssembly() {
    // List<Instr> instructions = new ArrayList<>();
     if (identifier instanceof PairID) {
+      /* We only malloc if its newpair */
       // malloc pair struct
-      addToCurLabel(new LDR(Instr.R0, "8"));
-      addToCurLabel(new BRANCH(true, "", "malloc"));
-      addToCurLabel(new MOV("", Instr.R4, Instr.R0));
-      // Need to increment register as we using R4
-      Instr.incDepth();
+      if (isNewpair) {
+        addToCurLabel(new LDR(Instr.R0, "8"));
+        addToCurLabel(new BRANCH(true, "", "malloc"));
+        addToCurLabel(new MOV("", Instr.R4, Instr.R0));
+        // Need to increment register as we using R4
+        Instr.incDepth();
+      }
 
       // first pair elem
       children.get(0).toAssembly();
-      TypeID child_1 = children.get(0).getIdentifier().getType();
-      addToCurLabel(new LDR(Instr.R0, String.valueOf(child_1.getBytes())));
-      addToCurLabel(new BRANCH(true, "", "malloc"));
-      addToCurLabel(new STR(child_1.getBytes(), "", Instr.R5, Instr.R0, 0));
-      addToCurLabel(new STR(Instr.R0, Instr.R4, 0));
+      if (isNewpair) {
+        Instr.decDepth();
 
+        TypeID child_1 = children.get(0).getIdentifier().getType();
+        addToCurLabel(new LDR(Instr.R0, String.valueOf(child_1.getBytes())));
+        addToCurLabel(new BRANCH(true, "", "malloc"));
+        addToCurLabel(new STR(child_1.getBytes(), "", Instr.R5, Instr.R0, 0));
+        addToCurLabel(new STR(Instr.R0, Instr.R4, 0));
+
+        Instr.incDepth();
+      }
       // second pair elem
       // if children is NOT an array of pairs elem
       if(children.size() == 2){
         children.get(1).toAssembly();
-        TypeID child_2 = children.get(1).getIdentifier().getType();
-        addToCurLabel(new LDR(Instr.R0, String.valueOf(child_2.getBytes())));
-        addToCurLabel(new BRANCH(true, "", "malloc"));
-        addToCurLabel(new STR(child_2.getBytes(),"", Instr.R5, Instr.R0, 0));
-        addToCurLabel(new STR(Instr.R0, Instr.R4, 4));
+        if (isNewpair) {
+          Instr.decDepth();
+          TypeID child_2 = children.get(1).getIdentifier().getType();
+          addToCurLabel(new LDR(Instr.R0, String.valueOf(child_2.getBytes())));
+          addToCurLabel(new BRANCH(true, "", "malloc"));
+          addToCurLabel(new STR(child_2.getBytes(), "", Instr.R5, Instr.R0, 0));
+          addToCurLabel(new STR(Instr.R0, Instr.R4, 4));
+        }
       }
 
       //addToCurLabel(instructions);

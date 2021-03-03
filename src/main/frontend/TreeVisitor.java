@@ -292,7 +292,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     children.add(exprAST);
 
     return new AssignRHSAST(exprAST.getIdentifier().getType(), currSymTab,
-        children);
+        children, false);
   }
 
   /**
@@ -307,7 +307,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     children.add(arrayLiterAST);
 
     return new AssignRHSAST(arrayLiterAST.getIdentifier().getType(), currSymTab,
-        children);
+        children, false);
   }
 
   /**
@@ -324,7 +324,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     PairID pairID = new PairID(firstExprAST.getIdentifier().getType(),
         secondExprAST.getIdentifier().getType());
 
-    return new AssignRHSAST(pairID, currSymTab, children);
+    return new AssignRHSAST(pairID, currSymTab, children, true);
   }
 
   /**
@@ -338,7 +338,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     children.add(pairElemAST);
 
     return new AssignRHSAST(pairElemAST.getIdentifier().getType(), currSymTab,
-        children);
+        children, false);
   }
 
   @Override
