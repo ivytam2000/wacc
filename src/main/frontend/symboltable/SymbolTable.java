@@ -10,6 +10,7 @@ public class SymbolTable {
   private final Map<String, Identifier> dictionary = new HashMap<>();
   private int size = 0;
   private int tempFuncOffset = 0;
+  private boolean funcContext = false;
   private final Map<String, Integer> varOffsets = new LinkedHashMap<>();
   private final SymbolTable parent;
 
@@ -91,6 +92,8 @@ public class SymbolTable {
 
   public void resetFuncOffset() {tempFuncOffset = 0;}
 
+  public void setFuncContext(boolean val) {funcContext = val; }
+
   public int getStackOffset(String var) {
     SymbolTable temp = this;
     int innerOffset = 0;
@@ -107,10 +110,11 @@ public class SymbolTable {
     varOffsets.put(var,offset);
   }
 
-  public int getSmallestOffset(){
-    if(varOffsets.isEmpty()){
+  public int getSmallestOffset() {
+    if (varOffsets.isEmpty()) {
       return size;
     }
-    return Collections.min(varOffsets.values());
+    int ans = Collections.min(varOffsets.values());
+    return funcContext ? ans - 4 : ans;
   }
 }
