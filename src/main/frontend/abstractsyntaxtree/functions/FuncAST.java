@@ -1,11 +1,7 @@
 package frontend.abstractsyntaxtree.functions;
 
 import antlr.WaccParser.FuncContext;
-import backend.instructions.Instr;
-import backend.instructions.LTORG;
-import backend.instructions.MOV;
-import backend.instructions.POP;
-import backend.instructions.PUSH;
+import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -14,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static backend.BackEndGenerator.addToUsrDefFuncs;
+import static backend.Utils.getEndRoutine;
+import static backend.Utils.getStartRoutine;
 import static backend.instructions.Instr.addToCurLabel;
 import static backend.instructions.Instr.addToLabelOrder;
 import static backend.instructions.Instr.setCurLabel;
@@ -66,6 +64,8 @@ public class FuncAST extends Node {
     setCurLabel(labelName);
     addToLabelOrder(labelName);
 
+
+
     int offset = 0;
     for (Node paramAST : params.paramASTs) {
       String varName = ((ParamAST) paramAST).getName();
@@ -75,8 +75,12 @@ public class FuncAST extends Node {
 
     List<Instr> instructions = new ArrayList<>();
     addToCurLabel(new PUSH(Instr.LR));
+    FuncID id = (FuncID) this.getIdentifier();
+    addToCurLabel(getStartRoutine(id.getSymtab(), false));
 
     statements.toAssembly();
+
+    addToCurLabel(getEndRoutine(id.getSymtab(), false));
 
     instructions.add(new POP(Instr.PC));
     instructions.add(new POP(Instr.PC));

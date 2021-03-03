@@ -52,9 +52,9 @@ public class Utils {
   }
 
   public static List<Instr> getStartRoutine(SymbolTable symtab,
-      boolean beginStat) {
+      boolean backEndGenerator) {
     List<Instr> instrs = new ArrayList<>();
-    if (!beginStat) {
+    if (backEndGenerator) {
       instrs.add(new PUSH(Instr.LR));
     }
     int size = symtab.getSize();
@@ -74,7 +74,7 @@ public class Utils {
   // LDR r0 =0
   // POP {pc}
   public static List<Instr> getEndRoutine(SymbolTable symtab,
-      boolean beginStat) {
+      boolean backEndGenerator) {
     List<Instr> instrs = new ArrayList<>();
     int stackSize = symtab.getSize();
     if (stackSize > 0) {
@@ -85,7 +85,7 @@ public class Utils {
       }
       instrs.add(new ADD(false, Instr.SP, Instr.SP, "#" + stackSize));
     }
-    if (!beginStat) {
+    if (backEndGenerator) {
       instrs.add(new LDR(Instr.R0, "0"));
       instrs.add(new POP(Instr.PC));
       instrs.add(new LTORG());

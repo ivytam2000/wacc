@@ -50,7 +50,7 @@ public class ValidTests {
         validFolderPath + "function/nested_functions/");
   }
 
-  @Ignore
+
   @Test
   public void validSimpleFuncTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(

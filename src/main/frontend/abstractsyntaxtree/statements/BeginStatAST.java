@@ -27,9 +27,9 @@ public class BeginStatAST extends Node {
 
   @Override
   public void toAssembly() {
-    addToCurLabel(getStartRoutine(symtab, true));
+    addToCurLabel(getStartRoutine(symtab, false));
     stat.toAssembly();
-    addToCurLabel(getEndRoutine(symtab,true));
+    addToCurLabel(getEndRoutine(symtab,false));
   }
 
   public Node getStat() {
