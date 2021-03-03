@@ -64,13 +64,12 @@ public class FuncAST extends Node {
     setCurLabel(labelName);
     addToLabelOrder(labelName);
 
-
-
-    int offset = 0;
+    SymbolTable funcsymtab = ((FuncID) identifier).getSymtab();
+    int offset = 4;
     for (Node paramAST : params.paramASTs) {
       String varName = ((ParamAST) paramAST).getName();
+      funcsymtab.addOffset(varName, offset);
       offset += paramAST.getIdentifier().getType().getBytes();
-      globalScope.addOffset(varName, offset);
     }
 
     List<Instr> instructions = new ArrayList<>();

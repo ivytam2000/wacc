@@ -9,6 +9,7 @@ public class SymbolTable {
 
   private final Map<String, Identifier> dictionary = new HashMap<>();
   private int size = 0;
+  private int tempFuncOffset = 0;
   private final Map<String, Integer> varOffsets = new LinkedHashMap<>();
   private final SymbolTable parent;
 
@@ -86,6 +87,10 @@ public class SymbolTable {
     size += val;
   }
 
+  public void incrementFuncOffset(int val) { tempFuncOffset += val; }
+
+  public void resetFuncOffset() {tempFuncOffset = 0;}
+
   public int getStackOffset(String var) {
     SymbolTable temp = this;
     int innerOffset = 0;
@@ -95,7 +100,7 @@ public class SymbolTable {
       temp = temp.parent;
     }
 
-    return innerOffset + temp.varOffsets.get(var);
+    return innerOffset + tempFuncOffset + temp.varOffsets.get(var);
   }
 
   public void addOffset(String var, int offset){

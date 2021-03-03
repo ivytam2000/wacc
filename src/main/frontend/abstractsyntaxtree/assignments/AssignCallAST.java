@@ -24,6 +24,7 @@ public class AssignCallAST extends AssignRHSAST {
   private final String funcName;
   private final ArgListAST args;
   private final Call_assignRHSContext ctx;
+  private final SymbolTable symtab;
 
   public AssignCallAST(
       String funcName, SymbolTable symtab, ArgListAST args,
@@ -32,6 +33,7 @@ public class AssignCallAST extends AssignRHSAST {
     this.funcName = funcName;
     this.args = args;
     this.ctx = ctx;
+    this.symtab = symtab;
   }
 
   @Override
@@ -92,7 +94,7 @@ public class AssignCallAST extends AssignRHSAST {
 
     int accOffset = 0;
     String transferReg = Instr.getTargetReg();
-    for (int i = 0; i < args.getArguments().size(); i++) {
+    for (int i = args.getArguments().size() - 1; i >= 0; i--) {
       Node argNode = args.getArguments().get(i);
 
       // Puts the next argument into the transfer register
@@ -100,12 +102,13 @@ public class AssignCallAST extends AssignRHSAST {
 
       int offset = argNode.getIdentifier().getType().getBytes();
       accOffset += offset;
-      instructions
-          .add(new STR(offset, "", transferReg, Instr.SP, -offset, true));
+      symtab.incrementFuncOffset(offset);
+      Instr.addToCurLabel(new STR(offset, "", transferReg, Instr.SP, -offset, true));
     }
 
     instructions.add(new BRANCH(true, "", "f_" + funcName));
     instructions.add(new ADD(false, Instr.SP, Instr.SP, "#" + accOffset));
+    symtab.resetFuncOffset();
     instructions.add(new MOV("", transferReg, Instr.R0));
     addToCurLabel(instructions);
   }
