@@ -50,8 +50,13 @@ public class ArrayLiterAST extends Node {
   @Override
   public void toAssembly() {
     String lengthOfArray = "" + children.size();
-    Identifier childrenType = children.get(0).getIdentifier();
-    int bytesNeeded = childrenType.getType().getBytes();
+    int bytesNeeded = 0;
+
+    if (!children.isEmpty()) {
+      Identifier childrenType = children.get(0).getIdentifier();
+      bytesNeeded = childrenType.getType().getBytes();
+    }
+
     String byteOfArray = "" + (4 + children.size() * bytesNeeded);
     addToCurLabel(new LDR(Instr.R0, byteOfArray));
 
