@@ -3,12 +3,13 @@ package backend.instructions;
 public class ADD extends Instr {
 
   private final boolean setFlags;
-  private final String dest; //Also first operand
+  private final String dest; // Also first operand
   private final String src;
   private final String operand;
   private final String shift;
 
-  public ADD(boolean setFlags, String dest, String src, String operand, String shift) {
+  public ADD(boolean setFlags, String dest, String src, String operand,
+      String shift) {
     this.setFlags = setFlags;
     this.dest = dest;
     this.src = src;
@@ -20,8 +21,9 @@ public class ADD extends Instr {
     this(setFlags, dest, src, operand, "");
   }
 
-
-  // ADD{S} dest, dest, operand2
+  /**
+   * Returns ADD{S} dest, dest, operand2.
+   */
   @Override
   public String translateToArm() {
     String s = "";
@@ -30,7 +32,5 @@ public class ADD extends Instr {
     }
     return "ADD" + (setFlags ? "S " : " ")
         + dest + ", " + src + ", " + operand + s;
-   /* return "ADD" + (setFlags ? "S " : " ")
-        + dest + ", " + dest + ", " + operand2;*/
   }
 }

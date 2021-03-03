@@ -1,7 +1,7 @@
 package frontend.abstractsyntaxtree.assignments;
 
 import antlr.WaccParser.Call_assignRHSContext;
-import backend.Utils;
+import backend.instructions.ADD;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
@@ -90,21 +90,23 @@ public class AssignCallAST extends AssignRHSAST {
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
+    int accOffset = 0;
     String transferReg = Instr.getTargetReg();
     for (int i = 0; i < args.getArguments().size(); i++) {
       Node argNode = args.getArguments().get(i);
-      int argOffset = symtab.getStackOffset(argNode.getIdentifier().toString());
-      instructions.add(new MOV("", transferReg,
-          Utils.getEffectiveAddr(Instr.SP, argOffset)));
 
-      TypeID paramID = ((FuncID) getIdentifier()).getParams().get(i);
-      int paramOffset = symtab.getStackOffset(paramID.toString());
-      instructions.add(new STR(transferReg, Utils.getEffectiveAddr(Instr.SP, paramOffset), 0));
+      // Puts the next argument into the transfer register
+      argNode.toAssembly();
+
+      int offset = argNode.getIdentifier().getType().getBytes();
+      accOffset += offset;
+      instructions
+          .add(new STR(offset, "", transferReg, Instr.SP, -offset, true));
     }
 
     instructions.add(new BRANCH(true, "", "f_" + funcName));
-
-    // TODO: How to move the return value back into the LHS?
-    addToCurLabel(instructions);;
+    instructions.add(new ADD(false, Instr.SP, Instr.SP, "#" + accOffset));
+    instructions.add(new MOV("", transferReg, Instr.R0));
+    addToCurLabel(instructions);
   }
 }

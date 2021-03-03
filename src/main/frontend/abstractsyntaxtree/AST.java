@@ -42,6 +42,9 @@ public class AST extends Node {
 
   @Override
   public void toAssembly() {
-     statAST.toAssembly();
+    for (Node funcAST : getFuncASTs()) {
+      funcAST.toAssembly();
+    }
+    getStatAST().toAssembly();
   }
 }

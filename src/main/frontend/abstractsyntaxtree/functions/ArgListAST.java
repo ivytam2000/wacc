@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ArgListAST extends Node {
 
-  private List<Node> expressions;
+  private final List<Node> expressions;
 
   public ArgListAST(List<Node> expressions) {
     this.expressions = expressions;

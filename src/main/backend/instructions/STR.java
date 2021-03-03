@@ -10,6 +10,7 @@ public class STR extends Instr {
   private final String dest;
   private int offset;
   private boolean noOffset;
+  private boolean increment = false;
 
   // NOTE that for STR: source is lhs and destination is rhs
   public STR(int bytes, String conditions, String src, String dest, int offset) {
@@ -24,6 +25,11 @@ public class STR extends Instr {
   // without byte and condition
   public STR(String src, String dest, int offset) {
     this(4, "", src, dest, offset);
+  }
+
+  public STR(int bytes, String conditions, String src, String dest, int offset, boolean increment) {
+    this(bytes, conditions, src, dest, offset);
+    this.increment = increment;
   }
 
 
@@ -54,6 +60,6 @@ public class STR extends Instr {
 
   @Override
   public String translateToArm() {
-    return getStr() + " " + src + ", " + getDest();
+    return getStr() + " " + src + ", " + getDest() + (increment ? "!" : "");
   }
 }
