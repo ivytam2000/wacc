@@ -116,7 +116,7 @@ public class BackEndGenerator {
     return dataSegmentStrings.indexOf(msg);
   }
 
-  public static void addToPreDefFunc(String func) {
+  public static void addToPreDefFuncs(String func) {
     preDefFuncs.add(func);
   }
 

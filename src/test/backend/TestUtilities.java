@@ -34,8 +34,9 @@ public class TestUtilities {
     List<String> names = getTestNames(folderPath);
     List<String> folderNames = getFolderNames(folderPath);
 
-    for (String folder: folderNames) {
-      executablesFromOurCompilerMatchesReferenceCompiler(folderPath + folder + "/");
+    for (String folder : folderNames) {
+      executablesFromOurCompilerMatchesReferenceCompiler(
+          folderPath + folder + "/");
     }
 
     for (String name : names) {
@@ -119,11 +120,11 @@ public class TestUtilities {
     String os = System.getProperty("os.name").toLowerCase();
 
     if (os.contains("mac")) {
-      // uses ref emulate to send http request to retrieve assembly outputs
-      // if you want to run the pipeline tests, build docker image from dockerfile and run the image
+      // Uses ref emulate to send HTTP request to retrieve assembly outputs
+      // If you want to run the pipeline tests, build Docker image from Dockerfile and run the image
       builder.command("./refEmulate", assFilePath);
 
-      // gets output in command line
+      // Gets output from command line
       String output = getOutputFromProcess(builder);
       String[] splitOutput = output.split("\n");
 
@@ -133,7 +134,8 @@ public class TestUtilities {
       for (String line : splitOutput) {
         // Checks if the next line is unwanted output
         if (nextLineIsOutput) {
-          if (line.equals("---------------------------------------------------------------")) {
+          if (line.equals(
+              "---------------------------------------------------------------")) {
             return actualStdOuts;
           } else {
             if (!line.equals(" ") && !line.isEmpty()) {
@@ -150,11 +152,10 @@ public class TestUtilities {
       return actualStdOuts;
 
     } else {
-      // for linux and pipeline, uses linux gcc and qemu to retrieve assembly output
+      // For Linux and CI/CD, uses Linux GCC and QEMU to retrieve assembly output
       builder
           .command("arm-linux-gnueabi-gcc", "-o", exeFilePath,
-              "-mcpu=arm1176jzf-s",
-              "-mtune=arm1176jzf-s", assFilePath);
+              "-mcpu=arm1176jzf-s", "-mtune=arm1176jzf-s", assFilePath);
       Process process = builder.start();
       try {
         process.waitFor();
@@ -170,8 +171,8 @@ public class TestUtilities {
   }
 
   /**
-   * Retrieves cached expected values of the .wacc file and returns the filtered standard output
-   * stream stored in the file.
+   * Retrieves cached expected values of the .wacc file and returns the filtered
+   * standard output stream stored in the file.
    */
   private static List<String> getReferenceCompilerStdOut(String filePath)
       throws IOException {

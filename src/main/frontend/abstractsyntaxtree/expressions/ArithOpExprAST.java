@@ -114,9 +114,9 @@ public class ArithOpExprAST extends Node {
     }
 
     if (addOverflow) {
-      BackEndGenerator.addToPreDefFunc("p_throw_overflow_error");
+      BackEndGenerator.addToPreDefFuncs("p_throw_overflow_error");
     } else {
-      BackEndGenerator.addToPreDefFunc("p_check_divide_by_zero");
+      BackEndGenerator.addToPreDefFuncs("p_check_divide_by_zero");
     }
 
     addToCurLabel(instrs);

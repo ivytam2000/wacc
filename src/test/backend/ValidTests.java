@@ -57,7 +57,7 @@ public class ValidTests {
         validFolderPath + "function/simple_functions/");
   }
 
-  @Ignore
+  
   @Test
   public void validIfTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "if/");
@@ -82,7 +82,7 @@ public class ValidTests {
         validFolderPath + "runtimeErr/");
   }
 
- @Ignore
+  @Ignore
   @Test
   public void validScopeTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
@@ -96,7 +96,7 @@ public class ValidTests {
         validFolderPath + "sequence/");
   }
 
-  @Ignore
+  
   @Test
   public void validVariablesTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(

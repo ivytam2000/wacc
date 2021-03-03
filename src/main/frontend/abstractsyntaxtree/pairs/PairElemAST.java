@@ -6,14 +6,11 @@ import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
 import backend.instructions.MOV;
-import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.abstractsyntaxtree.expressions.PairLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
-import frontend.symboltable.BoolID;
-import frontend.symboltable.CharID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
@@ -117,7 +114,7 @@ public class PairElemAST extends Node {
     instructions.add(new LDR(Instr.R4, Instr.SP, stackPointerOffset));
 
     instructions.add(new MOV("", Instr.R0, Instr.R4));
-    BackEndGenerator.addToPreDefFunc("p_check_null_pointer");
+    BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
     instructions.add(new BRANCH(true, "", "p_check_null_pointer"));
 
     if (first) {
