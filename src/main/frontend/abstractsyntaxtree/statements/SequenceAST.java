@@ -20,7 +20,7 @@ public class SequenceAST extends Node {
 
   @Override
   public void toAssembly() {
-    for(Node stat : statements){
+    for (Node stat : statements) {
       stat.toAssembly();
     }
   }

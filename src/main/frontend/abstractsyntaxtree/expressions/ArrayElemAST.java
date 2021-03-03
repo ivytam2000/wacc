@@ -72,7 +72,7 @@ public class ArrayElemAST extends Node {
   //TODO: Nested array?
   @Override
   public void toAssembly() {
-    BackEndGenerator.addToPreDefFunc("p_check_array_bounds");
+    BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
     List<Instr> instrs = new ArrayList<>();
     String target = Instr.getTargetReg();
     instrs.add(new ADD(false, target, Instr.SP, getOffset()));

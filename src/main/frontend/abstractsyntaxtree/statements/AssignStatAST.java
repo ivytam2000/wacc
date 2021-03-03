@@ -12,11 +12,8 @@ import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.pairs.PairElemAST;
 import frontend.errorlistener.SemanticErrorCollector;
-import frontend.symboltable.ArrayID;
-import frontend.symboltable.Identifier;
-import frontend.symboltable.PairID;
-import frontend.symboltable.SymbolTable;
-import frontend.symboltable.TypeID;
+import frontend.symboltable.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,13 +63,20 @@ public class AssignStatAST extends Node {
   @Override
   public void toAssembly() {
     rhs.toAssembly();
-    if (lhs.getAssignNode() instanceof ArrayElemAST || lhs.getAssignNode() instanceof PairElemAST) {
+    if (lhs.getAssignNode() instanceof ArrayElemAST || lhs
+        .getAssignNode() instanceof PairElemAST) {
       String sndReg = Instr.incDepth();
       lhs.toAssembly();
       String fstReg = Instr.decDepth();
       Instr.addToCurLabel(new STR(fstReg, sndReg, 0));
     } else { // Regular variable
-      Instr.addToCurLabel(new STR(Instr.R4, Instr.SP, symtab.getStackOffset(lhs.getIdentName())));
+      int bytes = 4;
+      if (lhs.getIdentifier().getType() instanceof CharID || lhs.getIdentifier()
+          .getType() instanceof BoolID) {
+        bytes = 1;
+      }
+      Instr.addToCurLabel(new STR(bytes, "", Instr.R4, Instr.SP,
+          symtab.getStackOffset(lhs.getIdentName())));
     }
   }
 }

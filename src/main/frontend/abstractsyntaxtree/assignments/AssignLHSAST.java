@@ -68,7 +68,7 @@ public class AssignLHSAST extends Node {
         // Check size
         instrs.add(new MOV("", Instr.R0, sndReg));
         instrs.add(new MOV("", Instr.R1, fstReg));
-        BackEndGenerator.addToPreDefFunc("p_check_array_bounds");
+        BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
         instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
         // Go to first element (0th element is size)
         int size = assignNode.getIdentifier().getType().getBytes();
@@ -82,7 +82,7 @@ public class AssignLHSAST extends Node {
       String reg = Instr.getTargetReg();
       instrs.add(new LDR(reg, Instr.SP, symtab.getStackOffset(assignName)));
       instrs.add(new MOV("", Instr.R0, reg));
-      BackEndGenerator.addToPreDefFunc("p_check_null_pointer");
+      BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
       instrs.add(new BRANCH(true, "", "p_check_null_pointer"));
       instrs.add(new LDR(reg, reg, ((PairElemAST) assignNode).getFirst() ? 0 : assignNode.getIdentifier().getType().getBytes()));
     }

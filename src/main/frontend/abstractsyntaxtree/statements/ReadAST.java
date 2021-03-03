@@ -2,7 +2,6 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.AssignLHSContext;
 import backend.BackEndGenerator;
-import backend.instructions.ADD;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
@@ -48,7 +47,7 @@ public class ReadAST extends Node {
     MOV movInstr = new MOV("", Instr.R0, Instr.R4);
     instrs.add(movInstr);
     String label = lhsType instanceof IntID ? "p_read_int" : "p_read_char";
-    BackEndGenerator.addToPreDefFunc(label);
+    BackEndGenerator.addToPreDefFuncs(label);
     BRANCH brInstr = new BRANCH(true, "", label);
     instrs.add(brInstr);
     addToCurLabel(instrs);
