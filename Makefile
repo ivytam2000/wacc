@@ -17,6 +17,8 @@ test: all
 	[ -z "$(TESTCLASS)" ] && ./gradlew test || ./gradlew test --tests $(TESTCLASS)
 
 clean:
+	$(RM) *.s
+	$(RM) *.exe
 	$(RM) $(SOURCE_DIR)/main/antlr
 	gradle clean
 
