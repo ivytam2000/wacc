@@ -2,6 +2,8 @@ package frontend.abstractsyntaxtree.functions;
 
 import antlr.WaccParser.FuncContext;
 import backend.instructions.Instr;
+import backend.instructions.LTORG;
+import backend.instructions.MOV;
 import backend.instructions.POP;
 import backend.instructions.PUSH;
 import frontend.abstractsyntaxtree.Node;
@@ -61,10 +63,11 @@ public class FuncAST extends Node {
     List<Instr> instructions = new ArrayList<>();
     instructions.add(new PUSH(Instr.LR));
     statements.toAssembly();
-    // TODO: MOV r0, r4?
+    instructions.add(new MOV("", Instr.R0, Instr.getTargetReg()));
     instructions.add(new POP(Instr.PC));
     instructions.add(new POP(Instr.PC));
-    addToUsrDefFuncs(funcName, instructions);
+    instructions.add(new LTORG());
+    addToUsrDefFuncs("f_" + funcName, instructions);
   }
 
   public void addFuncToGlobalScope() {

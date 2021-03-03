@@ -17,7 +17,6 @@ public class BackEndGenerator {
   private static final List<String> preDefFuncs = new ArrayList<>();
   private static Map<String, List<Instr>> usrDefFuncs;
 
-  // private static List<Instr> mainInstructions;
   private final AST ast;
 
   public BackEndGenerator(AST ast) {
@@ -25,12 +24,11 @@ public class BackEndGenerator {
     dataSegmentStrings.clear();
     preDefFuncs.clear();
     usrDefFuncs = new HashMap<>();
-    // mainInstructions = generateMainInstructions();
   }
 
   public String run() {
     StringBuilder output = new StringBuilder();
-    // generates the main body of instructions (main, L0, L1 etc)
+    // Generates the main body of instructions, e.g.: main, L0, L1 etc.
     generateMainInstructions();
 
     Map<String, List<Instr>> preDefFuncInstrs = Utils.getPreDefFunc(preDefFuncs);
@@ -71,8 +69,6 @@ public class BackEndGenerator {
       output.append(writeTextSection(label, Instr.getLabels().get(label)));
     }
 
-    // output.append(writeTextSection("main", mainInstructions));
-
     for (Map.Entry<String, List<Instr>> pdf : preDefFuncInstrs.entrySet()) {
       String pdfName = pdf.getKey();
       List<Instr> pdfInstrs = pdf.getValue();
@@ -81,16 +77,6 @@ public class BackEndGenerator {
 
     return output.toString();
   }
-
-  /*  private Map<String, List<Instr>> generateFuncInstructions() {
-    Map<String, List<Instr>> defFunc = new HashMap<>();
-
-    for (Node funcAST : ast.getFuncASTs()) {
-      defFunc.put(funcAST.getIdentifier().toString(), funcAST.toAssembly());
-    }
-
-    return defFunc;
-  }*/
 
   private void generateMainInstructions() {
     addToCurLabel(Utils.getStartRoutine(ast.getSymtab()));

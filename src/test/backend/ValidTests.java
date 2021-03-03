@@ -101,7 +101,7 @@ public class ValidTests {
     executablesFromOurCompilerMatchesReferenceCompiler(
         validFolderPath + "variables/");
   }
-  
+
   @Test
   public void validWhileTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(

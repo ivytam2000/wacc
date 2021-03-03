@@ -64,7 +64,7 @@ public class Utils {
     return instrs;
   }
 
-  // end-routine function - not sure if this is valid
+  // End-routine function - not sure if this is valid
   // ADD sp, sp, #stackSize
   // LDR r0 =0
   // POP {pc}
@@ -105,7 +105,6 @@ public class Utils {
     // brInstr should not be null
     return brInstr;
   }
-
 
   // ------ PRE-DEFINED FUNCTIONS ------
 
@@ -282,7 +281,7 @@ public class Utils {
 
     pdf.put("p_free_pair", instrs);
   }
-
+  
   private static void p_read_char(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
@@ -294,5 +293,4 @@ public class Utils {
 
     pdf.put("p_read_char", instrs);
   }
-
 }
