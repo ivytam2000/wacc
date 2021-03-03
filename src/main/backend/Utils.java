@@ -106,9 +106,17 @@ public class Utils {
     } else if (type instanceof StringID) {
       BackEndGenerator.addToPreDefFuncs("p_print_string");
       brInstr = new BRANCH(true, "", "p_print_string");
-    } else if (type instanceof OptionalPairID || type instanceof ArrayID) {
+    } else if (type instanceof OptionalPairID) {
       BackEndGenerator.addToPreDefFuncs("p_print_reference");
       brInstr = new BRANCH(true, "", "p_print_reference");
+    } else if (type instanceof ArrayID) {
+      if (((ArrayID) type).getElemType() instanceof CharID) {
+        BackEndGenerator.addToPreDefFuncs("p_print_string");
+        brInstr = new BRANCH(true, "", "p_print_string");
+      } else {
+        BackEndGenerator.addToPreDefFuncs("p_print_reference");
+        brInstr = new BRANCH(true, "", "p_print_reference");
+      }
     }
     // brInstr should not be null
     return brInstr;

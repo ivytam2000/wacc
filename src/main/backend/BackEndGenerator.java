@@ -16,6 +16,7 @@ import static backend.instructions.Instr.setCurLabel;
 public class BackEndGenerator {
 
   private static final List<String> dataSegmentStrings = new ArrayList<>();
+  private static int dataSegmentIndex = 0;
 
   private static final List<String> preDefFuncs = new ArrayList<>();
   private static Map<String, List<Instr>> usrDefFuncs;
@@ -51,8 +52,9 @@ public class BackEndGenerator {
       int msgIndex = 0;
       for (String dataSegmentString : dataSegmentStrings) {
         output.append("msg_").append(msgIndex).append(":\n");
-        int len = dataSegmentString.length();
-        for (int i = 0; i < len; ) {
+        int limit = dataSegmentString.length();
+        int len = limit;
+        for (int i = 0; i < limit; ) {
           if (dataSegmentString.charAt(i) == '\\') {
             len--;
             i++;
@@ -100,7 +102,8 @@ public class BackEndGenerator {
 
   public static int addToDataSegment(String msg) {
     dataSegmentStrings.add(msg);
-    return dataSegmentStrings.indexOf(msg);
+    // If we use indexOf method, always returns first occurence
+    return dataSegmentIndex++;
   }
 
   public static void addToPreDefFuncs(String func) {
