@@ -216,9 +216,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
     instrs.add(new LDR(4, "NE", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(TRUE_MSG))));
-//    instrs.add(new LDR(4, "NE", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(TRUE_MSG)));
     instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(FALSE_MSG))));
-//    instrs.add(new LDR(4, "EQ", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(FALSE_MSG)));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
     instrs.add(new MOV("", Instr.R0, "#0"));
@@ -233,7 +231,6 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R1, "#0"));
     instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG))));
-//    instrs.add(new LDR(4, "EQ", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG)));
     BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
     instrs.add(new POP(Instr.PC));
@@ -262,7 +259,6 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
     instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
-//    instrs.add(new LDR(4, "EQ", Instr.R0, "msg_" + BackEndGenerator.addToDataSegment(NULL_MSG)));
     BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true,"EQ", "p_throw_runtime_error"));
     instrs.add(new POP(Instr.PC));

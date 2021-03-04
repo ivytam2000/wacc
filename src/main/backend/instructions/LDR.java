@@ -28,7 +28,6 @@ public class LDR extends Instr {
     this(4, "", dest, addrMode);
   }
 
-
   //TODO: Fix switch case
   private String getLdr() {
     String ldr = "LDR";
