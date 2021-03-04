@@ -77,10 +77,10 @@ public class ArrayLiterAST extends Node {
 
       int offset = i * bytesNeeded + 4;
       addToCurLabel(
-          new STR(curr_ident.getType().getBytes(), "", sndReg, fstReg, offset));
+          new STR(curr_ident.getType().getBytes(), "", sndReg, AddrMode.buildAddrWithOffset(fstReg, offset)));
     }
 
     addToCurLabel(new LDR(Instr.R5, AddrMode.buildVal(lengthOfArray)));
-    addToCurLabel(new STR(Instr.R5, Instr.R4, 0));
+    addToCurLabel(new STR(Instr.R5, AddrMode.buildAddr(Instr.R4)));
   }
 }

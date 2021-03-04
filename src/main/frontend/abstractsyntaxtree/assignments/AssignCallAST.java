@@ -104,7 +104,7 @@ public class AssignCallAST extends AssignRHSAST {
       int offset = argNode.getIdentifier().getType().getBytes();
       accOffset += offset;
       symtab.incrementFuncOffset(offset);
-      Instr.addToCurLabel(new STR(offset, "", transferReg, Instr.SP, -offset, true));
+      Instr.addToCurLabel(new STR(offset, "", transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
     }
 
     instructions.add(new BRANCH(true, "", "f_" + funcName));

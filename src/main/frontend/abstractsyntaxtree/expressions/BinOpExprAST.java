@@ -105,7 +105,7 @@ public class BinOpExprAST extends Node {
       addToCurLabel(instrs);
       return ;
     } else if (op.equals("||")) {
-      instrs.add(new ORR(false, fstReg, sndReg));
+      instrs.add(new ORR(false, fstReg, AddrMode.buildReg(sndReg)));
       addToCurLabel(instrs);
       return ;
     }

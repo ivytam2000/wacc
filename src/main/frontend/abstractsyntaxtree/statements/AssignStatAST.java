@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.statements;
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.AssignLHSContext;
 import backend.BackEndGenerator;
+import backend.instructions.AddrMode;
 import backend.instructions.Instr;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
@@ -59,7 +60,7 @@ public class AssignStatAST extends Node {
     }
   }
 
-  //TODO: Can we somehow collapse ArrayElem and PairElem case?
+  // TODO: Can we somehow collapse ArrayElem and PairElem case?
   @Override
   public void toAssembly() {
     rhs.toAssembly();
@@ -69,10 +70,10 @@ public class AssignStatAST extends Node {
       String sndReg = Instr.incDepth();
       lhs.toAssembly();
       String fstReg = Instr.decDepth();
-      Instr.addToCurLabel(new STR(bytes, "" , fstReg, sndReg, 0));
+      Instr.addToCurLabel(new STR(bytes, "" , fstReg, AddrMode.buildAddr(sndReg)));
     } else { // Regular variable
-      Instr.addToCurLabel(new STR(bytes, "", Instr.R4, Instr.SP,
-          symtab.getStackOffset(lhs.getIdentName())));
+      Instr.addToCurLabel(new STR(bytes, "", Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP,
+          symtab.getStackOffset(lhs.getIdentName()))));
     }
   }
 }

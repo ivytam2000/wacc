@@ -63,8 +63,8 @@ public class AssignRHSAST extends Node {
         TypeID child_1 = children.get(0).getIdentifier().getType();
         addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(child_1.getBytes())));
         addToCurLabel(new BRANCH(true, "", "malloc"));
-        addToCurLabel(new STR(child_1.getBytes(), "", Instr.R5, Instr.R0, 0));
-        addToCurLabel(new STR(Instr.R0, Instr.R4, 0));
+        addToCurLabel(new STR(child_1.getBytes(), "", Instr.R5, AddrMode.buildAddr(Instr.R0)));
+        addToCurLabel(new STR(Instr.R0, AddrMode.buildAddr(Instr.R4)));
 
         Instr.incDepth();
       }
@@ -77,8 +77,8 @@ public class AssignRHSAST extends Node {
           TypeID child_2 = children.get(1).getIdentifier().getType();
           addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(child_2.getBytes())));
           addToCurLabel(new BRANCH(true, "", "malloc"));
-          addToCurLabel(new STR(child_2.getBytes(), "", Instr.R5, Instr.R0, 0));
-          addToCurLabel(new STR(Instr.R0, Instr.R4, 4));
+          addToCurLabel(new STR(child_2.getBytes(), "", Instr.R5, AddrMode.buildAddr(Instr.R0)));
+          addToCurLabel(new STR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 4)));
         }
       }
 
