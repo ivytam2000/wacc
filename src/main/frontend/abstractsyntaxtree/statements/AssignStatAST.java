@@ -70,10 +70,12 @@ public class AssignStatAST extends Node {
       String sndReg = Instr.incDepth();
       lhs.toAssembly();
       String fstReg = Instr.decDepth();
-      Instr.addToCurLabel(new STR(bytes, "" , fstReg, AddrMode.buildAddr(sndReg)));
+      Instr.addToCurLabel(
+          new STR(bytes, "", fstReg, AddrMode.buildAddr(sndReg)));
     } else { // Regular variable
-      Instr.addToCurLabel(new STR(bytes, "", Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP,
-          symtab.getStackOffset(lhs.getIdentName()))));
+      Instr.addToCurLabel(
+          new STR(bytes, "", Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP,
+              symtab.getStackOffset(lhs.getIdentName()))));
     }
   }
 }

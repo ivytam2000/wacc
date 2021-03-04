@@ -98,7 +98,8 @@ public class UnOpExprAST extends Node {
       instrs.add(new ORR(true, Instr.getTargetReg(), AddrMode.buildImm(1)));
     } else if (ctx.MINUS() != null) {
       // Revere subtract
-      instrs.add(new SUB(true, true, Instr.getTargetReg(), Instr.getTargetReg(), "#0"));
+      instrs.add(new SUB(true, true, Instr.getTargetReg(), Instr.getTargetReg(),
+          AddrMode.buildImm(0)));
       // Check for overflow
       BackEndGenerator.addToPreDefFuncs("p_throw_overflow_error");
       instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));

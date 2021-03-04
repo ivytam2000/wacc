@@ -89,7 +89,8 @@ public class ArithOpExprAST extends Node {
         instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
         break;
       case "-":
-        instrs.add(new SUB(false, true, targetReg, fstReg, sndReg));
+        instrs.add(
+            new SUB(false, true, targetReg, fstReg, AddrMode.buildReg(sndReg)));
         instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
         break;
       case "*":
@@ -107,7 +108,8 @@ public class ArithOpExprAST extends Node {
         instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(sndReg)));
         instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
         instrs.add(new BRANCH(true, "", "__aeabi_idiv"));
-        instrs.add(new MOV("", Instr.getTargetReg(), AddrMode.buildReg(Instr.R0)));
+        instrs.add(
+            new MOV("", Instr.getTargetReg(), AddrMode.buildReg(Instr.R0)));
         break;
       case "%":
         addOverflow = false;
@@ -115,10 +117,11 @@ public class ArithOpExprAST extends Node {
         instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(sndReg)));
         instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
         instrs.add(new BRANCH(true, "", "__aeabi_idivmod"));
-        instrs.add(new MOV("", Instr.getTargetReg(), AddrMode.buildReg(Instr.R1)));
+        instrs.add(
+            new MOV("", Instr.getTargetReg(), AddrMode.buildReg(Instr.R1)));
         break;
       default:
-        assert(false); // UNREACHABLE
+        assert (false); // UNREACHABLE
     }
 
     if (addOverflow) {

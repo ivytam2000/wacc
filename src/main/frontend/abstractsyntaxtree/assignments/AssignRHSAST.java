@@ -43,7 +43,7 @@ public class AssignRHSAST extends Node {
 
   @Override
   public void toAssembly() {
-   // List<Instr> instructions = new ArrayList<>();
+    // List<Instr> instructions = new ArrayList<>();
     if (identifier instanceof PairID) {
       // We only malloc if it's newpair
       // malloc pair struct
@@ -63,27 +63,31 @@ public class AssignRHSAST extends Node {
         TypeID child_1 = children.get(0).getIdentifier().getType();
         addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(child_1.getBytes())));
         addToCurLabel(new BRANCH(true, "", "malloc"));
-        addToCurLabel(new STR(child_1.getBytes(), "", Instr.R5, AddrMode.buildAddr(Instr.R0)));
+        addToCurLabel(new STR(child_1.getBytes(), "", Instr.R5,
+            AddrMode.buildAddr(Instr.R0)));
         addToCurLabel(new STR(Instr.R0, AddrMode.buildAddr(Instr.R4)));
 
         Instr.incDepth();
       }
       // Second pair elem
       // If children is NOT an array of pairs elem
-      if(children.size() == 2){
+      if (children.size() == 2) {
         children.get(1).toAssembly();
         if (isNewpair) {
           Instr.decDepth();
           TypeID child_2 = children.get(1).getIdentifier().getType();
-          addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(child_2.getBytes())));
+          addToCurLabel(
+              new LDR(Instr.R0, AddrMode.buildVal(child_2.getBytes())));
           addToCurLabel(new BRANCH(true, "", "malloc"));
-          addToCurLabel(new STR(child_2.getBytes(), "", Instr.R5, AddrMode.buildAddr(Instr.R0)));
-          addToCurLabel(new STR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 4)));
+          addToCurLabel(new STR(child_2.getBytes(), "", Instr.R5,
+              AddrMode.buildAddr(Instr.R0)));
+          addToCurLabel(
+              new STR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 4)));
         }
       }
 
     } else {
-      for (Node expr: children) {
+      for (Node expr : children) {
         expr.toAssembly();
       }
     }

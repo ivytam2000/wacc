@@ -46,9 +46,11 @@ public class Utils {
       // If greater than 10 bits
       while (size > TEN_BITS) {
         size = size - TEN_BITS;
-        instrs.add(new SUB(false, false, Instr.SP, Instr.SP, "#" + TEN_BITS));
+        instrs.add(new SUB(false, false, Instr.SP, Instr.SP,
+            AddrMode.buildImm(TEN_BITS)));
       }
-      instrs.add(new SUB(false, false, Instr.SP, Instr.SP, "#" + size));
+      instrs.add(
+          new SUB(false, false, Instr.SP, Instr.SP, AddrMode.buildImm(size)));
     }
     return instrs;
   }
