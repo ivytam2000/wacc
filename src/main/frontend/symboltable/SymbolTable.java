@@ -117,4 +117,8 @@ public class SymbolTable {
     int ans = Collections.min(varOffsets.values());
     return funcContext ? ans - 4 : ans;
   }
+
+  public SymbolTable getParent(){
+    return parent;
+  }
 }

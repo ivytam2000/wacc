@@ -80,9 +80,9 @@ public class FuncAST extends Node {
     statements.toAssembly();
     funcsymtab.setFuncContext(false);
 
-    addToCurLabel(getEndRoutine(funcsymtab, false));
+   // addToCurLabel(getEndRoutine(funcsymtab, false));
 
-    instructions.add(new POP(Instr.PC));
+   // instructions.add(new POP(Instr.PC));
     instructions.add(new POP(Instr.PC));
     instructions.add(new LTORG());
     addToCurLabel(instructions);

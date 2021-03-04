@@ -1,10 +1,13 @@
 package frontend.abstractsyntaxtree.statements;
 
+import static backend.instructions.Instr.PC;
 import static backend.instructions.Instr.addToCurLabel;
 
 import antlr.WaccParser.Return_statContext;
+import backend.Utils;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
+import backend.instructions.POP;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.SymbolTable;
@@ -42,5 +45,9 @@ public class ReturnAST extends Node {
     expr.toAssembly();
     instructions.add(new MOV("", Instr.R0, Instr.getTargetReg()));
     addToCurLabel(instructions);
+    SymbolTable scope = symtab.getParent().isTopLevel() ? symtab :
+        symtab.getParent();
+    addToCurLabel(Utils.getEndRoutine(scope, false));
+    addToCurLabel(new POP(PC));
   }
 }
