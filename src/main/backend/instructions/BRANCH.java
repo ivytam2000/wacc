@@ -2,7 +2,9 @@ package backend.instructions;
 
 public class BRANCH extends Instr {
 
-  //bool indicating if its B or BL (branch with link
+  /**
+   * Indicates if its B or BL, i.e. branch with link.
+   */
   private final boolean link;
   private final String conditions;
   private final String label;

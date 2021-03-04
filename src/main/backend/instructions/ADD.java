@@ -3,38 +3,34 @@ package backend.instructions;
 public class ADD extends Instr {
 
   private final boolean setFlags;
-  private final String dest; // Also first operand
+  private final String dst; // Also first operand
   private final String src;
-  private AddrMode operand;
-  private AddrMode shift;
+  private final AddrMode operand;
+  private final AddrMode shift;
 
-  public ADD(boolean setFlags, String dest, String src, AddrMode operand) {
-    this.setFlags = setFlags;
-    this.dest = dest;
-    this.src = src;
-    this.operand = operand;
-    this.shift = null;
+  public ADD(boolean setFlags, String dst, String src, AddrMode operand) {
+    this(setFlags, dst, src, operand, null);
   }
 
-  public ADD(boolean setFlags, String dest, String src, AddrMode operand,
+  public ADD(boolean setFlags, String dst, String src, AddrMode operand,
       AddrMode shift) {
     this.setFlags = setFlags;
-    this.dest = dest;
+    this.dst = dst;
     this.src = src;
     this.operand = operand;
     this.shift = shift;
   }
 
   /**
-   * Returns ADD{S} dest, dest, operand2.
+   * Returns ADD{S} dest, dest, operand2; and shifts if necessary.
    */
   @Override
   public String translateToArm() {
-    String s = "";
+    String shiftArg = "";
     if (shift != null) {
-      s = ", " + shift.translateToArm();
+      shiftArg = ", " + shift.translateToArm();
     }
     return "ADD" + (setFlags ? "S " : " ")
-        + dest + ", " + src + ", " + operand.translateToArm() + s;
+        + dst + ", " + src + ", " + operand.translateToArm() + shiftArg;
   }
 }

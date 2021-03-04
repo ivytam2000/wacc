@@ -87,7 +87,7 @@ public class ArrayElemAST extends Node {
       instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
       instrs.add(new ADD(false, target, target, AddrMode.buildImm(4)));
       if (size > 1) {
-        instrs.add(new ADD(false, target, target, AddrMode.buildReg(sndReg), AddrMode.buildImmWithShiftL(size / 2)));
+        instrs.add(new ADD(false, target, target, AddrMode.buildReg(sndReg), AddrMode.buildImmWithLSL(size / 2)));
       } else {
         instrs.add(new ADD(false, target, target, AddrMode.buildReg(sndReg)));
       }

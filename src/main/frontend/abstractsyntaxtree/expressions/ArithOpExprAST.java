@@ -96,9 +96,9 @@ public class ArithOpExprAST extends Node {
       case "*":
         instrs.add(new MUL(fstReg, sndReg, regsOnStack));
         if (regsOnStack) {
-          instrs.add(new CMP(fstReg, AddrMode.buildReg(sndReg), AddrMode.buildArithmeticShiftL(31)));
+          instrs.add(new CMP(fstReg, AddrMode.buildReg(sndReg), AddrMode.buildImmWithASR(31)));
         } else {
-          instrs.add(new CMP(sndReg,  AddrMode.buildReg(fstReg), AddrMode.buildArithmeticShiftL(31)));
+          instrs.add(new CMP(sndReg,  AddrMode.buildReg(fstReg), AddrMode.buildImmWithASR(31)));
         }
         instrs.add(new BRANCH(true, "NE", "p_throw_overflow_error"));
         break;

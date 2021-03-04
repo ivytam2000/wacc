@@ -2,7 +2,6 @@ package backend;
 
 import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.AST;
-import frontend.abstractsyntaxtree.Node;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Map;
 
 import static backend.instructions.Instr.addToCurLabel;
 import static backend.instructions.Instr.addToLabelOrder;
-import static backend.instructions.Instr.mainLabelName;
 import static backend.instructions.Instr.setCurLabel;
 
 public class BackEndGenerator {

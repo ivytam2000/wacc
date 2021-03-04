@@ -90,6 +90,11 @@ public class Utils {
     return instrs;
   }
 
+  /**
+   * Adds functions to the list of pre-defined functions that need to be in the
+   * assembly file depending on the type of identifier we are dealing with, e.g.
+   * integers need to print in case of an overflow.
+   */
   public static BRANCH getPrintBranch(TypeID type) {
     BRANCH brInstr = null;
     if (type instanceof IntID) {

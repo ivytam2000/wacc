@@ -2,8 +2,8 @@ package backend.instructions;
 
 public class CMP extends Instr {
 
-  private final String reg; // first operand
-  private final AddrMode operand; // second operand
+  private final String reg; // First operand
+  private final AddrMode operand; // Second operand
   private final AddrMode shift;
 
   public CMP(String reg, AddrMode operand, AddrMode shift) {
@@ -13,9 +13,7 @@ public class CMP extends Instr {
   }
 
   public CMP(String reg, AddrMode operand) {
-    this.reg = reg;
-    this.operand = operand;
-    this.shift = null;
+    this(reg, operand, null);
   }
 
   @Override

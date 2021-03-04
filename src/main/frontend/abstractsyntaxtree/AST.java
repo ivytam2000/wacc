@@ -1,13 +1,7 @@
 package frontend.abstractsyntaxtree;
 
-import static backend.instructions.Instr.addToLabelOrder;
-import static backend.instructions.Instr.mainLabelName;
-import static backend.instructions.Instr.setCurLabel;
-
-import backend.instructions.Instr;
 import frontend.symboltable.SymbolTable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * A top-level AST node for the whole program.

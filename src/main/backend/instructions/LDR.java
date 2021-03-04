@@ -1,10 +1,9 @@
 package backend.instructions;
 
-// Very similar to STR
 public class LDR extends Instr {
 
-  // Number of bytes determines the type of str instruction
-  // 4 bytes = word
+  // Number of bytes determines the type of STR instruction
+  // A word is 4 bytes
   private final int bytes;
   private final String conditions;
   private final AddrMode addrMode;
@@ -25,22 +24,26 @@ public class LDR extends Instr {
   }
 
   //TODO: Fix switch case
+
+  /**
+   * Gets the correct type of LDR instruction depending on size of operand.
+   */
   private String getLdr() {
     String ldr = "LDR";
     switch (bytes) {
-      //Signed byte
+      // Signed byte
       case 1:
         ldr += "SB";
         break;
-      //Signed halfword
+      // Signed halfword
       case -2:
         ldr += "SH";
         break;
-      //Halfword
+      // Halfword
       case 2:
         ldr += "H";
         break;
-      //Word
+      // Word
       default:
     }
     return ldr + conditions;

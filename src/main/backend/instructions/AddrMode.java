@@ -6,6 +6,10 @@ public class AddrMode extends Instr {
   private final int offsetFromOperand;
   private final AddrModeType type;
 
+  /**
+   * Converts registers, values and offsets into a general addressing mode
+   * format for any assembly language, e.g. [operand, #offsetFromOperand].
+   */
   private AddrMode(Object operand, int offsetFromOperand, AddrModeType type) {
     this.operand = operand;
     this.offsetFromOperand = offsetFromOperand;
@@ -24,28 +28,35 @@ public class AddrMode extends Instr {
     return new AddrMode(operand, 0, AddrModeType.IMM);
   }
 
-  public static AddrMode buildImmWithShiftL(Object operand) {
-    return new AddrMode(operand, 0, AddrModeType.IMM_SHIFT_L);
+  public static AddrMode buildImmWithLSL(Object operand) {
+    return new AddrMode(operand, 0, AddrModeType.LOGIC_SHIFT_L);
   }
 
-  public static AddrMode buildImmWithShiftR(Object operand) {
-    return new AddrMode(operand, 0, AddrModeType.IMM_SHIFT_R);
+  public static AddrMode buildImmWithLSR(Object operand) {
+    return new AddrMode(operand, 0, AddrModeType.LOGIC_SHIFT_R);
   }
 
-  public static AddrMode buildArithmeticShiftL(Object operand) {
+  public static AddrMode buildImmWithASL(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.ARITH_SHIFT_L);
+  }
+
+  public static AddrMode buildImmWithASR(Object operand) {
+    return new AddrMode(operand, 0, AddrModeType.ARITH_SHIFT_R);
   }
 
   public static AddrMode buildAddr(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.ADDR_OFFSET);
   }
 
-  public static AddrMode buildAddrWithOffset(Object operand, int offsetFromOperand) {
+  public static AddrMode buildAddrWithOffset(Object operand,
+      int offsetFromOperand) {
     return new AddrMode(operand, offsetFromOperand, AddrModeType.ADDR_OFFSET);
   }
 
-  public static AddrMode buildAddrWithWriteBack(Object operand, int offsetFromOperand) {
-    return new AddrMode(operand, offsetFromOperand, AddrModeType.ADDR_OFFSET_WRITEBACK);
+  public static AddrMode buildAddrWithWriteBack(Object operand,
+      int offsetFromOperand) {
+    return new AddrMode(operand, offsetFromOperand,
+        AddrModeType.ADDR_OFFSET_WRITEBACK);
   }
 
   @Override
@@ -57,11 +68,13 @@ public class AddrMode extends Instr {
         return "=" + operand;
       case IMM:
         return "#" + operand;
-      case IMM_SHIFT_L:
+      case LOGIC_SHIFT_L:
         return "LSL #" + operand;
-      case IMM_SHIFT_R:
+      case LOGIC_SHIFT_R:
         return "LSR #" + operand;
       case ARITH_SHIFT_L:
+        return "ASL #" + operand;
+      case ARITH_SHIFT_R:
         return "ASR #" + operand;
       case ADDR_OFFSET:
         if (offsetFromOperand == 0) {
@@ -72,7 +85,7 @@ public class AddrMode extends Instr {
       case ADDR_OFFSET_WRITEBACK:
         return ("[" + operand + ", #" + offsetFromOperand + "]!");
       default:
-        return "";
+        throw new IllegalArgumentException("Addressing mode does not exist");
     }
   }
 }

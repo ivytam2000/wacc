@@ -20,16 +20,16 @@ public abstract class Instr {
   public static final String LR = "lr";
   public static final String PC = "pc";
 
-  public static final String mainLabelName = "main";
+  public static final String MAIN_LABEL = "main";
 
   private static final String[] regs = {R4, R5, R6, R7, R8, R9, R10, R11};
   private static int regsDepth = 0;
 
   private static int nextLabelNumber = 0;
-  private static String curLabel = "main";
+  private static String curLabel = MAIN_LABEL;
   // List of labels to keep track of the order to print the labels
   private static List<String> labelOrder = new ArrayList<>(
-      Collections.singletonList("main"));
+      Collections.singletonList(MAIN_LABEL));
 
   private static Map<String, List<Instr>> labels = new HashMap<>();
 
@@ -73,7 +73,9 @@ public abstract class Instr {
     return nextLabel;
   }
 
-  // Adds to the label order meaning that label should be printed next
+  /**
+   * Adds to the label order, meaning that this label should be printed next.
+   */
   public static void addToLabelOrder(String label) {
     labelOrder.add(label);
   }
@@ -89,6 +91,9 @@ public abstract class Instr {
     }
   }
 
+  /**
+   * Adds instructions to the text section named with the current label.
+   */
   public static void addToCurLabel(Instr instr) {
     List<Instr> curInstrs = labels.containsKey(curLabel) ?
         labels.get(curLabel) : new ArrayList<>();
@@ -104,5 +109,12 @@ public abstract class Instr {
     return labels;
   }
 
+  /**
+   * Converts the generalised instruction object into ARM-specific assembly
+   * code. Subclasses of Instr should store sufficient metadata about the
+   * instruction to do this translation. If necessary, we could also have
+   * similar methods such as translateToX86(), translateToMips() etc., without
+   * having to change the implementation of the Instr object.
+   */
   public abstract String translateToArm();
 }
