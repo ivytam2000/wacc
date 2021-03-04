@@ -5,6 +5,7 @@ import antlr.WaccParser.ArithOpExpr_2Context;
 import antlr.WaccParser.ExprContext;
 import backend.BackEndGenerator;
 import backend.instructions.ADD;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.CMP;
 import backend.instructions.Instr;
@@ -84,7 +85,7 @@ public class ArithOpExprAST extends Node {
     boolean addOverflow = true;
     switch (op) {
       case "+":
-        instrs.add(new ADD(true, targetReg, fstReg, sndReg));
+        instrs.add(new ADD(true, targetReg, fstReg, AddrMode.buildReg(sndReg)));
         instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
         break;
       case "-":
@@ -94,9 +95,9 @@ public class ArithOpExprAST extends Node {
       case "*":
         instrs.add(new MUL(fstReg, sndReg, regsOnStack));
         if (regsOnStack) {
-          instrs.add(new CMP(fstReg, sndReg, "ASR #31"));
+          instrs.add(new CMP(fstReg, AddrMode.buildReg(sndReg), AddrMode.buildArithmeticShiftL(31)));
         } else {
-          instrs.add(new CMP(sndReg, fstReg, "ASR #31"));
+          instrs.add(new CMP(sndReg,  AddrMode.buildReg(fstReg), AddrMode.buildArithmeticShiftL(31)));
         }
         instrs.add(new BRANCH(true, "NE", "p_throw_overflow_error"));
         break;

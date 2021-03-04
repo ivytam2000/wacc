@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.assignments;
 
 import antlr.WaccParser.Call_assignRHSContext;
 import backend.instructions.ADD;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
@@ -108,7 +109,7 @@ public class AssignCallAST extends AssignRHSAST {
 
     instructions.add(new BRANCH(true, "", "f_" + funcName));
     if (accOffset > 0) {
-      instructions.add(new ADD(false, Instr.SP, Instr.SP, "#" + accOffset));
+      instructions.add(new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset)));
     }
     symtab.resetFuncOffset();
     instructions.add(new MOV("", transferReg, Instr.R0));

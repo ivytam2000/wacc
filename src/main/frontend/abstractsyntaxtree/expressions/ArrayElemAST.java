@@ -75,7 +75,7 @@ public class ArrayElemAST extends Node {
   public void toAssembly() {
     BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
     String target = Instr.getTargetReg();
-    addToCurLabel(new ADD(false, target, Instr.SP, getOffset()));
+    addToCurLabel(new ADD(false, target, Instr.SP, AddrMode.buildReg(getOffset())));
     int size = getIdentifier().getType().getBytes();
     for (Node e : exprs) {
       List<Instr> instrs = new ArrayList<>();
@@ -87,8 +87,12 @@ public class ArrayElemAST extends Node {
       instrs.add(new MOV("", Instr.R0, sndReg));
       instrs.add(new MOV("", Instr.R1, target));
       instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
-      instrs.add(new ADD(false, target, target, "#4"));
-      instrs.add(new ADD(false, target, target, sndReg, size > 1 ? "LSL #" + size / 2 : ""));
+      instrs.add(new ADD(false, target, target, AddrMode.buildImm(4)));
+      if (size > 1) {
+        instrs.add(new ADD(false, target, target, AddrMode.buildReg(sndReg), AddrMode.buildImmWithShiftL(size / 2)));
+      } else {
+        instrs.add(new ADD(false, target, target, AddrMode.buildReg(sndReg)));
+      }
       addToCurLabel(instrs);
     }
     addToCurLabel(new LDR(size, "", target, AddrMode.buildAddr(target)));

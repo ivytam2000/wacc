@@ -15,6 +15,7 @@ import java.util.List;
 
 import static backend.BackEndGenerator.addToUsrDefFuncs;
 import static backend.instructions.Instr.*;
+import static backend.instructions.Instr.addToCurLabel;
 
 public class WhileAST extends Node {
   private final Node expr;
@@ -66,7 +67,7 @@ public class WhileAST extends Node {
     expr.toAssembly();
     /* Test if the expression is true if it is we branch to a new label which
        will include the instructions for the body of the while loop */
-    addToCurLabel(new CMP(Instr.R4,"#1"));
+    addToCurLabel(new CMP(Instr.R4, AddrMode.buildImm(1)));
     addToCurLabel(new BRANCH(false, "EQ", bodyLabel));
 
     /* Set current label to the body label */

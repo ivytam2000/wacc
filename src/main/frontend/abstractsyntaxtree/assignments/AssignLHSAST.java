@@ -50,7 +50,7 @@ public class AssignLHSAST extends Node {
     assert (symtab != null);
 
     if (assignNode == null) { //Variable
-      Instr.addToCurLabel(new ADD(false, Instr.R4, Instr.SP, "#" + symtab.getStackOffset(assignName)));
+      Instr.addToCurLabel(new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(symtab.getStackOffset(assignName))));
       return;
     }
 
@@ -58,7 +58,7 @@ public class AssignLHSAST extends Node {
     if (assignNode instanceof ArrayElemAST) {
       String fstReg = Instr.getTargetReg();
       // Get pointer to array
-      Instr.addToCurLabel(new ADD(false, fstReg, Instr.SP, "#" + symtab.getStackOffset(assignName)));
+      Instr.addToCurLabel(new ADD(false, fstReg, Instr.SP, AddrMode.buildImm(symtab.getStackOffset(assignName))));
       String sndReg = Instr.incDepth();
 
       List<Node> exprs = ((ArrayElemAST) assignNode).getExprs();
@@ -83,9 +83,13 @@ public class AssignLHSAST extends Node {
         } else {
           size = assignNode.getIdentifier().getType().getBytes();
         }
-        instrs.add(new ADD(false, fstReg, fstReg, "#" + size));
         // Index to the target element
-        instrs.add(new ADD(false, fstReg, fstReg, sndReg, size > 1 ? "LSL #" + size / 2 : ""));
+        instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildImm(size)));
+        if (size > 1) {
+          instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildReg(sndReg), AddrMode.buildImmWithShiftL(size / 2)));
+        } else {
+          instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildReg(sndReg)));
+        }
       }
 
       Instr.decDepth();

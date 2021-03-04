@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
 import backend.BackEndGenerator;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.CMP;
 import backend.instructions.Instr;
@@ -73,7 +74,7 @@ public class IfAST extends Node {
     String nextStatLabel = getNextLabel();
 
     // Test the boolean expression if it evaluates to false jump to elseStat label
-    addToCurLabel(new CMP(Instr.R4, "#0"));
+    addToCurLabel(new CMP(Instr.R4, AddrMode.buildImm(0)));
     addToCurLabel(new BRANCH(false, "EQ", elseStatLabel));
 
     //Evaluate thenStat (true) body in current label

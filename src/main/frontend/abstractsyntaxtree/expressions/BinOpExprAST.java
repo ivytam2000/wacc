@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.expressions;
 import antlr.WaccParser.ExprContext;
 import backend.instructions.ADD;
 import backend.instructions.AND;
+import backend.instructions.AddrMode;
 import backend.instructions.CMP;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
@@ -109,7 +110,7 @@ public class BinOpExprAST extends Node {
       return ;
     }
 
-    instrs.add(new CMP(fstReg, sndReg));
+    instrs.add(new CMP(fstReg, AddrMode.buildReg(sndReg)));
 
     String c1 = "";
     String c2 = "";

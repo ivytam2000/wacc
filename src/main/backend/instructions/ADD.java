@@ -5,20 +5,24 @@ public class ADD extends Instr {
   private final boolean setFlags;
   private final String dest; // Also first operand
   private final String src;
-  private final String operand;
-  private final String shift;
+  private AddrMode operand;
+  private AddrMode shift;
 
-  public ADD(boolean setFlags, String dest, String src, String operand,
-      String shift) {
+  public ADD(boolean setFlags, String dest, String src, AddrMode operand) {
+    this.setFlags = setFlags;
+    this.dest = dest;
+    this.src = src;
+    this.operand = operand;
+    this.shift = null;
+  }
+
+  public ADD(boolean setFlags, String dest, String src, AddrMode operand,
+      AddrMode shift) {
     this.setFlags = setFlags;
     this.dest = dest;
     this.src = src;
     this.operand = operand;
     this.shift = shift;
-  }
-
-  public ADD(boolean setFlags, String dest, String src, String operand) {
-    this(setFlags, dest, src, operand, "");
   }
 
   /**
@@ -27,10 +31,10 @@ public class ADD extends Instr {
   @Override
   public String translateToArm() {
     String s = "";
-    if (!shift.equals("")) {
-      s = ", " + shift;
+    if (shift != null) {
+      s = ", " + shift.translateToArm();
     }
     return "ADD" + (setFlags ? "S " : " ")
-        + dest + ", " + src + ", " + operand + s;
+        + dest + ", " + src + ", " + operand.translateToArm() + s;
   }
 }

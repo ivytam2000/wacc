@@ -3,24 +3,27 @@ package backend.instructions;
 public class CMP extends Instr {
 
   private final String reg; // first operand
-  private final String operand; // second operand
-  private final String shift;
+  private final AddrMode operand; // second operand
+  private final AddrMode shift;
 
-  public CMP(String reg, String operand, String shift) {
+  public CMP(String reg, AddrMode operand, AddrMode shift) {
     this.reg = reg;
     this.operand = operand;
     this.shift = shift;
   }
 
-  public CMP(String reg, String operand) {
-    this(reg, operand, "");
+  public CMP(String reg, AddrMode operand) {
+    this.reg = reg;
+    this.operand = operand;
+    this.shift = null;
   }
 
   @Override
   public String translateToArm() {
-    String instr = "CMP " + reg + ", " + operand;
-    if (!shift.equals("")) {
-      instr += (", " + shift);
+    String instr = "CMP " + reg + ", " + operand.translateToArm();
+
+    if (shift != null) {
+      instr += (", " + shift.translateToArm());
     }
     return instr;
   }

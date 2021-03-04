@@ -7,12 +7,8 @@ public class LDR extends Instr {
   // 4 bytes = word
   private final int bytes;
   private final String conditions;
-  private String src;
-  private AddrMode addrMode;
+  private final AddrMode addrMode;
   private final String dest;
-  private boolean isValue;
-  private int offset;
-  private boolean noOffset;
 
   //TODO: Signed bytes?
   //TODO: Constructors are a mess
@@ -48,16 +44,6 @@ public class LDR extends Instr {
       default:
     }
     return ldr + conditions;
-  }
-
-  private String getSrc() {
-    if (isValue) {
-      return "=" + src;
-    }
-    if (noOffset) {
-      return "[" + src + "]";
-    }
-    return "[" + src + ", #" + offset + "]";
   }
 
   @Override

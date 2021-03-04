@@ -32,6 +32,10 @@ public class AddrMode extends Instr {
     return new AddrMode(operand, 0, AddrModeType.IMM_SHIFT_R);
   }
 
+  public static AddrMode buildArithmeticShiftL(Object operand) {
+    return new AddrMode(operand, 0, AddrModeType.ARITH_SHIFT_L);
+  }
+
   public static AddrMode buildAddr(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.ADDR_OFFSET);
   }
@@ -57,6 +61,8 @@ public class AddrMode extends Instr {
         return "LSL #" + operand;
       case IMM_SHIFT_R:
         return "LSR #" + operand;
+      case ARITH_SHIFT_L:
+        return "ASR #" + operand;
       case ADDR_OFFSET:
         if (offsetFromOperand == 0) {
           return ("[" + operand + "]");
