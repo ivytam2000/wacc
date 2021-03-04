@@ -36,7 +36,7 @@ public class UnOpExprAST extends Node {
     this.exprAST = exprAST;
   }
 
-  //Different unOp defined for different types
+  // Different unOp defined for different types
   @Override
   public void check() {
     TypeID exprType = exprAST.getIdentifier().getType();
@@ -49,25 +49,25 @@ public class UnOpExprAST extends Node {
       }
       unOpExprType = symbtab.lookupAll("bool");
 
-    } else if (ctx.MINUS() != null) { //MINUS defined for int only
+    } else if (ctx.MINUS() != null) { // MINUS defined for int only
       if (!(exprType instanceof IntID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("int");
 
-    } else if (ctx.CHR() != null) { //CHR defined for int only
+    } else if (ctx.CHR() != null) { // CHR defined for int only
       if (!(exprType instanceof IntID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("char");
 
-    } else if (ctx.LEN() != null) { //LEN defined for string and array
+    } else if (ctx.LEN() != null) { // LEN defined for string and array
       if (!(exprType instanceof StringID || exprType instanceof ArrayID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("int");
 
-    } else if (ctx.ORD() != null) { //ORD defined for char only
+    } else if (ctx.ORD() != null) { // ORD defined for char only
       if (!(exprType instanceof CharID)) {
         error = true;
       }
@@ -95,10 +95,11 @@ public class UnOpExprAST extends Node {
     // UnOp
     if (ctx.NOT() != null) {
       // XOR
-      instrs.add(new ORR(true, Instr.getTargetReg(), "#1"));
+      instrs.add(new ORR(true, Instr.getTargetReg(), AddrMode.buildImm(1)));
     } else if (ctx.MINUS() != null) {
       // Revere subtract
-      instrs.add(new SUB(true, true, Instr.getTargetReg(), Instr.getTargetReg(), "#0"));
+      instrs.add(new SUB(true, true, Instr.getTargetReg(), Instr.getTargetReg(),
+          AddrMode.buildImm(0)));
       // Check for overflow
       BackEndGenerator.addToPreDefFuncs("p_throw_overflow_error");
       instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
@@ -106,10 +107,7 @@ public class UnOpExprAST extends Node {
       // Length of array stored at its corresponding memory with 0 offset
       instrs.add(new LDR(4, "", Instr.getTargetReg(),
           AddrMode.buildAddr(Instr.getTargetReg())));
-//      instrs.add(new LDR(4, "", Instr.getTargetReg(), Instr.getTargetReg(), 0));
     }
-
-    // ORD and CHR needs so additional instructions, only loading from stack
 
     addToCurLabel(instrs);
   }

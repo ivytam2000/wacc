@@ -43,7 +43,8 @@ public class AssignLHSAST extends Node {
   }
 
   @Override
-  public void check() {}
+  public void check() {
+  }
 
   @Override
   public void toAssembly() {
@@ -68,8 +69,8 @@ public class AssignLHSAST extends Node {
         // Get the size of array
         instrs.add(new LDR(fstReg, AddrMode.buildAddr(fstReg)));
         // Check size
-        instrs.add(new MOV("", Instr.R0, sndReg));
-        instrs.add(new MOV("", Instr.R1, fstReg));
+        instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(sndReg)));
+        instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(fstReg)));
         BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
         instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
         // Go to first element (0th element is size)
@@ -93,13 +94,15 @@ public class AssignLHSAST extends Node {
       }
 
       Instr.decDepth();
-    } else { //Pair
+    } else { // Pair
       String reg = Instr.getTargetReg();
-      instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(Instr.SP, symtab.getStackOffset(assignName))));
-      instrs.add(new MOV("", Instr.R0, reg));
+      instrs.add(new LDR(reg, AddrMode
+          .buildAddrWithOffset(Instr.SP, symtab.getStackOffset(assignName))));
+      instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(reg)));
       BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
       instrs.add(new BRANCH(true, "", "p_check_null_pointer"));
-      instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(reg, ((PairElemAST) assignNode).getFirst() ? 0 : 4)));
+      instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(reg,
+          ((PairElemAST) assignNode).getFirst() ? 0 : 4)));
     }
     Instr.addToCurLabel(instrs);
   }

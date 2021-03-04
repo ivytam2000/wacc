@@ -3,17 +3,17 @@ package backend.instructions;
 public class MOV extends Instr {
 
   private final String conditions;
-  private final String dest;
-  private final String src; // Can be an immediate
+  private final String dst;
+  private final AddrMode src;
 
-  public MOV(String conditions, String dest, String src) {
+  public MOV(String conditions, String dst, AddrMode src) {
     this.conditions = conditions;
-    this.dest = dest;
+    this.dst = dst;
     this.src = src;
   }
 
   @Override
   public String translateToArm() {
-    return "MOV" + conditions + " " + dest + ", " + src;
+    return "MOV" + conditions + " " + dst + ", " + src.translateToArm();
   }
 }

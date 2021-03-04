@@ -110,7 +110,7 @@ public class PairElemAST extends Node {
     int stackPointerOffset = symtab.getStackOffset(identName);
     instructions.add(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, stackPointerOffset)));
 
-    instructions.add(new MOV("", Instr.R0, Instr.R4));
+    instructions.add(new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4)));
     BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
     instructions.add(new BRANCH(true, "", "p_check_null_pointer"));
 

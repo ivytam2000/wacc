@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
 import backend.BackEndGenerator;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
@@ -50,7 +51,7 @@ public class FreeAST extends Node {
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
     TypeID exprType = expr.getIdentifier().getType();
-    instrs.add(new MOV("", Instr.R0, Instr.R4));
+    instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4)));
     String label = exprType instanceof PairID ? "p_free_pair" : "p_free_array";
     BackEndGenerator.addToPreDefFuncs(label);
     BRANCH brInstr = new BRANCH(true, "", label);

@@ -105,7 +105,7 @@ public class BinOpExprAST extends Node {
       addToCurLabel(instrs);
       return ;
     } else if (op.equals("||")) {
-      instrs.add(new ORR(false, fstReg, sndReg));
+      instrs.add(new ORR(false, fstReg, AddrMode.buildReg(sndReg)));
       addToCurLabel(instrs);
       return ;
     }
@@ -140,11 +140,11 @@ public class BinOpExprAST extends Node {
         c2 = "EQ";
         break;
       default:
-        assert(false); //UNREACHABLE
+        assert(false); // UNREACHABLE
     }
 
-    instrs.add(new MOV(c1, fstReg, "#1"));
-    instrs.add(new MOV(c2, fstReg, "#0"));
+    instrs.add(new MOV(c1, fstReg, AddrMode.buildImm(1)));
+    instrs.add(new MOV(c2, fstReg, AddrMode.buildImm(0)));
 
     addToCurLabel(instrs);
   }

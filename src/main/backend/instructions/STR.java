@@ -2,64 +2,47 @@ package backend.instructions;
 
 public class STR extends Instr {
 
-  // Number of bytes determines the type of str instruction
-  // 4 bytes = word
+  // Number of bytes determines the type of STR instruction
+  // A word is 4 bytes in size
   private final int bytes;
   private final String conditions;
   private final String src;
-  private final String dest;
-  private int offset;
-  private boolean noOffset;
-  private boolean increment = false;
+  private final AddrMode dst;
 
   // NOTE that for STR: source is lhs and destination is rhs
-  public STR(int bytes, String conditions, String src, String dest, int offset) {
+  public STR(int bytes, String conditions, String src, AddrMode dst) {
     this.bytes = bytes;
     this.conditions = conditions;
     this.src = src;
-    this.dest = dest;
-    this.offset = offset;
-    this.noOffset = offset == 0;
+    this.dst = dst;
   }
 
-  // without byte and condition
-  public STR(String src, String dest, int offset) {
-    this(4, "", src, dest, offset);
-  }
-
-  public STR(int bytes, String conditions, String src, String dest, int offset, boolean increment) {
-    this(bytes, conditions, src, dest, offset);
-    this.increment = increment;
+  // Without byte and condition parameters
+  public STR(String src, AddrMode dst) {
+    this(4, "", src, dst);
   }
 
 
   private String getStr() {
     String str = "STR" + conditions;
     switch (bytes) {
-      //Byte
+      // Byte
       case 1:
         return str + "B";
-      //Halfword
+      // Halfword
       case 2:
         return str + "H";
-      //Doubleword
+      // Doubleword
       case 8:
         return str + "D";
-      //Word
+      // Word
       default:
         return str;
     }
   }
 
-  private String getDest() {
-    if (noOffset) {
-      return "[" + dest + "]";
-    }
-    return "[" + dest + ", #" + offset + "]";
-  }
-
   @Override
   public String translateToArm() {
-    return getStr() + " " + src + ", " + getDest() + (increment ? "!" : "");
+    return getStr() + " " + src + ", " + dst.translateToArm();
   }
 }

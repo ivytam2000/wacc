@@ -10,7 +10,6 @@ public class MUL extends Instr {
     this.regHigh = flip ? regLow : regHigh;
   }
 
-  // SMULL regLow, regHigh, regLow, regHigh
   @Override
   public String translateToArm() {
     return "SMULL " + regLow + ", " + regHigh + ", " + regLow + ", " + regHigh;

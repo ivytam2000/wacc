@@ -70,7 +70,6 @@ public class ArrayElemAST extends Node {
     return "#" + offset;
   }
 
-  //TODO: Nested array?
   @Override
   public void toAssembly() {
     BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
@@ -80,12 +79,11 @@ public class ArrayElemAST extends Node {
     for (Node e : exprs) {
       List<Instr> instrs = new ArrayList<>();
       String sndReg = Instr.incDepth();
-      // adds extra stuff to nested array?
       e.toAssembly();
       Instr.decDepth();
       instrs.add(new LDR(target, AddrMode.buildAddr(target)));
-      instrs.add(new MOV("", Instr.R0, sndReg));
-      instrs.add(new MOV("", Instr.R1, target));
+      instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(sndReg)));
+      instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(target)));
       instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
       instrs.add(new ADD(false, target, target, AddrMode.buildImm(4)));
       if (size > 1) {

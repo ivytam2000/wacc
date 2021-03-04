@@ -5,6 +5,7 @@ import static backend.instructions.Instr.addToCurLabel;
 
 import antlr.WaccParser.Return_statContext;
 import backend.Utils;
+import backend.instructions.AddrMode;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import backend.instructions.POP;
@@ -44,7 +45,7 @@ public class ReturnAST extends Node {
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
     expr.toAssembly();
-    instructions.add(new MOV("", Instr.R0, Instr.getTargetReg()));
+    instructions.add(new MOV("", Instr.R0, AddrMode.buildReg(Instr.getTargetReg())));
     addToCurLabel(instructions);
     addToCurLabel(Utils.getEndRoutine(symtab, false));
     addToCurLabel(new POP(PC));

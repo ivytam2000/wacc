@@ -81,7 +81,7 @@ public class VarDecAST extends Node {
     symtab.addOffset(varName, offset);
     assignRHS.toAssembly();
     // Stores the value in the offset stack address
-    STR strInstr = new STR(decType.getBytes(),"", Instr.R4, Instr.SP, offset);
+    STR strInstr = new STR(decType.getBytes(),"", Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset));
     instrs.add(strInstr);
     addToCurLabel(instrs);
   }
