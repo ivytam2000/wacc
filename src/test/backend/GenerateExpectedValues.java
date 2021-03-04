@@ -87,6 +87,7 @@ public class GenerateExpectedValues {
           if (expectedStdOuts.isEmpty() && line.isEmpty()) {
             continue;
           } else {
+            line = line.replaceAll("0x[0-9]+", "0xaaaaaaaa");
             expectedStdOuts.add(line);
           }
         }

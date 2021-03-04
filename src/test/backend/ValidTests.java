@@ -36,34 +36,29 @@ public class ValidTests {
         validFolderPath + "basic/skip/");
   }
 
-
   @Test
   public void validExprTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
         validFolderPath + "expressions/");
   }
 
-  @Ignore
   @Test
   public void validNestedFuncTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
         validFolderPath + "function/nested_functions/");
   }
   
-  @Ignore
   @Test
   public void validSimpleFuncTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
         validFolderPath + "function/simple_functions/");
   }
-
   
   @Test
   public void validIfTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "if/");
   }
 
-  @Ignore
   @Test
   public void validIOTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "IO/");

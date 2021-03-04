@@ -140,9 +140,10 @@ public class TestUtilities {
               "---------------------------------------------------------------")) {
             return actualStdOuts;
           } else {
-            if (actualStdOuts.isEmpty() && line.isEmpty()) {
+            if (actualStdOuts.isEmpty() && line.isEmpty() || line.equals("\u0000")) {
               continue;
             } else {
+              line = line.replaceAll("0x[0-9]+", "0xaaaaaaaa");
               actualStdOuts.add(line);
             }
           }
@@ -201,21 +202,14 @@ public class TestUtilities {
   private static boolean valuesFromOurCompilerMatchesReferenceCompiler(
       String sourceFilePath, String textFilePath) throws IOException {
     List<String> actualOutput = getOurCompilerStdOut(sourceFilePath);
+    int actualHash = actualOutput.hashCode();
     List<String> expectedOutput = getReferenceCompilerStdOut(
         textFilePath);
+    int expectedHash = expectedOutput.hashCode();
     if (actualOutput.size() != expectedOutput.size()) {
       return false;
     }
-    return outputMatches(actualOutput, expectedOutput);
-  }
-
-  private static boolean outputMatches(List<String> actual, List<String> expected) {
-    for (int i = 0; i < actual.size(); i++) {
-      if (!stringMatches(actual.get(i), expected.get(i))) {
-        return false;
-      }
-    }
-    return true;
+    return actualHash == expectedHash;
   }
 
   private static boolean stringMatches(String actual, String expected) {
