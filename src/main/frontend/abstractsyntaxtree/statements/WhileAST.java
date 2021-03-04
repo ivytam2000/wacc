@@ -74,7 +74,9 @@ public class WhileAST extends Node {
     // Add body label to label order list as it should be printed before the
     // nextStat label
     addToLabelOrder(bodyLabel);
+    addToCurLabel(Utils.getStartRoutine(symtab, false));
     stat.toAssembly();
+    addToCurLabel(Utils.getEndRoutine(symtab, false));
 
     /*Set current label back to the nextStat label and add it to the label
      * order */
