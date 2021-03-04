@@ -76,7 +76,16 @@ public class Utils {
   public static List<Instr> getEndRoutine(SymbolTable symtab,
       boolean backEndGenerator) {
     List<Instr> instrs = new ArrayList<>();
-    int stackSize = symtab.getSize();
+    int stackSize = 0;
+    if (symtab.getFuncContext()) {
+      SymbolTable temp = symtab;
+      while (!temp.isTopLevel()) {
+        stackSize += temp.getSize();
+        temp = temp.getParent();
+      }
+    } else {
+      stackSize = symtab.getSize();
+    }
     if (stackSize > 0) {
       // if greater than 10 bits
       while (stackSize > TEN_BITS ) {

@@ -11,6 +11,7 @@ public class SymbolTable {
   private int size = 0;
   private int tempFuncOffset = 0;
   private boolean funcContext = false;
+  private boolean skipLR = false;
   private final Map<String, Integer> varOffsets = new LinkedHashMap<>();
   private final SymbolTable parent;
 
@@ -92,7 +93,13 @@ public class SymbolTable {
 
   public void resetFuncOffset() {tempFuncOffset = 0;}
 
-  public void setFuncContext(boolean val) {funcContext = val; }
+  public void setFuncContext() {funcContext = true; }
+
+  public void setSkipLR() {skipLR = true;}
+
+  public boolean getFuncContext() {
+    return funcContext;
+  }
 
   public int getStackOffset(String var) {
     SymbolTable temp = this;
@@ -115,7 +122,12 @@ public class SymbolTable {
       return size;
     }
     int ans = Collections.min(varOffsets.values());
-    return funcContext ? ans - 4 : ans;
+    if (skipLR) {
+      skipLR = false;
+      return ans - 4;
+    } else {
+      return ans;
+    }
   }
 
   public SymbolTable getParent(){

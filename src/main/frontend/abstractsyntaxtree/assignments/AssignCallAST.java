@@ -107,7 +107,9 @@ public class AssignCallAST extends AssignRHSAST {
     }
 
     instructions.add(new BRANCH(true, "", "f_" + funcName));
-    instructions.add(new ADD(false, Instr.SP, Instr.SP, "#" + accOffset));
+    if (accOffset > 0) {
+      instructions.add(new ADD(false, Instr.SP, Instr.SP, "#" + accOffset));
+    }
     symtab.resetFuncOffset();
     instructions.add(new MOV("", transferReg, Instr.R0));
     addToCurLabel(instructions);

@@ -49,7 +49,7 @@ public class TestUtilities {
             valuesFromOurCompilerMatchesReferenceCompiler(sourceFilePath,
                 textFilePath));
       } catch (AssertionError e) {
-        StringBuilder errorMsg = new StringBuilder(name)
+        StringBuilder   errorMsg = new StringBuilder(name)
             .append(": Output did not match with reference compiler.\n");
         errorMsg.append("Expected output: ")
             .append(getReferenceCompilerStdOut(textFilePath)).append("\n");
@@ -169,8 +169,9 @@ public class TestUtilities {
       }
       builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeFilePath);
       String output = getOutputFromProcess(builder);
+      output = output.replaceAll("0x[a-zA-Z0-9]+", "0xaaaaaaaa");
       String[] splitOutput =
-          output.equals("") ? new String[0] : output.split("\n");
+          output.equals("") ? new String[0] : Arrays.stream(output.split("\n")).filter(s -> !s.equals("\u0000")).toArray(String[]::new);
       return Arrays.asList(splitOutput.clone());
     }
   }
