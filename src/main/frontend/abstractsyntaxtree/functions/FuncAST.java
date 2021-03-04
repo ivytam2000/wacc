@@ -74,14 +74,13 @@ public class FuncAST extends Node {
 
     List<Instr> instructions = new ArrayList<>();
     addToCurLabel(new PUSH(Instr.LR));
-    FuncID id = (FuncID) this.getIdentifier();
-    addToCurLabel(getStartRoutine(id.getSymtab(), false));
+    addToCurLabel(getStartRoutine(funcsymtab, false));
 
     funcsymtab.setFuncContext(true);
     statements.toAssembly();
     funcsymtab.setFuncContext(false);
 
-    addToCurLabel(getEndRoutine(id.getSymtab(), false));
+    addToCurLabel(getEndRoutine(funcsymtab, false));
 
     instructions.add(new POP(Instr.PC));
     instructions.add(new POP(Instr.PC));

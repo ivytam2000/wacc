@@ -190,14 +190,17 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     SymbolTable encScope = currSymTab;
 
     // Each branch is executed in its own scope
-    currSymTab = new SymbolTable(encScope);
+    SymbolTable thenScope = new SymbolTable(encScope);
+    currSymTab = thenScope;
     Node thenStat = visit(ctx.stat(0));
-    currSymTab = new SymbolTable(encScope);
+    SymbolTable elseScope = new SymbolTable(encScope);
+    currSymTab = elseScope;
     Node elseStat = visit(ctx.stat(1));
 
     currSymTab = encScope; // Swap back to parent scope
 
-    IfAST ifAST = new IfAST(expr, thenStat, elseStat, ctx.expr());
+    IfAST ifAST = new IfAST(expr, thenStat, elseStat, thenScope,
+        elseScope, ctx.expr());
     ifAST.check();
 
     return ifAST;

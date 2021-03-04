@@ -8,6 +8,7 @@ import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
+import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.util.concurrent.BlockingDeque;
 
 import static backend.BackEndGenerator.addToUsrDefFuncs;
+import static backend.Utils.getEndRoutine;
+import static backend.Utils.getStartRoutine;
 import static backend.instructions.Instr.*;
 
 public class IfAST extends Node {
@@ -22,14 +25,20 @@ public class IfAST extends Node {
   private final Node expr;
   private final Node thenStat;
   private final Node elseStat;
+  // BACKEND: symbol tables of then and else stats
+  private final SymbolTable thenScope;
+  private final SymbolTable elseScope;
   private final ExprContext exprCtx;
 
-  public IfAST(Node expr, Node thenStat, Node elseStat, ExprContext ctx) {
+  public IfAST(Node expr, Node thenStat, Node elseStat, SymbolTable thenScope,
+      SymbolTable elseScope, ExprContext ctx) {
     // Set identifier to be same as expressions
     super(expr.getIdentifier());
     this.expr = expr;
     this.thenStat = thenStat;
     this.elseStat = elseStat;
+    this.thenScope = thenScope;
+    this.elseScope = elseScope;
     this.exprCtx = ctx;
   }
 
@@ -68,7 +77,10 @@ public class IfAST extends Node {
     addToCurLabel(new BRANCH(false, "EQ", elseStatLabel));
 
     //Evaluate thenStat (true) body in current label
+    addToCurLabel(getStartRoutine(thenScope, false));
     thenStat.toAssembly();
+    addToCurLabel(getEndRoutine(thenScope, false));
+
     // Branch to the nextStatLabel to skip over the elseStatlabel (false body)
     addToCurLabel(new BRANCH(false, "", nextStatLabel));
 
@@ -77,7 +89,9 @@ public class IfAST extends Node {
 
     // Evaluate the elseStat (false body) in a new label (elseStatLabel)
     setCurLabel(elseStatLabel);
+    addToCurLabel(getStartRoutine(elseScope, false));
     elseStat.toAssembly();
+    addToCurLabel(getEndRoutine(elseScope, false));
 
     // Create and set a new label for the next statements after the ifAST
     setCurLabel(nextStatLabel);
