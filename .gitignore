@@ -17,9 +17,6 @@ target/
 out/
 src/.DS_Store
 src/.bsp/sbt.json
-src/test/examples/**/*
-!src/test/examples/**/*.wacc
-!src/test/examples/**/*.txt
 *.s
 *.exe
 
