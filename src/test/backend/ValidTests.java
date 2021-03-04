@@ -7,6 +7,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
+@Ignore
 public class ValidTests {
 
   String validFolderPath = "src/test/examples/valid/";
