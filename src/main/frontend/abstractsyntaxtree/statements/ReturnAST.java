@@ -23,6 +23,7 @@ public class ReturnAST extends Node {
   public ReturnAST(SymbolTable symtab, Node expr, Return_statContext ctx) {
     super(expr.getIdentifier());
     this.symtab = symtab;
+    symtab.setFuncContext();
     this.expr = expr;
     this.ctx = ctx;
   }
@@ -45,9 +46,7 @@ public class ReturnAST extends Node {
     expr.toAssembly();
     instructions.add(new MOV("", Instr.R0, Instr.getTargetReg()));
     addToCurLabel(instructions);
-    SymbolTable scope = symtab.getParent().isTopLevel() ? symtab :
-        symtab.getParent();
-    addToCurLabel(Utils.getEndRoutine(scope, false));
+    addToCurLabel(Utils.getEndRoutine(symtab, false));
     addToCurLabel(new POP(PC));
   }
 }
