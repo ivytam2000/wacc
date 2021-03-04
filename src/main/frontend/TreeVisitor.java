@@ -170,9 +170,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public WhileAST visitWhile_stat(While_statContext ctx) {
     SymbolTable encScope = currSymTab;
-    currSymTab = new SymbolTable(encScope); // New scope
-
     Node expr = visit(ctx.expr());
+
+    currSymTab = new SymbolTable(encScope); // New scope
     Node stat = visit(ctx.stat());
 
     WhileAST whileAST = new WhileAST(expr, stat, ctx.expr(), currSymTab);
