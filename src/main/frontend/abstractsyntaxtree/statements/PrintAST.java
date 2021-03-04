@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import backend.Utils;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
@@ -36,7 +37,7 @@ public class PrintAST extends Node {
     // R4.
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
-    MOV movInstr = new MOV("", Instr.R0, Instr.R4);
+    MOV movInstr = new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4));
     instrs.add(movInstr);
     BRANCH brInstr = Utils.getPrintBranch(expr.getIdentifier().getType());
     instrs.add(brInstr);

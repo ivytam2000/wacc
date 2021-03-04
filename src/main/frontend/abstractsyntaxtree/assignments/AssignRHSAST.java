@@ -45,17 +45,17 @@ public class AssignRHSAST extends Node {
   public void toAssembly() {
    // List<Instr> instructions = new ArrayList<>();
     if (identifier instanceof PairID) {
-      /* We only malloc if its newpair */
+      // We only malloc if it's newpair
       // malloc pair struct
       if (isNewpair) {
         addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(8)));
         addToCurLabel(new BRANCH(true, "", "malloc"));
-        addToCurLabel(new MOV("", Instr.R4, Instr.R0));
+        addToCurLabel(new MOV("", Instr.R4, AddrMode.buildReg(Instr.R0)));
         // Need to increment register as we using R4
         Instr.incDepth();
       }
 
-      // first pair elem
+      // First pair elem
       children.get(0).toAssembly();
       if (isNewpair) {
         Instr.decDepth();
@@ -68,8 +68,8 @@ public class AssignRHSAST extends Node {
 
         Instr.incDepth();
       }
-      // second pair elem
-      // if children is NOT an array of pairs elem
+      // Second pair elem
+      // If children is NOT an array of pairs elem
       if(children.size() == 2){
         children.get(1).toAssembly();
         if (isNewpair) {

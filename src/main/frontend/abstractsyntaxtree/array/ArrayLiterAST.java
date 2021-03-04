@@ -23,7 +23,8 @@ public class ArrayLiterAST extends Node {
   private final SymbolTable symtab;
 
   public ArrayLiterAST(
-      SymbolTable symtab, Identifier identifier, List<Node> children, ArrayLiterContext ctx) {
+      SymbolTable symtab, Identifier identifier, List<Node> children,
+      ArrayLiterContext ctx) {
     super(identifier);
     this.children = children;
     this.ctx = ctx;
@@ -47,7 +48,6 @@ public class ArrayLiterAST extends Node {
     }
   }
 
-  //TODO: If we had nested arrays, this fails
   @Override
   public void toAssembly() {
     String lengthOfArray = "" + children.size();
@@ -61,11 +61,11 @@ public class ArrayLiterAST extends Node {
     String byteOfArray = "" + (4 + children.size() * bytesNeeded);
     addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(byteOfArray)));
 
-    // add malloc branch to allocate memory, should be called in var dec
+    // Add malloc branch to allocate memory, should be called in VarDecAST
     addToCurLabel(new BRANCH(true, "", "malloc"));
 
-    // mov r4 to r0
-    addToCurLabel(new MOV("", Instr.R4, Instr.R0));
+    // Move r4 to r0
+    addToCurLabel(new MOV("", Instr.R4, AddrMode.buildReg(Instr.R0)));
 
     for (int i = 0; i < children.size(); i++) {
       Node curr_expr = children.get(i);
@@ -76,7 +76,8 @@ public class ArrayLiterAST extends Node {
       String fstReg = Instr.decDepth();
 
       int offset = i * bytesNeeded + 4;
-      addToCurLabel(new STR(curr_ident.getType().getBytes(), "", sndReg, fstReg, offset));
+      addToCurLabel(
+          new STR(curr_ident.getType().getBytes(), "", sndReg, fstReg, offset));
     }
 
     addToCurLabel(new LDR(Instr.R5, AddrMode.buildVal(lengthOfArray)));

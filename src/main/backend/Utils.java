@@ -35,22 +35,6 @@ public class Utils {
   private static final String PTR_MSG
       = "%p\\0";
 
-  public static String getAssignValue(Identifier identifier, String value) {
-    if (identifier instanceof IntID || identifier instanceof StringID) {
-      return "=" + value;
-    } else {
-      return "#" + value;
-    }
-  }
-
-  public static String getEffectiveAddr(String reg, int offset) {
-    StringBuilder output = new StringBuilder("[").append(reg);
-    String offsetTag =
-        offset == 0 ? "" : new StringBuilder(", #").append(offset).toString();
-    output.append(offsetTag).append("]");
-    return output.toString();
-  }
-
   public static List<Instr> getStartRoutine(SymbolTable symtab,
       boolean backEndGenerator) {
     List<Instr> instrs = new ArrayList<>();
@@ -59,7 +43,7 @@ public class Utils {
     }
     int size = symtab.getSize();
     if (size > 0) {
-      // if greater than 10 bits
+      // If greater than 10 bits
       while (size > TEN_BITS) {
         size = size - TEN_BITS;
         instrs.add(new SUB(false, false, Instr.SP, Instr.SP, "#" + TEN_BITS));
@@ -69,10 +53,10 @@ public class Utils {
     return instrs;
   }
 
-  // End-routine function - not sure if this is valid
-  // ADD sp, sp, #stackSize
-  // LDR r0 =0
-  // POP {pc}
+  /**
+   * Returns the end routine instructions for every scope, e.g. ADD sp, sp,
+   * #stackSize; LDR r0 =0; POP {pc}.
+   */
   public static List<Instr> getEndRoutine(SymbolTable symtab,
       boolean backEndGenerator) {
     List<Instr> instrs = new ArrayList<>();
@@ -87,8 +71,8 @@ public class Utils {
       stackSize = symtab.getSize();
     }
     if (stackSize > 0) {
-      // if greater than 10 bits
-      while (stackSize > TEN_BITS ) {
+      // If greater than 10 bits
+      while (stackSize > TEN_BITS) {
         stackSize = stackSize - TEN_BITS;
         instrs.add(new ADD(false, Instr.SP, Instr.SP, "#" + TEN_BITS));
       }
@@ -131,8 +115,9 @@ public class Utils {
     return brInstr;
   }
 
-  // ------ PRE-DEFINED FUNCTIONS ------
-
+  /**
+   * Returns a map of every pre-defined function and their instructions.
+   */
   public static Map<String, List<Instr>> getPreDefFunc(List<String> pdfs) {
     // Keep track of unique preDefFunc that has already been added
     Set<String> pdfTracker = new HashSet<>();
@@ -164,10 +149,11 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new LDR(Instr.R1, AddrMode.buildAddr(Instr.R0)));
     instrs.add(new ADD(false, Instr.R2, Instr.R0, "#4"));
-    instrs.add(new LDR(Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(STRING_MSG))));
+    instrs.add(new LDR(Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(STRING_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, "#0"));
+    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new BRANCH(true, "", "fflush"));
     instrs.add(new POP(Instr.PC));
 
@@ -176,7 +162,8 @@ public class Utils {
 
   private static void p_throw_overflow_error(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
-    instrs.add(new LDR(Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(OVERFLOW_MSG))));
+    instrs.add(new LDR(Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(OVERFLOW_MSG))));
     BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "", "p_throw_runtime_error"));
 
@@ -187,7 +174,7 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     BackEndGenerator.addToPreDefFuncs("p_print_string");
     instrs.add(new BRANCH(true, "", "p_print_string"));
-    instrs.add(new MOV("", Instr.R0, "#-1"));
+    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(-1)));
     instrs.add(new BRANCH(true, "", "exit"));
 
     pdf.put("p_throw_runtime_error", instrs);
@@ -196,11 +183,12 @@ public class Utils {
   private static void p_print_int(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV("", Instr.R1, Instr.R0));
-    instrs.add(new LDR(Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(INT_MSG))));
+    instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs.add(new LDR(Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(INT_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, "#0"));
+    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new BRANCH(true, "", "fflush"));
     instrs.add(new POP(Instr.PC));
 
@@ -210,10 +198,11 @@ public class Utils {
   private static void p_print_ln(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new LDR(Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(LN_MSG))));
+    instrs.add(new LDR(Instr.R0,
+        AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(LN_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "puts"));
-    instrs.add(new MOV("", Instr.R0, "#0"));
+    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new BRANCH(true, "", "fflush"));
     instrs.add(new POP(Instr.PC));
 
@@ -224,11 +213,13 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
-    instrs.add(new LDR(4, "NE", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(TRUE_MSG))));
-    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(FALSE_MSG))));
+    instrs.add(new LDR(4, "NE", Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(TRUE_MSG))));
+    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(FALSE_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, "#0"));
+    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new BRANCH(true, "", "fflush"));
     instrs.add(new POP(Instr.PC));
 
@@ -239,7 +230,8 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R1, "#0"));
-    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG))));
+    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal(
+        "msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG))));
     BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
     instrs.add(new POP(Instr.PC));
@@ -251,13 +243,15 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
-    instrs.add(new LDR(4, "LT", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(NEG_INDEX_MSG))));
+    instrs.add(new LDR(4, "LT", Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(NEG_INDEX_MSG))));
     BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
-    instrs.add(new BRANCH(true,"LT", "p_throw_runtime_error"));
+    instrs.add(new BRANCH(true, "LT", "p_throw_runtime_error"));
     instrs.add(new LDR(Instr.R1, AddrMode.buildAddr(Instr.R1)));
     instrs.add(new CMP(Instr.R0, Instr.R1));
-    instrs.add(new LDR(4, "CS", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(BIG_INDEX_MSG))));
-    instrs.add(new BRANCH(true,"CS", "p_throw_runtime_error"));
+    instrs.add(new LDR(4, "CS", Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(BIG_INDEX_MSG))));
+    instrs.add(new BRANCH(true, "CS", "p_throw_runtime_error"));
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_check_array_bounds", instrs);
@@ -267,9 +261,10 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
-    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
+    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
     BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
-    instrs.add(new BRANCH(true,"EQ", "p_throw_runtime_error"));
+    instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_check_null_pointer", instrs);
@@ -278,10 +273,11 @@ public class Utils {
   private static void p_read_int(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV("", Instr.R1, Instr.R0));
-    instrs.add(new LDR(Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(INT_MSG))));
+    instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs.add(new LDR(Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(INT_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
-    instrs.add(new BRANCH(true,"", "scanf"));
+    instrs.add(new BRANCH(true, "", "scanf"));
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_read_int", instrs);
@@ -291,17 +287,18 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, "#0"));
-    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
+    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
     BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
     instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
     instrs.add(new PUSH(Instr.R0));
     instrs.add(new LDR(Instr.R0, AddrMode.buildAddr(Instr.R0)));
-    instrs.add(new BRANCH(true,"", "free"));
+    instrs.add(new BRANCH(true, "", "free"));
     instrs.add(new LDR(Instr.R0, AddrMode.buildAddr(Instr.SP)));
     instrs.add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R0, 4)));
-    instrs.add(new BRANCH(true,"", "free"));
+    instrs.add(new BRANCH(true, "", "free"));
     instrs.add(new POP(Instr.R0));
-    instrs.add(new BRANCH(true,"", "free"));
+    instrs.add(new BRANCH(true, "", "free"));
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_free_pair", instrs);
@@ -310,10 +307,11 @@ public class Utils {
   private static void p_read_char(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV("", Instr.R1, Instr.R0));
-    instrs.add(new LDR(Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(CHAR_MSG))));
+    instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs.add(new LDR(Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(CHAR_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
-    instrs.add(new BRANCH(true,"", "scanf"));
+    instrs.add(new BRANCH(true, "", "scanf"));
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_read_char", instrs);
@@ -322,11 +320,12 @@ public class Utils {
   private static void p_print_reference(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV("", Instr.R1, Instr.R0));
-    instrs.add(new LDR(Instr.R0, AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(PTR_MSG))));
+    instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs.add(new LDR(Instr.R0, AddrMode
+        .buildVal("msg_" + BackEndGenerator.addToDataSegment(PTR_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, "#4"));
     instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, "#0"));
+    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new BRANCH(true, "", "fflush"));
     instrs.add(new POP(Instr.PC));
 

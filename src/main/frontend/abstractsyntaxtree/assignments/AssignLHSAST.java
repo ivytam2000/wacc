@@ -43,14 +43,16 @@ public class AssignLHSAST extends Node {
   }
 
   @Override
-  public void check() {}
+  public void check() {
+  }
 
   @Override
   public void toAssembly() {
     assert (symtab != null);
 
-    if (assignNode == null) { //Variable
-      Instr.addToCurLabel(new ADD(false, Instr.R4, Instr.SP, "#" + symtab.getStackOffset(assignName)));
+    if (assignNode == null) { // Variable
+      Instr.addToCurLabel(new ADD(false, Instr.R4, Instr.SP,
+          "#" + symtab.getStackOffset(assignName)));
       return;
     }
 
@@ -58,7 +60,8 @@ public class AssignLHSAST extends Node {
     if (assignNode instanceof ArrayElemAST) {
       String fstReg = Instr.getTargetReg();
       // Get pointer to array
-      Instr.addToCurLabel(new ADD(false, fstReg, Instr.SP, "#" + symtab.getStackOffset(assignName)));
+      Instr.addToCurLabel(new ADD(false, fstReg, Instr.SP,
+          "#" + symtab.getStackOffset(assignName)));
       String sndReg = Instr.incDepth();
 
       List<Node> exprs = ((ArrayElemAST) assignNode).getExprs();
@@ -68,8 +71,8 @@ public class AssignLHSAST extends Node {
         // Get the size of array
         instrs.add(new LDR(fstReg, AddrMode.buildAddr(fstReg)));
         // Check size
-        instrs.add(new MOV("", Instr.R0, sndReg));
-        instrs.add(new MOV("", Instr.R1, fstReg));
+        instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(sndReg)));
+        instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(fstReg)));
         BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
         instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
         // Go to first element (0th element is size)
@@ -85,17 +88,20 @@ public class AssignLHSAST extends Node {
         }
         instrs.add(new ADD(false, fstReg, fstReg, "#" + size));
         // Index to the target element
-        instrs.add(new ADD(false, fstReg, fstReg, sndReg, size > 1 ? "LSL #" + size / 2 : ""));
+        instrs.add(new ADD(false, fstReg, fstReg, sndReg,
+            size > 1 ? "LSL #" + size / 2 : ""));
       }
 
       Instr.decDepth();
-    } else { //Pair
+    } else { // Pair
       String reg = Instr.getTargetReg();
-      instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(Instr.SP, symtab.getStackOffset(assignName))));
-      instrs.add(new MOV("", Instr.R0, reg));
+      instrs.add(new LDR(reg, AddrMode
+          .buildAddrWithOffset(Instr.SP, symtab.getStackOffset(assignName))));
+      instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(reg)));
       BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
       instrs.add(new BRANCH(true, "", "p_check_null_pointer"));
-      instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(reg, ((PairElemAST) assignNode).getFirst() ? 0 : 4)));
+      instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(reg,
+          ((PairElemAST) assignNode).getFirst() ? 0 : 4)));
     }
     Instr.addToCurLabel(instrs);
   }

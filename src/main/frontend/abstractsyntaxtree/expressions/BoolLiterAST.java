@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.expressions;
 
+import backend.instructions.AddrMode;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
@@ -11,15 +12,11 @@ import static backend.instructions.Instr.addToCurLabel;
 
 public class BoolLiterAST extends Node {
 
-  private final boolean val; //For backend
+  private final boolean val;
 
   public BoolLiterAST(SymbolTable symtab, Boolean val) {
     super(symtab.lookupAll("bool"));
     this.val = val;
-  }
-
-  public String getVal() {
-    return val ? "#1": "#0";
   }
 
   @Override
@@ -31,7 +28,8 @@ public class BoolLiterAST extends Node {
     List<Instr> instrs = new ArrayList<>();
 
     // Move character into target register
-    instrs.add(new MOV("", Instr.getTargetReg(), getVal()));
+    AddrMode val = this.val ? AddrMode.buildImm(1) : AddrMode.buildImm(0);
+    instrs.add(new MOV("", Instr.getTargetReg(), val));
 
     addToCurLabel(instrs);
   }

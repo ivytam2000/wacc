@@ -5,6 +5,7 @@ import antlr.WaccParser.ArithOpExpr_2Context;
 import antlr.WaccParser.ExprContext;
 import backend.BackEndGenerator;
 import backend.instructions.ADD;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.CMP;
 import backend.instructions.Instr;
@@ -48,7 +49,7 @@ public class ArithOpExprAST extends Node {
     TypeID eLType = eL.getIdentifier().getType();
     TypeID eRType = eR.getIdentifier().getType();
 
-    //Both eL and eR must be of type int to do arithmetic
+    // Both eL and eR must be of type int to do arithmetic
 
     if (!(eLType instanceof IntID || eLType instanceof UnknownID)) {
       SemanticErrorCollector
@@ -102,22 +103,22 @@ public class ArithOpExprAST extends Node {
         break;
       case "/":
         addOverflow = false;
-        instrs.add(new MOV("", Instr.R0, fstReg));
-        instrs.add(new MOV("", Instr.R1, sndReg));
+        instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(fstReg)));
+        instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(sndReg)));
         instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
         instrs.add(new BRANCH(true, "", "__aeabi_idiv"));
-        instrs.add(new MOV("", Instr.getTargetReg(), Instr.R0));
+        instrs.add(new MOV("", Instr.getTargetReg(), AddrMode.buildReg(Instr.R0)));
         break;
       case "%":
         addOverflow = false;
-        instrs.add(new MOV("", Instr.R0, fstReg));
-        instrs.add(new MOV("", Instr.R1, sndReg));
+        instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(fstReg)));
+        instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(sndReg)));
         instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
         instrs.add(new BRANCH(true, "", "__aeabi_idivmod"));
-        instrs.add(new MOV("", Instr.getTargetReg(), Instr.R1));
+        instrs.add(new MOV("", Instr.getTargetReg(), AddrMode.buildReg(Instr.R1)));
         break;
       default:
-        assert(false); //UNREACHABLE
+        assert(false); // UNREACHABLE
     }
 
     if (addOverflow) {

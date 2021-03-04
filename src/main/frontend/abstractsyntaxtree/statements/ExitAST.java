@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.Exit_statContext;
 import antlr.WaccParser.ExprContext;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
@@ -49,7 +50,7 @@ public class ExitAST extends Node {
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     expr.toAssembly();
-    MOV movInstr = new MOV("", Instr.R0, Instr.R4);
+    MOV movInstr = new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4));
     instrs.add(movInstr);
     BRANCH brInstr = new BRANCH(true, "", "exit");
     instrs.add(brInstr);

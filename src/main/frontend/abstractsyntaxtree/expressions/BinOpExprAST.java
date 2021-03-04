@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.expressions;
 import antlr.WaccParser.ExprContext;
 import backend.instructions.ADD;
 import backend.instructions.AND;
+import backend.instructions.AddrMode;
 import backend.instructions.CMP;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
@@ -139,11 +140,11 @@ public class BinOpExprAST extends Node {
         c2 = "EQ";
         break;
       default:
-        assert(false); //UNREACHABLE
+        assert(false); // UNREACHABLE
     }
 
-    instrs.add(new MOV(c1, fstReg, "#1"));
-    instrs.add(new MOV(c2, fstReg, "#0"));
+    instrs.add(new MOV(c1, fstReg, AddrMode.buildImm(1)));
+    instrs.add(new MOV(c2, fstReg, AddrMode.buildImm(0)));
 
     addToCurLabel(instrs);
   }

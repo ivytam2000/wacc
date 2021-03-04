@@ -1,8 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
-import backend.BackEndGenerator;
+import backend.instructions.AddrMode;
 import backend.instructions.Instr;
-import backend.instructions.LDR;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
@@ -13,19 +12,21 @@ import static backend.instructions.Instr.addToCurLabel;
 
 public class CharLiterAST extends Node {
 
-  private final String val; //For backend
+  private final String val;
 
   public CharLiterAST(SymbolTable symtab, String val) {
     super(symtab.lookupAll("char"));
     this.val = val;
   }
 
-  public String getVal() {
-    return "#" + (val.equals("\\0") ? 0 : "'" + val + "'") ;
+  public AddrMode getVal() {
+    return (val.equals("\\0") ? AddrMode.buildImm(0)
+        : AddrMode.buildImm("'" + val + "'"));
   }
 
   @Override
-  public void check() {}
+  public void check() {
+  }
 
   @Override
   public void toAssembly() {
