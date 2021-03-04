@@ -66,7 +66,9 @@ public class FuncAST extends Node {
 
     SymbolTable funcsymtab = ((FuncID) identifier).getSymtab();
     int offset = 4 + funcsymtab.getSize();
+    boolean skipLR = false;
     for (Node paramAST : params.paramASTs) {
+      skipLR = true;
       String varName = ((ParamAST) paramAST).getName();
       funcsymtab.addOffset(varName, offset);
       offset += paramAST.getIdentifier().getType().getBytes();
@@ -76,9 +78,10 @@ public class FuncAST extends Node {
     addToCurLabel(new PUSH(Instr.LR));
     addToCurLabel(getStartRoutine(funcsymtab, false));
 
-    funcsymtab.setFuncContext(true);
+    if (skipLR) {
+      funcsymtab.setSkipLR();
+    }
     statements.toAssembly();
-    funcsymtab.setFuncContext(false);
 
    // addToCurLabel(getEndRoutine(funcsymtab, false));
 
