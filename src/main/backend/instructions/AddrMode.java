@@ -12,6 +12,10 @@ public class AddrMode extends Instr {
     this.type = type;
   }
 
+  public static AddrMode buildReg(Object operand) {
+    return new AddrMode(operand, 0, AddrModeType.REG);
+  }
+
   public static AddrMode buildVal(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.VAL);
   }
@@ -36,13 +40,15 @@ public class AddrMode extends Instr {
     return new AddrMode(operand, offsetFromOperand, AddrModeType.ADDR_OFFSET);
   }
 
-  public AddrMode buildAddrWithWriteBack(Object operand, int offsetFromOperand) {
+  public static AddrMode buildAddrWithWriteBack(Object operand, int offsetFromOperand) {
     return new AddrMode(operand, offsetFromOperand, AddrModeType.ADDR_OFFSET_WRITEBACK);
   }
 
   @Override
   public String translateToArm() {
     switch (type) {
+      case REG:
+        return operand.toString();
       case VAL:
         return "=" + operand;
       case IMM:
