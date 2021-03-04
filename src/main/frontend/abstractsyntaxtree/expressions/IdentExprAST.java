@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.IdentExprContext;
+import backend.instructions.AddrMode;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
 import frontend.abstractsyntaxtree.Node;
@@ -50,7 +51,9 @@ public class IdentExprAST extends Node {
     // Load from (SP + offset) into target register
     int offset = currsymtab.getStackOffset(getName());
     instrs.add(new LDR(identifier.getType().getBytes(), "",
-        Instr.getTargetReg(), Instr.SP, offset));
+        Instr.getTargetReg(), AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+//    instrs.add(new LDR(identifier.getType().getBytes(), "",
+//        Instr.getTargetReg(), Instr.SP, offset));
 
     addToCurLabel(instrs);
   }

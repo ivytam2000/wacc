@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.pairs;
 
 import antlr.WaccParser.PairElemContext;
 import backend.BackEndGenerator;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
@@ -106,16 +107,8 @@ public class PairElemAST extends Node {
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
-    //    instructions.add(new STR(1, "", Instr.R5, Instr.R0, 0));
-    //    instructions.add(new STR(Instr.R0, Instr.R4, 4));
-    //    // use symbol table to get offset and then add the extra inner offset
     int stackPointerOffset = symtab.getStackOffset(identName);
-    //
-    //    stackPointerOffset += childIdentifier.getType().getBytes();
-    //
-    //    instructions.add(new STR(Instr.R4, Instr.SP, stackPointerOffset));
-
-    instructions.add(new LDR(Instr.R4, Instr.SP, stackPointerOffset));
+    instructions.add(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, stackPointerOffset)));
 
     instructions.add(new MOV("", Instr.R0, Instr.R4));
     BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
@@ -126,14 +119,13 @@ public class PairElemAST extends Node {
 
     if (first) {
       elem_type = type.getFstType();
-      instructions.add(new LDR(Instr.R4, Instr.R4, 0));
+      instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
     } else {
       elem_type = type.getSndType();
-      instructions.add(new LDR(Instr.R4, Instr.R4, 4));
+      instructions.add(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.R4, 4)));
     }
 
-    instructions.add(new LDR(elem_type.getBytes(), "", Instr.R4, Instr.R4, 0));
-    //    instructions.add(new STR(Instr.R4, Instr.SP, 0));
+    instructions.add(new LDR(elem_type.getBytes(), "", Instr.R4, AddrMode.buildAddr(Instr.R4)));
 
     addToCurLabel(instructions);
   }

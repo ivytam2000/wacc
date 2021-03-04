@@ -143,7 +143,7 @@ public class TestUtilities {
             if (actualStdOuts.isEmpty() && line.isEmpty() || line.equals("\u0000")) {
               continue;
             } else {
-              line = line.replaceAll("0x[0-9]+", "0xaaaaaaaa");
+              line = line.replaceAll("0x[a-zA-Z0-9]+", "0xaaaaaaaa");
               actualStdOuts.add(line);
             }
           }
@@ -218,7 +218,7 @@ public class TestUtilities {
     }
 
     // Match addresses
-    Pattern p = Pattern.compile("0x[0-9]+");
+    Pattern p = Pattern.compile("0x[a-zA-Z0-9]+");
     Matcher matcher = p.matcher(actual);
     if (matcher.find()) {
       String actualSub = actual.substring(matcher.end());

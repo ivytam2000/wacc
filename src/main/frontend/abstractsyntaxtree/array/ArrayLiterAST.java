@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.array;
 
 import antlr.WaccParser.ArrayLiterContext;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
@@ -58,7 +59,7 @@ public class ArrayLiterAST extends Node {
     }
 
     String byteOfArray = "" + (4 + children.size() * bytesNeeded);
-    addToCurLabel(new LDR(Instr.R0, byteOfArray));
+    addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(byteOfArray)));
 
     // add malloc branch to allocate memory, should be called in var dec
     addToCurLabel(new BRANCH(true, "", "malloc"));
@@ -78,7 +79,7 @@ public class ArrayLiterAST extends Node {
       addToCurLabel(new STR(curr_ident.getType().getBytes(), "", sndReg, fstReg, offset));
     }
 
-    addToCurLabel(new LDR(Instr.R5, lengthOfArray));
+    addToCurLabel(new LDR(Instr.R5, AddrMode.buildVal(lengthOfArray)));
     addToCurLabel(new STR(Instr.R5, Instr.R4, 0));
   }
 }

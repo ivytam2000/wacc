@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.assignments;
 
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
@@ -47,7 +48,7 @@ public class AssignRHSAST extends Node {
       /* We only malloc if its newpair */
       // malloc pair struct
       if (isNewpair) {
-        addToCurLabel(new LDR(Instr.R0, "8"));
+        addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(8)));
         addToCurLabel(new BRANCH(true, "", "malloc"));
         addToCurLabel(new MOV("", Instr.R4, Instr.R0));
         // Need to increment register as we using R4
@@ -60,7 +61,7 @@ public class AssignRHSAST extends Node {
         Instr.decDepth();
 
         TypeID child_1 = children.get(0).getIdentifier().getType();
-        addToCurLabel(new LDR(Instr.R0, String.valueOf(child_1.getBytes())));
+        addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(child_1.getBytes())));
         addToCurLabel(new BRANCH(true, "", "malloc"));
         addToCurLabel(new STR(child_1.getBytes(), "", Instr.R5, Instr.R0, 0));
         addToCurLabel(new STR(Instr.R0, Instr.R4, 0));
@@ -74,14 +75,12 @@ public class AssignRHSAST extends Node {
         if (isNewpair) {
           Instr.decDepth();
           TypeID child_2 = children.get(1).getIdentifier().getType();
-          addToCurLabel(new LDR(Instr.R0, String.valueOf(child_2.getBytes())));
+          addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(child_2.getBytes())));
           addToCurLabel(new BRANCH(true, "", "malloc"));
           addToCurLabel(new STR(child_2.getBytes(), "", Instr.R5, Instr.R0, 0));
           addToCurLabel(new STR(Instr.R0, Instr.R4, 4));
         }
       }
-
-      //addToCurLabel(instructions);
 
     } else {
       for (Node expr: children) {

@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.assignments;
 
 import backend.BackEndGenerator;
 import backend.instructions.ADD;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
@@ -65,7 +66,7 @@ public class AssignLHSAST extends Node {
         // Evaluate the index
         e.toAssembly();
         // Get the size of array
-        instrs.add(new LDR(fstReg, fstReg, 0));
+        instrs.add(new LDR(fstReg, AddrMode.buildAddr(fstReg)));
         // Check size
         instrs.add(new MOV("", Instr.R0, sndReg));
         instrs.add(new MOV("", Instr.R1, fstReg));
@@ -90,12 +91,11 @@ public class AssignLHSAST extends Node {
       Instr.decDepth();
     } else { //Pair
       String reg = Instr.getTargetReg();
-      instrs.add(new LDR(reg, Instr.SP, symtab.getStackOffset(assignName)));
+      instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(Instr.SP, symtab.getStackOffset(assignName))));
       instrs.add(new MOV("", Instr.R0, reg));
       BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
       instrs.add(new BRANCH(true, "", "p_check_null_pointer"));
-      instrs.add(new LDR(reg, reg, ((PairElemAST) assignNode).getFirst() ? 0
-          : 4));
+      instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(reg, ((PairElemAST) assignNode).getFirst() ? 0 : 4)));
     }
     Instr.addToCurLabel(instrs);
   }

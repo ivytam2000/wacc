@@ -7,7 +7,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
-@Ignore
 public class ValidTests {
 
   String validFolderPath = "src/test/examples/valid/";
@@ -60,6 +59,7 @@ public class ValidTests {
     executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "if/");
   }
 
+  @Ignore
   @Test
   public void validIOTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "IO/");

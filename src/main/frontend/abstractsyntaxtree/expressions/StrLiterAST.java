@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import backend.BackEndGenerator;
+import backend.instructions.AddrMode;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
 import frontend.abstractsyntaxtree.Node;
@@ -33,7 +34,7 @@ public class StrLiterAST extends Node {
 
     // Add string to data segment and load message directly into target register
     int index = BackEndGenerator.addToDataSegment(val);
-    instrs.add(new LDR(Instr.getTargetReg(), "msg_" + index));
+    instrs.add(new LDR(Instr.getTargetReg(), AddrMode.buildVal("msg_" + index)));
 
     addToCurLabel(instrs);
   }

@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.expressions;
 
+import backend.instructions.AddrMode;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
 import frontend.abstractsyntaxtree.Node;
@@ -46,7 +47,7 @@ public class IntLiterAST extends Node {
     }
 
     // Load value directly into target register
-    instrs.add(new LDR(Instr.getTargetReg(), val));
+    instrs.add(new LDR(Instr.getTargetReg(), AddrMode.buildVal(val)));
 
     addToCurLabel(instrs);
   }

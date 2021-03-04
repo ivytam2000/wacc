@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.UnaryOperContext;
 import backend.BackEndGenerator;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
@@ -103,7 +104,9 @@ public class UnOpExprAST extends Node {
       instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
     } else if (ctx.LEN() != null) {
       // Length of array stored at its corresponding memory with 0 offset
-      instrs.add(new LDR(4, "", Instr.getTargetReg(), Instr.getTargetReg(), 0));
+      instrs.add(new LDR(4, "", Instr.getTargetReg(),
+          AddrMode.buildAddr(Instr.getTargetReg())));
+//      instrs.add(new LDR(4, "", Instr.getTargetReg(), Instr.getTargetReg(), 0));
     }
 
     // ORD and CHR needs so additional instructions, only loading from stack

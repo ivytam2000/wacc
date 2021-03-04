@@ -3,6 +3,7 @@ package frontend.abstractsyntaxtree.expressions;
 import antlr.WaccParser.ArrayElemContext;
 import backend.BackEndGenerator;
 import backend.instructions.ADD;
+import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
@@ -82,7 +83,7 @@ public class ArrayElemAST extends Node {
       // adds extra stuff to nested array?
       e.toAssembly();
       Instr.decDepth();
-      instrs.add(new LDR(target, target, 0));
+      instrs.add(new LDR(target, AddrMode.buildAddr(target)));
       instrs.add(new MOV("", Instr.R0, sndReg));
       instrs.add(new MOV("", Instr.R1, target));
       instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
@@ -90,6 +91,6 @@ public class ArrayElemAST extends Node {
       instrs.add(new ADD(false, target, target, sndReg, size > 1 ? "LSL #" + size / 2 : ""));
       addToCurLabel(instrs);
     }
-    addToCurLabel(new LDR(size, "", target, target, 0));
+    addToCurLabel(new LDR(size, "", target, AddrMode.buildAddr(target)));
   }
 }

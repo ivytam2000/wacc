@@ -12,27 +12,27 @@ public class AddrMode extends Instr {
     this.type = type;
   }
 
-  public AddrMode buildVal(Object operand) {
+  public static AddrMode buildVal(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.VAL);
   }
 
-  public AddrMode buildImm(Object operand) {
+  public static AddrMode buildImm(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.IMM);
   }
 
-  public AddrMode buildImmWithShiftL(Object operand) {
+  public static AddrMode buildImmWithShiftL(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.IMM_SHIFT_L);
   }
 
-  public AddrMode buildImmWithShiftR(Object operand) {
+  public static AddrMode buildImmWithShiftR(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.IMM_SHIFT_R);
   }
 
-  public AddrMode buildAddr(Object operand) {
+  public static AddrMode buildAddr(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.ADDR_OFFSET);
   }
 
-  public AddrMode buildAddrWithOffset(Object operand, int offsetFromOperand) {
+  public static AddrMode buildAddrWithOffset(Object operand, int offsetFromOperand) {
     return new AddrMode(operand, offsetFromOperand, AddrModeType.ADDR_OFFSET);
   }
 
