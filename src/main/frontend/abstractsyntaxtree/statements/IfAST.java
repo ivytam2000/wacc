@@ -1,7 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
-import backend.BackEndGenerator;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.CMP;
@@ -12,11 +11,6 @@ import frontend.symboltable.BoolID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.BlockingDeque;
-
-import static backend.BackEndGenerator.addToUsrDefFuncs;
 import static backend.Utils.getEndRoutine;
 import static backend.Utils.getStartRoutine;
 import static backend.instructions.Instr.*;

@@ -9,9 +9,8 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.BackEndGenerator.addToUsrDefFuncs;
-import static backend.Utils.getEndRoutine;
 import static backend.Utils.getStartRoutine;
+import static backend.instructions.Instr.MAIN_LABEL;
 import static backend.instructions.Instr.addToCurLabel;
 import static backend.instructions.Instr.addToLabelOrder;
 import static backend.instructions.Instr.setCurLabel;
@@ -64,32 +63,30 @@ public class FuncAST extends Node {
     setCurLabel(labelName);
     addToLabelOrder(labelName);
 
-    SymbolTable funcsymtab = ((FuncID) identifier).getSymtab();
-    int offset = 4 + funcsymtab.getSize();
+    // Calculate the size of stack frame that needs to be allocated
+    SymbolTable funcSymTab = ((FuncID) identifier).getSymtab();
+    int offset = 4 + funcSymTab.getSize();
     boolean skipLR = false;
     for (Node paramAST : params.paramASTs) {
       skipLR = true;
       String varName = ((ParamAST) paramAST).getName();
-      funcsymtab.addOffset(varName, offset);
+      funcSymTab.addOffset(varName, offset);
       offset += paramAST.getIdentifier().getType().getBytes();
     }
 
     List<Instr> instructions = new ArrayList<>();
     addToCurLabel(new PUSH(Instr.LR));
-    addToCurLabel(getStartRoutine(funcsymtab, false));
+    addToCurLabel(getStartRoutine(funcSymTab, false));
 
     if (skipLR) {
-      funcsymtab.setSkipLR();
+      funcSymTab.setSkipLR();
     }
     statements.toAssembly();
 
-   // addToCurLabel(getEndRoutine(funcsymtab, false));
-
-   // instructions.add(new POP(Instr.PC));
     instructions.add(new POP(Instr.PC));
     instructions.add(new LTORG());
     addToCurLabel(instructions);
-    setCurLabel("main");
+    setCurLabel(MAIN_LABEL);
   }
 
   public void addFuncToGlobalScope() {

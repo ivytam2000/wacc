@@ -17,7 +17,6 @@ public class BackEndGenerator {
   private static int dataSegmentIndex = 0;
 
   private static final List<String> preDefFuncs = new ArrayList<>();
-  private static Map<String, List<Instr>> usrDefFuncs;
 
   private final AST ast;
 
@@ -25,7 +24,6 @@ public class BackEndGenerator {
     this.ast = ast;
     dataSegmentStrings.clear();
     preDefFuncs.clear();
-    usrDefFuncs = new HashMap<>();
   }
 
   public String run() {
@@ -106,9 +104,5 @@ public class BackEndGenerator {
 
   public static void addToPreDefFuncs(String func) {
     preDefFuncs.add(func);
-  }
-
-  public static void addToUsrDefFuncs(String label, List<Instr> instrs) {
-    usrDefFuncs.put(label, instrs);
   }
 }

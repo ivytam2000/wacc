@@ -10,10 +10,6 @@ import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static backend.BackEndGenerator.addToUsrDefFuncs;
 import static backend.instructions.Instr.*;
 import static backend.instructions.Instr.addToCurLabel;
 
