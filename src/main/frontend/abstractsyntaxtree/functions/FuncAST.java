@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static backend.Utils.getStartRoutine;
-import static backend.instructions.Instr.MAIN_LABEL;
 import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 import static backend.instructions.Instr.addToLabelOrder;
@@ -87,7 +86,7 @@ public class FuncAST extends Node {
     instructions.add(new POP(Instr.PC));
     instructions.add(new LTORG());
     addToCurLabel(instructions);
-    setCurLabel(MAIN_LABEL);
+    setCurLabel(Label.MAIN);
   }
 
   public void addFuncToGlobalScope() {

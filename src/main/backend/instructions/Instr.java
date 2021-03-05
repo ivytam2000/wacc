@@ -20,8 +20,6 @@ public abstract class Instr {
   public static final String LR = "lr";
   public static final String PC = "pc";
 
-  public static final String MAIN_LABEL = "main";
-
   public static final int NULL_PAIR = 0;
   public static final int FALSE_VAL = 0;
   public static final int TRUE_VAL = 1;
@@ -33,10 +31,10 @@ public abstract class Instr {
   private static int regsDepth = 0;
 
   private static int nextLabelNumber = 0;
-  private static String curLabel = MAIN_LABEL;
+  private static String curLabel = Label.MAIN;
   // List of labels to keep track of the order to print the labels
   private static List<String> labelOrder = new ArrayList<>(
-      Collections.singletonList(MAIN_LABEL));
+      Collections.singletonList(Label.MAIN));
 
   private static Map<String, List<Instr>> labels = new HashMap<>();
 

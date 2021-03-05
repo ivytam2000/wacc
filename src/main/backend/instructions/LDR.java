@@ -9,9 +9,6 @@ public class LDR extends Instr {
   private final AddrMode addrMode;
   private final String dest;
 
-  //TODO: Signed bytes?
-  //TODO: Constructors are a mess
-
   public LDR(int bytes, String conditions, String dest, AddrMode addrMode) {
     this.addrMode = addrMode;
     this.bytes = bytes;
@@ -23,8 +20,6 @@ public class LDR extends Instr {
     this(4, "", dest, addrMode);
   }
 
-  //TODO: Fix switch case
-
   /**
    * Gets the correct type of LDR instruction depending on size of operand.
    */
@@ -35,11 +30,11 @@ public class LDR extends Instr {
       case 1:
         ldr += "SB";
         break;
-      // Signed halfword
+      // Signed half word
       case -2:
         ldr += "SH";
         break;
-      // Halfword
+      // Half word
       case 2:
         ldr += "H";
         break;

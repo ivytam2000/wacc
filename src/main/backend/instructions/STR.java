@@ -29,10 +29,10 @@ public class STR extends Instr {
       // Byte
       case 1:
         return str + "B";
-      // Halfword
+      // Half word
       case 2:
         return str + "H";
-      // Doubleword
+      // Double word
       case 8:
         return str + "D";
       // Word

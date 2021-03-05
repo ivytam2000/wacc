@@ -98,26 +98,26 @@ public class Utils {
   public static BRANCH getPrintBranch(TypeID type) {
     BRANCH brInstr = null;
     if (type instanceof IntID) {
-      BackEndGenerator.addToPreDefFuncs("p_print_int");
-      brInstr = new BRANCH(true, "", "p_print_int");
+      BackEndGenerator.addToPreDefFuncs(Label.P_PRINT_INT);
+      brInstr = new BRANCH(true, Condition.NO_CON, Label.P_PRINT_INT);
     } else if (type instanceof BoolID) {
-      BackEndGenerator.addToPreDefFuncs("p_print_bool");
-      brInstr = new BRANCH(true, "", "p_print_bool");
+      BackEndGenerator.addToPreDefFuncs(Label.P_PRINT_BOOL);
+      brInstr = new BRANCH(true, Condition.NO_CON, Label.P_PRINT_BOOL);
     } else if (type instanceof CharID) {
-      brInstr = new BRANCH(true, "", "putchar");
+      brInstr = new BRANCH(true, Condition.NO_CON, Label.PUTCHAR);
     } else if (type instanceof StringID) {
-      BackEndGenerator.addToPreDefFuncs("p_print_string");
-      brInstr = new BRANCH(true, "", "p_print_string");
+      BackEndGenerator.addToPreDefFuncs(Label.P_PRINT_STRING);
+      brInstr = new BRANCH(true, Condition.NO_CON, Label.P_PRINT_STRING);
     } else if (type instanceof OptionalPairID) {
-      BackEndGenerator.addToPreDefFuncs("p_print_reference");
-      brInstr = new BRANCH(true, "", "p_print_reference");
+      BackEndGenerator.addToPreDefFuncs(Label.P_PRINT_REFERENCE);
+      brInstr = new BRANCH(true, Condition.NO_CON, Label.P_PRINT_REFERENCE);
     } else if (type instanceof ArrayID) {
       if (((ArrayID) type).getElemType() instanceof CharID) {
-        BackEndGenerator.addToPreDefFuncs("p_print_string");
-        brInstr = new BRANCH(true, "", "p_print_string");
+        BackEndGenerator.addToPreDefFuncs(Label.P_PRINT_STRING);
+        brInstr = new BRANCH(true, Condition.NO_CON, Label.P_PRINT_STRING);
       } else {
-        BackEndGenerator.addToPreDefFuncs("p_print_reference");
-        brInstr = new BRANCH(true, "", "p_print_reference");
+        BackEndGenerator.addToPreDefFuncs(Label.P_PRINT_REFERENCE);
+        brInstr = new BRANCH(true, Condition.NO_CON, Label.P_PRINT_REFERENCE);
       }
     }
     // brInstr should not be null
@@ -153,6 +153,15 @@ public class Utils {
     return preDefFuncInstrs;
   }
 
+  private static List<Instr> printf() {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.PRINTF));
+    instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildImm(0)));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.FFLUSH));
+    return instrs;
+  }
+
   private static void p_print_string(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
@@ -160,48 +169,42 @@ public class Utils {
     instrs.add(new ADD(false, Instr.R2, Instr.R0, AddrMode.buildImm(4)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(STRING_MSG))));
-    instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
-    instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new BRANCH(true, "", "fflush"));
+    instrs.addAll(printf());
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_print_string", instrs);
+    pdf.put(Label.P_PRINT_STRING, instrs);
   }
 
   private static void p_throw_overflow_error(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(OVERFLOW_MSG))));
-    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
-    instrs.add(new BRANCH(true, "", "p_throw_runtime_error"));
+    BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_THROW_RUNTIME_ERROR));
 
-    pdf.put("p_throw_overflow_error", instrs);
+    pdf.put(Label.P_THROW_OVERFLOW_ERROR, instrs);
   }
 
   private static void p_throw_runtime_error(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
-    BackEndGenerator.addToPreDefFuncs("p_print_string");
-    instrs.add(new BRANCH(true, "", "p_print_string"));
-    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(-1)));
-    instrs.add(new BRANCH(true, "", "exit"));
+    BackEndGenerator.addToPreDefFuncs(Label.P_PRINT_STRING);
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_PRINT_STRING));
+    instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildImm(-1)));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.EXIT));
 
-    pdf.put("p_throw_runtime_error", instrs);
+    pdf.put(Label.P_THROW_RUNTIME_ERROR, instrs);
   }
 
   private static void p_print_int(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(INT_MSG))));
-    instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
-    instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new BRANCH(true, "", "fflush"));
+    instrs.addAll(printf());
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_print_int", instrs);
+    pdf.put(Label.P_PRINT_INT, instrs);
   }
 
   private static void p_print_ln(Map<String, List<Instr>> pdf) {
@@ -210,9 +213,9 @@ public class Utils {
     instrs.add(new LDR(Instr.R0,
         AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(LN_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
-    instrs.add(new BRANCH(true, "", "puts"));
-    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new BRANCH(true, "", "fflush"));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.PUTS));
+    instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildImm(0)));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.FFLUSH));
     instrs.add(new POP(Instr.PC));
 
     pdf.put("p_print_ln", instrs);
@@ -222,122 +225,116 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new LDR(4, "NE", Instr.R0, AddrMode
+    instrs.add(new LDR(4, Condition.NE, Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(TRUE_MSG))));
-    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode
+    instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(FALSE_MSG))));
-    instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
-    instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new BRANCH(true, "", "fflush"));
+    instrs.addAll(printf());
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_print_bool", instrs);
+    pdf.put(Label.P_PRINT_BOOL, instrs);
   }
 
   private static void p_check_divide_by_zero(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R1, AddrMode.buildImm(0)));
-    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode.buildVal(
+    instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode.buildVal(
         "msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG))));
-    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
-    instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
+    BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
+    instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_check_divide_by_zero", instrs);
+    pdf.put(Label.P_CHECK_DIVIDE_BY_ZERO, instrs);
   }
 
   private static void p_check_array_bounds(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new LDR(4, "LT", Instr.R0, AddrMode
+    instrs.add(new LDR(4, Condition.LT, Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(NEG_INDEX_MSG))));
-    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
-    instrs.add(new BRANCH(true, "LT", "p_throw_runtime_error"));
+    BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
+    instrs.add(new BRANCH(true, Condition.LT, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new LDR(Instr.R1, AddrMode.buildAddr(Instr.R1)));
     instrs.add(new CMP(Instr.R0, AddrMode.buildReg(Instr.R1)));
-    instrs.add(new LDR(4, "CS", Instr.R0, AddrMode
+    instrs.add(new LDR(4, Condition.CS, Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(BIG_INDEX_MSG))));
-    instrs.add(new BRANCH(true, "CS", "p_throw_runtime_error"));
+    instrs.add(new BRANCH(true, Condition.CS, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_check_array_bounds", instrs);
+    pdf.put(Label.P_CHECK_ARRAY_BOUNDS, instrs);
   }
 
   private static void p_check_null_pointer(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode
+    instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
-    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
-    instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
+    BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
+    instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_check_null_pointer", instrs);
+    pdf.put(Label.P_CHECK_NULL_POINTER, instrs);
   }
 
   private static void p_read_int(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(INT_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
-    instrs.add(new BRANCH(true, "", "scanf"));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.SCANF));
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_read_int", instrs);
+    pdf.put(Label.P_READ_INT, instrs);
   }
 
   private static void p_free_pair(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new LDR(4, "EQ", Instr.R0, AddrMode
+    instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
-    BackEndGenerator.addToPreDefFuncs("p_throw_runtime_error");
-    instrs.add(new BRANCH(true, "EQ", "p_throw_runtime_error"));
+    BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
+    instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new PUSH(Instr.R0));
     instrs.add(new LDR(Instr.R0, AddrMode.buildAddr(Instr.R0)));
-    instrs.add(new BRANCH(true, "", "free"));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.FREE));
     instrs.add(new LDR(Instr.R0, AddrMode.buildAddr(Instr.SP)));
     instrs.add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R0, 4)));
-    instrs.add(new BRANCH(true, "", "free"));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.FREE));
     instrs.add(new POP(Instr.R0));
-    instrs.add(new BRANCH(true, "", "free"));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.FREE));
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_free_pair", instrs);
+    pdf.put(Label.P_FREE_PAIR, instrs);
   }
 
   private static void p_read_char(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(CHAR_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
-    instrs.add(new BRANCH(true, "", "scanf"));
+    instrs.add(new BRANCH(true, Condition.NO_CON, Label.SCANF));
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_read_char", instrs);
+    pdf.put(Label.P_READ_CHAR, instrs);
   }
 
   private static void p_print_reference(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildVal("msg_" + BackEndGenerator.addToDataSegment(PTR_MSG))));
-    instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
-    instrs.add(new BRANCH(true, "", "printf"));
-    instrs.add(new MOV("", Instr.R0, AddrMode.buildImm(0)));
-    instrs.add(new BRANCH(true, "", "fflush"));
+    instrs.addAll(printf());
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_print_reference", instrs);
+    pdf.put(Label.P_PRINT_REFERENCE, instrs);
   }
 }

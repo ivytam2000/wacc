@@ -11,7 +11,6 @@ import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
-import java.util.ArrayList;
 import java.util.List;
 
 import static backend.instructions.Instr.WORD_SIZE;

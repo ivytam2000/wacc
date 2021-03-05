@@ -14,8 +14,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class TestUtilities {
 
@@ -211,21 +210,5 @@ public class TestUtilities {
       return false;
     }
     return actualHash == expectedHash;
-  }
-
-  private static boolean stringMatches(String actual, String expected) {
-    if (actual.equals(expected)) {
-      return true;
-    }
-
-    // Match addresses
-    Pattern p = Pattern.compile("0x[a-zA-Z0-9]+");
-    Matcher matcher = p.matcher(actual);
-    if (matcher.find()) {
-      String actualSub = actual.substring(matcher.end());
-      String expectedSub = expected.substring(matcher.end());
-       return stringMatches(actualSub, expectedSub);
-    }
-    return false;
   }
 }
