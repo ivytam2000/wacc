@@ -24,18 +24,11 @@ public class StrLiterAST extends Node {
   @Override
   public void check() {}
 
-  public String getVal() {
-    return val;
-  }
-
   @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-
     // Add string to data segment and load message directly into target register
     int index = BackEndGenerator.addToDataSegment(val);
-    instrs.add(new LDR(Instr.getTargetReg(), AddrMode.buildVal("msg_" + index)));
-
-    addToCurLabel(instrs);
+    Instr loadMsg = new LDR(Instr.getTargetReg(), AddrMode.buildStringVal(index));
+    addToCurLabel(loadMsg);
   }
 }

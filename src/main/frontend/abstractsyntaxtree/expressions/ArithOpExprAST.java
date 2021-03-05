@@ -8,7 +8,9 @@ import backend.instructions.ADD;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.CMP;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
+import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.MUL;
 import backend.instructions.SUB;
@@ -70,30 +72,41 @@ public class ArithOpExprAST extends Node {
 
   @Override
   public void toAssembly() {
+    // eL op eR
+    // Evaluate eL first, then eR and finally op
 
+    // Evaluate eL
     eL.toAssembly();
 
+    // Evaluate eR (Use next register)
     String sndReg = Instr.incDepth();
     eR.toAssembly();
     String fstReg = Instr.decDepth();
 
+
+    // Handle special case where we run out of registers and stack is used
     boolean regsOnStack = Instr.regsOnStack();
     String targetReg = regsOnStack ? sndReg : fstReg;
 
     List<Instr> instrs = new ArrayList<>();
 
+    // To check which pre-defined function to add to assembly program
     boolean addOverflow = true;
     switch (op) {
       case "+":
+        // Do addition and branch if overflow
         instrs.add(new ADD(true, targetReg, fstReg, AddrMode.buildReg(sndReg)));
-        instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
+        instrs.add(new BRANCH(true, Condition.VS, Label.P_THROW_OVERFLOW_ERROR));
         break;
+
       case "-":
-        instrs.add(
-            new SUB(false, true, targetReg, fstReg, AddrMode.buildReg(sndReg)));
-        instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
+        // Do subtraction and branch if overflow
+        instrs.add(new SUB(false, true, targetReg, fstReg, AddrMode.buildReg(sndReg)));
+        instrs.add(new BRANCH(true, Condition.VS, Label.P_THROW_OVERFLOW_ERROR));
         break;
+
       case "*":
+        // Do multiplication
         instrs.add(new MUL(fstReg, sndReg, regsOnStack));
         // Compare with arithmetic shift to detect overflow
         if (regsOnStack) {
@@ -101,34 +114,38 @@ public class ArithOpExprAST extends Node {
         } else {
           instrs.add(new CMP(sndReg,  AddrMode.buildReg(fstReg), AddrMode.buildImmWithASR(Instr.WORD_BIT_LIMIT)));
         }
-        instrs.add(new BRANCH(true, "NE", "p_throw_overflow_error"));
+        instrs.add(new BRANCH(true, Condition.NE, Label.P_THROW_OVERFLOW_ERROR));
         break;
+
       case "/":
         addOverflow = false;
-        instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(fstReg)));
-        instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(sndReg)));
-        instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
-        instrs.add(new BRANCH(true, "", "__aeabi_idiv"));
-        instrs.add(
-            new MOV("", Instr.getTargetReg(), AddrMode.buildReg(Instr.R0)));
+        // If not division by zero, do division and store result as needed
+        instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildReg(fstReg)));
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(sndReg)));
+        instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_DIVIDE_BY_ZERO));
+        instrs.add(new BRANCH(true, Condition.NO_CON, Label.DIV_FUNC));
+        instrs.add(new MOV(Condition.NO_CON, Instr.getTargetReg(), AddrMode.buildReg(Instr.R0)));
         break;
-      case "%":
+
+      case "%": // Modulus
         addOverflow = false;
-        instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(fstReg)));
-        instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(sndReg)));
-        instrs.add(new BRANCH(true, "", "p_check_divide_by_zero"));
-        instrs.add(new BRANCH(true, "", "__aeabi_idivmod"));
-        instrs.add(
-            new MOV("", Instr.getTargetReg(), AddrMode.buildReg(Instr.R1)));
+        // If not mod zero, do div and mod, store result as needed
+        instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildReg(fstReg)));
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(sndReg)));
+        instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_DIVIDE_BY_ZERO));
+        instrs.add(new BRANCH(true, Condition.NO_CON, Label.MOD_FUNC));
+        instrs.add(new MOV(Condition.NO_CON, Instr.getTargetReg(), AddrMode.buildReg(Instr.R1)));
         break;
+
       default:
         assert (false); // UNREACHABLE
     }
 
+    // Add pre-defined function
     if (addOverflow) {
-      BackEndGenerator.addToPreDefFuncs("p_throw_overflow_error");
+      BackEndGenerator.addToPreDefFuncs(Label.P_THROW_OVERFLOW_ERROR);
     } else {
-      BackEndGenerator.addToPreDefFuncs("p_check_divide_by_zero");
+      BackEndGenerator.addToPreDefFuncs(Label.P_CHECK_DIVIDE_BY_ZERO);
     }
 
     addToCurLabel(instrs);

@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import backend.instructions.AddrMode;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
@@ -19,22 +20,19 @@ public class CharLiterAST extends Node {
     this.val = val;
   }
 
-  public AddrMode getVal() {
+  @Override
+  public void check() {
+  }
+
+  private AddrMode getVal() {
     return (val.equals("\\0") ? AddrMode.buildImm(0)
         : AddrMode.buildImm("'" + val + "'"));
   }
 
   @Override
-  public void check() {
-  }
-
-  @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-
     // Move character into target register
-    instrs.add(new MOV("", Instr.getTargetReg(), getVal()));
-
-    addToCurLabel(instrs);
+    Instr movChar = new MOV(Condition.NO_CON, Instr.getTargetReg(), getVal());
+    addToCurLabel(movChar);
   }
 }

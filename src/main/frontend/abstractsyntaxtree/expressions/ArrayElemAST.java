@@ -5,8 +5,10 @@ import backend.BackEndGenerator;
 import backend.instructions.ADD;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
+import backend.instructions.Label;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -73,28 +75,41 @@ public class ArrayElemAST extends Node {
 
   @Override
   public void toAssembly() {
-    BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
+    // Store address of array at target register
     String target = Instr.getTargetReg();
     addToCurLabel(new ADD(false, target, Instr.SP, AddrMode.buildReg(getOffset())));
+    String sndReg = Instr.incDepth();
+
     int size = getIdentifier().getType().getBytes();
+    // Iterate through nested arrays
     for (Node e : exprs) {
       List<Instr> instrs = new ArrayList<>();
-      String sndReg = Instr.incDepth();
+
+      // Evaluate index expression
       e.toAssembly();
-      Instr.decDepth();
+
+      // Check whether index is positive and within array bounds
       instrs.add(new LDR(target, AddrMode.buildAddr(target)));
-      instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(sndReg)));
-      instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(target)));
-      instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
+      instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildReg(sndReg)));
+      instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(target)));
+      instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_ARRAY_BOUNDS));
+
       // Skip over 0th element (size)
       instrs.add(new ADD(false, target, target, AddrMode.buildImm(WORD_SIZE)));
+
+      //Index to correct element position
       if (size > 1) {
         instrs.add(new ADD(false, target, target, AddrMode.buildReg(sndReg), AddrMode.buildImmWithLSL(size / 2)));
       } else {
         instrs.add(new ADD(false, target, target, AddrMode.buildReg(sndReg)));
       }
+
       addToCurLabel(instrs);
     }
-    addToCurLabel(new LDR(size, "", target, AddrMode.buildAddr(target)));
+
+    // Clean up and load element into target register
+    Instr.decDepth();
+    BackEndGenerator.addToPreDefFuncs(Label.P_CHECK_ARRAY_BOUNDS);
+    addToCurLabel(new LDR(size, Condition.NO_CON, target, AddrMode.buildAddr(target)));
   }
 }

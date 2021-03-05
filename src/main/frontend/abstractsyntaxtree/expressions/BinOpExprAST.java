@@ -1,11 +1,12 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.ExprContext;
-import backend.instructions.ADD;
 import backend.instructions.AND;
 import backend.instructions.AddrMode;
 import backend.instructions.CMP;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
+import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.ORR;
 import frontend.abstractsyntaxtree.Node;
@@ -94,14 +95,20 @@ public class BinOpExprAST extends Node {
 
   @Override
   public void toAssembly() {
+    // eL op eR
+    // Evaluate eL first, then eR and finally op
+
+    // Evaluate eL
     String fstReg = Instr.getTargetReg();
     eL.toAssembly();
-    List<Instr> instrs = new ArrayList<>();
 
+    // Evaluate eR
     String sndReg = Instr.incDepth();
     eR.toAssembly();
     Instr.decDepth();
 
+    List<Instr> instrs = new ArrayList<>();
+    // AND ORR have different bodies, we deal with them first
     if (op.equals("&&")) {
       instrs.add(new AND(fstReg, AddrMode.buildReg(sndReg)));
       addToCurLabel(instrs);
@@ -112,44 +119,50 @@ public class BinOpExprAST extends Node {
       return ;
     }
 
+    // Compare registers, set result conditions depending on op
     instrs.add(new CMP(fstReg, AddrMode.buildReg(sndReg)));
-
     String c1 = "";
     String c2 = "";
     switch (op) {
       case ">":
-        c1 = "GT";
-        c2 = "LE";
+        c1 = Condition.GT;
+        c2 = Condition.LE;
         break;
+
       case ">=":
-        c1 = "GE";
-        c2 = "LT";
+        c1 = Condition.GE;
+        c2 = Condition.LT;
         break;
+
       case "<":
-        c1 = "LT";
-        c2 = "GE";
+        c1 = Condition.LT;
+        c2 = Condition.GE;
         break;
+
       case "<=":
-        c1 = "LE";
-        c2 = "GT";
+        c1 = Condition.LE;
+        c2 = Condition.GT;
         break;
+
       case "==":
-        c1 = "EQ";
-        c2 = "NE";
+        c1 = Condition.EQ;
+        c2 = Condition.NE;
         break;
+
       case "!=":
-        c1 = "NE";
-        c2 = "EQ";
+        c1 = Condition.NE;
+        c2 = Condition.EQ;
         break;
+
       default:
         assert(false); // UNREACHABLE
     }
 
+    // Set result at target register depending on condition
     instrs.add(new MOV(c1, fstReg, AddrMode.buildImm(TRUE_VAL)));
     instrs.add(new MOV(c2, fstReg, AddrMode.buildImm(FALSE_VAL)));
 
     addToCurLabel(instrs);
   }
-
 
 }

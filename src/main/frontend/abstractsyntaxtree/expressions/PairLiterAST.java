@@ -23,8 +23,8 @@ public class PairLiterAST extends Node {
 
   @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-    instrs.add(new LDR(Instr.getTargetReg(), AddrMode.buildVal(NULL_PAIR)));
-    addToCurLabel(instrs);
+    // Load null (0) into target register
+    Instr loadNull = new LDR(Instr.getTargetReg(), AddrMode.buildVal(NULL_PAIR));
+    addToCurLabel(loadNull);
   }
 }
