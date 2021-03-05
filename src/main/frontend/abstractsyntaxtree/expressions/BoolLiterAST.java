@@ -1,6 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import backend.instructions.AddrMode;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
@@ -25,14 +26,14 @@ public class BoolLiterAST extends Node {
   public void check() {
   }
 
+  private AddrMode getVal() {
+    return (this.val ? AddrMode.buildImm(TRUE_VAL) : AddrMode.buildImm(FALSE_VAL));
+  }
+
   @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-
-    // Move character into target register
-    AddrMode val = this.val ? AddrMode.buildImm(TRUE_VAL) : AddrMode.buildImm(FALSE_VAL);
-    instrs.add(new MOV("", Instr.getTargetReg(), val));
-
-    addToCurLabel(instrs);
+    // Move boolean into target register
+    Instr movBool = new MOV(Condition.NO_CON, Instr.getTargetReg(), getVal());
+    addToCurLabel(movBool);
   }
 }

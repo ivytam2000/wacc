@@ -30,8 +30,6 @@ public class IntLiterAST extends Node {
 
   @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-
     // Remove leading zeros
     if (!val.equals("0")) {
       boolean zero = false;
@@ -47,8 +45,7 @@ public class IntLiterAST extends Node {
     }
 
     // Load value directly into target register
-    instrs.add(new LDR(Instr.getTargetReg(), AddrMode.buildVal(val)));
-
-    addToCurLabel(instrs);
+    Instr loadInt = new LDR(Instr.getTargetReg(), AddrMode.buildVal(val));
+    addToCurLabel(loadInt);
   }
 }

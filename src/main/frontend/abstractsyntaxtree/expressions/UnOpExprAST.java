@@ -4,8 +4,10 @@ import antlr.WaccParser.UnaryOperContext;
 import backend.BackEndGenerator;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
+import backend.instructions.Label;
 import backend.instructions.ORR;
 import backend.instructions.SUB;
 import frontend.abstractsyntaxtree.Node;
@@ -90,27 +92,33 @@ public class UnOpExprAST extends Node {
 
   @Override
   public void toAssembly() {
+    // op exprAST
+    // Evaluate exprAST, then op
 
-    // Set up
+    // Evaluate exprAST
+    String targetReg = Instr.getTargetReg();
     exprAST.toAssembly();
-    List<Instr> instrs = new ArrayList<>();
 
-    // UnOp
+    // Evaluate op
+    List<Instr> instrs = new ArrayList<>();
     if (ctx.NOT() != null) {
-      // XOR
-      instrs.add(new ORR(true, Instr.getTargetReg(), AddrMode.buildImm(TRUE_VAL)));
+      // Use XOR to flip bits
+       instrs.add(new ORR(true, targetReg, AddrMode.buildImm(TRUE_VAL)));
     } else if (ctx.MINUS() != null) {
-      // Revere subtract
-      instrs.add(new SUB(true, true, Instr.getTargetReg(), Instr.getTargetReg(),
-          AddrMode.buildImm(0)));
+      // Reverse subtract
+      instrs.add(new SUB(true, true, targetReg, targetReg, AddrMode.buildImm(0)));
       // Check for overflow
-      BackEndGenerator.addToPreDefFuncs("p_throw_overflow_error");
-      instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
+      BackEndGenerator.addToPreDefFuncs(Label.P_THROW_OVERFLOW_ERROR);
+      instrs.add(new BRANCH(true, Condition.VS, Label.P_THROW_OVERFLOW_ERROR));
     } else if (ctx.LEN() != null) {
-      // Length of array stored at its corresponding memory with 0 offset
-      instrs.add(new LDR(WORD_SIZE, "", Instr.getTargetReg(),
-          AddrMode.buildAddr(Instr.getTargetReg())));
+      // Length of array stored at 0th index of its corresponding memory addr
+      instrs.add(new LDR(WORD_SIZE, Condition.NO_CON, targetReg,
+          AddrMode.buildAddr(targetReg)));
     }
+    /*
+    No need additional instructions for chr and ord as long as the correct value
+    is loaded when evaluating expression.
+    */
 
     addToCurLabel(instrs);
   }
