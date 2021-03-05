@@ -4,7 +4,6 @@ import antlr.WaccParser.Exit_statContext;
 import antlr.WaccParser.ExprContext;
 import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.expressions.IntLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ExitID;
 import frontend.symboltable.IntID;

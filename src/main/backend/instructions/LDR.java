@@ -2,7 +2,7 @@ package backend.instructions;
 
 public class LDR extends Instr {
 
-  // Number of bytes determines the type of STR instruction
+  // Number of bytes determines the type of LDR instruction
   // A word is 4 bytes
   private final int bytes;
   private final String conditions;

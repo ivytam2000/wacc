@@ -14,7 +14,6 @@ import java.util.List;
 
 import static backend.instructions.AddrMode.buildAddrWithOffset;
 import static backend.instructions.Condition.NO_CON;
-import static backend.instructions.Instr.R4;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class VarDecAST extends Node {

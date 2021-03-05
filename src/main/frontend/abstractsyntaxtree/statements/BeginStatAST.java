@@ -1,11 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
-import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.SymbolTable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static backend.Utils.getEndRoutine;
 import static backend.Utils.getStartRoutine;

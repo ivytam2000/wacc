@@ -1,12 +1,11 @@
 package frontend.abstractsyntaxtree.statements;
 
 import backend.Utils;
-import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
-import frontend.symboltable.*;
+
 
 import java.util.ArrayList;
 import java.util.List;

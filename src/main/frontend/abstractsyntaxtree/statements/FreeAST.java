@@ -7,7 +7,6 @@ import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.PairID;
-import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 
 import java.util.ArrayList;
@@ -23,14 +22,11 @@ public class FreeAST extends Node {
 
   private final Node expr;
   private final ExprContext ctx;
-  private final SymbolTable symtab;
 
-  public FreeAST(Node expr, ExprContext ctx, SymbolTable symtab) {
+  public FreeAST(Node expr, ExprContext ctx) {
     super(expr.getIdentifier());
     this.expr = expr;
     this.ctx = ctx;
-
-    this.symtab = symtab;
   }
 
   @Override

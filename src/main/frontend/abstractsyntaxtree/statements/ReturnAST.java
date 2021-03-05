@@ -7,7 +7,6 @@ import static backend.instructions.Instr.addToCurLabel;
 
 import antlr.WaccParser.Return_statContext;
 import backend.Utils;
-import backend.instructions.AddrMode;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import backend.instructions.POP;

@@ -148,7 +148,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public FreeAST visitFree_stat(Free_statContext ctx) {
     Node expr = visit(ctx.expr());
 
-    FreeAST freeAST = new FreeAST(expr, ctx.expr(),currSymTab);
+    FreeAST freeAST = new FreeAST(expr, ctx.expr());
     freeAST.check();
 
     return freeAST;
