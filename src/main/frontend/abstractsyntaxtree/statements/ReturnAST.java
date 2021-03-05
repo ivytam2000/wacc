@@ -1,12 +1,9 @@
 package frontend.abstractsyntaxtree.statements;
 
-import static backend.instructions.AddrMode.buildReg;
-import static backend.instructions.Condition.NO_CON;
-import static backend.instructions.Instr.PC;
-import static backend.instructions.Instr.addToCurLabel;
-
 import antlr.WaccParser.Return_statContext;
 import backend.Utils;
+import backend.instructions.AddrMode;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import backend.instructions.POP;
@@ -15,6 +12,8 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static backend.instructions.Instr.addToCurLabel;
 
 public class ReturnAST extends Node {
 
@@ -47,10 +46,13 @@ public class ReturnAST extends Node {
     // Evaluate the expression
     expr.toAssembly();
     List<Instr> instructions = new ArrayList<>();
-    instructions.add(new MOV(NO_CON, Instr.R0, buildReg(Instr.getTargetReg())));
+
+    // Move argument to R0
+    instructions.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildReg(Instr.getTargetReg())));
     addToCurLabel(instructions);
+
     // Restore the stack pointer by incrementing the function's stack
     addToCurLabel(Utils.getEndRoutine(symtab, false));
-    addToCurLabel(new POP(PC));
+    addToCurLabel(new POP(Instr.PC));
   }
 }

@@ -3,8 +3,8 @@ package backend.instructions;
 public class SUB extends Instr {
 
   private final boolean reverse;  // For RSB instruction (negation)
-  private final boolean setFlags;
-  private final String dest;      // Also first operand
+  private final boolean setFlags; // Set overflow  
+  private final String dest;
   private final String operand1;
   private final AddrMode operand2;
 

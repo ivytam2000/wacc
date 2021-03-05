@@ -19,6 +19,13 @@ public class ParamListAST extends Node {
     this.paramASTs = paramASTs;
   }
 
+  // Used in the visitor to convert ASTs to IDs
+  public List<TypeID> convertToParamIDs() {
+    return paramASTs.stream()
+        .map(paramAST -> paramAST.getIdentifier().getType())
+        .collect(Collectors.toList());
+  }
+
   @Override
   public void check() {
     for (ParamAST paramAST : paramASTs) {
@@ -28,11 +35,4 @@ public class ParamListAST extends Node {
 
   @Override
   public void toAssembly() {}
-
-  // Used in the visitor to convert ASTs to IDs
-  public List<TypeID> convertToParamIDs() {
-    return paramASTs.stream()
-        .map(paramAST -> paramAST.getIdentifier().getType())
-        .collect(Collectors.toList());
-  }
 }

@@ -11,6 +11,10 @@ public class SequenceAST extends Node {
     this.statements = statements;
   }
 
+  public List<Node> getStatements() {
+    return statements;
+  }
+
   @Override
   public void check() {
   }
@@ -20,9 +24,5 @@ public class SequenceAST extends Node {
     for (Node stat : statements) {
       stat.toAssembly();
     }
-  }
-
-  public List<Node> getStatements() {
-    return statements;
   }
 }

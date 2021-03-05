@@ -22,12 +22,14 @@ public class ReadAST extends Node {
   private final AssignLHSAST lhs;
   private final AssignLHSContext ctx;
   private final Identifier lhsType;
+  private final SymbolTable symtab;
 
-  public ReadAST(AssignLHSAST assignLHS, AssignLHSContext ctx) {
+  public ReadAST(AssignLHSAST assignLHS, AssignLHSContext ctx, SymbolTable symtab) {
     super();
     this.lhs = assignLHS;
     this.ctx = ctx;
-    lhsType = lhs.getIdentifier();
+    this.lhsType = lhs.getIdentifier();
+    this.symtab = symtab;
   }
 
   @Override
@@ -45,7 +47,12 @@ public class ReadAST extends Node {
   @Override
   public void toAssembly() {
     // Evaluate the expression
-    lhs.toAssembly();
+    if (lhs.getAssignNode() == null) { // Variable
+      Instr.addToCurLabel(new ADD(false, Instr.R4, Instr.SP,
+          AddrMode.buildImm(symtab.getStackOffset(lhs.getIdentName()))));
+    } else {
+      lhs.toAssembly();
+    }
     List<Instr> instrs = new ArrayList<>();
     MOV movInstr = new MOV(NO_CON, Instr.R0, buildReg(Instr.R4));
     instrs.add(movInstr);

@@ -64,7 +64,7 @@ public class ArrayLiterAST extends Node {
     String byteOfArray = Integer.toString(WORD_SIZE + children.size() * bytesNeeded);
     addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(byteOfArray)));
 
-    // Add malloc branch to allocate memory, should be called in VarDecAST
+    // Add malloc branch to allocate memory
     addToCurLabel(new BRANCH(true, Condition.NO_CON, Label.MALLOC));
 
     // Move r4 to r0
@@ -79,9 +79,9 @@ public class ArrayLiterAST extends Node {
       curr_expr.toAssembly();
       String fstReg = Instr.decDepth();
 
+      // storing the offsets of the expressions (skip WORD_SIZE bytes which stores length)
       int offset = i * bytesNeeded + WORD_SIZE;
 
-      // storing the offsets of the expressions
       addToCurLabel(
           new STR(curr_ident.getType().getBytes(), Condition.NO_CON, sndReg,
               AddrMode.buildAddrWithOffset(fstReg, offset)));

@@ -3,7 +3,6 @@ package backend.instructions;
 public class LDR extends Instr {
 
   // Number of bytes determines the type of LDR instruction
-  // A word is 4 bytes
   private final int bytes;
   private final String conditions;
   private final AddrMode addrMode;
@@ -16,6 +15,7 @@ public class LDR extends Instr {
     this.dest = dest;
   }
 
+  // Default to 4 bytes (word size) if not specified
   public LDR(String dest, AddrMode addrMode) {
     this(4, Condition.NO_CON, dest, addrMode);
   }
@@ -30,7 +30,7 @@ public class LDR extends Instr {
       case 1:
         ldr += "SB";
         break;
-      // Signed half word
+      // Signed half word (Added for extensibility)
       case -2:
         ldr += "SH";
         break;

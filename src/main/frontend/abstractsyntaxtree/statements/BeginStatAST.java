@@ -18,6 +18,10 @@ public class BeginStatAST extends Node {
     this.symtab = symtab;
   }
 
+  public Node getStat() {
+    return stat;
+  }
+
   @Override
   public void check() {}
 
@@ -29,9 +33,5 @@ public class BeginStatAST extends Node {
     stat.toAssembly();
     // Increment stack pointer to restore its position in the previous scope
     addToCurLabel(getEndRoutine(symtab,false));
-  }
-
-  public Node getStat() {
-    return stat;
   }
 }

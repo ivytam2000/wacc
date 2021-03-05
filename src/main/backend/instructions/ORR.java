@@ -2,7 +2,7 @@ package backend.instructions;
 
 public class ORR extends Instr {
 
-  private final boolean exclusive;
+  private final boolean exclusive; // Toggle between OR and XOR
   private final String dest;
   private final AddrMode operand2;
 

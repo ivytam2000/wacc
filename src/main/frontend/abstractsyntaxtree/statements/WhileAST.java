@@ -10,9 +10,7 @@ import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
 
-import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.*;
-import static backend.instructions.Instr.addToCurLabel;
 
 public class WhileAST extends Node {
   private final Node expr;
@@ -57,7 +55,7 @@ public class WhileAST extends Node {
     String bodyLabel = getNextLabel();
 
     // Branch to this the nextStat label
-    addToCurLabel(new BRANCH(false, NO_CON, nextStatLabel));
+    addToCurLabel(new BRANCH(false, Condition.NO_CON, nextStatLabel));
 
     setCurLabel(nextStatLabel);
     expr.toAssembly();

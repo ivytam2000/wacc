@@ -12,8 +12,6 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.instructions.AddrMode.buildAddrWithOffset;
-import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class VarDecAST extends Node {
@@ -38,6 +36,14 @@ public class VarDecAST extends Node {
     this.ctx = ctx;
     this.rhsCtx = ctx.assignRHS();
     this.assignRHS = assignRHS;
+  }
+
+  public Node getTypeAST() {
+    return typeAST;
+  }
+
+  public AssignRHSAST getAssignRHS() {
+    return assignRHS;
   }
 
   @Override
@@ -74,23 +80,19 @@ public class VarDecAST extends Node {
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     TypeID decType = typeAST.getIdentifier().getType();
+
     // Generate the offset of the variable
     int offset = symtab.getSmallestOffset() - decType.getBytes();
+
     // Add the offset to the symbol table's hashmap of variables' offsets
     symtab.addOffset(varName, offset);
     assignRHS.toAssembly();
+
     // Stores the value in the offset stack address
-    STR strInstr = new STR(decType.getBytes(), NO_CON, Instr.R4,
-                           buildAddrWithOffset(Instr.SP, offset));
+    STR strInstr = new STR(decType.getBytes(), Condition.NO_CON, Instr.R4,
+                           AddrMode.buildAddrWithOffset(Instr.SP, offset));
+
     instrs.add(strInstr);
     addToCurLabel(instrs);
-  }
-
-  public Node getTypeAST() {
-    return typeAST;
-  }
-
-  public AssignRHSAST getAssignRHS() {
-    return assignRHS;
   }
 }

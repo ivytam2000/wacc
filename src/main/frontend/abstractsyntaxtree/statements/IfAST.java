@@ -10,7 +10,6 @@ import frontend.symboltable.TypeID;
 
 import static backend.Utils.getEndRoutine;
 import static backend.Utils.getStartRoutine;
-import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.*;
 
 public class IfAST extends Node {
@@ -74,7 +73,7 @@ public class IfAST extends Node {
     thenStat.toAssembly();
     addToCurLabel(getEndRoutine(thenScope, false));
     // Branch to the nextStatLabel to skip over the elseStatlabel
-    addToCurLabel(new BRANCH(false, NO_CON, nextStatLabel));
+    addToCurLabel(new BRANCH(false, Condition.NO_CON, nextStatLabel));
 
     // Add elseStatLabel before evaluating elseStat
     addToLabelOrder(elseStatLabel);

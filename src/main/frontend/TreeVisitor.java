@@ -235,7 +235,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public ReadAST visitRead_stat(Read_statContext ctx) {
     AssignLHSAST assignLHSAST = (AssignLHSAST) visit(ctx.assignLHS());
 
-    ReadAST readAST = new ReadAST(assignLHSAST, ctx.assignLHS());
+    ReadAST readAST = new ReadAST(assignLHSAST, ctx.assignLHS(), currSymTab);
     readAST.check();
 
     return readAST;
@@ -418,7 +418,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       }
       currSymTab.add(nestedID);
 
-      return new ArrayTypeAST(nestedID, dimensions);
+      return new ArrayTypeAST(nestedID);
     } else {
       // Pair-type array
       Node pairTypeAST = visit(ctx.pairType());
@@ -426,7 +426,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       ArrayID pairArrayID = new ArrayID(pairTypeAST.getIdentifier().getType());
       currSymTab.add(pairArrayID);
 
-      return new ArrayTypeAST(pairArrayID, dimensions);
+      return new ArrayTypeAST(pairArrayID);
     }
   }
 

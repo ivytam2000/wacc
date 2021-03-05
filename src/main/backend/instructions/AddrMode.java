@@ -16,6 +16,8 @@ public class AddrMode extends Instr {
     this.type = type;
   }
 
+  // Implemented with factory method pattern
+
   public static AddrMode buildReg(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.REG);
   }
