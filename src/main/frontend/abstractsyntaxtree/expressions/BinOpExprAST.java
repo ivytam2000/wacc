@@ -103,7 +103,7 @@ public class BinOpExprAST extends Node {
     Instr.decDepth();
 
     if (op.equals("&&")) {
-      instrs.add(new AND(fstReg, sndReg));
+      instrs.add(new AND(fstReg, AddrMode.buildReg(sndReg)));
       addToCurLabel(instrs);
       return ;
     } else if (op.equals("||")) {
