@@ -6,6 +6,7 @@ import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Condition;
 import backend.instructions.Instr;
+import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
@@ -106,15 +107,19 @@ public class AssignCallAST extends AssignRHSAST {
       accOffset += offset;
       symtab.incrementFuncOffset(offset);
       Instr.addToCurLabel(new STR(offset,
-          Condition.NO_CON, transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
+          Condition.NO_CON, transferReg,
+          AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
     }
 
-    instructions.add(new BRANCH(true, Condition.NO_CON, "f_" + funcName));
+    instructions
+        .add(new BRANCH(true, Condition.NO_CON, Label.FUNC_HEADER + funcName));
     if (accOffset > 0) {
-      instructions.add(new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset)));
+      instructions.add(
+          new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset)));
     }
     symtab.resetFuncOffset();
-    instructions.add(new MOV(Condition.NO_CON, transferReg, AddrMode.buildReg(Instr.R0)));
+    instructions.add(
+        new MOV(Condition.NO_CON, transferReg, AddrMode.buildReg(Instr.R0)));
     addToCurLabel(instructions);
   }
 }

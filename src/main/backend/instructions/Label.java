@@ -5,7 +5,10 @@ public abstract class Label {
   // Main program label
   public static final String MAIN = "main";
 
-  // Pre defined functions
+  // User-defined functions header
+  public static final String FUNC_HEADER = "f_";
+
+  // Pre-defined functions
   public static final String P_PRINT_INT = "p_print_int";
   public static final String P_PRINT_BOOL = "p_print_bool";
   public static final String P_PRINT_STRING = "p_print_string";
