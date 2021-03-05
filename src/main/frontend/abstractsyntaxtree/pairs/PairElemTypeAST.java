@@ -1,9 +1,8 @@
 package frontend.abstractsyntaxtree.pairs;
 
-import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.Identifier;
-import java.util.List;
+
 
 public class PairElemTypeAST extends Node {
 

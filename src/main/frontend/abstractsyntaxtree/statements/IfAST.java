@@ -63,20 +63,19 @@ public class IfAST extends Node {
     // Evaluate the boolean expression
     expr.toAssembly();
 
-    // This ensures that the nextStatLabel is always after the elseStatLabel
     String elseStatLabel = getNextLabel();
     String nextStatLabel = getNextLabel();
 
-    // Test the boolean expression if it evaluates to false jump to elseStat label
+    // Testing the boolean expression
+    // If it evaluates to false jump to elseStat label
     addToCurLabel(new CMP(Instr.R4, AddrMode.buildImm(0)));
     addToCurLabel(new BRANCH(false, "EQ", elseStatLabel));
 
-    //Evaluate thenStat (true) body in current label
+    //Evaluate thenStat body in current label
     addToCurLabel(getStartRoutine(thenScope, false));
     thenStat.toAssembly();
     addToCurLabel(getEndRoutine(thenScope, false));
-
-    // Branch to the nextStatLabel to skip over the elseStatlabel (false body)
+    // Branch to the nextStatLabel to skip over the elseStatlabel
     addToCurLabel(new BRANCH(false, "", nextStatLabel));
 
     // Add elseStatLabel before evaluating elseStat

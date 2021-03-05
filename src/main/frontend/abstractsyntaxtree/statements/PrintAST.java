@@ -16,12 +16,10 @@ import static backend.instructions.Instr.addToCurLabel;
 public class PrintAST extends Node {
 
   private final Node expr;
-  private final SymbolTable symtab;
 
-  public PrintAST(Node expr, SymbolTable symtab) {
+  public PrintAST(Node expr) {
     super(expr.getIdentifier());
     this.expr = expr;
-    this.symtab = symtab;
   }
 
   public Node getExpr() {
