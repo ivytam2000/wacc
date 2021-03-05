@@ -168,7 +168,7 @@ public class Utils {
     instrs.add(new LDR(Instr.R1, AddrMode.buildAddr(Instr.R0)));
     instrs.add(new ADD(false, Instr.R2, Instr.R0, AddrMode.buildImm(4)));
     instrs.add(new LDR(Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(STRING_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(STRING_MSG))));
     instrs.addAll(printf());
     instrs.add(new POP(Instr.PC));
 
@@ -178,7 +178,7 @@ public class Utils {
   private static void p_throw_overflow_error(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new LDR(Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(OVERFLOW_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(OVERFLOW_MSG))));
     BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
     instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_THROW_RUNTIME_ERROR));
 
@@ -200,7 +200,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(INT_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(INT_MSG))));
     instrs.addAll(printf());
     instrs.add(new POP(Instr.PC));
 
@@ -211,14 +211,14 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new LDR(Instr.R0,
-        AddrMode.buildVal("msg_" + BackEndGenerator.addToDataSegment(LN_MSG))));
+        AddrMode.buildStringVal(BackEndGenerator.addToDataSegment(LN_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
     instrs.add(new BRANCH(true, Condition.NO_CON, Label.PUTS));
     instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new BRANCH(true, Condition.NO_CON, Label.FFLUSH));
     instrs.add(new POP(Instr.PC));
 
-    pdf.put("p_print_ln", instrs);
+    pdf.put(Label.P_PRINT_LN, instrs);
   }
 
   private static void p_print_bool(Map<String, List<Instr>> pdf) {
@@ -226,9 +226,9 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new LDR(4, Condition.NE, Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(TRUE_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(TRUE_MSG))));
     instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(FALSE_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(FALSE_MSG))));
     instrs.addAll(printf());
     instrs.add(new POP(Instr.PC));
 
@@ -239,8 +239,8 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R1, AddrMode.buildImm(0)));
-    instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode.buildVal(
-        "msg_" + BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG))));
+    instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode.buildStringVal(
+        BackEndGenerator.addToDataSegment(DIV_BY_ZERO_MSG))));
     BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
     instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new POP(Instr.PC));
@@ -253,13 +253,13 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new LDR(4, Condition.LT, Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(NEG_INDEX_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(NEG_INDEX_MSG))));
     BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
     instrs.add(new BRANCH(true, Condition.LT, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new LDR(Instr.R1, AddrMode.buildAddr(Instr.R1)));
     instrs.add(new CMP(Instr.R0, AddrMode.buildReg(Instr.R1)));
     instrs.add(new LDR(4, Condition.CS, Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(BIG_INDEX_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(BIG_INDEX_MSG))));
     instrs.add(new BRANCH(true, Condition.CS, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new POP(Instr.PC));
 
@@ -271,7 +271,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(NULL_MSG))));
     BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
     instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new POP(Instr.PC));
@@ -284,7 +284,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(INT_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(INT_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
     instrs.add(new BRANCH(true, Condition.NO_CON, Label.SCANF));
     instrs.add(new POP(Instr.PC));
@@ -297,7 +297,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(NULL_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(NULL_MSG))));
     BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
     instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
     instrs.add(new PUSH(Instr.R0));
@@ -318,7 +318,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(CHAR_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(CHAR_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
     instrs.add(new BRANCH(true, Condition.NO_CON, Label.SCANF));
     instrs.add(new POP(Instr.PC));
@@ -331,7 +331,7 @@ public class Utils {
     instrs.add(new PUSH(Instr.LR));
     instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
-        .buildVal("msg_" + BackEndGenerator.addToDataSegment(PTR_MSG))));
+        .buildStringVal(BackEndGenerator.addToDataSegment(PTR_MSG))));
     instrs.addAll(printf());
     instrs.add(new POP(Instr.PC));
 

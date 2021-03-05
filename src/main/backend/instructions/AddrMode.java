@@ -24,6 +24,10 @@ public class AddrMode extends Instr {
     return new AddrMode(operand, 0, AddrModeType.VAL);
   }
 
+  public static AddrMode buildStringVal(Object operand) {
+    return new AddrMode(operand, 0, AddrModeType.STRING_VAL);
+  }
+
   public static AddrMode buildImm(Object operand) {
     return new AddrMode(operand, 0, AddrModeType.IMM);
   }
@@ -68,6 +72,8 @@ public class AddrMode extends Instr {
         return "=" + operand;
       case IMM:
         return "#" + operand;
+      case STRING_VAL:
+        return "=msg_" + operand;
       case LOGIC_SHIFT_L:
         return "LSL #" + operand;
       case LOGIC_SHIFT_R:

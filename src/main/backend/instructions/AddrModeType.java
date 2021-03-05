@@ -3,6 +3,7 @@ package backend.instructions;
 enum AddrModeType {
   REG,
   VAL,
+  STRING_VAL,
   IMM,
   LOGIC_SHIFT_L,
   LOGIC_SHIFT_R,
