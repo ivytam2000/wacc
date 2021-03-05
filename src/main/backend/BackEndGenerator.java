@@ -3,7 +3,6 @@ package backend;
 import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.AST;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
