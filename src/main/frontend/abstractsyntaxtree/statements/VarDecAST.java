@@ -5,15 +5,16 @@ import antlr.WaccParser.Var_decl_statContext;
 import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
-import frontend.abstractsyntaxtree.array.ArrayLiterAST;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
-import frontend.abstractsyntaxtree.expressions.PairLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.AddrMode.buildAddrWithOffset;
+import static backend.instructions.Condition.NO_CON;
+import static backend.instructions.Instr.R4;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class VarDecAST extends Node {
@@ -74,11 +75,14 @@ public class VarDecAST extends Node {
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     TypeID decType = typeAST.getIdentifier().getType();
+    // Generate the offset of the variable
     int offset = symtab.getSmallestOffset() - decType.getBytes();
+    // Add the offset to the symbol table's hashmap of variables' offsets
     symtab.addOffset(varName, offset);
     assignRHS.toAssembly();
     // Stores the value in the offset stack address
-    STR strInstr = new STR(decType.getBytes(),"", Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset));
+    STR strInstr = new STR(decType.getBytes(), NO_CON, Instr.R4,
+                           buildAddrWithOffset(Instr.SP, offset));
     instrs.add(strInstr);
     addToCurLabel(instrs);
   }

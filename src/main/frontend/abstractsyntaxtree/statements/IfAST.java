@@ -1,10 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
-import backend.instructions.AddrMode;
-import backend.instructions.BRANCH;
-import backend.instructions.CMP;
-import backend.instructions.Instr;
+import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
@@ -13,6 +10,7 @@ import frontend.symboltable.TypeID;
 
 import static backend.Utils.getEndRoutine;
 import static backend.Utils.getStartRoutine;
+import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.*;
 
 public class IfAST extends Node {
@@ -69,19 +67,19 @@ public class IfAST extends Node {
     // Testing the boolean expression
     // If it evaluates to false jump to elseStat label
     addToCurLabel(new CMP(Instr.R4, AddrMode.buildImm(0)));
-    addToCurLabel(new BRANCH(false, "EQ", elseStatLabel));
+    addToCurLabel(new BRANCH(false, Condition.EQ, elseStatLabel));
 
     //Evaluate thenStat body in current label
     addToCurLabel(getStartRoutine(thenScope, false));
     thenStat.toAssembly();
     addToCurLabel(getEndRoutine(thenScope, false));
     // Branch to the nextStatLabel to skip over the elseStatlabel
-    addToCurLabel(new BRANCH(false, "", nextStatLabel));
+    addToCurLabel(new BRANCH(false, NO_CON, nextStatLabel));
 
     // Add elseStatLabel before evaluating elseStat
     addToLabelOrder(elseStatLabel);
 
-    // Evaluate the elseStat (false body) in a new label (elseStatLabel)
+    // Evaluate the elseStat in a new label
     setCurLabel(elseStatLabel);
     addToCurLabel(getStartRoutine(elseScope, false));
     elseStat.toAssembly();
@@ -89,7 +87,6 @@ public class IfAST extends Node {
 
     // Create and set a new label for the next statements after the ifAST
     setCurLabel(nextStatLabel);
-
     addToLabelOrder(nextStatLabel);
   }
 }

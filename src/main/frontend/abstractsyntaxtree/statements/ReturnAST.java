@@ -1,5 +1,7 @@
 package frontend.abstractsyntaxtree.statements;
 
+import static backend.instructions.AddrMode.buildReg;
+import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.PC;
 import static backend.instructions.Instr.addToCurLabel;
 
@@ -43,10 +45,12 @@ public class ReturnAST extends Node {
 
   @Override
   public void toAssembly() {
-    List<Instr> instructions = new ArrayList<>();
+    // Evaluate the expression
     expr.toAssembly();
-    instructions.add(new MOV("", Instr.R0, AddrMode.buildReg(Instr.getTargetReg())));
+    List<Instr> instructions = new ArrayList<>();
+    instructions.add(new MOV(NO_CON, Instr.R0, buildReg(Instr.getTargetReg())));
     addToCurLabel(instructions);
+    // Restore the stack pointer by incrementing the function's stack
     addToCurLabel(Utils.getEndRoutine(symtab, false));
     addToCurLabel(new POP(PC));
   }

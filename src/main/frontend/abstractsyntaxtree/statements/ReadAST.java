@@ -2,10 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.AssignLHSContext;
 import backend.BackEndGenerator;
-import backend.instructions.AddrMode;
-import backend.instructions.BRANCH;
-import backend.instructions.Instr;
-import backend.instructions.MOV;
+import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -14,7 +11,11 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.AddrMode.buildReg;
+import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.addToCurLabel;
+import static backend.instructions.Label.P_READ_CHAR;
+import static backend.instructions.Label.P_READ_INT;
 
 public class ReadAST extends Node {
 
@@ -43,13 +44,15 @@ public class ReadAST extends Node {
 
   @Override
   public void toAssembly() {
+    // Evaluate the expression
     lhs.toAssembly();
     List<Instr> instrs = new ArrayList<>();
-    MOV movInstr = new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4));
+    MOV movInstr = new MOV(NO_CON, Instr.R0, buildReg(Instr.R4));
     instrs.add(movInstr);
-    String label = lhsType instanceof IntID ? "p_read_int" : "p_read_char";
+    // Branch to appropriate read label according to its type
+    String label = lhsType instanceof IntID ? P_READ_INT : P_READ_CHAR;
     BackEndGenerator.addToPreDefFuncs(label);
-    BRANCH brInstr = new BRANCH(true, "", label);
+    BRANCH brInstr = new BRANCH(true, NO_CON, label);
     instrs.add(brInstr);
     addToCurLabel(instrs);
   }

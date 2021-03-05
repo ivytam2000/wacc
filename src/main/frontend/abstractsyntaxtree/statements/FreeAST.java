@@ -2,10 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.ExprContext;
 import backend.BackEndGenerator;
-import backend.instructions.AddrMode;
-import backend.instructions.BRANCH;
-import backend.instructions.Instr;
-import backend.instructions.MOV;
+import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
@@ -16,7 +13,11 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.AddrMode.buildReg;
+import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.addToCurLabel;
+import static backend.instructions.Label.P_FREE_ARRAY;
+import static backend.instructions.Label.P_FREE_PAIR;
 
 public class FreeAST extends Node {
 
@@ -48,13 +49,17 @@ public class FreeAST extends Node {
 
   @Override
   public void toAssembly() {
+    // Evaluate the expression
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
+    // Move the value of the expression from R4 to R0
+    instrs.add(new MOV(NO_CON, Instr.R0, buildReg(Instr.R4)));
+    // Get the appropriate label to free the expression according to its type
     TypeID exprType = expr.getIdentifier().getType();
-    instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4)));
-    String label = exprType instanceof PairID ? "p_free_pair" : "p_free_array";
+    String label = exprType instanceof PairID ? P_FREE_PAIR : P_FREE_ARRAY;
     BackEndGenerator.addToPreDefFuncs(label);
-    BRANCH brInstr = new BRANCH(true, "", label);
+    // Branch to appropriate label
+    BRANCH brInstr = new BRANCH(true, NO_CON, label);
     instrs.add(brInstr);
     addToCurLabel(instrs);
   }

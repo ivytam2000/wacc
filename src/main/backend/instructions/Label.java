@@ -18,6 +18,7 @@ public abstract class Label {
   public static final String P_READ_INT = "p_read_int";
   public static final String P_CHECK_NULL_POINTER = "p_check_null_pointer";
   public static final String P_FREE_PAIR = "p_free_pair";
+  public static final String P_FREE_ARRAY = "p_free_array";
   public static final String P_READ_CHAR = "p_read_char";
   public static final String P_CHECK_ARRAY_BOUNDS = "p_check_array_bounds";
   public static final String P_CHECK_DIVIDE_BY_ZERO = "p_check_divide_by_zero";

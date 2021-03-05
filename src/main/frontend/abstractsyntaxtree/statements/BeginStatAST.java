@@ -27,8 +27,11 @@ public class BeginStatAST extends Node {
 
   @Override
   public void toAssembly() {
+    // Decrement stack pointer to make space for the stack of new scope
     addToCurLabel(getStartRoutine(symtab, false));
+    // Evaluate statements inside the new scope
     stat.toAssembly();
+    // Increment stack pointer to restore its position in the previous scope
     addToCurLabel(getEndRoutine(symtab,false));
   }
 

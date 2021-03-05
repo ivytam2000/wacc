@@ -11,6 +11,8 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.AddrMode.buildReg;
+import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class PrintAST extends Node {
@@ -31,12 +33,12 @@ public class PrintAST extends Node {
 
   @Override
   public void toAssembly() {
-    // assumes that the expr.toAssembly() will load or mov the expr's value into
-    // R4.
+    // Evaluate the expression
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
-    MOV movInstr = new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4));
+    MOV movInstr = new MOV(NO_CON, Instr.R0, buildReg(Instr.R4));
     instrs.add(movInstr);
+    // Branch to print label according to its type
     BRANCH brInstr = Utils.getPrintBranch(expr.getIdentifier().getType());
     instrs.add(brInstr);
     addToCurLabel(instrs);

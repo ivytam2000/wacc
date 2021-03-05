@@ -2,11 +2,7 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.Exit_statContext;
 import antlr.WaccParser.ExprContext;
-import backend.instructions.AddrMode;
-import backend.instructions.BRANCH;
-import backend.instructions.Instr;
-import backend.instructions.LDR;
-import backend.instructions.MOV;
+import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.IntLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -17,6 +13,8 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.AddrMode.buildReg;
+import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class ExitAST extends Node {
@@ -48,11 +46,14 @@ public class ExitAST extends Node {
 
   @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
+    // Evaluate the expression
     expr.toAssembly();
-    MOV movInstr = new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4));
+    List<Instr> instrs = new ArrayList<>();
+    // Move the expression from R4 to R0
+    MOV movInstr = new MOV(NO_CON, Instr.R0, buildReg(Instr.R4));
     instrs.add(movInstr);
-    BRANCH brInstr = new BRANCH(true, "", "exit");
+    // Branch to exit label
+    BRANCH brInstr = new BRANCH(true, NO_CON, Label.EXIT);
     instrs.add(brInstr);
     addToCurLabel(instrs);
   }

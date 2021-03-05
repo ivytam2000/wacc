@@ -10,6 +10,7 @@ import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
 
+import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.*;
 import static backend.instructions.Instr.addToCurLabel;
 
@@ -49,34 +50,29 @@ public class WhileAST extends Node {
 
   @Override
   public void toAssembly() {
-    /* Create a new label for nextStat which will include the evaluation of the
-     * while condition expression and the instructions after the while loop */
+    // Create a new label with instructions which evaluate the while
+    // condition expression and the statements after the while loop
     String nextStatLabel = getNextLabel();
-    /* Create a new label fo the body of the loop */
+    // Create a new label with instructions for the body of the loop
     String bodyLabel = getNextLabel();
 
-    /* Branch to this the nextStat label */
-    addToCurLabel(new BRANCH(false, "", nextStatLabel));
+    // Branch to this the nextStat label
+    addToCurLabel(new BRANCH(false, NO_CON, nextStatLabel));
 
-    /* Set CurLabel to nextStat label */
     setCurLabel(nextStatLabel);
     expr.toAssembly();
-    /* Test if the expression is true if it is we branch to a new label which
-       will include the instructions for the body of the while loop */
+    // Test if the expression is true if it is we branch the bodyLabel
     addToCurLabel(new CMP(Instr.R4, AddrMode.buildImm(1)));
-    addToCurLabel(new BRANCH(false, "EQ", bodyLabel));
+    addToCurLabel(new BRANCH(false, Condition.EQ, bodyLabel));
 
-    /* Set current label to the body label */
     setCurLabel(bodyLabel);
-    // Add body label to label order list as it should be printed before the
-    // nextStat label
+    // Body label should be printed before nextStatLabel
     addToLabelOrder(bodyLabel);
+    // Make space on the stack for while's new scope
     addToCurLabel(Utils.getStartRoutine(symtab, false));
     stat.toAssembly();
     addToCurLabel(Utils.getEndRoutine(symtab, false));
 
-    /*Set current label back to the nextStat label and add it to the label
-     * order */
     setCurLabel(nextStatLabel);
     addToLabelOrder(nextStatLabel);
   }
