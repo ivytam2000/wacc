@@ -22,6 +22,8 @@ public abstract class Instr {
 
   public static final String MAIN_LABEL = "main";
 
+  public static final int WORD_SIZE = 4;
+
   private static final String[] regs = {R4, R5, R6, R7, R8, R9, R10, R11};
   private static int regsDepth = 0;
 
