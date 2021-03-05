@@ -59,7 +59,7 @@ public class FuncAST extends Node {
 
   @Override
   public void toAssembly() {
-    String labelName = "f_" + funcName;
+    String labelName = Label.FUNC_HEADER + funcName;
     setCurLabel(labelName);
     addToLabelOrder(labelName);
 
