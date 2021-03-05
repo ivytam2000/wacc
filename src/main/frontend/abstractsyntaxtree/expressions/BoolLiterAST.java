@@ -8,6 +8,8 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.FALSE_VAL;
+import static backend.instructions.Instr.TRUE_VAL;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class BoolLiterAST extends Node {
@@ -28,7 +30,7 @@ public class BoolLiterAST extends Node {
     List<Instr> instrs = new ArrayList<>();
 
     // Move character into target register
-    AddrMode val = this.val ? AddrMode.buildImm(1) : AddrMode.buildImm(0);
+    AddrMode val = this.val ? AddrMode.buildImm(TRUE_VAL) : AddrMode.buildImm(FALSE_VAL);
     instrs.add(new MOV("", Instr.getTargetReg(), val));
 
     addToCurLabel(instrs);

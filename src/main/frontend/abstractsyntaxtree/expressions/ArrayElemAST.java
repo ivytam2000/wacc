@@ -17,6 +17,7 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class ArrayElemAST extends Node {
@@ -85,7 +86,8 @@ public class ArrayElemAST extends Node {
       instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(sndReg)));
       instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(target)));
       instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
-      instrs.add(new ADD(false, target, target, AddrMode.buildImm(4)));
+      // Skip over 0th element (size)
+      instrs.add(new ADD(false, target, target, AddrMode.buildImm(WORD_SIZE)));
       if (size > 1) {
         instrs.add(new ADD(false, target, target, AddrMode.buildReg(sndReg), AddrMode.buildImmWithLSL(size / 2)));
       } else {

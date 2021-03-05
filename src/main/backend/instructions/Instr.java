@@ -22,7 +22,12 @@ public abstract class Instr {
 
   public static final String MAIN_LABEL = "main";
 
+  public static final int NULL_PAIR = 0;
+  public static final int FALSE_VAL = 0;
+  public static final int TRUE_VAL = 1;
   public static final int WORD_SIZE = 4;
+  public static final int PAIR_SIZE = 8;
+  public static final int WORD_BIT_LIMIT = 31;
 
   private static final String[] regs = {R4, R5, R6, R7, R8, R9, R10, R11};
   private static int regsDepth = 0;

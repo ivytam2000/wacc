@@ -11,6 +11,7 @@ import java.util.List;
 
 import static backend.Utils.getStartRoutine;
 import static backend.instructions.Instr.MAIN_LABEL;
+import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 import static backend.instructions.Instr.addToLabelOrder;
 import static backend.instructions.Instr.setCurLabel;
@@ -65,7 +66,7 @@ public class FuncAST extends Node {
 
     // Calculate the size of stack frame that needs to be allocated
     SymbolTable funcSymTab = ((FuncID) identifier).getSymtab();
-    int offset = 4 + funcSymTab.getSize();
+    int offset = WORD_SIZE + funcSymTab.getSize();
     boolean skipLR = false;
     for (Node paramAST : params.paramASTs) {
       skipLR = true;

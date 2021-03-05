@@ -20,6 +20,8 @@ import frontend.symboltable.UnknownID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.FALSE_VAL;
+import static backend.instructions.Instr.TRUE_VAL;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class BinOpExprAST extends Node {
@@ -143,8 +145,8 @@ public class BinOpExprAST extends Node {
         assert(false); // UNREACHABLE
     }
 
-    instrs.add(new MOV(c1, fstReg, AddrMode.buildImm(1)));
-    instrs.add(new MOV(c2, fstReg, AddrMode.buildImm(0)));
+    instrs.add(new MOV(c1, fstReg, AddrMode.buildImm(TRUE_VAL)));
+    instrs.add(new MOV(c2, fstReg, AddrMode.buildImm(FALSE_VAL)));
 
     addToCurLabel(instrs);
   }

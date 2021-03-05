@@ -21,6 +21,9 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.FALSE_VAL;
+import static backend.instructions.Instr.TRUE_VAL;
+import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class UnOpExprAST extends Node {
@@ -95,7 +98,7 @@ public class UnOpExprAST extends Node {
     // UnOp
     if (ctx.NOT() != null) {
       // XOR
-      instrs.add(new ORR(true, Instr.getTargetReg(), AddrMode.buildImm(1)));
+      instrs.add(new ORR(true, Instr.getTargetReg(), AddrMode.buildImm(TRUE_VAL)));
     } else if (ctx.MINUS() != null) {
       // Revere subtract
       instrs.add(new SUB(true, true, Instr.getTargetReg(), Instr.getTargetReg(),
@@ -105,7 +108,7 @@ public class UnOpExprAST extends Node {
       instrs.add(new BRANCH(true, "VS", "p_throw_overflow_error"));
     } else if (ctx.LEN() != null) {
       // Length of array stored at its corresponding memory with 0 offset
-      instrs.add(new LDR(4, "", Instr.getTargetReg(),
+      instrs.add(new LDR(WORD_SIZE, "", Instr.getTargetReg(),
           AddrMode.buildAddr(Instr.getTargetReg())));
     }
 

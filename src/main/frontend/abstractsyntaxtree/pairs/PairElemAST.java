@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class PairElemAST extends Node {
@@ -122,7 +123,8 @@ public class PairElemAST extends Node {
       instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
     } else {
       elem_type = type.getSndType();
-      instructions.add(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.R4, 4)));
+      // snd at offset 4 (i.e. 2nd pointer)
+      instructions.add(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.R4, WORD_SIZE)));
     }
 
     instructions.add(new LDR(elem_type.getBytes(), "", Instr.R4, AddrMode.buildAddr(Instr.R4)));

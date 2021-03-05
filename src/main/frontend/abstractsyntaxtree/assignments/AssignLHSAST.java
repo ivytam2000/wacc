@@ -75,19 +75,10 @@ public class AssignLHSAST extends Node {
         instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(fstReg)));
         BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
         instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
-        // Go to first element (0th element is size)
-        int size;
-        if (assignNode instanceof ArrayElemAST) {
-          if (assignNode.getIdentifier().getType() instanceof CharID) {
-            size = 4;
-          } else {
-            size = assignNode.getIdentifier().getType().getBytes();
-          }
-        } else {
-          size = assignNode.getIdentifier().getType().getBytes();
-        }
+        // Skip over 0th element is size which is of type int
+        instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildImm(Instr.WORD_SIZE)));
         // Index to the target element
-        instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildImm(size)));
+        int size = assignNode.getIdentifier().getType().getBytes();
         if (size > 1) {
           instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildReg(sndReg),
               AddrMode.buildImmWithLSL(size / 2)));
@@ -104,8 +95,9 @@ public class AssignLHSAST extends Node {
       instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(reg)));
       BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
       instrs.add(new BRANCH(true, "", "p_check_null_pointer"));
+      // Pair stored as 2 pointers (i.e. fst at index 0, snd at index 4)
       instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(reg,
-          ((PairElemAST) assignNode).getFirst() ? 0 : 4)));
+          ((PairElemAST) assignNode).getFirst() ? 0 : Instr.WORD_SIZE)));
     }
     Instr.addToCurLabel(instrs);
   }

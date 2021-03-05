@@ -95,10 +95,11 @@ public class ArithOpExprAST extends Node {
         break;
       case "*":
         instrs.add(new MUL(fstReg, sndReg, regsOnStack));
+        // Compare with arithmetic shift to detect overflow
         if (regsOnStack) {
-          instrs.add(new CMP(fstReg, AddrMode.buildReg(sndReg), AddrMode.buildImmWithASR(31)));
+          instrs.add(new CMP(fstReg, AddrMode.buildReg(sndReg), AddrMode.buildImmWithASR(Instr.WORD_BIT_LIMIT)));
         } else {
-          instrs.add(new CMP(sndReg,  AddrMode.buildReg(fstReg), AddrMode.buildImmWithASR(31)));
+          instrs.add(new CMP(sndReg,  AddrMode.buildReg(fstReg), AddrMode.buildImmWithASR(Instr.WORD_BIT_LIMIT)));
         }
         instrs.add(new BRANCH(true, "NE", "p_throw_overflow_error"));
         break;

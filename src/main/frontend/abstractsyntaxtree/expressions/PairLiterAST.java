@@ -9,6 +9,7 @@ import frontend.symboltable.NullID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.NULL_PAIR;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class PairLiterAST extends Node {
@@ -23,7 +24,7 @@ public class PairLiterAST extends Node {
   @Override
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
-    instrs.add(new LDR(Instr.getTargetReg(), AddrMode.buildVal(0)));
+    instrs.add(new LDR(Instr.getTargetReg(), AddrMode.buildVal(NULL_PAIR)));
     addToCurLabel(instrs);
   }
 }

@@ -48,7 +48,8 @@ public class AssignRHSAST extends Node {
       // We only malloc if it's newpair
       // malloc pair struct
       if (isNewpair) {
-        addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(8)));
+        // Pair has size 8 to hold 2 pointers
+        addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(Instr.PAIR_SIZE)));
         addToCurLabel(new BRANCH(true, "", "malloc"));
         addToCurLabel(new MOV("", Instr.R4, AddrMode.buildReg(Instr.R0)));
         // Need to increment register as we using R4

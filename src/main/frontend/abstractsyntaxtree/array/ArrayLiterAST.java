@@ -14,6 +14,7 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class ArrayLiterAST extends Node {
@@ -58,7 +59,7 @@ public class ArrayLiterAST extends Node {
       bytesNeeded = childrenType.getType().getBytes();
     }
 
-    String byteOfArray = "" + (4 + children.size() * bytesNeeded);
+    String byteOfArray = "" + (WORD_SIZE + children.size() * bytesNeeded);
     addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(byteOfArray)));
 
     // Add malloc branch to allocate memory, should be called in VarDecAST
@@ -75,7 +76,7 @@ public class ArrayLiterAST extends Node {
       curr_expr.toAssembly();
       String fstReg = Instr.decDepth();
 
-      int offset = i * bytesNeeded + 4;
+      int offset = i * bytesNeeded + WORD_SIZE;
       addToCurLabel(
           new STR(curr_ident.getType().getBytes(), "", sndReg,
               AddrMode.buildAddrWithOffset(fstReg, offset)));
