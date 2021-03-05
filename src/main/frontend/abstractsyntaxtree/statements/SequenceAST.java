@@ -1,9 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
-import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class SequenceAST extends Node {

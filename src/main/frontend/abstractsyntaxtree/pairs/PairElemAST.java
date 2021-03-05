@@ -124,7 +124,8 @@ public class PairElemAST extends Node {
     } else {
       elem_type = type.getSndType();
       // snd at offset 4 (i.e. 2nd pointer)
-      instructions.add(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.R4, WORD_SIZE)));
+      instructions.add(new LDR(Instr.R4,
+          AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
     }
 
     instructions.add(new LDR(elem_type.getBytes(), "", Instr.R4, AddrMode.buildAddr(Instr.R4)));

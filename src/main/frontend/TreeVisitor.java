@@ -97,7 +97,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public PrintAST visitPrint_stat(Print_statContext ctx) {
     Node expr = visit(ctx.expr());
-    return new PrintAST(expr, currSymTab);
+    return new PrintAST(expr);
   }
 
   @Override

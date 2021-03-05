@@ -43,11 +43,8 @@ public class VarDecAST extends Node {
   @Override
   public void check() {
     TypeID decType = typeAST.getIdentifier().getType();
-    if (decType instanceof CharID || decType instanceof BoolID) {
-      symtab.incrementSize(1);
-    } else {
-      symtab.incrementSize(4);
-    }
+    symtab.incrementSize(decType.getBytes());
+
     TypeID rhsType = assignRHS.getIdentifier().getType();
 
     int line = rhsCtx.getStart().getLine();
