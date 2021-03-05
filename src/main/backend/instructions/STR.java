@@ -19,7 +19,7 @@ public class STR extends Instr {
 
   // Without byte and condition parameters
   public STR(String src, AddrMode dst) {
-    this(4, "", src, dst);
+    this(4, Condition.NO_CON, src, dst);
   }
 
 

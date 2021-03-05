@@ -3,8 +3,10 @@ package frontend.abstractsyntaxtree.array;
 import antlr.WaccParser.ArrayLiterContext;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
+import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
@@ -53,20 +55,22 @@ public class ArrayLiterAST extends Node {
     String lengthOfArray = "" + children.size();
     int bytesNeeded = 0;
 
+    // if array is empty, then the bytesNeeded will be 0
     if (!children.isEmpty()) {
       Identifier childrenType = children.get(0).getIdentifier();
       bytesNeeded = childrenType.getType().getBytes();
     }
 
-    String byteOfArray = "" + (WORD_SIZE + children.size() * bytesNeeded);
+    String byteOfArray = Integer.toString(WORD_SIZE + children.size() * bytesNeeded);
     addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(byteOfArray)));
 
     // Add malloc branch to allocate memory, should be called in VarDecAST
-    addToCurLabel(new BRANCH(true, "", "malloc"));
+    addToCurLabel(new BRANCH(true, Condition.NO_CON, Label.MALLOC));
 
     // Move r4 to r0
-    addToCurLabel(new MOV("", Instr.R4, AddrMode.buildReg(Instr.R0)));
+    addToCurLabel(new MOV(Condition.NO_CON, Instr.R4, AddrMode.buildReg(Instr.R0)));
 
+    // Go through expressions in array to add to assembly code
     for (int i = 0; i < children.size(); i++) {
       Node curr_expr = children.get(i);
       Identifier curr_ident = curr_expr.getIdentifier();
@@ -76,11 +80,14 @@ public class ArrayLiterAST extends Node {
       String fstReg = Instr.decDepth();
 
       int offset = i * bytesNeeded + WORD_SIZE;
+
+      // storing the offsets of the expressions
       addToCurLabel(
-          new STR(curr_ident.getType().getBytes(), "", sndReg,
+          new STR(curr_ident.getType().getBytes(), Condition.NO_CON, sndReg,
               AddrMode.buildAddrWithOffset(fstReg, offset)));
     }
 
+    // stores length of array into registers
     addToCurLabel(new LDR(Instr.R5, AddrMode.buildVal(lengthOfArray)));
     addToCurLabel(new STR(Instr.R5, AddrMode.buildAddr(Instr.R4)));
   }

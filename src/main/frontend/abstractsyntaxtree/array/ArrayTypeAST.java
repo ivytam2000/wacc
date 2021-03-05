@@ -1,9 +1,7 @@
 package frontend.abstractsyntaxtree.array;
 
-import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.Node;
 import frontend.symboltable.Identifier;
-import java.util.List;
 
 public class ArrayTypeAST extends Node {
 
@@ -12,11 +10,6 @@ public class ArrayTypeAST extends Node {
   public ArrayTypeAST(Identifier identifier, int dimensions) {
     super(identifier);
     this.dimensions = dimensions;
-  }
-
-  // For future use in code generation
-  public int getDimensions() {
-    return dimensions;
   }
 
   @Override

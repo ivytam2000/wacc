@@ -4,13 +4,14 @@ import backend.BackEndGenerator;
 import backend.instructions.ADD;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
+import backend.instructions.Label;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.pairs.PairElemAST;
-import frontend.symboltable.CharID;
 import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,15 +69,21 @@ public class AssignLHSAST extends Node {
       for (Node e : exprs) {
         // Evaluate the index
         e.toAssembly();
+
         // Get the size of array
         instrs.add(new LDR(fstReg, AddrMode.buildAddr(fstReg)));
+
         // Check size
-        instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(sndReg)));
-        instrs.add(new MOV("", Instr.R1, AddrMode.buildReg(fstReg)));
-        BackEndGenerator.addToPreDefFuncs("p_check_array_bounds");
-        instrs.add(new BRANCH(true, "", "p_check_array_bounds"));
+        instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildReg(sndReg)));
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(fstReg)));
+
+        // Check array bounds
+        BackEndGenerator.addToPreDefFuncs(Label.P_CHECK_ARRAY_BOUNDS);
+        instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_ARRAY_BOUNDS));
+
         // Skip over 0th element is size which is of type int
         instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildImm(Instr.WORD_SIZE)));
+
         // Index to the target element
         int size = assignNode.getIdentifier().getType().getBytes();
         if (size > 1) {
@@ -92,9 +99,12 @@ public class AssignLHSAST extends Node {
       String reg = Instr.getTargetReg();
       instrs.add(new LDR(reg, AddrMode
           .buildAddrWithOffset(Instr.SP, symtab.getStackOffset(assignName))));
-      instrs.add(new MOV("", Instr.R0, AddrMode.buildReg(reg)));
-      BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
-      instrs.add(new BRANCH(true, "", "p_check_null_pointer"));
+      instrs.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildReg(reg)));
+
+      // Check null pointer
+      BackEndGenerator.addToPreDefFuncs(Label.P_CHECK_NULL_POINTER);
+      instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_NULL_POINTER));
+
       // Pair stored as 2 pointers (i.e. fst at index 0, snd at index 4)
       instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(reg,
           ((PairElemAST) assignNode).getFirst() ? 0 : Instr.WORD_SIZE)));

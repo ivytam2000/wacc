@@ -4,8 +4,10 @@ import antlr.WaccParser.PairElemContext;
 import backend.BackEndGenerator;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
+import backend.instructions.Label;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
@@ -14,7 +16,6 @@ import frontend.abstractsyntaxtree.expressions.PairLiterAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -108,17 +109,20 @@ public class PairElemAST extends Node {
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
+    // gets the stack offset of the pair variable
     int stackPointerOffset = symtab.getStackOffset(identName);
     instructions.add(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, stackPointerOffset)));
 
-    instructions.add(new MOV("", Instr.R0, AddrMode.buildReg(Instr.R4)));
-    BackEndGenerator.addToPreDefFuncs("p_check_null_pointer");
-    instructions.add(new BRANCH(true, "", "p_check_null_pointer"));
+    // jumps to branch to check if null pointer error
+    instructions.add(new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildReg(Instr.R4)));
+    BackEndGenerator.addToPreDefFuncs(Label.P_CHECK_NULL_POINTER);
+    instructions.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_NULL_POINTER));
 
     PairID type = (PairID) childIdentifier.getType();
     TypeID elem_type;
 
     if (first) {
+      // if its the first elem of pair
       elem_type = type.getFstType();
       instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
     } else {
@@ -128,7 +132,7 @@ public class PairElemAST extends Node {
           AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
     }
 
-    instructions.add(new LDR(elem_type.getBytes(), "", Instr.R4, AddrMode.buildAddr(Instr.R4)));
+    instructions.add(new LDR(elem_type.getBytes(), Condition.NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R4)));
 
     addToCurLabel(instructions);
   }

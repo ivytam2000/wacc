@@ -17,7 +17,7 @@ public class LDR extends Instr {
   }
 
   public LDR(String dest, AddrMode addrMode) {
-    this(4, "", dest, addrMode);
+    this(4, Condition.NO_CON, dest, addrMode);
   }
 
   /**
