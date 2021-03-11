@@ -87,12 +87,12 @@ public class ValidTests {
   }
 
   @Test
-  public void validExtensionExprTest() throws IOException {
-    exitsWith(customDir + "expressions/", 0);
+  public void validExtensionBitwiseTest() throws IOException {
+    exitsWith(customDir + "bitwise/", 0);
   }
 
   @Test
-  public void validExtensionSequenceTest() throws IOException {
-    exitsWith(customDir + "sequence/", 0);
+  public void validExtensionIntegerLiteralsTest() throws IOException {
+    exitsWith(customDir + "integerLiterals/", 0);
   }
 }

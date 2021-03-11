@@ -73,7 +73,7 @@ public class InvalidSemanticTests {
   }
 
   @Test
-  public void invalidSemanticExtensionExprTests() throws IOException {
-    exitsWith(customDir + "expressions/", 200);
+  public void invalidSemanticExtensionBitwiseTests() throws IOException {
+    exitsWith(customDir + "bitwise/", 200);
   }
 }

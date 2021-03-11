@@ -62,7 +62,7 @@ public class InvalidSyntaxTests {
   }
 
   @Test
-  public void invalidSyntaxExtensionExprTest() throws IOException {
-    exitsWith(customDir + "expressions/", 100);
+  public void invalidSyntaxExtensionBitwiseTest() throws IOException {
+    exitsWith(customDir + "bitwise/", 100);
   }
 }
