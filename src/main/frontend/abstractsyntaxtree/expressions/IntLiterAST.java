@@ -12,7 +12,7 @@ import static backend.instructions.Instr.addToCurLabel;
 
 public class IntLiterAST extends Node {
 
-  private String val; //For backend
+  private String val;
 
   public IntLiterAST(SymbolTable symtab, boolean positive, String val) {
     super(symtab.lookupAll("int"));
@@ -25,7 +25,6 @@ public class IntLiterAST extends Node {
 
   @Override
   public void check() {
-
   }
 
   @Override

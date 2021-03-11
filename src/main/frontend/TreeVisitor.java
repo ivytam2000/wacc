@@ -472,6 +472,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
+  public IntLiterAST visitHexIntLiter(HexIntLiterContext ctx) {
+    int val = Integer.parseInt(ctx.HEXADECIMAL_INTEGER().getText(), 16);
+    IntLiterAST intLiterAST =
+        new IntLiterAST(currSymTab, ctx.MINUS() == null, Integer.toString(val));
+    intLiterAST.check();
+
+    return intLiterAST;
+  }
+
+  @Override
   public BoolLiterAST visitBoolLiter(BoolLiterContext ctx) {
     return new BoolLiterAST(currSymTab, ctx.FALSE() == null);
   }

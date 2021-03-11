@@ -6,9 +6,20 @@ parser grammar WaccParser;
 
 @parser::members {
   SyntaxErrorListener syntaxErr;
+
   public WaccParser(TokenStream input, SyntaxErrorListener syntaxErr) {
     this(input);
     this.syntaxErr = syntaxErr;
+  }
+
+  public void checkOverflowError(long val) {
+    if (((IntLiterContext) this._ctx).MINUS() != null &&
+      -val < Integer.MIN_VALUE) {
+      syntaxErr.intError(this._ctx.start.getLine(), false);
+    } else if (((IntLiterContext) this._ctx).MINUS() == null &&
+      val > Integer.MAX_VALUE) {
+      syntaxErr.intError(this._ctx.start.getLine(), true);
+    }
   }
 }
 
@@ -84,16 +95,11 @@ pairElemType: baseType
 
 expr:
 (PLUS | MINUS)?
-(INTEGER {
-          long temp = Long.valueOf($INTEGER.text);
-          if (((IntLiterContext) this._ctx).MINUS() != null &&
-            -temp < Integer.MIN_VALUE) {
-            syntaxErr.intError(this._ctx.start.getLine(), false);
-          } else if (((IntLiterContext) this._ctx).MINUS() == null &&
-            temp > Integer.MAX_VALUE) {
-            syntaxErr.intError(this._ctx.start.getLine(), true);
-          }
-         })                                                           #intLiter
+(INTEGER { checkOverflowError(Long.valueOf($INTEGER.text)); })        #intLiter
+| (PLUS | MINUS)? (HEXADECIMAL_INTEGER {
+    long val = Long.parseLong($HEXADECIMAL_INTEGER.text);
+    checkOverflowError(val);
+  })                                                                  #hexIntLiter
 | (TRUE | FALSE)                                                      #boolLiter
 | CHAR_LITER                                                          #charLiter
 | STR_LITER                                                           #strLiter

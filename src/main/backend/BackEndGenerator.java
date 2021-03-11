@@ -28,7 +28,7 @@ public class BackEndGenerator {
     // Generates the main body of instructions, e.g.: main, L0, L1 etc.
     generateMainInstructions();
 
-    //Build body for pre-defined functions required
+    // Build body for pre-defined functions required
     Map<String, List<Instr>> preDefFuncInstrs = Utils
         .getPreDefFunc(preDefFuncs);
     for (Map.Entry<String, List<Instr>> pdf : preDefFuncInstrs.entrySet()) {

@@ -73,13 +73,15 @@ NULL: 'null' ;
 
 // Characters and numbers
 fragment DIGIT: '0'..'9' ;
-fragment LOWERCASE: 'a'..'z';
-fragment UPPERCASE: 'A'..'Z';
-fragment UNDERSCORE: '_';
-fragment SINGLE_QUOTE: '\'';
-fragment DOUBLE_QUOTE: '"';
+fragment HEXADECIMAL_FORMATTER: '0x' ;
+fragment LOWERCASE: 'a'..'z' ;
+fragment UPPERCASE: 'A'..'Z' ;
+fragment UNDERSCORE: '_' ;
+fragment SINGLE_QUOTE: '\'' ;
+fragment DOUBLE_QUOTE: '"' ;
 
 INTEGER: DIGIT+ ;
+HEXADECIMAL_INTEGER: HEXADECIMAL_FORMATTER DIGIT+ ;
 
 fragment ESCAPED_CHARACTER:
     '\\'
