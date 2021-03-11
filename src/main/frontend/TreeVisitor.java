@@ -536,27 +536,27 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitBitAndExpr(BitAndExprContext ctx) {
+  public ArithOpExprAST visitBitAndExpr(BitAndExprContext ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
 
-    BinOpExprAST binOpExprAST =
-        new BinOpExprAST(currSymTab, Utils.INT_CHAR, "&", eL, eR, ctx);
-    binOpExprAST.check();
+    ArithOpExprAST arithOpExprAST = new ArithOpExprAST(currSymTab, "&", eL, eR,
+        ctx);
+    arithOpExprAST.check();
 
-    return binOpExprAST;
+    return arithOpExprAST;
   }
 
   @Override
-  public Node visitBitOrExpr(BitOrExprContext ctx) {
+  public ArithOpExprAST visitBitOrExpr(BitOrExprContext ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
 
-    BinOpExprAST binOpExprAST =
-        new BinOpExprAST(currSymTab, Utils.INT_CHAR, "|", eL, eR, ctx);
-    binOpExprAST.check();
+    ArithOpExprAST arithOpExprAST = new ArithOpExprAST(currSymTab, "|", eL, eR,
+        ctx);
+    arithOpExprAST.check();
 
-    return binOpExprAST;
+    return arithOpExprAST;
   }
 
   @Override

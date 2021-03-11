@@ -3,10 +3,14 @@ package frontend;
 import antlr.WaccLexer;
 import antlr.WaccParser;
 import frontend.abstractsyntaxtree.AST;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
-import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;

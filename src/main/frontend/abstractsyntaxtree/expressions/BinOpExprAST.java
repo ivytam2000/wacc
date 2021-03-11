@@ -109,11 +109,11 @@ public class BinOpExprAST extends Node {
 
     List<Instr> instrs = new ArrayList<>();
     // AND and ORR have different bodies, we deal with them first
-    if (op.equals("&&") || op.equals("&")) {
+    if (op.equals("&&")) {
       instrs.add(new AND(fstReg, AddrMode.buildReg(sndReg)));
       addToCurLabel(instrs);
       return;
-    } else if (op.equals("||") || op.equals("|")) {
+    } else if (op.equals("||")) {
       instrs.add(new ORR(false, fstReg, AddrMode.buildReg(sndReg)));
       addToCurLabel(instrs);
       return;

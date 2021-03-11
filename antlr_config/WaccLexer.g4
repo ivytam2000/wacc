@@ -51,15 +51,15 @@ EQ: '==' ;
 NE: '!=' ;
 AND: '&&' ;
 OR: '||' ;
-BIT_AND: '&';
-BIT_OR: '|';
+BIT_AND: '&' ;
+BIT_OR: '|' ;
 
 // Unary operators
 NOT: '!' ;
 LEN: 'len' ;
 ORD: 'ord' ;
 CHR: 'chr' ;
-BIT_NOT: '~';
+BIT_NOT: '~' ;
 
 // Brackets
 OPEN_PARENTHESES: '(' ;
