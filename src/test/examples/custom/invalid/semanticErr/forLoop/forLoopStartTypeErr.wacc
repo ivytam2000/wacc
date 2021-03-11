@@ -9,7 +9,7 @@
 # Program:
 
 begin
-  for i in true to 10
+  for i in true until 10
     do
         skip
     done

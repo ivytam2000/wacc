@@ -32,7 +32,7 @@ FST: 'fst' ;
 SND: 'snd' ;
 FOR: 'for';
 IN: 'in';
-TO: 'to';
+UNTIL: 'until';
 
 // Base types
 INT: 'int' ;
