@@ -82,20 +82,21 @@ public class Utils {
         && !(sndLType instanceof NullID)
         && !(fstRType instanceof NullID)
         && !(sndRType instanceof NullID)) {
-      return (fstLType.getClass() == fstRType.getClass())
-          && (sndLType.getClass() == sndRType.getClass());
+      return (typeCompat(fstLType, fstRType))
+          && (typeCompat(sndLType, sndRType));
     }
 
     // First of each pair is not null
     if (!(fstLType instanceof NullID) && !(fstRType instanceof NullID)) {
-      return (fstLType.getClass() == fstRType.getClass());
+      return (typeCompat(fstLType, fstRType));
     }
 
     // Second of each pair is not null
     if (!(sndRType instanceof NullID) && !(sndLType instanceof NullID)) {
-      return (sndLType.getClass() == sndRType.getClass());
+      return (typeCompat(sndLType, sndRType));
     }
 
+    // Case where the first and second type of eRType is null
     return true;
   }
 
