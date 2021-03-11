@@ -17,7 +17,7 @@ public class TypeSemanticsTests {
   public void validSimplePair() throws IOException {
     AST ast =
         TestUtilities.buildAST("simplePair.wacc");
-    VarDecAST varDecAST = (VarDecAST) ast.getStatAST();;
+    VarDecAST varDecAST = (VarDecAST) ast.getStatAST();
 
     Node typeAST = varDecAST.getTypeAST();
     assert (typeAST instanceof PairTypeAST);

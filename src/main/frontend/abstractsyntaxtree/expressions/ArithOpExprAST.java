@@ -40,8 +40,6 @@ public class ArithOpExprAST extends Node {
     this.op = op;
     this.eL = eL;
     this.eR = eR;
-    assert (ctx instanceof ArithOpExpr_1Context
-        || ctx instanceof ArithOpExpr_2Context);
     this.ctx = ctx;
   }
 

@@ -86,7 +86,6 @@ public class ValidTests {
     exitsWith(baseDir + "while/", 0);
   }
 
-  @Ignore
   @Test
   public void validExtensionExprTest() throws IOException {
     exitsWith(customDir + "expressions/", 0);
