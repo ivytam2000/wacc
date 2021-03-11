@@ -473,7 +473,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public IntLiterAST visitBinIntLiter(BinIntLiterContext ctx) {
-    int val = Integer.parseInt(ctx.BINARY_INTEGER().getText(), 2);
+    // Substring removes '0b' portion of token
+    String token = ctx.BINARY_INTEGER().getText().substring(2);
+    int val = Integer.parseInt(token, 2);
 
     IntLiterAST intLiterAST =
         new IntLiterAST(currSymTab, ctx.MINUS() == null, Integer.toString(val));
@@ -484,7 +486,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public IntLiterAST visitHexIntLiter(HexIntLiterContext ctx) {
-    int val = Integer.parseInt(ctx.HEXADECIMAL_INTEGER().getText(), 16);
+    // Substring removes '0x' portion of token
+    String token = ctx.HEXADECIMAL_INTEGER().getText().substring(2);
+    int val = Integer.parseInt(token, 16);
 
     IntLiterAST intLiterAST =
         new IntLiterAST(currSymTab, ctx.MINUS() == null, Integer.toString(val));
@@ -501,7 +505,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public CharLiterAST visitCharLiter(CharLiterContext ctx) {
     String s = ctx.CHAR_LITER().getText();
-    // substring removes quotes
+    // Substring removes quotes
     return new CharLiterAST(currSymTab, s.substring(1, s.length() - 1));
   }
 

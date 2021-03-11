@@ -12,12 +12,10 @@ parser grammar WaccParser;
     this.syntaxErr = syntaxErr;
   }
 
-  public void checkOverflowError(long val) {
-    if (((IntLiterContext) this._ctx).MINUS() != null &&
-      -val < Integer.MIN_VALUE) {
+  public void checkOverflowError(boolean isMinus, long val) {
+    if (isMinus && -val < Integer.MIN_VALUE) {
       syntaxErr.intError(this._ctx.start.getLine(), false);
-    } else if (((IntLiterContext) this._ctx).MINUS() == null &&
-      val > Integer.MAX_VALUE) {
+    } else if (!isMinus && val > Integer.MAX_VALUE) {
       syntaxErr.intError(this._ctx.start.getLine(), true);
     }
   }
@@ -95,14 +93,21 @@ pairElemType: baseType
 
 expr:
 (PLUS | MINUS)?
-(INTEGER { checkOverflowError(Long.valueOf($INTEGER.text)); })        #intLiter
+(INTEGER {
+    boolean isMinus = ((IntLiterContext) this._ctx).MINUS() != null;
+    checkOverflowError(isMinus, Long.valueOf($INTEGER.text));
+  })                                                                  #intLiter
 | (PLUS | MINUS)? (BINARY_INTEGER {
-    long val = Long.parseLong($BINARY_INTEGER.text, 2);
-    checkOverflowError(val);
+    String token = $BINARY_INTEGER.text.substring(2);
+    boolean isMinus = ((BinIntLiterContext) this._ctx).MINUS() != null;
+    long val = Long.parseLong(token, 2);
+    checkOverflowError(isMinus, val);
   })                                                                  #binIntLiter
 | (PLUS | MINUS)? (HEXADECIMAL_INTEGER {
-    long val = Long.parseLong($HEXADECIMAL_INTEGER.text, 16);
-    checkOverflowError(val);
+    String token = $HEXADECIMAL_INTEGER.text.substring(2);
+    boolean isMinus = ((HexIntLiterContext) this._ctx).MINUS() != null;
+    long val = Long.parseLong(token, 16);
+    checkOverflowError(isMinus, val);
   })                                                                  #hexIntLiter
 | (TRUE | FALSE)                                                      #boolLiter
 | CHAR_LITER                                                          #charLiter

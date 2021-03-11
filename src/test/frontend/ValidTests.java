@@ -90,4 +90,9 @@ public class ValidTests {
   public void validExtensionExprTest() throws IOException {
     exitsWith(customDir + "expressions/", 0);
   }
+
+  @Test
+  public void validExtensionSequenceTest() throws IOException {
+    exitsWith(customDir + "sequence/", 0);
+  }
 }
