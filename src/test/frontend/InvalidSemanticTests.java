@@ -72,8 +72,14 @@ public class InvalidSemanticTests {
     exitsWith(baseDir + "while/", 200);
   }
 
+  // ********* EXTENSION TESTS *********
   @Test
   public void invalidSemanticExtensionBitwiseTests() throws IOException {
     exitsWith(customDir + "bitwise/", 200);
+  }
+
+  @Test
+  public void invalidSemanticExtensionForTests() throws IOException{
+    exitsWith(customDir + "forLoop/", 200);
   }
 }

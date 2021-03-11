@@ -1,4 +1,4 @@
-# Type mismatch in end expression in for loop
+# Type mismatch in start expression in for loop
 
 # Output:
 # #semantic_error#
@@ -9,7 +9,7 @@
 # Program:
 
 begin
-  for i in 1 to 'c'
+  for i in true to 10
     do
         skip
     done

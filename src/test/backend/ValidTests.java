@@ -114,4 +114,11 @@ public class ValidTests {
         "src/test/examples/custom/valid/integerLiterals/");
   }
 
+  @Test
+  public void validExtensionForLoopsTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        "src/test/examples/custom/valid/forLoops/");
+  }
+
+
 }
