@@ -30,6 +30,9 @@ CLOSE_SQUARE_BRACKETS: ']' ;
 PAIR: 'pair' ;
 FST: 'fst' ;
 SND: 'snd' ;
+FOR: 'for';
+IN: 'in';
+TO: 'to';
 
 // Base types
 INT: 'int' ;

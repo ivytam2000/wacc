@@ -183,6 +183,23 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return whileAST;
   }
 
+  @Override public Node visitFor_stat(For_statContext ctx) {
+    SymbolTable encScope = currSymTab;
+    Node startExpr = visit(ctx.expr(0));
+    Node endExpr = visit(ctx.expr(1));
+
+    currSymTab = new SymbolTable(encScope); // New scope
+    String varName = ctx.IDENT().getText();
+    Node stat = visit(ctx.stat());
+    ForAST forAST = new ForAST(varName, startExpr, endExpr, stat, currSymTab,
+        ctx);
+    forAST.check();
+
+    currSymTab = encScope; // Swap back to parent scope
+
+    return forAST;
+  }
+
   @Override
   public IfAST visitIf_stat(If_statContext ctx) {
     Node expr = visit(ctx.expr());
