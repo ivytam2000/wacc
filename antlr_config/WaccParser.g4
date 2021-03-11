@@ -18,17 +18,17 @@ options {
 
 program: BEGIN (func)* stat END EOF ;
 
-/** Functions */
+// Functions
 func: (type IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat END
 {syntaxErr.returnCheck(this._ctx);}) ;
 
-/** Parameters list */
+// Parameters list
 paramList: param (COMMA param)* ;
 
-/** Parameters */
+// Parameters
 param: type IDENT ;
 
-/** Statements */
+// Statements
 stat: SKIP_LITER                                            #skip_stat
 | type IDENT ASSIGN assignRHS                               #var_decl_stat
 | assignLHS ASSIGN assignRHS                                #assign_stat
@@ -44,7 +44,7 @@ stat: SKIP_LITER                                            #skip_stat
 | BEGIN stat END                                            #begin_stat
 ;
 
-/** Assignments */
+// Assignments
 assignLHS: IDENT
 | arrayElem
 | pairElem
@@ -61,7 +61,7 @@ argList: expr (COMMA expr)* ;
 
 pairElem: FST expr | SND expr ;
 
-/** Types */
+// Types
 type: baseType
 | arrayType
 | pairType
@@ -102,6 +102,8 @@ expr:
 | arrayElem                                                           #arrElemExpr
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES                             #paranExpr
 | unaryOper expr                                                      #unOpExpr
+| expr BIT_AND expr                                                   #bitAndExpr
+| expr BIT_OR expr                                                    #bitOrExpr
 | expr arithmeticOper1 expr                                           #arithOpExpr_1
 | expr arithmeticOper2 expr                                           #arithOpExpr_2
 | expr binaryOper1 expr                                               #binOpExpr_1
@@ -110,11 +112,11 @@ expr:
 | expr OR expr                                                        #orExpr
 ;
 
-unaryOper: NOT | MINUS | LEN | ORD | CHR ;
-arithmeticOper1: MULT | DIV | MOD;
-arithmeticOper2: PLUS | MINUS;
-binaryOper1: GT | GTE | LT | LTE;
-binaryOper2: EQ | NE;
+unaryOper: NOT | MINUS | LEN | ORD | CHR | BIT_NOT ;
+arithmeticOper1: MULT | DIV | MOD ;
+arithmeticOper2: PLUS | MINUS ;
+binaryOper1: GT | GTE | LT | LTE ;
+binaryOper2: EQ | NE ;
 
 arrayElem: IDENT (OPEN_SQUARE_BRACKETS expr CLOSE_SQUARE_BRACKETS)+ ;
 

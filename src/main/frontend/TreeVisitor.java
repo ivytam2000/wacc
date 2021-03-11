@@ -536,6 +536,30 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
+  public Node visitBitAndExpr(BitAndExprContext ctx) {
+    Node eL = visit(ctx.expr(0));
+    Node eR = visit(ctx.expr(1));
+
+    BinOpExprAST binOpExprAST =
+        new BinOpExprAST(currSymTab, Utils.INT_CHAR, "&", eL, eR, ctx);
+    binOpExprAST.check();
+
+    return binOpExprAST;
+  }
+
+  @Override
+  public Node visitBitOrExpr(BitOrExprContext ctx) {
+    Node eL = visit(ctx.expr(0));
+    Node eR = visit(ctx.expr(1));
+
+    BinOpExprAST binOpExprAST =
+        new BinOpExprAST(currSymTab, Utils.INT_CHAR, "|", eL, eR, ctx);
+    binOpExprAST.check();
+
+    return binOpExprAST;
+  }
+
+  @Override
   public ArithOpExprAST visitArithOpExpr_1(ArithOpExpr_1Context ctx) {
     Node eL = visit(ctx.expr(0));
     Node eR = visit(ctx.expr(1));
@@ -701,7 +725,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       arrayID = new ArrayID(children.get(0).getIdentifier().getType());
     }
 
-    ArrayLiterAST arrayLiterAST = new ArrayLiterAST(currSymTab, arrayID, children, ctx);
+    ArrayLiterAST arrayLiterAST = new ArrayLiterAST(currSymTab, arrayID,
+        children, ctx);
     arrayLiterAST.check();
     return arrayLiterAST;
   }

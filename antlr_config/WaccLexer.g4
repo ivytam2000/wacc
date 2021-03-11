@@ -1,10 +1,10 @@
 lexer grammar WaccLexer;
 
-/** Program */
+// Program
 END: 'end' ;
 BEGIN: 'begin' ;
 
-/** General */
+// General
 IS: 'is' ;
 COMMA: ',' ;
 ASSIGN: '=' ;
@@ -31,13 +31,13 @@ PAIR: 'pair' ;
 FST: 'fst' ;
 SND: 'snd' ;
 
-/** Base types */
+// Base types
 INT: 'int' ;
 BOOL: 'bool' ;
 CHAR: 'char' ;
 STRING: 'string' ;
 
-/** Binary operators */
+// Binary operators
 PLUS: '+' ;
 MINUS: '-' ;
 MULT: '*' ;
@@ -51,24 +51,27 @@ EQ: '==' ;
 NE: '!=' ;
 AND: '&&' ;
 OR: '||' ;
+BIT_AND: '&';
+BIT_OR: '|';
 
-/** Unary operators */
+// Unary operators
 NOT: '!' ;
 LEN: 'len' ;
 ORD: 'ord' ;
 CHR: 'chr' ;
+BIT_NOT: '~';
 
-/** Brackets */
+// Brackets
 OPEN_PARENTHESES: '(' ;
 CLOSE_PARENTHESES: ')' ;
 
-/** Booleans */
+// Booleans
 TRUE: 'true' ;
 FALSE: 'false' ;
 
 NULL: 'null' ;
 
-/** Characters and numbers */
+// Characters and numbers
 fragment DIGIT: '0'..'9' ;
 fragment LOWERCASE: 'a'..'z';
 fragment UPPERCASE: 'A'..'Z';
@@ -90,7 +93,7 @@ fragment ESCAPED_CHARACTER:
     | '\\');
 fragment CHARACTER: ~( '\'' | '"' | '\\' ) | ESCAPED_CHARACTER ;
 
-/** Match and discard whitespace */
+// Match and discard whitespace
 WS : (' '|'\t'|'\r'|'\n')+ -> channel(HIDDEN) ;
 
 IDENT:
@@ -105,6 +108,6 @@ IDENT:
 CHAR_LITER: SINGLE_QUOTE CHARACTER SINGLE_QUOTE;
 STR_LITER: DOUBLE_QUOTE CHARACTER* DOUBLE_QUOTE;
 
-/** Match and discard comments which start with '#', followed by a sequence of
-0 or more of any characters (.*? is a wildcard which consumes everything) */
+// Match and discard comments which start with '#' followed by a sequence of 0 or more of any characters
+// .*? is a wildcard which consumes everything
 COMMENT: '#' .*? '\n' -> skip ;
