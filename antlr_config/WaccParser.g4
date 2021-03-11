@@ -16,7 +16,26 @@ options {
   tokenVocab=WaccLexer;
 }
 
-program: BEGIN (func)* stat END EOF ;
+program: BEGIN (classes)* (func)* stat END EOF ;
+
+/** Classes */
+classes: CLASS IDENT IS attribute? constructor (VISIBILITY func)* END ;
+
+/** Class Attributes **/
+attribute: VISIBILITY param
+| attribute SEMI_COLON attribute ;
+
+/** Class Constructors **/
+constructor: VISIBILITY IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat? END ;
+
+/** Class Instantiate **/
+classInstant: NEW IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES ;
+
+/** Class Function Calls **/
+classFunc: CALL IDENT FULL_STOP IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES ;
+
+/** Get Class Attributes **/
+classattr: IDENT FULL_STOP IDENT ;
 
 /** Functions */
 func: (type IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat END
@@ -48,6 +67,8 @@ stat: SKIP_LITER                                            #skip_stat
 assignLHS: IDENT
 | arrayElem
 | pairElem
+| classattr
+| IDENT IDENT
 ;
 
 assignRHS: expr                                                     #expr_assignRHS
@@ -55,6 +76,9 @@ assignRHS: expr                                                     #expr_assign
 | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES        #newPair_assignRHS
 | pairElem                                                          #pairElem_assignRHS
 | CALL IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES            #call_assignRHS
+| IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES                 #instantiate_assignRHS
+| classFunc                                                         #callClassFunc_assignRHS
+| classInstant                                                      #newClassInstant_assignRHS
 ;
 
 argList: expr (COMMA expr)* ;
@@ -108,6 +132,7 @@ expr:
 | expr binaryOper2 expr                                               #binOpExpr_2
 | expr AND expr                                                       #andExpr
 | expr OR expr                                                        #orExpr
+| classattr                                                           #classAttrExpr
 ;
 
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;

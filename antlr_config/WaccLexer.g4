@@ -7,7 +7,10 @@ BEGIN: 'begin' ;
 /** General */
 IS: 'is' ;
 COMMA: ',' ;
+FULL_STOP: '.' ;
 ASSIGN: '=' ;
+CLASS: 'class';
+NEW: 'new' ;
 SKIP_LITER: 'skip' ;
 READ: 'read' ;
 FREE: 'free' ;
@@ -67,6 +70,10 @@ TRUE: 'true' ;
 FALSE: 'false' ;
 
 NULL: 'null' ;
+
+fragment PUBLIC: 'public' ;
+fragment PRIVATE: 'private' ;
+VISIBILITY: PUBLIC | PRIVATE ;
 
 /** Characters and numbers */
 fragment DIGIT: '0'..'9' ;

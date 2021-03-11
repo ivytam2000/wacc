@@ -271,7 +271,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   @Override
   public AssignLHSAST visitAssignLHS(AssignLHSContext ctx) {
     if (ctx.IDENT() != null) {
-      String assignName = ctx.IDENT().getText();
+      String assignName = ctx.IDENT().get(0).getText();
       return new AssignLHSAST(currSymTab, assignName);
 
     } else if (ctx.pairElem() != null) { // LHS is of pair type
