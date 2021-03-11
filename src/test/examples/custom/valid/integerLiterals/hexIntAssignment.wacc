@@ -1,9 +1,6 @@
 # hexadecimal integer variable declaration and assignment
 
 # Output:
-# #empty#
-
-# Exit:
 # 132
 
 # Program:
@@ -11,5 +8,5 @@
 begin
   int x = 0x0 ;
   x = 0x84 ;
-  exit x
+  print x
 end

@@ -100,4 +100,18 @@ public class ValidTests {
     executablesFromOurCompilerMatchesReferenceCompiler(
         validFolderPath + "while/");
   }
+
+  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
+  @Test
+  public void validExtensionBitwiseTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        "src/test/examples/custom/valid/bitwise/");
+  }
+  // Made test cases for extension: Binary, Octal and Hexadecimal literals
+  @Test
+  public void validExtensionIntegerLiteralTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        "src/test/examples/custom/valid/integerLiterals/");
+  }
+
 }
