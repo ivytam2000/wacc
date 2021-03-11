@@ -73,7 +73,10 @@ NULL: 'null' ;
 
 // Characters and numbers
 fragment DIGIT: '0'..'9' ;
+fragment BINARY_FORMATTER: '0b' ;
+fragment BINARY_DIGIT: '0' | '1' ;
 fragment HEXADECIMAL_FORMATTER: '0x' ;
+fragment HEXADECIMAL_DIGIT: DIGIT | 'a'..'f' | 'A'..'F' ;
 fragment LOWERCASE: 'a'..'z' ;
 fragment UPPERCASE: 'A'..'Z' ;
 fragment UNDERSCORE: '_' ;
@@ -81,7 +84,8 @@ fragment SINGLE_QUOTE: '\'' ;
 fragment DOUBLE_QUOTE: '"' ;
 
 INTEGER: DIGIT+ ;
-HEXADECIMAL_INTEGER: HEXADECIMAL_FORMATTER DIGIT+ ;
+BINARY_INTEGER: BINARY_FORMATTER BINARY_DIGIT+ ;
+HEXADECIMAL_INTEGER: HEXADECIMAL_FORMATTER HEXADECIMAL_DIGIT+ ;
 
 fragment ESCAPED_CHARACTER:
     '\\'

@@ -96,8 +96,12 @@ pairElemType: baseType
 expr:
 (PLUS | MINUS)?
 (INTEGER { checkOverflowError(Long.valueOf($INTEGER.text)); })        #intLiter
+| (PLUS | MINUS)? (BINARY_INTEGER {
+    long val = Long.parseLong($BINARY_INTEGER.text, 2);
+    checkOverflowError(val);
+  })                                                                  #binIntLiter
 | (PLUS | MINUS)? (HEXADECIMAL_INTEGER {
-    long val = Long.parseLong($HEXADECIMAL_INTEGER.text);
+    long val = Long.parseLong($HEXADECIMAL_INTEGER.text, 16);
     checkOverflowError(val);
   })                                                                  #hexIntLiter
 | (TRUE | FALSE)                                                      #boolLiter

@@ -472,8 +472,20 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
+  public IntLiterAST visitBinIntLiter(BinIntLiterContext ctx) {
+    int val = Integer.parseInt(ctx.BINARY_INTEGER().getText(), 2);
+
+    IntLiterAST intLiterAST =
+        new IntLiterAST(currSymTab, ctx.MINUS() == null, Integer.toString(val));
+    intLiterAST.check();
+
+    return intLiterAST;
+  }
+
+  @Override
   public IntLiterAST visitHexIntLiter(HexIntLiterContext ctx) {
     int val = Integer.parseInt(ctx.HEXADECIMAL_INTEGER().getText(), 16);
+
     IntLiterAST intLiterAST =
         new IntLiterAST(currSymTab, ctx.MINUS() == null, Integer.toString(val));
     intLiterAST.check();
