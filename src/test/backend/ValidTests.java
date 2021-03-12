@@ -117,7 +117,7 @@ public class ValidTests {
   }
 
   // Made test cases for extension: Additional Loop Control Statements
-  @Ignore
+
   @Test
   public void validExtensionForLoopTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(

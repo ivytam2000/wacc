@@ -36,14 +36,14 @@ public class ForAST extends Node {
     // Only allow ints
     TypeID startType = startExpr.getIdentifier().getType();
     TypeID endType = endExpr.getIdentifier().getType();
-    if (!(startType instanceof IntID)) {
+    if (!(endType instanceof IntID)) {
       SemanticErrorCollector.addIncompatibleType(
           "int",
           endType.getTypeName(),
           ctx.expr(1).getText(),
           ctx.expr(1).getStart().getLine(),
           ctx.expr(1).getStart().getCharPositionInLine());
-    } else if (!(endType instanceof IntID)) {
+    } else if (!(startType instanceof IntID)) {
       SemanticErrorCollector.addIncompatibleType(
           "int",
           startType.getTypeName(),
@@ -51,6 +51,8 @@ public class ForAST extends Node {
           ctx.expr(0).getStart().getLine(),
           ctx.expr(0).getStart().getCharPositionInLine());
     }
+
+    currSymtab.getParent().incrementSize(startType.getBytes());
   }
 
   @Override

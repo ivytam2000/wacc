@@ -188,14 +188,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     SymbolTable encScope = currSymTab;
     Node startExpr = visit(ctx.expr(0));
     Node endExpr = visit(ctx.expr(1));
+    // Add the variable to the enclosing scope
+    String varName = ctx.IDENT().getText();
+    currSymTab.add(varName, new IntID());
 
     currSymTab = new SymbolTable(encScope); // New scope
-    String varName = ctx.IDENT().getText();
-    // Add to enclosing scope symbol table
-    currSymTab.incrementSize(4);
-    currSymTab.add(varName, new IntID());
     Node stat = visit(ctx.stat());
-
     ForAST forAST = new ForAST(varName, startExpr, endExpr, stat, currSymTab,
         ctx);
     forAST.check();

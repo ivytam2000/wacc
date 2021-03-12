@@ -9,7 +9,7 @@
 # Program:
 
 begin
-  for i in 0 until 3 do
+  for i in 0 until 4 do
     println i
   done
 end
