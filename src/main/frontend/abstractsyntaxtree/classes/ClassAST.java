@@ -30,10 +30,10 @@ public class ClassAST extends Node {
   }
 
   public void addClassToGlobalScope() {
-    Identifier f = globalScope.lookupAll("class " + className);
+    Identifier c = globalScope.lookupAll("class " + className);
 
-    // f already defined
-    if (f != null) {
+    // class already defined
+    if (c != null) {
       SemanticErrorCollector.addSymbolAlreadyDefined(
           className, ctx.getStart().getLine(),
           ctx.getStart().getCharPositionInLine());
@@ -45,7 +45,12 @@ public class ClassAST extends Node {
 
   @Override
   public void check() {
-
+    // check if constructor has the same name as class
+    String constructorName = constructorAST.getClassName();
+    if (!className.equals(constructorName)) {
+      SemanticErrorCollector.addConstructorHasDifferentNameAsClass(
+          className, constructorName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+    }
   }
 
   @Override

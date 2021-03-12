@@ -1,7 +1,6 @@
 package frontend.abstractsyntaxtree.classes;
 
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.functions.ParamAST;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,7 +18,10 @@ public class ClassAttributeListAST extends Node {
 
   @Override
   public void check() {
-    // TODO check if there are any duplicate attributes in the list
+    // calls check on child to see if the variable is defined
+    for (ClassAttributeAST classAttrAST: classAttrASTs) {
+      classAttrAST.check();
+    }
   }
 
   @Override

@@ -1,7 +1,9 @@
 package frontend.abstractsyntaxtree.classes;
 
+import antlr.WaccParser.AttributeContext;
 import antlr.WaccParser.ParamContext;
 import frontend.abstractsyntaxtree.Node;
+import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 
@@ -9,11 +11,11 @@ public class ClassAttributeAST extends Node {
 
   private final String varName;
   private final SymbolTable symtab;
-  private final ParamContext ctx;
+  private final AttributeContext ctx;
   private final Visibility visibility;
 
   public ClassAttributeAST(Identifier identifier, SymbolTable symtab,
-      Visibility visibility, String varName, ParamContext ctx) {
+      Visibility visibility, String varName, AttributeContext ctx) {
     super(identifier);
     this.symtab = symtab;
     this.varName = varName;
@@ -21,8 +23,20 @@ public class ClassAttributeAST extends Node {
     this.visibility = visibility;
   }
 
+  public String getName() {
+    return varName;
+  }
+
   @Override
   public void check() {
+    // checks if the variable is defined in the symbol table, if not, it gets added in
+    Identifier v = symtab.lookup(varName);
+    if (v != null) {
+      SemanticErrorCollector.addSymbolAlreadyDefined(
+          varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+      return;
+    }
+    symtab.add(varName, identifier);
   }
 
   @Override
