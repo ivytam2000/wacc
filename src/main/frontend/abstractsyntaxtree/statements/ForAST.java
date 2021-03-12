@@ -21,13 +21,8 @@ public class ForAST extends Node {
   private final SymbolTable currSymtab;
   private final WaccParser.For_statContext ctx;
 
-  public ForAST(
-      String varName,
-      Node startExpr,
-      Node endExpr,
-      Node stat,
-      SymbolTable currSymTab,
-      WaccParser.For_statContext ctx) {
+  public ForAST(String varName, Node startExpr, Node endExpr, Node stat,
+      SymbolTable currSymTab, WaccParser.For_statContext ctx) {
     this.varName = varName;
     this.startExpr = startExpr;
     this.endExpr = endExpr;
@@ -41,20 +36,14 @@ public class ForAST extends Node {
     // Only allow ints
     TypeID startType = startExpr.getIdentifier().getType();
     TypeID endType = endExpr.getIdentifier().getType();
-    if (startType instanceof IntID) {
-      if (endType instanceof IntID) {
-        // Add to enclosing scope symbol table
-        currSymtab.getParent().add(varName, new IntID());
-        currSymtab.getParent().incrementSize(endType.getBytes());
-      } else {
-        SemanticErrorCollector.addIncompatibleType(
-            "int",
-            endType.getTypeName(),
-            ctx.expr(1).getText(),
-            ctx.expr(1).getStart().getLine(),
-            ctx.expr(1).getStart().getCharPositionInLine());
-      }
-    } else {
+    if (!(startType instanceof IntID)) {
+      SemanticErrorCollector.addIncompatibleType(
+          "int",
+          endType.getTypeName(),
+          ctx.expr(1).getText(),
+          ctx.expr(1).getStart().getLine(),
+          ctx.expr(1).getStart().getCharPositionInLine());
+    } else if (!(endType instanceof IntID)) {
       SemanticErrorCollector.addIncompatibleType(
           "int",
           startType.getTypeName(),
@@ -69,13 +58,15 @@ public class ForAST extends Node {
     // **** Variable Declaration ******
     // Generate the offset of the variable
     int offset =
-        currSymtab.getParent().getSmallestOffset() - startExpr.getIdentifier().getType().getBytes();
+        currSymtab.getParent().getSmallestOffset() - startExpr.getIdentifier()
+            .getType().getBytes();
     // Add the offset to the enclosing symbol table's hashmap of variables'
     // offsets
     currSymtab.getParent().addOffset(varName, offset);
     startExpr.toAssembly();
     // Stores the value in the offset stack address
-    STR strInstr = new STR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset));
+    STR strInstr = new STR(Instr.R4,
+        AddrMode.buildAddrWithOffset(Instr.SP, offset));
     addToCurLabel(strInstr);
 
     String nextStatLabel = getNextLabel();
@@ -86,7 +77,8 @@ public class ForAST extends Node {
 
     // **** Condition: VARNAME < END Expr ****
     String fstReg = Instr.getTargetReg();
-    Instr loadVar = new LDR(Instr.getTargetReg(), AddrMode.buildAddrWithOffset(Instr.SP, offset));
+    Instr loadVar = new LDR(Instr.getTargetReg(),
+        AddrMode.buildAddrWithOffset(Instr.SP, offset));
     addToCurLabel(loadVar);
     String sndReg = Instr.incDepth();
     endExpr.toAssembly();
@@ -108,9 +100,10 @@ public class ForAST extends Node {
     // **** VARNAME ++ ***
     addToCurLabel(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP,
         offset)));
-    addToCurLabel(new ADD(false,Instr.R4, Instr.R4, AddrMode.buildImm(1)));
+    addToCurLabel(new ADD(false, Instr.R4, Instr.R4, AddrMode.buildImm(1)));
     BackEndGenerator.addToPreDefFuncs(Label.P_THROW_OVERFLOW_ERROR);
-    addToCurLabel(new STR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+    addToCurLabel(
+        new STR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
     addToCurLabel(Utils.getEndRoutine(currSymtab, false));
 
     setCurLabel(nextStatLabel);

@@ -72,14 +72,15 @@ public class InvalidSemanticTests {
     exitsWith(baseDir + "while/", 200);
   }
 
-  // ********* EXTENSION TESTS *********
+  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
   @Test
   public void invalidSemanticExtensionBitwiseTests() throws IOException {
     exitsWith(customDir + "bitwise/", 200);
   }
 
+  // Made test cases for extension: Additional Loop Control Statements
   @Test
-  public void invalidSemanticExtensionForTests() throws IOException{
+  public void invalidSemanticExtensionForLoopTests() throws IOException {
     exitsWith(customDir + "forLoop/", 200);
   }
 }

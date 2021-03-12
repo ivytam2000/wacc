@@ -104,6 +104,12 @@ expr:
     long val = Long.parseLong(token, 2);
     checkOverflowError(isMinus, val);
   })                                                                  #binIntLiter
+| (PLUS | MINUS)? (OCTAL_INTEGER {
+    String token = $OCTAL_INTEGER.text.substring(2);
+    boolean isMinus = ((OctIntLiterContext) this._ctx).MINUS() != null;
+    long val = Long.parseLong(token, 8);
+    checkOverflowError(isMinus, val);
+  })                                                                  #octIntLiter
 | (PLUS | MINUS)? (HEXADECIMAL_INTEGER {
     String token = $HEXADECIMAL_INTEGER.text.substring(2);
     boolean isMinus = ((HexIntLiterContext) this._ctx).MINUS() != null;

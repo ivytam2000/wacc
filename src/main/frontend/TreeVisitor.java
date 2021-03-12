@@ -183,14 +183,19 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return whileAST;
   }
 
-  @Override public Node visitFor_stat(For_statContext ctx) {
+  @Override
+  public Node visitFor_stat(For_statContext ctx) {
     SymbolTable encScope = currSymTab;
     Node startExpr = visit(ctx.expr(0));
     Node endExpr = visit(ctx.expr(1));
 
     currSymTab = new SymbolTable(encScope); // New scope
     String varName = ctx.IDENT().getText();
+    // Add to enclosing scope symbol table
+    currSymTab.incrementSize(4);
+    currSymTab.add(varName, new IntID());
     Node stat = visit(ctx.stat());
+
     ForAST forAST = new ForAST(varName, startExpr, endExpr, stat, currSymTab,
         ctx);
     forAST.check();
@@ -493,6 +498,19 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     // Substring removes '0b' portion of token
     String token = ctx.BINARY_INTEGER().getText().substring(2);
     int val = Integer.parseInt(token, 2);
+
+    IntLiterAST intLiterAST =
+        new IntLiterAST(currSymTab, ctx.MINUS() == null, Integer.toString(val));
+    intLiterAST.check();
+
+    return intLiterAST;
+  }
+
+  @Override
+  public Node visitOctIntLiter(OctIntLiterContext ctx) {
+    // Substring removes '0o' portion of token
+    String token = ctx.OCTAL_INTEGER().getText().substring(2);
+    int val = Integer.parseInt(token, 8);
 
     IntLiterAST intLiterAST =
         new IntLiterAST(currSymTab, ctx.MINUS() == null, Integer.toString(val));

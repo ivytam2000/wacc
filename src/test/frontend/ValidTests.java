@@ -4,6 +4,7 @@ import java.io.IOException;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static backend.TestUtilities.executablesFromOurCompilerMatchesReferenceCompiler;
 import static frontend.TestUtilities.exitsWith;
 
 public class ValidTests {
@@ -86,13 +87,21 @@ public class ValidTests {
     exitsWith(baseDir + "while/", 0);
   }
 
+  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
   @Test
   public void validExtensionBitwiseTest() throws IOException {
     exitsWith(customDir + "bitwise/", 0);
   }
 
+  // Made test cases for extension: Binary, Octal and Hexadecimal literals
   @Test
   public void validExtensionIntegerLiteralsTest() throws IOException {
     exitsWith(customDir + "integerLiterals/", 0);
+  }
+
+  // Made test cases for extension: Additional Loop Control Statements
+  @Test
+  public void validExtensionForLoopTest() throws IOException {
+    exitsWith(customDir + "forLoop/", 0);
   }
 }

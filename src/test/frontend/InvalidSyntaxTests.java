@@ -61,6 +61,7 @@ public class InvalidSyntaxTests {
     exitsWith(baseDir + "while/", 100);
   }
 
+  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
   @Test
   public void invalidSyntaxExtensionBitwiseTest() throws IOException {
     exitsWith(customDir + "bitwise/", 100);

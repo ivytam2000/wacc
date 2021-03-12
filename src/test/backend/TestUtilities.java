@@ -56,7 +56,7 @@ public class TestUtilities {
             .append(getOurCompilerStdOut(sourceFilePath)).append("\n");
         fail(errorMsg.toString());
       } catch (IOException e) {
-        fail("Process Builder failed to start!");
+        fail(e.toString());
       }
     }
   }

@@ -30,9 +30,9 @@ CLOSE_SQUARE_BRACKETS: ']' ;
 PAIR: 'pair' ;
 FST: 'fst' ;
 SND: 'snd' ;
-FOR: 'for';
-IN: 'in';
-UNTIL: 'until';
+FOR: 'for' ;
+IN: 'in' ;
+UNTIL: 'until' ;
 
 // Base types
 INT: 'int' ;
@@ -78,6 +78,8 @@ NULL: 'null' ;
 fragment DIGIT: '0'..'9' ;
 fragment BINARY_FORMATTER: '0b' ;
 fragment BINARY_DIGIT: '0' | '1' ;
+fragment OCTAL_FORMATTER: '0o' ;
+fragment OCTAL_DIGIT: '0'..'7' ;
 fragment HEXADECIMAL_FORMATTER: '0x' ;
 fragment HEXADECIMAL_DIGIT: DIGIT | 'a'..'f' | 'A'..'F' ;
 fragment LOWERCASE: 'a'..'z' ;
@@ -88,6 +90,7 @@ fragment DOUBLE_QUOTE: '"' ;
 
 INTEGER: DIGIT+ ;
 BINARY_INTEGER: BINARY_FORMATTER BINARY_DIGIT+ ;
+OCTAL_INTEGER: OCTAL_FORMATTER OCTAL_DIGIT+ ;
 HEXADECIMAL_INTEGER: HEXADECIMAL_FORMATTER HEXADECIMAL_DIGIT+ ;
 
 fragment ESCAPED_CHARACTER:
