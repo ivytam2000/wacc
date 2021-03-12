@@ -43,12 +43,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public AST visitProgram(ProgramContext ctx) {
     // Functions analysis
     List<Node> fs = new ArrayList<>();
+    List<Node> cs = new ArrayList<>();
     List<ClassesContext> classContexts = ctx.classes();
     List<FuncContext> funcContexts = ctx.func();
 
     // Add all classes to global scope first in order
     for (ClassesContext cc : classContexts) {
-      fs.add(visitClasses(cc));
+      cs.add(visitClasses(cc));
     }
     // Add all functions to global scope first in order to support recursion
     for (FuncContext fc : funcContexts) {
@@ -62,12 +63,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     // visit stat
     Node statAST = visit(ctx.stat());
 
-    return new AST(fs, statAST, currSymTab);
+    return new AST(cs, fs, statAST, currSymTab);
   }
 
   @Override
   public ClassAST visitClasses(ClassesContext ctx) {
-    // TODO visits classes defined
+    // visits a class
+    // sets new scope for class
+    SymbolTable globalScope = currSymTab;
+    currSymTab = new SymbolTable(globalScope);
+
     String className = ctx.IDENT().getText();
     ClassID classID = new ClassID(className, currSymTab);
 
@@ -86,27 +91,34 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       classFunctions.add(currFunc);
     }
 
-    ClassAST classAST = new ClassAST(classID, currSymTab, className,
+    ClassAST classAST = new ClassAST(classID, globalScope, className,
         classAttrListAST, constructorAST, classFunctions, ctx);
 
+    // final checks on the class, checks that constructor is the same name as the class name
+    classAST.check();
+    // checks if the class is already defined
     classAST.addClassToGlobalScope();
+
+    // Swap back symbol table
+    currSymTab = globalScope;
 
     return classAST;
   }
 
   @Override
   public ClassAttributeAST visitAttribute(AttributeContext ctx) {
-    // Don't need to check, generates a class attribute
-    ParamAST param = visitParam(ctx.param());
+    // Don't need to check, checking gets done in ClassAttributeListAST
+    Identifier identifier = visit(ctx.type()).getIdentifier();
+    String varName = ctx.IDENT().getText();
     Visibility visibility = ctx.VISIBILITY().getText().equals("public")
         ? Visibility.PUBLIC : Visibility.PRIVATE;
-    return new ClassAttributeAST(param.getIdentifier(), currSymTab, visibility,
-        param.getName(), ctx.param());
+    return new ClassAttributeAST(identifier, currSymTab, visibility,
+        varName, ctx);
   }
 
   @Override
   public ClassAttributeListAST visitAttributeList(AttributeListContext ctx) {
-    // TODO generates all attributes in the class
+    // stores all the attributes of the class
     List<ClassAttributeAST> classAttributes = new ArrayList<>();
 
     for (AttributeContext attrCtx : ctx.attribute()) {
@@ -114,17 +126,21 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     }
 
     ClassAttributeListAST classAttrListAST = new ClassAttributeListAST(classAttributes);
-    classAttrListAST.check();
+
     // checks if variables are overlapped within the class
+    classAttrListAST.check();
 
     return classAttrListAST;
   }
 
   @Override
   public ClassConstructorAST visitConstructor(ConstructorContext ctx) {
-    // TODO generates a constructor in the class
-    Visibility visibility = ctx.VISIBILITY().getText().equals("public")
-        ? Visibility.PUBLIC : Visibility.PRIVATE;
+    // In the form of: H(int v, int y) end where the params are the attributes defined above constructor
+    // Makes constructor for the class
+
+    // add new symbol table
+    SymbolTable classSymtab = currSymTab;
+    currSymTab = new SymbolTable(classSymtab);
 
     // Initialises empty ParamListAST if no params
     ParamListAST params =
@@ -138,22 +154,33 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     ConstructorID constructID = new ConstructorID(classID, params.convertToParamIDs(),
         currSymTab);
 
-    ClassConstructorAST classConstructorAST = new ClassConstructorAST(constructID, currSymTab, className, params);
+    ClassConstructorAST constructAST =
+        new ClassConstructorAST(constructID, classSymtab, className, params, ctx);
 
-    return classConstructorAST;
+    // checks if constructor contains all the attributes defined
+    constructAST.check();
+
+    // restore symbol table
+    currSymTab = classSymtab;
+
+    return constructAST;
   }
 
   @Override
   public ClassFuncAST visitClassFunc(ClassFuncContext ctx) {
-    // TODO call class function
     FuncContext classFuncContexts = ctx.func();
     FuncAST fc = visitFunc(classFuncContexts);
+    visitFuncWrapper(classFuncContexts, fc);
     Visibility visibility = ctx.VISIBILITY().getText().equals("public")
         ? Visibility.PUBLIC : Visibility.PRIVATE;
     // TODO actually add in tags to state if its public in check
-    return new ClassFuncAST(fc.getIdentifier(), currSymTab,
-        visibility, fc);
+    ClassFuncAST classFunc = new ClassFuncAST(fc.getIdentifier(), currSymTab,
+        visibility, fc, ctx);
 
+    // checks if the function is already defined and checks if the function is the same as the className
+    // aka the constructor name
+    classFunc.check();
+    return classFunc;
   }
 
   @Override
