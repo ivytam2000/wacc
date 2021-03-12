@@ -119,6 +119,45 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addConstructorHasDifferentNameAsClass(
+      String className, String constructorName, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Constructor in class %s does not have the same name, got %s instead",
+            line, position, className, constructorName);
+    addError(errorMsg);
+  }
+
+  public static void addIncompatibleTypeInConstructor(
+      String expected, String actual, String construct, String token, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Incompatible Types in class constructor %s at %s, "
+                + "Expected Type: %s, "
+                + "but Actual Type: %s",
+            line, position, construct, token, expected, actual);
+    addError(errorMsg);
+  }
+
+  public static void addInconsistentNumberOfParamInConstructor(
+     String param, String type, String construct, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Incompatible Types in class constructor %s, "
+                + "Missing parameter %s with type %s",
+            line, position, construct, param, type);
+    addError(errorMsg);
+  }
+
+  public static void addFunctionHasSameNameAsClassConstructor(
+      String funcName, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Function %s has the same name as its class Constructor",
+            line, position, funcName);
+    addError(errorMsg);
+  }
+
   private static void addError(String s) {
     errors.add(s);
   }
