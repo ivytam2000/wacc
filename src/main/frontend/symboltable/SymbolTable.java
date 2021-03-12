@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class SymbolTable {
 
@@ -84,6 +85,8 @@ public class SymbolTable {
     }
     return null;
   }
+
+  public Set<String> getAllIdent() { return dictionary.keySet(); }
 
   public void incrementSize(int val) {
     size += val;
