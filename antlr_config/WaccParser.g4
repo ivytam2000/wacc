@@ -22,13 +22,13 @@ program: BEGIN (classes)* (func)* stat END EOF ;
 classes: CLASS IDENT IS attributeList? constructor (classFunc)* END ;
 
 /** Class Attribute **/
-attribute: VISIBILITY param;
+attribute: VISIBILITY type IDENT;
 
 /** Class Attributes **/
 attributeList: attribute (SEMI_COLON attribute)* ;
 
 /** Class Constructors **/
-constructor: VISIBILITY IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat? END ;
+constructor: IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES END ;
 
 /** Class Functions **/
 classFunc: VISIBILITY func ;
