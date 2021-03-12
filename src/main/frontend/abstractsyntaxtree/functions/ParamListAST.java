@@ -19,6 +19,8 @@ public class ParamListAST extends Node {
     this.paramASTs = paramASTs;
   }
 
+  public List<ParamAST> getParamList() { return paramASTs; }
+
   @Override
   public void check() {
     for (ParamAST paramAST : paramASTs) {
