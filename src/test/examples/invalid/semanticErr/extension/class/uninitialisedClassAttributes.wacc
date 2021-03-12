@@ -1,0 +1,15 @@
+# class attributes not initialised
+
+# Exit:
+# 200
+
+# Program:
+
+begin
+  class H is 
+    private int v 
+    public K() is 
+    end
+  end
+  int i = 0 
+end

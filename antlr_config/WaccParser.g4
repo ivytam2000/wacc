@@ -19,23 +19,28 @@ options {
 program: BEGIN (classes)* (func)* stat END EOF ;
 
 /** Classes */
-classes: CLASS IDENT IS attribute? constructor (VISIBILITY func)* END ;
+classes: CLASS IDENT IS attributeList? constructor (classFunc)* END ;
+
+/** Class Attribute **/
+attribute: VISIBILITY param;
 
 /** Class Attributes **/
-attribute: VISIBILITY param
-| attribute SEMI_COLON attribute ;
+attributeList: attribute (SEMI_COLON attribute)* ;
 
 /** Class Constructors **/
 constructor: VISIBILITY IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat? END ;
+
+/** Class Functions **/
+classFunc: VISIBILITY func ;
 
 /** Class Instantiate **/
 classInstant: NEW IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES ;
 
 /** Class Function Calls **/
-classFunc: CALL IDENT FULL_STOP IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES ;
+callClassFunc: CALL IDENT FULL_STOP IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES ;
 
 /** Get Class Attributes **/
-classattr: IDENT FULL_STOP IDENT ;
+classAttr: IDENT FULL_STOP IDENT ;
 
 /** Functions */
 func: (type IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES IS stat END
@@ -64,11 +69,11 @@ stat: SKIP_LITER                                            #skip_stat
 ;
 
 /** Assignments */
-assignLHS: IDENT
-| arrayElem
-| pairElem
-| classattr
-| IDENT IDENT
+assignLHS: IDENT                                            #ident_assignLHS
+| arrayElem                                                 #arrayElem_assignLHS
+| pairElem                                                  #pairElem_assignLHS
+| classAttr                                                 #classattr_assignLHS
+| IDENT IDENT                                               #identIdent_assignLHS
 ;
 
 assignRHS: expr                                                     #expr_assignRHS
@@ -76,9 +81,8 @@ assignRHS: expr                                                     #expr_assign
 | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES        #newPair_assignRHS
 | pairElem                                                          #pairElem_assignRHS
 | CALL IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES            #call_assignRHS
-| IDENT OPEN_PARENTHESES argList? CLOSE_PARENTHESES                 #instantiate_assignRHS
-| classFunc                                                         #callClassFunc_assignRHS
-| classInstant                                                      #newClassInstant_assignRHS
+| callClassFunc                                                     #callClassFunc_assignRHS
+| classInstant                                                      #instantiate_assignRHS
 ;
 
 argList: expr (COMMA expr)* ;
@@ -132,7 +136,7 @@ expr:
 | expr binaryOper2 expr                                               #binOpExpr_2
 | expr AND expr                                                       #andExpr
 | expr OR expr                                                        #orExpr
-| classattr                                                           #classAttrExpr
+| classAttr                                                           #classAttrExpr
 ;
 
 unaryOper: NOT | MINUS | LEN | ORD | CHR ;

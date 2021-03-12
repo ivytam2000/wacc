@@ -6,6 +6,12 @@ import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
 import frontend.abstractsyntaxtree.array.ArrayLiterAST;
 import frontend.abstractsyntaxtree.array.ArrayTypeAST;
+import frontend.abstractsyntaxtree.classes.ClassAST;
+import frontend.abstractsyntaxtree.classes.ClassAttributeAST;
+import frontend.abstractsyntaxtree.classes.ClassAttributeListAST;
+import frontend.abstractsyntaxtree.classes.ClassConstructorAST;
+import frontend.abstractsyntaxtree.classes.ClassFuncAST;
+import frontend.abstractsyntaxtree.classes.Visibility;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.abstractsyntaxtree.functions.FuncAST;
 import frontend.abstractsyntaxtree.functions.ParamAST;
@@ -37,7 +43,13 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public AST visitProgram(ProgramContext ctx) {
     // Functions analysis
     List<Node> fs = new ArrayList<>();
+    List<ClassesContext> classContexts = ctx.classes();
     List<FuncContext> funcContexts = ctx.func();
+
+    // Add all classes to global scope first in order
+    for (ClassesContext cc : classContexts) {
+      fs.add(visitClasses(cc));
+    }
     // Add all functions to global scope first in order to support recursion
     for (FuncContext fc : funcContexts) {
       fs.add(visitFunc(fc));
@@ -51,6 +63,115 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     Node statAST = visit(ctx.stat());
 
     return new AST(fs, statAST, currSymTab);
+  }
+
+  @Override
+  public ClassAST visitClasses(ClassesContext ctx) {
+    // TODO visits classes defined
+    String className = ctx.IDENT().getText();
+    ClassID classID = new ClassID(className, currSymTab);
+
+    ClassAttributeListAST classAttrListAST =
+        ctx.attributeList() == null ? new ClassAttributeListAST()
+            : visitAttributeList(ctx.attributeList());
+
+    ClassConstructorAST constructorAST = visitConstructor(ctx.constructor());
+
+    List<ClassFuncContext> classFuncContexts = ctx.classFunc();
+    List<ClassFuncAST> classFunctions = new ArrayList<>();
+
+    for (ClassFuncContext cfc : classFuncContexts) {
+      ClassFuncAST currFunc = visitClassFunc(cfc);
+      currFunc.setClassName(className);
+      classFunctions.add(currFunc);
+    }
+
+    ClassAST classAST = new ClassAST(classID, currSymTab, className,
+        classAttrListAST, constructorAST, classFunctions, ctx);
+
+    classAST.addClassToGlobalScope();
+
+    return classAST;
+  }
+
+  @Override
+  public ClassAttributeAST visitAttribute(AttributeContext ctx) {
+    // Don't need to check, generates a class attribute
+    ParamAST param = visitParam(ctx.param());
+    Visibility visibility = ctx.VISIBILITY().getText().equals("public")
+        ? Visibility.PUBLIC : Visibility.PRIVATE;
+    return new ClassAttributeAST(param.getIdentifier(), currSymTab, visibility,
+        param.getName(), ctx.param());
+  }
+
+  @Override
+  public ClassAttributeListAST visitAttributeList(AttributeListContext ctx) {
+    // TODO generates all attributes in the class
+    List<ClassAttributeAST> classAttributes = new ArrayList<>();
+
+    for (AttributeContext attrCtx : ctx.attribute()) {
+      classAttributes.add(visitAttribute(attrCtx));
+    }
+
+    ClassAttributeListAST classAttrListAST = new ClassAttributeListAST(classAttributes);
+    classAttrListAST.check();
+    // checks if variables are overlapped within the class
+
+    return classAttrListAST;
+  }
+
+  @Override
+  public ClassConstructorAST visitConstructor(ConstructorContext ctx) {
+    // TODO generates a constructor in the class
+    Visibility visibility = ctx.VISIBILITY().getText().equals("public")
+        ? Visibility.PUBLIC : Visibility.PRIVATE;
+
+    // Initialises empty ParamListAST if no params
+    ParamListAST params =
+        ctx.paramList() == null ? new ParamListAST()
+            : visitParamList(ctx.paramList());
+
+    String className = ctx.IDENT().getText();
+
+    Identifier classID = new ClassID(className, currSymTab);
+
+    ConstructorID constructID = new ConstructorID(classID, params.convertToParamIDs(),
+        currSymTab);
+
+    ClassConstructorAST classConstructorAST = new ClassConstructorAST(constructID, currSymTab, className, params);
+
+    return classConstructorAST;
+  }
+
+  @Override
+  public ClassFuncAST visitClassFunc(ClassFuncContext ctx) {
+    // TODO call class function
+    FuncContext classFuncContexts = ctx.func();
+    FuncAST fc = visitFunc(classFuncContexts);
+    Visibility visibility = ctx.VISIBILITY().getText().equals("public")
+        ? Visibility.PUBLIC : Visibility.PRIVATE;
+    // TODO actually add in tags to state if its public in check
+    return new ClassFuncAST(fc.getIdentifier(), currSymTab,
+        visibility, fc);
+
+  }
+
+  @Override
+  public Node visitClassInstant(ClassInstantContext ctx) {
+    // TODO creates class instant
+    return null;
+  }
+
+  @Override
+  public Node visitCallClassFunc(CallClassFuncContext ctx) {
+    // TODO call class function
+    return null;
+  }
+
+  @Override
+  public Node visitClassAttr(ClassAttrContext ctx) {
+    // TODO returns class attribute node
+    return null;
   }
 
   // Sets up FuncAST and adds to global scope
@@ -148,7 +269,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public FreeAST visitFree_stat(Free_statContext ctx) {
     Node expr = visit(ctx.expr());
 
-    FreeAST freeAST = new FreeAST(expr, ctx.expr(),currSymTab);
+    FreeAST freeAST = new FreeAST(expr, ctx.expr(), currSymTab);
     freeAST.check();
 
     return freeAST;
@@ -269,19 +390,33 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public AssignLHSAST visitAssignLHS(AssignLHSContext ctx) {
-    if (ctx.IDENT() != null) {
-      String assignName = ctx.IDENT().get(0).getText();
-      return new AssignLHSAST(currSymTab, assignName);
+  public AssignLHSAST visitIdent_assignLHS(Ident_assignLHSContext ctx) {
+    String assignName = ctx.IDENT().getText();
+    return new AssignLHSAST(currSymTab, assignName);
+  }
 
-    } else if (ctx.pairElem() != null) { // LHS is of pair type
-      PairElemAST pairElem = visitPairElem((ctx.pairElem()));
-      return new AssignLHSAST(currSymTab, pairElem, pairElem.getName());
+  @Override
+  public AssignLHSAST visitPairElem_assignLHS(PairElem_assignLHSContext ctx) {
+    PairElemAST pairElem = visitPairElem((ctx.pairElem()));
+    return new AssignLHSAST(currSymTab, pairElem, pairElem.getName());
+  }
 
-    } else { // LHS is of array type
-      ArrayElemAST arrayElem = visitArrayElem((ctx.arrayElem()));
-      return new AssignLHSAST(currSymTab, arrayElem, arrayElem.getName());
-    }
+  @Override
+  public AssignLHSAST visitArrayElem_assignLHS(ArrayElem_assignLHSContext ctx) {
+    ArrayElemAST arrayElem = visitArrayElem((ctx.arrayElem()));
+    return new AssignLHSAST(currSymTab, arrayElem, arrayElem.getName());
+  }
+
+  @Override
+  public Node visitClassattr_assignLHS(Classattr_assignLHSContext ctx) {
+    // TODO implement class attribute on assignLHS
+    return visit(ctx.classAttr());
+  }
+
+  @Override
+  public Node visitIdentIdent_assignLHS(IdentIdent_assignLHSContext ctx) {
+    // TODO implement new var dec instance of a class
+    return null;
   }
 
   /**
@@ -354,6 +489,18 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     assignCallAST.check();
 
     return assignCallAST;
+  }
+
+  @Override
+  public Node visitCallClassFunc_assignRHS(CallClassFunc_assignRHSContext ctx) {
+    // TODO implement call class functions
+    return null;
+  }
+
+  @Override
+  public Node visitInstantiate_assignRHS(Instantiate_assignRHSContext ctx) {
+    // TODO implement new class instance declaration
+    return visit(ctx.classInstant());
   }
 
   @Override
@@ -655,6 +802,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     binOpExprAST.check();
 
     return binOpExprAST;
+  }
+
+  @Override
+  public AST visitClassAttrExpr(ClassAttrExprContext ctx) {
+    // TODO retrieves the attribute of a class instance
+    return null;
   }
 
   @Override

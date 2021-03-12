@@ -34,6 +34,8 @@ public class FuncAST extends Node {
     this.ctx = ctx;
   }
 
+  public String getFuncName() { return this.funcName; }
+
   public void setStatements(Node statements) {
     this.statements = statements;
   }

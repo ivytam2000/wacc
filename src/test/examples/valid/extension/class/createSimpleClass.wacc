@@ -1,0 +1,21 @@
+# program passes as class is initialised correctly
+
+# Exit:
+# 0
+
+# Program:
+
+begin
+  class H is 
+    private int k;
+    public bool b
+    public H() is 
+      k = 2 ;
+      b = True
+    end
+    public int getK() is
+      return k 
+    end
+  end
+  int i = 0 
+end

@@ -1,0 +1,14 @@
+# class name and constructor must be the same
+
+# Exit:
+# 200
+
+# Program:
+
+begin
+  class H is 
+    public K() is 
+    end
+  end
+  int i = 0 
+end
