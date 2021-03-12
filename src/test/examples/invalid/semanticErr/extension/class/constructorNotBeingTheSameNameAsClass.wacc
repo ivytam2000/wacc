@@ -1,0 +1,7 @@
+begin
+  class H is 
+    private int v
+    K(int v) end
+  end
+  int u = 0
+end
