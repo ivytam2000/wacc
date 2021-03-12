@@ -11,12 +11,14 @@ public class AST extends Node {
   /**
    * A list of all the functions within the program scanned in the first pass.
    */
+  private final List<Node> classASTs;
   private final List<Node> funcASTs;
   private final Node statAST;
   private final SymbolTable symtab;
 
-  public AST(List<Node> funcASTs, Node statAST, SymbolTable symtab) {
+  public AST(List<Node> classASTs, List<Node> funcASTs, Node statAST, SymbolTable symtab) {
     super();
+    this.classASTs = classASTs;
     this.funcASTs = funcASTs;
     this.statAST = statAST;
     this.symtab = symtab;
