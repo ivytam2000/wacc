@@ -46,6 +46,11 @@ public class VarDecAST extends Node {
     TypeID decType = typeAST.getIdentifier().getType();
     symtab.incrementSize(decType.getBytes());
 
+    // if function is not defined or class is not defined
+    if (assignRHS.getIdentifier() == null) {
+      return;
+    }
+
     TypeID rhsType = assignRHS.getIdentifier().getType();
 
     int line = rhsCtx.getStart().getLine();

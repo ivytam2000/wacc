@@ -1,7 +1,6 @@
 package frontend.abstractsyntaxtree.classes;
 
 import antlr.WaccParser.ClassAttrContext;
-import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassID;
@@ -52,7 +51,7 @@ public class AccessClassAttributeAST extends AssignLHSAST {
 
     // Attribute does not exist in the class
     if (attributeIdent == null) {
-      SemanticErrorCollector.addClassDoesNotHaveAttributeName(
+      SemanticErrorCollector.addClassDoesNotHaveAttribute(
           className, attributeName, line, position);
       return;
     }
@@ -61,6 +60,7 @@ public class AccessClassAttributeAST extends AssignLHSAST {
     if (attributeIdent.getVisibility() == Visibility.PRIVATE) {
       SemanticErrorCollector.addClassAttributeIsPrivate(
           className, attributeName, line, position);
+      return;
     }
 
     setIdentifier(attributeIdent);

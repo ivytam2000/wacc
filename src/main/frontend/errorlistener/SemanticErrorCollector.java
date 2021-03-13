@@ -175,6 +175,15 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addIsNotConstructor(int line, int position,
+      String constructName, String actual) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- %s is not a constructor, it is a %s",
+            line, position, constructName, actual);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
   public static void addClassConstructorNotDefinedError(
       String className, int line, int position) {
     String errorMsg =
@@ -193,12 +202,21 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
-  public static void addClassDoesNotHaveAttributeName(
+  public static void addClassDoesNotHaveAttribute(
       String className, String attributeName, int line, int position) {
     String errorMsg =
         String.format(
             "line %d:%d -- Class %s does not have attribute %s",
             line, position, className, attributeName);
+    addError(errorMsg);
+  }
+
+  public static void addClassDoesNotHaveFunction(
+      String className, String funcName, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Class %s does not have function %s",
+            line, position, className, funcName);
     addError(errorMsg);
   }
 
@@ -211,6 +229,39 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addClassFunctionIsPrivate(
+      String className, String funcName, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Function %s in class %s is private",
+            line, position, funcName, className);
+    addError(errorMsg);
+  }
+
+  public static void addIsNotClassFuncError(int line, int pos, String className, String funcName, String gotType) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- %s.%s is not a function, it is a %s", line, pos, className, funcName, gotType);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
+  public static void addClassFuncInconsistentArgsError(
+      int line, int pos, String className, String funcName, int paramSize, int argsSize) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Class function %s.%s expected %d arguments but got %d arguments",
+            line, pos, className, funcName, paramSize, argsSize);
+    addError(errorMsg);
+  }
+
+  public static void addClassFuncInconsistentArgTypeError(
+      int line, int pos, String className, String funcName, int index, String paramType, String argType) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Class function %s.%s argument %d expected type: %s but got actual type: %s",
+            line, pos, className, funcName, index, paramType, argType);
+    SemanticErrorCollector.addError(errorMsg);
+  }
 
   private static void addError(String s) {
     errors.add(s);

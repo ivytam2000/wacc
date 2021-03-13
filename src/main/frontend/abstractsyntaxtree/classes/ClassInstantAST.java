@@ -7,6 +7,7 @@ import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassID;
 import frontend.symboltable.ConstructorID;
+import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
@@ -31,11 +32,20 @@ public class ClassInstantAST extends AssignRHSAST {
 
   @Override
   public void check() {
+    int line = ctx.getStart().getLine();
+
     // class not defined when doing lookupALL in constructor
     if (identifier == null) {
       SemanticErrorCollector.addClassNotDefined(className,
-          ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+          line, ctx.getStart().getCharPositionInLine());
       return;
+    }
+
+    if (!(identifier instanceof ClassID)) {
+      // Given function name is not actually a function type
+      SemanticErrorCollector.addIsNotConstructor(
+          line, ctx.getStart().getCharPositionInLine(),
+          className, identifier.getType().getTypeName());
     }
 
     // assume it will have to be class since we look up "class className"
@@ -51,10 +61,12 @@ public class ClassInstantAST extends AssignRHSAST {
       int argsSize = actual.size();
 
       // If given number of arguments are not the same as the number of params
+      int pos = (argsSize == 0) ? ctx.getStart().getCharPositionInLine():
+          ctx.argList().getStart().getCharPositionInLine();
       if (paramSize != argsSize) {
         SemanticErrorCollector.addClassConstructorInconsistentArgsError(
-            ctx.getStart().getLine(),
-            ctx.argList().getStart().getCharPositionInLine(),
+            line,
+            pos,
             className,
             paramSize,
             argsSize);
@@ -68,7 +80,7 @@ public class ClassInstantAST extends AssignRHSAST {
             // If argument and param types don't match
             if (currParam.getClass() != argType.getClass()) {
               SemanticErrorCollector.addFuncInconsistentArgTypeError(
-                  ctx.getStart().getLine(),
+                  line,
                   ctx.argList().expr(i).getStart().getCharPositionInLine(),
                   className,
                   i,

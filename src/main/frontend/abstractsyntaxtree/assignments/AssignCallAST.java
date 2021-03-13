@@ -54,11 +54,13 @@ public class AssignCallAST extends AssignRHSAST {
         int paramSize = params.size();
         int argsSize = argsAST.size();
 
+        int pos = (argsSize == 0) ? ctx.getStart().getCharPositionInLine():
+            ctx.argList().getStart().getCharPositionInLine();
         // If given number of arguments are not the same as the number of params
         if (paramSize != argsSize) {
           SemanticErrorCollector.addFuncInconsistentArgsError(
               line,
-              ctx.argList().getStart().getCharPositionInLine(),
+              pos,
               funcName,
               paramSize,
               argsSize);

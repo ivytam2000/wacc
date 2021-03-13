@@ -7,6 +7,7 @@ import frontend.abstractsyntaxtree.*;
 import frontend.abstractsyntaxtree.array.ArrayLiterAST;
 import frontend.abstractsyntaxtree.array.ArrayTypeAST;
 import frontend.abstractsyntaxtree.classes.AccessClassAttributeAST;
+import frontend.abstractsyntaxtree.classes.CallClassFunctionAST;
 import frontend.abstractsyntaxtree.classes.ClassAST;
 import frontend.abstractsyntaxtree.classes.ClassAttributeAST;
 import frontend.abstractsyntaxtree.classes.ClassAttributeListAST;
@@ -196,8 +197,14 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitCallClassFunc(CallClassFuncContext ctx) {
-    // TODO call class function
-    return null;
+    String varName = ctx.IDENT(0).getText();
+    String funcName = ctx.IDENT(1).getText();
+    ArgListAST argListAST = visitArgList(ctx.argList());
+
+    CallClassFunctionAST callClassFunc = new CallClassFunctionAST(
+        varName, funcName, argListAST, currSymTab, ctx);
+    callClassFunc.check();
+    return callClassFunc;
   }
 
   @Override
