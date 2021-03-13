@@ -1,0 +1,19 @@
+begin
+  class H is 
+    private int v
+    H(int v) 
+    end
+    private int J(int v) is 
+      return 0
+    end
+  end
+  class K is 
+    private int k
+    K(int k) 
+    end
+    private int J(int v) is 
+      return 0
+    end
+  end
+  int k = 0 
+end
