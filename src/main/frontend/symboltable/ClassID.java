@@ -1,6 +1,5 @@
 package frontend.symboltable;
 
-import java.util.List;
 
 public class ClassID extends TypeID {
 
@@ -8,6 +7,7 @@ public class ClassID extends TypeID {
 
   public ClassID(String className, SymbolTable symtab) {
     super(className);
+    this.symtab = symtab;
   }
 
   @Override

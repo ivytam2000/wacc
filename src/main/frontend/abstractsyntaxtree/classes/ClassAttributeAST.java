@@ -1,7 +1,6 @@
 package frontend.abstractsyntaxtree.classes;
 
 import antlr.WaccParser.AttributeContext;
-import antlr.WaccParser.ParamContext;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
@@ -17,6 +16,7 @@ public class ClassAttributeAST extends Node {
   public ClassAttributeAST(Identifier identifier, SymbolTable symtab,
       Visibility visibility, String varName, AttributeContext ctx) {
     super(identifier);
+    identifier.setVisibility(visibility);
     this.symtab = symtab;
     this.varName = varName;
     this.ctx = ctx;

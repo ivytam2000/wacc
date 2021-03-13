@@ -11,6 +11,7 @@ import frontend.abstractsyntaxtree.classes.ClassAttributeAST;
 import frontend.abstractsyntaxtree.classes.ClassAttributeListAST;
 import frontend.abstractsyntaxtree.classes.ClassConstructorAST;
 import frontend.abstractsyntaxtree.classes.ClassFuncAST;
+import frontend.abstractsyntaxtree.classes.ClassInstantAST;
 import frontend.abstractsyntaxtree.classes.Visibility;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.abstractsyntaxtree.functions.FuncAST;
@@ -74,7 +75,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     currSymTab = new SymbolTable(globalScope);
 
     String className = ctx.IDENT().getText();
-    ClassID classID = new ClassID(className, currSymTab);
 
     ClassAttributeListAST classAttrListAST =
         ctx.attributeList() == null ? new ClassAttributeListAST()
@@ -90,6 +90,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       currFunc.setClassName(className);
       classFunctions.add(currFunc);
     }
+
+    ClassID classID = new ClassID(className, currSymTab);
 
     ClassAST classAST = new ClassAST(classID, globalScope, className,
         classAttrListAST, constructorAST, classFunctions, ctx);
@@ -173,7 +175,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     visitFuncWrapper(classFuncContexts, fc);
     Visibility visibility = ctx.VISIBILITY().getText().equals("public")
         ? Visibility.PUBLIC : Visibility.PRIVATE;
-    // TODO actually add in tags to state if its public in check
     ClassFuncAST classFunc = new ClassFuncAST(fc.getIdentifier(), currSymTab,
         visibility, fc, ctx);
 
@@ -185,8 +186,11 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitClassInstant(ClassInstantContext ctx) {
-    // TODO creates class instant
-    return null;
+    ArgListAST argsList = visitArgList(ctx.argList());
+    String className = ctx.IDENT().getText();
+    ClassInstantAST newInstant = new ClassInstantAST(className, currSymTab, argsList, ctx);
+    newInstant.check();
+    return newInstant;
   }
 
   @Override
@@ -316,6 +320,19 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
+  public Node visitClass_var_decl_stat(Class_var_decl_statContext ctx) {
+    String className = ctx.IDENT().get(0).getText();
+    String varName = ctx.IDENT().get(1).getText();
+
+    AssignRHSAST assignRHSAST = (AssignRHSAST) visit(ctx.assignRHS());
+
+    ClassVarDecAST classVarDec = new ClassVarDecAST(
+        className, varName, assignRHSAST, currSymTab, ctx);
+    classVarDec.check();
+    return classVarDec;
+  }
+
+  @Override
   public WhileAST visitWhile_stat(While_statContext ctx) {
     SymbolTable encScope = currSymTab;
     Node expr = visit(ctx.expr());
@@ -438,12 +455,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitClassattr_assignLHS(Classattr_assignLHSContext ctx) {
     // TODO implement class attribute on assignLHS
     return visit(ctx.classAttr());
-  }
-
-  @Override
-  public Node visitIdentIdent_assignLHS(IdentIdent_assignLHSContext ctx) {
-    // TODO implement new var dec instance of a class
-    return null;
   }
 
   /**

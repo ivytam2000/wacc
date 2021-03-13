@@ -158,6 +158,32 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addClassNotDefined(
+      String className, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Class %s is not defined",
+            line, position, className);
+    addError(errorMsg);
+  }
+
+  public static void addClassConstructorInconsistentArgsError(
+      int line, int position, String constructName, int expected, int actual) {
+    String errorMsg =
+        String.format("line %d:%d -- Constructor %s expected %d arguments but got %d arguments",
+            line, position, constructName, expected, actual);
+    addError(errorMsg);
+  }
+
+  public static void addClassConstructorNotDefinedError(
+      String className, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Class constructor %s is not defined",
+            line, position, className);
+    addError(errorMsg);
+  }
+
   private static void addError(String s) {
     errors.add(s);
   }

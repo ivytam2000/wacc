@@ -20,6 +20,7 @@ public class ClassFuncAST extends Node {
   public ClassFuncAST(Identifier identifier, SymbolTable classScope,
       Visibility visibility, FuncAST funcAST, ClassFuncContext ctx) {
     super(identifier);
+    identifier.setVisibility(visibility);
     this.funcAST = funcAST;
     this.visibility = visibility;
     this.classScope = classScope;
