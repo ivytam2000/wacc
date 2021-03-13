@@ -1,0 +1,12 @@
+begin
+  class H is 
+    public int v
+    H(int v) 
+    end
+    private int J(int v) is 
+      return 0
+    end
+  end
+  H p = new H(2);
+  p.v = true
+end
