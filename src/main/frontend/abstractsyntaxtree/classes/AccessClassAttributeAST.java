@@ -60,10 +60,9 @@ public class AccessClassAttributeAST extends AssignLHSAST {
     if (attributeIdent.getVisibility() == Visibility.PRIVATE) {
       SemanticErrorCollector.addClassAttributeIsPrivate(
           className, attributeName, line, position);
-      return;
     }
-
     setIdentifier(attributeIdent);
+
   }
 
   @Override

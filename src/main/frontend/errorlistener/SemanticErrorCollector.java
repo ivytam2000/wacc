@@ -193,6 +193,15 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addConstructorInconsistentArgTypeError(
+      int line, int pos, String constructName, int index, String paramType, String argType) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Constructor %s argument %d expected type: %s but got actual type: %s",
+            line, pos, constructName, index, paramType, argType);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
   public static void addVariableIsNotAnInstanceOfAClass(
       String varName, int line, int position) {
     String errorMsg =

@@ -79,7 +79,7 @@ public class ClassInstantAST extends AssignRHSAST {
 
             // If argument and param types don't match
             if (currParam.getClass() != argType.getClass()) {
-              SemanticErrorCollector.addFuncInconsistentArgTypeError(
+              SemanticErrorCollector.addConstructorInconsistentArgTypeError(
                   line,
                   ctx.argList().expr(i).getStart().getCharPositionInLine(),
                   className,
