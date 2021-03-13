@@ -1,3 +1,5 @@
+# Public class functions with arguments can be called
+
 begin
   class H is 
     public int v

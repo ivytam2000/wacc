@@ -1,3 +1,4 @@
+
 begin
   class H is 
     private int v

@@ -1,3 +1,5 @@
+# Simple Class instantiation
+
 begin
   class H is 
     private int v

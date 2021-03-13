@@ -1,3 +1,5 @@
+# Class and constructor must have same name
+
 begin
   class H is 
     private int v

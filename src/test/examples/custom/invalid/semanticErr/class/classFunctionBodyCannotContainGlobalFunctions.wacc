@@ -1,3 +1,5 @@
+# Global Functions cannot be called inside class functions
+
 begin
   class H is 
     public int v

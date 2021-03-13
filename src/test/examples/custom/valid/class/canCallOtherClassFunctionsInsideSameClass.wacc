@@ -1,3 +1,5 @@
+# Class functions can be called inside other class functions
+
 begin
   class H is 
     public int v

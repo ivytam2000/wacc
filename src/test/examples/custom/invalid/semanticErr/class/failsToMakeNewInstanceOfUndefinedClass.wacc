@@ -1,3 +1,5 @@
+# Cannot make new instance of an undefined class
+
 begin
   class H is 
     private int v

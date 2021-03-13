@@ -1,3 +1,5 @@
+# Class instantiate must have correct arguments
+
 begin
   class H is 
     private int v

@@ -1,3 +1,5 @@
+# Private class attributes cannot be accessed
+
 begin
   class H is 
     private int v

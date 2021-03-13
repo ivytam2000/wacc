@@ -1,3 +1,5 @@
+# Class function return type must match the variable type
+
 begin
   class H is 
     public int v

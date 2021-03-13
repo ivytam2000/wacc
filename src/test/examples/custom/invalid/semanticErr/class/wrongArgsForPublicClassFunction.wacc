@@ -1,3 +1,5 @@
+# Wrong arguments for public class function
+
 begin
   class H is 
     public int v

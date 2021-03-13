@@ -1,3 +1,5 @@
+# Public class attributes can be accessed
+
 begin
   class H is 
     public int v

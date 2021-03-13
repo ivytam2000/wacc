@@ -1,3 +1,5 @@
+# Different classes can have their attributes be named the same as other classes
+
 begin
   class H is 
     private int v

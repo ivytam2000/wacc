@@ -1,3 +1,5 @@
+# Classes cannot be assigned to a different class type
+
 begin
   class H is 
     private int v

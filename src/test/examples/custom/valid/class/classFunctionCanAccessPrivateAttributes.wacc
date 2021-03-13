@@ -1,3 +1,5 @@
+# Class functions can access private class attributes
+
 begin
   class H is 
     private int v

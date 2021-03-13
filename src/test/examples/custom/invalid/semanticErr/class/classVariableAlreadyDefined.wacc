@@ -1,3 +1,5 @@
+# Cannot assign class to variable thats already defined
+
 begin
   class H is 
     private int v

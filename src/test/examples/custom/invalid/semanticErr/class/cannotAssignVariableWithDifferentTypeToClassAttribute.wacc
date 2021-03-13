@@ -1,3 +1,5 @@
+# Class attributes can be assigned only if they have the same type
+
 begin
   class H is 
     public int v

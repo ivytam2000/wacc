@@ -1,3 +1,5 @@
+# Multiple classes can be defined
+
 begin
   class H is 
     private int v
