@@ -6,6 +6,7 @@ import antlr.WaccParserBaseVisitor;
 import frontend.abstractsyntaxtree.*;
 import frontend.abstractsyntaxtree.array.ArrayLiterAST;
 import frontend.abstractsyntaxtree.array.ArrayTypeAST;
+import frontend.abstractsyntaxtree.classes.AccessClassAttributeAST;
 import frontend.abstractsyntaxtree.classes.ClassAST;
 import frontend.abstractsyntaxtree.classes.ClassAttributeAST;
 import frontend.abstractsyntaxtree.classes.ClassAttributeListAST;
@@ -200,9 +201,14 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public Node visitClassAttr(ClassAttrContext ctx) {
-    // TODO returns class attribute node
-    return null;
+  public AccessClassAttributeAST visitClassAttr(ClassAttrContext ctx) {
+    String variableName = ctx.IDENT().get(0).getText();
+    String attributeName = ctx.IDENT().get(1).getText();
+
+    AccessClassAttributeAST accessClassAttr = new AccessClassAttributeAST(
+        variableName, attributeName, currSymTab, ctx);
+    accessClassAttr.check();
+    return accessClassAttr;
   }
 
   // Sets up FuncAST and adds to global scope
@@ -453,8 +459,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitClassattr_assignLHS(Classattr_assignLHSContext ctx) {
-    // TODO implement class attribute on assignLHS
-    return visit(ctx.classAttr());
+    return visitClassAttr(ctx.classAttr());
   }
 
   /**
@@ -531,14 +536,12 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public Node visitCallClassFunc_assignRHS(CallClassFunc_assignRHSContext ctx) {
-    // TODO implement call class functions
-    return null;
+    return visitCallClassFunc(ctx.callClassFunc());
   }
 
   @Override
   public Node visitInstantiate_assignRHS(Instantiate_assignRHSContext ctx) {
-    // TODO implement new class instance declaration
-    return visit(ctx.classInstant());
+    return visitClassInstant(ctx.classInstant());
   }
 
   @Override
@@ -843,9 +846,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   }
 
   @Override
-  public AST visitClassAttrExpr(ClassAttrExprContext ctx) {
-    // TODO retrieves the attribute of a class instance
-    return null;
+  public Node visitClassAttrExpr(ClassAttrExprContext ctx) {
+    return visitClassAttr(ctx.classAttr());
   }
 
   @Override

@@ -26,20 +26,20 @@ public class Main {
       System.exit(status);
     }
 
-    // Initialises and runs the code generator
-    BackEndGenerator backEndGenerator = new BackEndGenerator(
-        frontEndAnalyser.getAst());
-    String armFilePath = srcFilePath.replace(".wacc", ".s");
-    String[] splitPaths = armFilePath.split("/");
-    armFilePath = splitPaths[splitPaths.length - 1];
-    File armFile = new File(armFilePath);
-    if (armFile.createNewFile()) {
-      System.out.println("File created: " + armFile.getName());
-    }
-
-    FileWriter armFileWriter = new FileWriter(armFilePath, false);
-    String output = backEndGenerator.run();
-    armFileWriter.write(output);
-    armFileWriter.close();
+//    // Initialises and runs the code generator
+//    BackEndGenerator backEndGenerator = new BackEndGenerator(
+//        frontEndAnalyser.getAst());
+//    String armFilePath = srcFilePath.replace(".wacc", ".s");
+//    String[] splitPaths = armFilePath.split("/");
+//    armFilePath = splitPaths[splitPaths.length - 1];
+//    File armFile = new File(armFilePath);
+//    if (armFile.createNewFile()) {
+//      System.out.println("File created: " + armFile.getName());
+//    }
+//
+//    FileWriter armFileWriter = new FileWriter(armFilePath, false);
+//    String output = backEndGenerator.run();
+//    armFileWriter.write(output);
+//    armFileWriter.close();
   }
 }

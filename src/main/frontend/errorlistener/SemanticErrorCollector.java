@@ -184,6 +184,34 @@ public class SemanticErrorCollector {
     addError(errorMsg);
   }
 
+  public static void addVariableIsNotAnInstanceOfAClass(
+      String varName, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Variable %s is not an instance of a class",
+            line, position, varName);
+    addError(errorMsg);
+  }
+
+  public static void addClassDoesNotHaveAttributeName(
+      String className, String attributeName, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Class %s does not have attribute %s",
+            line, position, className, attributeName);
+    addError(errorMsg);
+  }
+
+  public static void addClassAttributeIsPrivate(
+      String className, String attributeName, int line, int position) {
+    String errorMsg =
+        String.format(
+            "line %d:%d -- Attribute %s in class %s is private",
+            line, position, attributeName, className);
+    addError(errorMsg);
+  }
+
+
   private static void addError(String s) {
     errors.add(s);
   }
