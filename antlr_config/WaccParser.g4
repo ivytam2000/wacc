@@ -55,6 +55,7 @@ param: type IDENT ;
 /** Statements */
 stat: SKIP_LITER                                            #skip_stat
 | type IDENT ASSIGN assignRHS                               #var_decl_stat
+| IDENT IDENT ASSIGN assignRHS                              #class_var_decl_stat
 | assignLHS ASSIGN assignRHS                                #assign_stat
 | READ assignLHS                                            #read_stat
 | FREE expr                                                 #free_stat
@@ -73,7 +74,6 @@ assignLHS: IDENT                                            #ident_assignLHS
 | arrayElem                                                 #arrayElem_assignLHS
 | pairElem                                                  #pairElem_assignLHS
 | classAttr                                                 #classattr_assignLHS
-| IDENT IDENT                                               #identIdent_assignLHS
 ;
 
 assignRHS: expr                                                     #expr_assignRHS
