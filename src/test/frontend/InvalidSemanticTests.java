@@ -71,4 +71,9 @@ public class InvalidSemanticTests {
   public void invalidSemanticWhileTests() throws IOException {
     exitsWith(invalidSemanticFolderPath + "while/", 200);
   }
+
+  @Test
+  public void invalidSemanticClassTests() throws IOException {
+    exitsWith(invalidSemanticFolderPath + "extension/class/", 200);
+  }
 }

@@ -86,4 +86,9 @@ public class ValidTests {
   public void validWhileTest() throws IOException {
     exitsWith(validFolderPath + "while/", 0);
   }
+
+  @Test
+  public void validClassTests() throws IOException {
+    exitsWith(validFolderPath + "extension/class/", 0);
+  }
 }

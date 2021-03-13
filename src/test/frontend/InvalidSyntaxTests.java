@@ -63,4 +63,9 @@ public class InvalidSyntaxTests {
     exitsWith(invalidSyntaxFolderPath + "while/", 100);
   }
 
+  @Test
+  public void invalidSyntaxClassTest() throws IOException {
+    exitsWith(invalidSyntaxFolderPath + "extension/class/", 100);
+  }
+
 }
