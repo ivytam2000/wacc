@@ -14,13 +14,12 @@ import java.util.List;
 
 import static backend.instructions.AddrMode.buildAddrWithOffset;
 import static backend.instructions.Condition.NO_CON;
-import static backend.instructions.Instr.R4;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class VarDecAST extends Node {
 
   private final SymbolTable symtab;
-  private final Node typeAST;
+  private TypeID decType;
   private final String varName;
   private final AssignRHSAST assignRHS;
   private final Var_decl_statContext ctx;
@@ -28,13 +27,13 @@ public class VarDecAST extends Node {
 
   public VarDecAST(
       SymbolTable symtab,
-      Node typeAST,
+      TypeID decType,
       String varName,
       AssignRHSAST assignRHS,
       Var_decl_statContext ctx) {
     super();
     this.symtab = symtab;
-    this.typeAST = typeAST;
+    this.decType = decType;
     this.varName = varName;
     this.ctx = ctx;
     this.rhsCtx = ctx.assignRHS();
@@ -43,7 +42,6 @@ public class VarDecAST extends Node {
 
   @Override
   public void check() {
-    TypeID decType = typeAST.getIdentifier().getType();
     symtab.incrementSize(decType.getBytes());
 
     TypeID rhsType = assignRHS.getIdentifier().getType();
@@ -52,6 +50,28 @@ public class VarDecAST extends Node {
     int pos = rhsCtx.getStart().getCharPositionInLine();
 
     Identifier variable = symtab.lookup(varName);
+
+    // VarDec of nested pairs
+    if (decType instanceof PairID && rhsType instanceof PairID) {
+      PairID pairDecType = (PairID) decType;
+      PairID pairRhsType = (PairID) rhsType;
+
+      // Fst is a pair, set type based on RHS if not null
+      if (pairDecType.getFstType() instanceof PairID) {
+        TypeID pairRhsTypeFst = pairRhsType.getFstType();
+        if (!(pairRhsTypeFst instanceof NullID)) {
+          pairDecType.setFst(pairRhsTypeFst);
+        }
+      }
+
+      // Snd is a pair, set type based on RHS if not null
+      if (pairDecType.getSndType() instanceof PairID) {
+        TypeID pairRhsTypeSnd = pairRhsType.getSndType();
+        if (!(pairRhsTypeSnd instanceof NullID)) {
+          pairDecType.setSnd(pairRhsTypeSnd);
+        }
+      }
+    }
 
     // Check if var is already declared unless it is a function name
     if (variable != null && !(variable instanceof FuncID)) {
@@ -65,16 +85,14 @@ public class VarDecAST extends Node {
           pos);
     }
 
-    symtab.add(varName, typeAST.getIdentifier().getType());
-    setIdentifier(typeAST.getIdentifier().getType());
+    symtab.add(varName, decType);
+    setIdentifier(decType);
   }
-
 
 
   @Override
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
-    TypeID decType = typeAST.getIdentifier().getType();
     // Generate the offset of the variable
     int offset = symtab.getSmallestOffset() - decType.getBytes();
     // Add the offset to the symbol table's hashmap of variables' offsets
@@ -82,13 +100,13 @@ public class VarDecAST extends Node {
     assignRHS.toAssembly();
     // Stores the value in the offset stack address
     STR strInstr = new STR(decType.getBytes(), NO_CON, Instr.R4,
-                           buildAddrWithOffset(Instr.SP, offset));
+        buildAddrWithOffset(Instr.SP, offset));
     instrs.add(strInstr);
     addToCurLabel(instrs);
   }
 
-  public Node getTypeAST() {
-    return typeAST;
+  public TypeID getDecType() {
+    return decType;
   }
 
   public AssignRHSAST getAssignRHS() {

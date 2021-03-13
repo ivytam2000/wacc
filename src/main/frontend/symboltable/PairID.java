@@ -5,6 +5,14 @@ public class PairID extends OptionalPairID {
   private TypeID fst;
   private TypeID snd;
 
+  public void setFst(TypeID fst) {
+    this.fst = fst;
+  }
+
+  public void setSnd(TypeID snd) {
+    this.snd = snd;
+  }
+
   public TypeID getFstType() {
     return fst;
   }
@@ -39,7 +47,8 @@ public class PairID extends OptionalPairID {
     return this;
   }
 
-  @Override public int getBytes() {
+  @Override
+  public int getBytes() {
     return 4;
   }
 
