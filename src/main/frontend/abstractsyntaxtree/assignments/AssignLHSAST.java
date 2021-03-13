@@ -95,7 +95,7 @@ public class AssignLHSAST extends Node {
       }
 
       Instr.decDepth();
-    } else { // Pair
+    } else { // Pair elem
       String reg = Instr.getTargetReg();
       instrs.add(new LDR(reg, AddrMode
           .buildAddrWithOffset(Instr.SP, symtab.getStackOffset(assignName))));
@@ -107,7 +107,7 @@ public class AssignLHSAST extends Node {
 
       // Pair stored as 2 pointers (i.e. fst at index 0, snd at index 4)
       instrs.add(new LDR(reg, AddrMode.buildAddrWithOffset(reg,
-          ((PairElemAST) assignNode).getFirst() ? 0 : Instr.WORD_SIZE)));
+          ((PairElemAST) assignNode).isFirst() ? 0 : Instr.WORD_SIZE)));
     }
     Instr.addToCurLabel(instrs);
   }
