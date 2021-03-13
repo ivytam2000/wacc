@@ -35,7 +35,7 @@ public class BinOpExprAST extends Node {
 
   public BinOpExprAST(SymbolTable symtab, int expectedExprTypes,
       String op, Node eL, Node eR, ExprContext ctx) {
-    super(symtab.lookupAll("bool")); //BinOpExpr always has bool return type
+    super(symtab.lookupAll("bool")); // BinOpExpr always has bool return type
     this.op = op;
     this.expectedExprTypes = expectedExprTypes;
     this.eL = eL;
@@ -48,28 +48,28 @@ public class BinOpExprAST extends Node {
     TypeID eLType = eL.getIdentifier().getType();
     TypeID eRType = eR.getIdentifier().getType();
 
-    //Different binOps are compatible w different types
+    // Different binOps are compatible w different types
 
-    if (expectedExprTypes == Utils.ALL_TYPES) { //Defined for all types
+    if (expectedExprTypes == Utils.ALL_TYPES) { // Defined for all types
       if (!Utils.typeCompat(eLType, eRType)) {
         SemanticErrorCollector
             .addTypeMismatch(ctx.getStart().getLine(),
                 ctx.getStart().getCharPositionInLine(), op);
       }
     } else {
-      //Check for left and right expr of binOp separated to pin point error
+      // Check for left and right expr of binOp separated to pin point error
 
       boolean errorL = false;
       boolean errorR = false;
       String expectedTypes = "";
 
-      if (expectedExprTypes == Utils.INT_CHAR) { //Defined for int and char
+      if (expectedExprTypes == Utils.INT_CHAR) { // Defined for int and char
         errorL = !(eLType instanceof IntID || eLType instanceof CharID
             || eLType instanceof UnknownID);
         errorR = !(eRType instanceof IntID || eRType instanceof CharID
             || eRType instanceof UnknownID);
         expectedTypes = "int or char";
-      } else if (expectedExprTypes == Utils.BOOL) { //Defined for bool only
+      } else if (expectedExprTypes == Utils.BOOL) { // Defined for bool only
         errorL = !(eLType instanceof BoolID || eLType instanceof UnknownID);
         errorR = !(eRType instanceof BoolID || eRType instanceof UnknownID);
         expectedTypes = "bool";
@@ -108,15 +108,15 @@ public class BinOpExprAST extends Node {
     Instr.decDepth();
 
     List<Instr> instrs = new ArrayList<>();
-    // AND ORR have different bodies, we deal with them first
+    // AND and ORR have different bodies, we deal with them first
     if (op.equals("&&")) {
       instrs.add(new AND(fstReg, AddrMode.buildReg(sndReg)));
       addToCurLabel(instrs);
-      return ;
+      return;
     } else if (op.equals("||")) {
       instrs.add(new ORR(false, fstReg, AddrMode.buildReg(sndReg)));
       addToCurLabel(instrs);
-      return ;
+      return;
     }
 
     // Compare registers, set result conditions depending on op
@@ -155,7 +155,7 @@ public class BinOpExprAST extends Node {
         break;
 
       default:
-        assert(false); // UNREACHABLE
+        assert (false); // UNREACHABLE
     }
 
     // Set result at target register depending on condition
@@ -164,5 +164,4 @@ public class BinOpExprAST extends Node {
 
     addToCurLabel(instrs);
   }
-
 }

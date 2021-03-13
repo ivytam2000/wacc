@@ -23,10 +23,7 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.instructions.Instr.FALSE_VAL;
-import static backend.instructions.Instr.TRUE_VAL;
-import static backend.instructions.Instr.WORD_SIZE;
-import static backend.instructions.Instr.addToCurLabel;
+import static backend.instructions.Instr.*;
 
 public class UnOpExprAST extends Node {
 
@@ -48,7 +45,7 @@ public class UnOpExprAST extends Node {
     Identifier unOpExprType = null;
     boolean error = false;
 
-    if (ctx.NOT() != null) { //NOT defined for bool only
+    if (ctx.NOT() != null) { // NOT defined for bool only
       if (!(exprType instanceof BoolID)) {
         error = true;
       }
@@ -74,6 +71,11 @@ public class UnOpExprAST extends Node {
 
     } else if (ctx.ORD() != null) { // ORD defined for char only
       if (!(exprType instanceof CharID)) {
+        error = true;
+      }
+      unOpExprType = symbtab.lookupAll("int");
+    } else if (ctx.BIT_NOT() != null) { // BIT_NOT defined for int only
+      if (!(exprType instanceof IntID)) {
         error = true;
       }
       unOpExprType = symbtab.lookupAll("int");
@@ -103,10 +105,11 @@ public class UnOpExprAST extends Node {
     List<Instr> instrs = new ArrayList<>();
     if (ctx.NOT() != null) {
       // Use XOR to flip bits
-       instrs.add(new ORR(true, targetReg, AddrMode.buildImm(TRUE_VAL)));
+      instrs.add(new ORR(true, targetReg, AddrMode.buildImm(TRUE_VAL)));
     } else if (ctx.MINUS() != null) {
       // Reverse subtract
-      instrs.add(new SUB(true, true, targetReg, targetReg, AddrMode.buildImm(0)));
+      instrs
+          .add(new SUB(true, true, targetReg, targetReg, AddrMode.buildImm(0)));
       // Check for overflow
       BackEndGenerator.addToPreDefFuncs(Label.P_THROW_OVERFLOW_ERROR);
       instrs.add(new BRANCH(true, Condition.VS, Label.P_THROW_OVERFLOW_ERROR));
@@ -114,6 +117,13 @@ public class UnOpExprAST extends Node {
       // Length of array stored at 0th index of its corresponding memory addr
       instrs.add(new LDR(WORD_SIZE, Condition.NO_CON, targetReg,
           AddrMode.buildAddr(targetReg)));
+    } else if (ctx.BIT_NOT() != null) {
+      instrs.add(new LDR(Instr.incDepth(), AddrMode.buildVal(0)));
+      instrs.add(new SUB(false,false, getTargetReg(), getTargetReg(),
+          AddrMode.buildImm(1)));
+      instrs
+          .add(new ORR(true, targetReg, AddrMode.buildReg(getTargetReg())));
+      Instr.decDepth();
     }
     /*
     No need additional instructions for chr and ord as long as the correct value

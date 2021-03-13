@@ -3,16 +3,13 @@ package frontend.abstractsyntaxtree.statements;
 import backend.Utils;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
-import frontend.symboltable.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.instructions.AddrMode.buildReg;
-import static backend.instructions.Condition.NO_CON;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class PrintAST extends Node {
@@ -36,11 +33,15 @@ public class PrintAST extends Node {
     // Evaluate the expression
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
-    MOV movInstr = new MOV(NO_CON, Instr.R0, buildReg(Instr.R4));
+
+    // Move argument from R4 to R0
+    MOV movInstr = new MOV(Condition.NO_CON, Instr.R0, AddrMode.buildReg(Instr.R4));
     instrs.add(movInstr);
+
     // Branch to print label according to its type
     BRANCH brInstr = Utils.getPrintBranch(expr.getIdentifier().getType());
     instrs.add(brInstr);
+
     addToCurLabel(instrs);
   }
 

@@ -12,12 +12,12 @@ import org.junit.Test;
 
 public class TypeSemanticsTests {
 
-  //Creates a simple pair of type int and bool
+  // Creates a simple pair of type int and bool
   @Test
   public void validSimplePair() throws IOException {
     AST ast =
         TestUtilities.buildAST("simplePair.wacc");
-    VarDecAST varDecAST = (VarDecAST) ast.getStatAST();;
+    VarDecAST varDecAST = (VarDecAST) ast.getStatAST();
 
     Node typeAST = varDecAST.getTypeAST();
     assert (typeAST instanceof PairTypeAST);
@@ -32,7 +32,7 @@ public class TypeSemanticsTests {
     assert (pairID.getSndType() instanceof BoolID);
   }
 
-  //Creates a simple pair of type int and bool
+  // Creates a simple pair of type int and bool
 	@Test
   public void validNestedPair() throws IOException {
     AST ast =
@@ -44,14 +44,14 @@ public class TypeSemanticsTests {
     Node typeAST = varDecAST.getTypeAST();
     assert (typeAST instanceof PairTypeAST);
 
-    //LHS : Check outer pair
+    // LHS : Check outer pair
     PairTypeAST pairTypeAST = (PairTypeAST) typeAST;
     TypeID fstTypeLHS = pairTypeAST.getFst().getIdentifier().getType();
     TypeID sndTypeLHS = pairTypeAST.getSnd().getIdentifier().getType();
     assert (fstTypeLHS instanceof PairID);
     assert (sndTypeLHS instanceof PairID);
 
-    //LHS : Check inner pair
+    // LHS : Check inner pair
     PairID fstPairLHS = (PairID) fstTypeLHS.getType();
     PairID sndPairLHS = (PairID) sndTypeLHS.getType();
     assert (fstPairLHS.getFstType() instanceof NullID);
@@ -59,7 +59,7 @@ public class TypeSemanticsTests {
     assert (sndPairLHS.getFstType() instanceof NullID);
     assert (sndPairLHS.getSndType() instanceof NullID);
 
-    //RHS : Check outer pair
+    // RHS : Check outer pair
     TypeID rhsType = varDecAST.getAssignRHS().getIdentifier().getType();
     assert (rhsType instanceof PairID);
     PairID pairRHS = (PairID) rhsType;
@@ -68,7 +68,7 @@ public class TypeSemanticsTests {
     assert (fstTypeRHS instanceof PairID);
     assert (sndTypeRHS instanceof PairID);
 
-    //RHS : Check inner pair
+    // RHS : Check inner pair
     PairID fstPairRHS = (PairID) fstTypeRHS.getType();
     PairID sndPairRHS = (PairID) sndTypeRHS.getType();
     assert (fstPairRHS.getFstType() instanceof IntID);

@@ -3,7 +3,6 @@ package backend.instructions;
 public class STR extends Instr {
 
   // Number of bytes determines the type of STR instruction
-  // A word is 4 bytes in size
   private final int bytes;
   private final String conditions;
   private final String src;
@@ -18,6 +17,7 @@ public class STR extends Instr {
   }
 
   // Without byte and condition parameters
+  // Default to 4 bytes (word size) if not specified
   public STR(String src, AddrMode dst) {
     this(4, Condition.NO_CON, src, dst);
   }

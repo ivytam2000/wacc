@@ -2,8 +2,8 @@ package backend.instructions;
 
 public class ADD extends Instr {
 
-  private final boolean setFlags;
-  private final String dst; // Also first operand
+  private final boolean setFlags; //Set overflow
+  private final String dst;
   private final String src;
   private final AddrMode operand;
   private final AddrMode shift;

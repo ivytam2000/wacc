@@ -14,12 +14,19 @@ import java.util.Set;
 
 public class Utils {
 
+  // Size constant for stack growth
   private static final int TEN_BITS = 1024;
+
+  // String constants for messages
   private static final String INT_MSG = "%d\\0";
-  private static final String STRING_MSG = "%.*s\\0";
-  private static final String LN_MSG = "\\0";
   private static final String TRUE_MSG = "true\\0";
   private static final String FALSE_MSG = "false\\0";
+  private static final String CHAR_MSG
+      = " %c\\0";
+  private static final String PTR_MSG
+      = "%p\\0";
+  private static final String STRING_MSG = "%.*s\\0";
+  private static final String LN_MSG = "\\0";
   private static final String OVERFLOW_MSG
       = "OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n";
   private static final String DIV_BY_ZERO_MSG
@@ -30,17 +37,18 @@ public class Utils {
       = "ArrayIndexOutOfBoundsError: index too large\\n\\0";
   private static final String NULL_MSG
       = "NullReferenceError: dereference a null reference\\n\\0";
-  private static final String CHAR_MSG
-      = " %c\\0";
-  private static final String PTR_MSG
-      = "%p\\0";
 
+  // Generates start routine instructions
   public static List<Instr> getStartRoutine(SymbolTable symtab,
       boolean backEndGenerator) {
     List<Instr> instrs = new ArrayList<>();
+
+    // push LR
     if (backEndGenerator) {
       instrs.add(new PUSH(Instr.LR));
     }
+
+    // stack growth (limited to 10 bits at a time)
     int size = symtab.getSize();
     if (size > 0) {
       // If greater than 10 bits
@@ -52,17 +60,17 @@ public class Utils {
       instrs.add(
           new SUB(false, false, Instr.SP, Instr.SP, AddrMode.buildImm(size)));
     }
+
     return instrs;
   }
 
-  /**
-   * Returns the end routine instructions for every scope, e.g. ADD sp, sp,
-   * #stackSize; LDR r0 =0; POP {pc}.
-   */
+  // Returns the end routine instructions for every scope
   public static List<Instr> getEndRoutine(SymbolTable symtab,
       boolean backEndGenerator) {
     List<Instr> instrs = new ArrayList<>();
+
     int stackSize = 0;
+    // If returning from function, need to destroy parent stacks
     if (symtab.getFuncContext()) {
       SymbolTable temp = symtab;
       while (!temp.isTopLevel()) {
@@ -72,6 +80,8 @@ public class Utils {
     } else {
       stackSize = symtab.getSize();
     }
+
+    // Destroy stack (limited to 10 bits at a time)
     if (stackSize > 0) {
       // If greater than 10 bits
       while (stackSize > TEN_BITS) {
@@ -82,11 +92,14 @@ public class Utils {
       instrs.add(
           new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(stackSize)));
     }
+
+    // End routine (LDR r0 =0; POP {pc}; .ltorg;)
     if (backEndGenerator) {
       instrs.add(new LDR(Instr.R0, AddrMode.buildVal(0)));
       instrs.add(new POP(Instr.PC));
       instrs.add(new LTORG());
     }
+
     return instrs;
   }
 
@@ -124,6 +137,8 @@ public class Utils {
     return brInstr;
   }
 
+  //****** METHODS FOR PRE DEFINED FUNCTIONS ******
+
   /**
    * Returns a map of every pre-defined function and their instructions.
    */
@@ -136,13 +151,13 @@ public class Utils {
       String f = pdfs.get(i);
       // Prevent duplicates
       if (!pdfTracker.contains(f)) {
-        // Get method by name instead of a huge if-else / switch case
+        // Get method by name through reflection instead of a huge if-else / switch case
         try {
           Method method = Utils.class.getDeclaredMethod(f, Map.class);
           method.invoke(null, preDefFuncInstrs);
           pdfTracker.add(f);
         } catch (NoSuchMethodException e) {
-          // Helps with debugging (which preDefFuncs have not been defined yet)
+          // Helps with debugging (for preDefFuncs which have not been defined yet)
           System.err.println("No such predefined method! " + f);
         } catch (IllegalAccessException | InvocationTargetException e) {
           e.printStackTrace();

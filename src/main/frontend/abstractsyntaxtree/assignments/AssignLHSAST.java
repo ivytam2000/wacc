@@ -50,12 +50,7 @@ public class AssignLHSAST extends Node {
   @Override
   public void toAssembly() {
     assert (symtab != null);
-
-    if (assignNode == null) { // Variable
-      Instr.addToCurLabel(new ADD(false, Instr.R4, Instr.SP,
-          AddrMode.buildImm(symtab.getStackOffset(assignName))));
-      return;
-    }
+    assert (assignNode != null);
 
     List<Instr> instrs = new ArrayList<>();
     if (assignNode instanceof ArrayElemAST) {

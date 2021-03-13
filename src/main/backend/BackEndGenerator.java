@@ -3,13 +3,10 @@ package backend;
 import backend.instructions.Instr;
 import frontend.abstractsyntaxtree.AST;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static backend.instructions.Instr.addToCurLabel;
-import static backend.instructions.Instr.addToLabelOrder;
-import static backend.instructions.Instr.setCurLabel;
+import static backend.instructions.Instr.*;
 
 public class BackEndGenerator {
 
@@ -31,6 +28,7 @@ public class BackEndGenerator {
     // Generates the main body of instructions, e.g.: main, L0, L1 etc.
     generateMainInstructions();
 
+    // Build body for pre-defined functions required
     Map<String, List<Instr>> preDefFuncInstrs = Utils
         .getPreDefFunc(preDefFuncs);
     for (Map.Entry<String, List<Instr>> pdf : preDefFuncInstrs.entrySet()) {
@@ -48,6 +46,8 @@ public class BackEndGenerator {
       int msgIndex = 0;
       for (String dataSegmentString : dataSegmentStrings) {
         output.append("msg_").append(msgIndex).append(":\n");
+
+        // Calculates the length correctly (accounts for escape characters)
         int limit = dataSegmentString.length();
         int len = limit;
         for (int i = 0; i < limit; ) {
@@ -57,6 +57,7 @@ public class BackEndGenerator {
           }
           i++;
         }
+
         output.append("\t.word ").append(len).append("\n");
         output.append("\t.ascii \"").append(dataSegmentString).append("\"\n");
         msgIndex++;
@@ -69,13 +70,14 @@ public class BackEndGenerator {
 
     // Writes every labelled section and their corresponding instructions
     // Sections include user-defined functions, main etc.
-    for (String label : Instr.getLabelOrder()) {
-      output.append(writeTextSection(label, Instr.getLabels().get(label)));
+    for (String label : getLabelOrder()) {
+      output.append(writeTextSection(label, getLabels().get(label)));
     }
 
     return output.toString();
   }
 
+  // Starts the translation to assembly
   private void generateMainInstructions() {
     addToCurLabel(Utils.getStartRoutine(ast.getSymtab(),true));
     ast.toAssembly();
@@ -96,12 +98,13 @@ public class BackEndGenerator {
     return output.toString();
   }
 
+  // Adds msg to dataSegment and return index for instruction use
   public static int addToDataSegment(String msg) {
     dataSegmentStrings.add(msg);
-    // If we use indexOf method, always returns first occurence
     return dataSegmentIndex++;
   }
 
+  // Adds a pre-defined function
   public static void addToPreDefFuncs(String func) {
     preDefFuncs.add(func);
   }

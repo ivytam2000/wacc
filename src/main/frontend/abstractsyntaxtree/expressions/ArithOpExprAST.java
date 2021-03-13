@@ -5,6 +5,7 @@ import antlr.WaccParser.ArithOpExpr_2Context;
 import antlr.WaccParser.ExprContext;
 import backend.BackEndGenerator;
 import backend.instructions.ADD;
+import backend.instructions.AND;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.CMP;
@@ -13,6 +14,7 @@ import backend.instructions.Instr;
 import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.MUL;
+import backend.instructions.ORR;
 import backend.instructions.SUB;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -38,8 +40,6 @@ public class ArithOpExprAST extends Node {
     this.op = op;
     this.eL = eL;
     this.eR = eR;
-    assert (ctx instanceof ArithOpExpr_1Context
-        || ctx instanceof ArithOpExpr_2Context);
     this.ctx = ctx;
   }
 
@@ -93,6 +93,12 @@ public class ArithOpExprAST extends Node {
     // To check which pre-defined function to add to assembly program
     boolean addOverflow = true;
     switch (op) {
+      case "&":
+        instrs.add(new AND(fstReg, AddrMode.buildReg(sndReg)));
+        break;
+      case "|":
+        instrs.add(new ORR(false, fstReg, AddrMode.buildReg(sndReg)));
+        break;
       case "+":
         // Do addition and branch if overflow
         instrs.add(new ADD(true, targetReg, fstReg, AddrMode.buildReg(sndReg)));

@@ -9,95 +9,118 @@ import org.junit.Test;
 
 public class ValidTests {
 
-  String validFolderPath = "src/test/examples/valid/";
+  String baseDir = "src/test/examples/valid/";
+  String customDir = "src/test/examples/custom/valid/";
 
   @Ignore
   @Test
   public void validAdvancedTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "advanced/");
+        baseDir + "advanced/");
   }
 
   @Test
   public void validArrayTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "array/");
+        baseDir + "array/");
   }
 
   @Test
   public void validBasicExitTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "basic/exit/");
+        baseDir + "basic/exit/");
   }
 
   @Test
   public void validBasicSkipTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "basic/skip/");
+        baseDir + "basic/skip/");
   }
 
   @Test
   public void validExprTests() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "expressions/");
+        baseDir + "expressions/");
   }
 
   @Test
   public void validNestedFuncTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "function/nested_functions/");
+        baseDir + "function/nested_functions/");
   }
   
   @Test
   public void validSimpleFuncTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "function/simple_functions/");
+        baseDir + "function/simple_functions/");
   }
   
   @Test
   public void validIfTest() throws IOException {
-    executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "if/");
+    executablesFromOurCompilerMatchesReferenceCompiler(baseDir + "if/");
   }
 
   @Test
   public void validIOTest() throws IOException {
-    executablesFromOurCompilerMatchesReferenceCompiler(validFolderPath + "IO/");
+    executablesFromOurCompilerMatchesReferenceCompiler(baseDir + "IO/");
   }
 
   @Test
   public void validPairsTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "pairs/");
+        baseDir + "pairs/");
   }
 
   @Test
   public void validRuntimeErrTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "runtimeErr/");
+        baseDir + "runtimeErr/");
   }
 
   @Test
   public void validScopeTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "scope/");
+        baseDir + "scope/");
   }
 
   @Test
   public void validSequenceTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "sequence/");
+        baseDir + "sequence/");
   }
 
   
   @Test
   public void validVariablesTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "variables/");
+        baseDir + "variables/");
   }
 
   @Test
   public void validWhileTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
-        validFolderPath + "while/");
+        baseDir + "while/");
+  }
+
+  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
+  @Test
+  public void validExtensionBitwiseTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        customDir + "bitwise/");
+  }
+
+  // Made test cases for extension: Binary, Octal and Hexadecimal literals
+  @Test
+  public void validExtensionIntegerLiteralTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        customDir + "integerLiterals/");
+  }
+
+  // Made test cases for extension: Additional Loop Control Statements
+
+  @Test
+  public void validExtensionForLoopTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        customDir + "forLoop/");
   }
 }

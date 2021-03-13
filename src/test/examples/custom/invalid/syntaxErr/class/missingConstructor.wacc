@@ -1,0 +1,11 @@
+# program cannot a empty class, must have constructor
+
+# Exit:
+# 100
+
+# Program:
+
+begin
+  class H is 
+  end
+end

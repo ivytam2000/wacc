@@ -1,14 +1,14 @@
 package backend.instructions;
 
 enum AddrModeType {
-  REG,
-  VAL,
-  STRING_VAL,
-  IMM,
-  LOGIC_SHIFT_L,
-  LOGIC_SHIFT_R,
-  ARITH_SHIFT_L,
-  ARITH_SHIFT_R,
-  ADDR_OFFSET,
-  ADDR_OFFSET_WRITEBACK
+  REG,                          // Register
+  VAL,                          // =Value
+  STRING_VAL,                   // =msg_index
+  IMM,                          // #value
+  LOGIC_SHIFT_L,                // LSL
+  LOGIC_SHIFT_R,                // LSR
+  ARITH_SHIFT_L,                // ASL
+  ARITH_SHIFT_R,                // ASR
+  ADDR_OFFSET,                  // Register + offset
+  ADDR_OFFSET_WRITEBACK         // Pre-indexing
 }

@@ -6,6 +6,7 @@ import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Condition;
 import backend.instructions.Instr;
+import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
@@ -98,25 +99,40 @@ public class AssignCallAST extends AssignRHSAST {
 
     int accOffset = 0;
     String transferReg = Instr.getTargetReg();
+    // Allocate in reverse so that first argument directly on top of LR
     for (int i = args.getArguments().size() - 1; i >= 0; i--) {
       Node argNode = args.getArguments().get(i);
 
       // Puts the next argument into the transfer register
       argNode.toAssembly();
 
+      // Record total offset to destroy stack after
       int offset = argNode.getIdentifier().getType().getBytes();
       accOffset += offset;
-      symtab.incrementFuncOffset(offset);
-      Instr.addToCurLabel(new STR(offset,
-          Condition.NO_CON, transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
-    }
 
-    instructions.add(new BRANCH(true, Condition.NO_CON, "f_" + funcName));
-    if (accOffset > 0) {
-      instructions.add(new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset)));
+      // Temporary offset so that arguments are accessed correctly
+      symtab.incrementFuncOffset(offset);
+
+      // Add to stack
+      Instr.addToCurLabel(new STR(offset,
+          Condition.NO_CON, transferReg,
+          AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
     }
+    // Function call
+    instructions
+        .add(new BRANCH(true, Condition.NO_CON, Label.FUNC_HEADER + funcName));
+
+    // Destroy stack
+    if (accOffset > 0) {
+      instructions.add(
+          new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset)));
+    }
+    // Reset temporary offset
     symtab.resetFuncOffset();
-    instructions.add(new MOV(Condition.NO_CON, transferReg, AddrMode.buildReg(Instr.R0)));
+    // Move result
+    instructions.add(
+        new MOV(Condition.NO_CON, transferReg, AddrMode.buildReg(Instr.R0)));
+    
     addToCurLabel(instructions);
   }
 }

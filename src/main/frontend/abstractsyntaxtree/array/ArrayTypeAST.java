@@ -5,11 +5,8 @@ import frontend.symboltable.Identifier;
 
 public class ArrayTypeAST extends Node {
 
-  private final int dimensions;
-
-  public ArrayTypeAST(Identifier identifier, int dimensions) {
+  public ArrayTypeAST(Identifier identifier) {
     super(identifier);
-    this.dimensions = dimensions;
   }
 
   @Override

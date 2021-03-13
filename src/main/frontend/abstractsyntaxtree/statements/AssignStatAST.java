@@ -2,6 +2,8 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.AssignLHSContext;
+import backend.instructions.AddrMode;
+import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
@@ -12,10 +14,6 @@ import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.pairs.PairElemAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
-
-import static backend.instructions.AddrMode.buildAddr;
-import static backend.instructions.AddrMode.buildAddrWithOffset;
-import static backend.instructions.Condition.NO_CON;
 
 public class AssignStatAST extends Node {
 
@@ -65,19 +63,20 @@ public class AssignStatAST extends Node {
 
   @Override
   public void toAssembly() {
-    // Evaluate the rhs
+    // Evaluate the rhs to be assigned
     rhs.toAssembly();
+
     int bytes = lhs.getIdentifier().getType().getBytes();
     if (lhs.getAssignNode() instanceof ArrayElemAST || lhs.getAssignNode() instanceof PairElemAST) {
       String sndReg = Instr.incDepth();
+      // Evaluate lhs to get actual address to store result
       lhs.toAssembly();
       String fstReg = Instr.decDepth();
-      Instr.addToCurLabel(new STR(bytes, NO_CON, fstReg, buildAddr(sndReg)));
+      Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, fstReg, AddrMode.buildAddr(sndReg)));
     } else {
       // Regular variable
-      // lhs.toAssembly() is not used for regular variables
       int offset = symtab.getStackOffset(lhs.getIdentName());
-      Instr.addToCurLabel(new STR(bytes, NO_CON, Instr.R4, buildAddrWithOffset(Instr.SP, offset)));
+      Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
     }
   }
 }

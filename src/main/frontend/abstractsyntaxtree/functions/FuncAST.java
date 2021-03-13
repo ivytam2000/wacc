@@ -40,6 +40,20 @@ public class FuncAST extends Node {
     this.statements = statements;
   }
 
+  public void addFuncToGlobalScope() {
+    Identifier f = globalScope.lookupAll("func " + funcName);
+
+    // f already defined
+    if (f != null) {
+      SemanticErrorCollector.addSymbolAlreadyDefined(
+          funcName, ctx.getStart().getLine(),
+          ctx.getStart().getCharPositionInLine());
+      return;
+    }
+
+    globalScope.add("func " + funcName, identifier);
+  }
+
   @Override
   public void check() {
     // Return type of body
@@ -61,7 +75,7 @@ public class FuncAST extends Node {
 
   @Override
   public void toAssembly() {
-    String labelName = "f_" + funcName;
+    String labelName = Label.FUNC_HEADER + funcName;
     setCurLabel(labelName);
     addToLabelOrder(labelName);
 
@@ -80,28 +94,16 @@ public class FuncAST extends Node {
     addToCurLabel(new PUSH(Instr.LR));
     addToCurLabel(getStartRoutine(funcSymTab, false));
 
+    // If there is at least one parameter, we need to account for LR on the stack
     if (skipLR) {
       funcSymTab.setSkipLR();
     }
     statements.toAssembly();
 
+    // Clean up routine
     instructions.add(new POP(Instr.PC));
     instructions.add(new LTORG());
     addToCurLabel(instructions);
     setCurLabel(Label.MAIN);
-  }
-
-  public void addFuncToGlobalScope() {
-    Identifier f = globalScope.lookupAll("func " + funcName);
-
-    // f already defined
-    if (f != null) {
-      SemanticErrorCollector.addSymbolAlreadyDefined(
-          funcName, ctx.getStart().getLine(),
-          ctx.getStart().getCharPositionInLine());
-      return;
-    }
-
-    globalScope.add("func " + funcName, identifier);
   }
 }

@@ -1,7 +1,0 @@
-begin
-  class H is 
-    private int v
-    H(int v) end
-  end
-  int u = 0
-end
