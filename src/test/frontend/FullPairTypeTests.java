@@ -10,20 +10,22 @@ import frontend.symboltable.*;
 import java.io.IOException;
 import org.junit.Test;
 
-public class TypeSemanticsTests {
+public class FullPairTypeTests {
+
+  String testDir = "src/test/examples/extensions/fullPairs/";
 
   //Creates a simple pair of type int and bool
   @Test
   public void validSimplePair() throws IOException {
     AST ast =
-        TestUtilities.buildAST("simplePair.wacc");
+        TestUtilities.buildAST(testDir + "simplePair.wacc");
     VarDecAST varDecAST = (VarDecAST) ast.getStatAST();;
 
-    Node typeAST = varDecAST.getTypeAST();
-    assert (typeAST instanceof PairTypeAST);
-    PairTypeAST pairTypeAST = (PairTypeAST) typeAST;
-    assert (pairTypeAST.getFst().getIdentifier().getType() instanceof IntID);
-    assert (pairTypeAST.getSnd().getIdentifier().getType() instanceof BoolID);
+    TypeID type = varDecAST.getDecType();
+    assert (type instanceof PairID);
+    PairID pairType = (PairID) type;
+    assert (pairType.getFstType() instanceof IntID);
+    assert (pairType.getSndType() instanceof BoolID);
 
     TypeID rhsType = varDecAST.getAssignRHS().getIdentifier().getType();
     assert (rhsType instanceof PairID);
@@ -36,28 +38,28 @@ public class TypeSemanticsTests {
 	@Test
   public void validNestedPair() throws IOException {
     AST ast =
-        TestUtilities.buildAST("nestedPair.wacc");
+        TestUtilities.buildAST(testDir + "nestedPair.wacc");
     Node statAST = ast.getStatAST();
     assert (statAST instanceof SequenceAST);
     VarDecAST varDecAST = (VarDecAST) ((SequenceAST) statAST).getStatements().get(1);
 
-    Node typeAST = varDecAST.getTypeAST();
-    assert (typeAST instanceof PairTypeAST);
+    TypeID type = varDecAST.getDecType();
+    assert (type instanceof PairID);
 
     //LHS : Check outer pair
-    PairTypeAST pairTypeAST = (PairTypeAST) typeAST;
-    TypeID fstTypeLHS = pairTypeAST.getFst().getIdentifier().getType();
-    TypeID sndTypeLHS = pairTypeAST.getSnd().getIdentifier().getType();
+    PairID pairType = (PairID) type;
+    TypeID fstTypeLHS = pairType.getFstType();
+    TypeID sndTypeLHS = pairType.getSndType();
     assert (fstTypeLHS instanceof PairID);
     assert (sndTypeLHS instanceof PairID);
 
     //LHS : Check inner pair
     PairID fstPairLHS = (PairID) fstTypeLHS.getType();
     PairID sndPairLHS = (PairID) sndTypeLHS.getType();
-    assert (fstPairLHS.getFstType() instanceof NullID);
-    assert (fstPairLHS.getSndType() instanceof NullID);
-    assert (sndPairLHS.getFstType() instanceof NullID);
-    assert (sndPairLHS.getSndType() instanceof NullID);
+    assert (fstPairLHS.getFstType() instanceof IntID);
+    assert (fstPairLHS.getSndType() instanceof BoolID);
+    assert (sndPairLHS.getFstType() instanceof CharID);
+    assert (sndPairLHS.getSndType() instanceof StringID);
 
     //RHS : Check outer pair
     TypeID rhsType = varDecAST.getAssignRHS().getIdentifier().getType();

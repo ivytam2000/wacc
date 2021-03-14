@@ -69,14 +69,26 @@ public class TestUtilities {
     }
   }
 
+  public static void singleExitsWith(String filePath, int exitCode)
+      throws IOException {
+    OutputStream os = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(os));
+    FrontEndAnalyser analyser = buildFrontEndAnalyser(filePath);
+    try {
+      assertEquals(analyser.run(), exitCode);
+    } catch (AssertionError e) {
+      String[] filePathSplit = filePath.split("/");
+      fail("Test " + filePathSplit[filePathSplit.length - 1] + " did not exit with exit code " + exitCode);
+    }
+  }
+
   /**
    * Only call on syntactically valid programs. Used to test semantics.
    */
-  private static final String baseDir = "src/test/examples/custom/";
 
-  public static AST buildAST(String filename) throws IOException {
+  public static AST buildAST(String filePath) throws IOException {
     CharStream input = CharStreams
-        .fromStream(new FileInputStream(baseDir + filename));
+        .fromStream(new FileInputStream(filePath));
 
     // Create a lexer that reads from the input stream
     WaccLexer lexer = new WaccLexer(input);
