@@ -1,0 +1,9 @@
+# Constructor must include the same name for attributes
+
+begin
+  class H is 
+    private int v
+    H(int k) end
+  end
+  int u = 0
+end

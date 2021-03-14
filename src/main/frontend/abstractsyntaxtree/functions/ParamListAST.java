@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class ParamListAST extends Node {
 
-  protected List<ParamAST> paramASTs;
+  private List<ParamAST> paramASTs;
 
   public ParamListAST() {
     this.paramASTs = Collections.emptyList();
@@ -26,6 +26,13 @@ public class ParamListAST extends Node {
     return paramASTs.stream()
         .map(paramAST -> paramAST.getIdentifier().getType())
         .collect(Collectors.toList());
+  }
+
+  // Get sum of the param bytes
+  public int getParamBytes() {
+    return paramASTs.stream()
+        .map(paramAST -> paramAST.getIdentifier().getType().getBytes())
+        .reduce(0, Integer::sum);
   }
 
   @Override

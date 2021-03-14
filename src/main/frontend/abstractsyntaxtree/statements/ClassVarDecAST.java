@@ -1,15 +1,26 @@
 package frontend.abstractsyntaxtree.statements;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 import antlr.WaccParser.Class_var_decl_statContext;
+import backend.instructions.AddrMode;
+import backend.instructions.Condition;
+import backend.instructions.Instr;
+import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
+import frontend.abstractsyntaxtree.classes.ClassInstanceAST;
+import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassID;
+import frontend.symboltable.ConstructorID;
 import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassVarDecAST extends Node {
 
@@ -45,6 +56,23 @@ public class ClassVarDecAST extends Node {
 
     Identifier variable = symtab.lookup(varName);
 
+    // TODO REFACTOR!!!
+    // assignRHS is going to be calling classInstantAST.toAssembly()
+    ClassInstanceAST classInstanceAST = (ClassInstanceAST) assignRHS;
+    SymbolTable classScope = classID.getSymtab();
+    ConstructorID constructorID = (ConstructorID) classScope.lookup(className);
+    List<String> params = constructorID.getParamNames();
+    List<Node> args = classInstanceAST.getArgList().getArguments();
+
+    assert(params.size() == args.size());
+
+    for (int i = 0; i < args.size(); i++) {
+      Node arg = args.get(i);
+      String paramName = params.get(i);
+      symtab.add(varName + "." + paramName, arg.getIdentifier());
+    }
+
+
     // Check if var is already declared unless it is a function name
     if (variable != null && !(variable instanceof FuncID)) {
       SemanticErrorCollector.addSymbolAlreadyDefined(varName, line, pos);
@@ -55,12 +83,51 @@ public class ClassVarDecAST extends Node {
           className, rhsType.getTypeName(), varName, line, pos);
     }
 
+    symtab.incrementSize(identifier.getType().getBytes());
     symtab.add(varName, classID);
   }
 
   @Override
   public void toAssembly() {
+    List<Instr> instrs = new ArrayList<>();
 
+    // We know its going to be class ID
+    ClassID classType = (ClassID) identifier.getType();
+
+    // Generate the offset of the variable
+    int offset = symtab.getSmallestOffset() - classType.getBytes();
+
+    // Add the offset to the symbol table's hashmap of variables' offsets
+    symtab.addOffset(varName, offset);
+
+    // assignRHS is going to be calling classInstantAST.toAssembly()
+    ClassInstanceAST classInstanceAST = (ClassInstanceAST) assignRHS;
+    ClassID classID = (ClassID) classInstanceAST.getIdentifier();
+    SymbolTable classScope = classID.getSymtab();
+    ConstructorID constructorID = (ConstructorID) classScope.lookup(className);
+    List<String> params = constructorID.getParamNames();
+    List<Node> args = classInstanceAST.getArgList().getArguments();
+
+    assert(params.size() == args.size());
+
+    for (int i = 0; i < args.size(); i++) {
+      Node arg = args.get(i);
+      String paramName = params.get(i);
+      arg.toAssembly();
+      int argOffset = arg.getIdentifier().getType().getBytes();
+      symtab.addOffset(varName + "." + paramName, offset);
+
+      // Stores the value in the offset stack address
+      STR strInstr = new STR(argOffset, Condition.NO_CON,
+          Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset));
+      offset -= argOffset;
+      instrs.add(strInstr);
+    }
+
+    addToCurLabel(instrs);
+
+    // adds the variable onto the offset
+    symtab.addOffset(varName, identifier.getType().getBytes());
   }
 
 }

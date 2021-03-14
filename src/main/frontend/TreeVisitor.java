@@ -13,7 +13,7 @@ import frontend.abstractsyntaxtree.classes.ClassAttributeAST;
 import frontend.abstractsyntaxtree.classes.ClassAttributeListAST;
 import frontend.abstractsyntaxtree.classes.ClassConstructorAST;
 import frontend.abstractsyntaxtree.classes.ClassFuncAST;
-import frontend.abstractsyntaxtree.classes.ClassInstantAST;
+import frontend.abstractsyntaxtree.classes.ClassInstanceAST;
 import frontend.abstractsyntaxtree.classes.Visibility;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.abstractsyntaxtree.functions.FuncAST;
@@ -93,7 +93,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
       classFunctions.add(currFunc);
     }
 
-    ClassID classID = new ClassID(className, currSymTab);
+    ClassID classID = new ClassID(className, currSymTab, classAttrListAST.getAttributeBytes());
 
     ClassAST classAST = new ClassAST(classID, globalScope, className,
         classAttrListAST, constructorAST, classFunctions, ctx);
@@ -153,7 +153,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     String className = ctx.IDENT().getText();
 
-    Identifier classID = new ClassID(className, currSymTab);
+    Identifier classID = new ClassID(className, currSymTab, params.getParamBytes());
 
     ConstructorID constructID = new ConstructorID(classID, params.convertToParamIDs(),
         currSymTab);
@@ -190,7 +190,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public Node visitClassInstant(ClassInstantContext ctx) {
     ArgListAST argsList = visitArgList(ctx.argList());
     String className = ctx.IDENT().getText();
-    ClassInstantAST newInstant = new ClassInstantAST(className, currSymTab, argsList, ctx);
+    ClassInstanceAST newInstant = new ClassInstanceAST(className, currSymTab, argsList, ctx);
     newInstant.check();
     return newInstant;
   }

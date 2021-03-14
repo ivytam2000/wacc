@@ -7,6 +7,8 @@ public abstract class Label {
 
   // User-defined functions header
   public static final String FUNC_HEADER = "f_";
+  public static final String CLASS_HEADER = "c_";
+  public static final String CLASS_FUNC_HEADER = "cf_";
 
   // Pre-defined functions
   public static final String P_PRINT_INT = "p_print_int";

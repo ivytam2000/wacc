@@ -1,6 +1,12 @@
 package frontend.abstractsyntaxtree.classes;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 import antlr.WaccParser.ClassAttrContext;
+import backend.instructions.AddrMode;
+import backend.instructions.Condition;
+import backend.instructions.Instr;
+import backend.instructions.LDR;
 import frontend.abstractsyntaxtree.assignments.AssignLHSAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassID;
@@ -21,6 +27,11 @@ public class AccessClassAttributeAST extends AssignLHSAST {
     this.varName = varName;
     this.symtab = symtab;
     this.ctx = ctx;
+  }
+
+  @Override
+  public String getIdentName() {
+    return varName + "." + attributeName;
   }
 
   @Override
@@ -67,5 +78,10 @@ public class AccessClassAttributeAST extends AssignLHSAST {
 
   @Override
   public void toAssembly() {
+    // Load from (SP + offset) into target register
+    int offset = symtab.getStackOffset(varName + "." + attributeName);
+    Instr loadVar = new LDR(identifier.getType().getBytes(), Condition.NO_CON,
+        Instr.getTargetReg(), AddrMode.buildAddrWithOffset(Instr.SP, offset));
+    addToCurLabel(loadVar);
   }
 }

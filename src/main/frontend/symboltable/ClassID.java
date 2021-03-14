@@ -3,11 +3,13 @@ package frontend.symboltable;
 
 public class ClassID extends TypeID {
 
-  private SymbolTable symtab;
+  private final SymbolTable symtab;
+  private final int attributeBytes;
 
-  public ClassID(String className, SymbolTable symtab) {
+  public ClassID(String className, SymbolTable symtab, int attributeBytes) {
     super(className);
     this.symtab = symtab;
+    this.attributeBytes = attributeBytes;
   }
 
   @Override
@@ -15,11 +17,7 @@ public class ClassID extends TypeID {
     return this;
   }
 
-  @Override public int getBytes() {return 4;}
-
-  public void setSymtab(SymbolTable symtab) {
-    this.symtab = symtab;
-  }
+  @Override public int getBytes() {return attributeBytes;}
 
   public SymbolTable getSymtab() {
     return symtab;

@@ -16,6 +16,13 @@ public class ClassAttributeListAST extends Node {
     this.classAttrASTs = classAttrASTs;
   }
 
+  // Get sum of the param bytes
+  public int getAttributeBytes() {
+    return classAttrASTs.stream()
+        .map(attrAST -> attrAST.getIdentifier().getType().getBytes())
+        .reduce(0, Integer::sum);
+  }
+
   @Override
   public void check() {
     // calls check on child to see if the variable is defined

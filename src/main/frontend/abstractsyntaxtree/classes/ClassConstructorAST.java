@@ -1,16 +1,30 @@
 package frontend.abstractsyntaxtree.classes;
 
 import antlr.WaccParser.ConstructorContext;
+import backend.instructions.Instr;
+import backend.instructions.LTORG;
+import backend.instructions.Label;
+import backend.instructions.POP;
+import backend.instructions.PUSH;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.functions.ParamAST;
 import frontend.abstractsyntaxtree.functions.ParamListAST;
 import frontend.errorlistener.SemanticErrorCollector;
+import frontend.symboltable.ConstructorID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import static backend.Utils.getStartRoutine;
+import static backend.instructions.Instr.WORD_SIZE;
+import static backend.instructions.Instr.addToCurLabel;
+import static backend.instructions.Instr.addToLabelOrder;
+import static backend.instructions.Instr.setCurLabel;
 
 public class ClassConstructorAST extends Node {
 
@@ -42,6 +56,7 @@ public class ClassConstructorAST extends Node {
 
     for (ParamAST param: paramList.getParamList()) {
       String varName = param.getName();
+      ((ConstructorID) identifier).addParamName(varName);
       Identifier currIdent = classScope.lookup(varName);
       if (currIdent == null) {
         SemanticErrorCollector.addVariableUndefined(
@@ -76,6 +91,35 @@ public class ClassConstructorAST extends Node {
 
   @Override
   public void toAssembly() {
+    String labelName = Label.CLASS_HEADER + className;
+    setCurLabel(labelName);
+    addToLabelOrder(labelName);
 
+    // Calculate the size of stack frame that needs to be allocated
+    SymbolTable classSymtab = ((ConstructorID) identifier).getSymtab();
+    int offset = WORD_SIZE;
+    boolean skipLR = false;
+    for (Node paramAST : paramList.getParamList()) {
+      skipLR = true;
+      String varName = ((ParamAST) paramAST).getName();
+      classSymtab.addOffset(varName, offset);
+      offset += paramAST.getIdentifier().getType().getBytes();
+    }
+
+    List<Instr> instructions = new ArrayList<>();
+    addToCurLabel(new PUSH(Instr.LR));
+    addToCurLabel(getStartRoutine(classSymtab, false));
+
+    // If there is at least one parameter, we need to account for LR on the stack
+    if (skipLR) {
+      classSymtab.setSkipLR();
+    }
+
+    // Clean up routine
+    instructions.add(new POP(Instr.PC));
+    instructions.add(new LTORG());
+    addToCurLabel(instructions);
+
+    setCurLabel(Label.MAIN);
   }
 }

@@ -6,6 +6,7 @@ import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
+import frontend.symboltable.ClassID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.TypeID;
 
@@ -29,9 +30,11 @@ public class FreeAST extends Node {
   public void check() {
     // Expression must be of type pair or array
     TypeID exprType = expr.getIdentifier().getType();
-    if ((!(exprType instanceof PairID)) && (!(exprType instanceof ArrayID))) {
+    if ((!(exprType instanceof PairID)) &&
+        (!(exprType instanceof ArrayID)) &&
+        !(exprType instanceof ClassID)) {
       SemanticErrorCollector.addIncompatibleType(
-          "pair(T1, T2) or T[] (for " + "some T, T1, T2)",
+          "class T or pair(T1, T2) or T[] (for " + "some T, T1, T2)",
           exprType.getTypeName(),
           ctx.getText(),
           ctx.getStart().getLine(),

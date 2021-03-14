@@ -48,13 +48,10 @@ public class ClassFuncAST extends Node {
       }
     }
 
-    // checks that the function has correct return type with body
-    funcAST.check();
-
   }
 
   @Override
   public void toAssembly() {
-
+    funcAST.toAssembly();
   }
 }

@@ -1,27 +1,33 @@
 package frontend.abstractsyntaxtree.classes;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 import antlr.WaccParser.ClassInstantContext;
+import backend.instructions.AddrMode;
+import backend.instructions.Condition;
+import backend.instructions.Instr;
+import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassID;
 import frontend.symboltable.ConstructorID;
-import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ClassInstantAST extends AssignRHSAST {
+public class ClassInstanceAST extends AssignRHSAST {
 
   private final String className;
   private final ArgListAST args;
   private final SymbolTable symtab;
   private final ClassInstantContext ctx;
 
-  public ClassInstantAST(String className, SymbolTable symtab,
+  public ClassInstanceAST(String className, SymbolTable symtab,
       ArgListAST args, ClassInstantContext ctx) {
     super(symtab.lookupAll("class " + className), symtab);
     this.className = className;
@@ -29,6 +35,8 @@ public class ClassInstantAST extends AssignRHSAST {
     this.symtab = symtab;
     this.ctx = ctx;
   }
+
+  public ArgListAST getArgList() { return args; }
 
   @Override
   public void check() {
@@ -42,7 +50,7 @@ public class ClassInstantAST extends AssignRHSAST {
     }
 
     if (!(identifier instanceof ClassID)) {
-      // Given function name is not actually a function type
+      // Given function name is not actually a class type
       SemanticErrorCollector.addIsNotConstructor(
           line, ctx.getStart().getCharPositionInLine(),
           className, identifier.getType().getTypeName());
@@ -100,6 +108,5 @@ public class ClassInstantAST extends AssignRHSAST {
 
   @Override
   public void toAssembly() {
-
   }
 }

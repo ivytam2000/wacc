@@ -1,6 +1,8 @@
 package frontend.abstractsyntaxtree.classes;
 
 import antlr.WaccParser.ClassesContext;
+import backend.instructions.Instr;
+import backend.instructions.Label;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
@@ -55,6 +57,13 @@ public class ClassAST extends Node {
 
   @Override
   public void toAssembly() {
+    // dont need to call classAttrListAST to assembly since the attributes are the exact same
+    // as the constructor param
+    constructorAST.toAssembly();
 
+    // calls assembly for functions to make their own branches
+    for (ClassFuncAST classFuncAST: classFuncASTSList) {
+      classFuncAST.toAssembly();
+    }
   }
 }
