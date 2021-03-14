@@ -10,6 +10,7 @@ stages:
   - build
   - frontend-test
   - backend-test
+  - extension-test
 
 build job:
   stage: build
@@ -46,3 +47,11 @@ valid backend test job:
     - make test TESTCLASS="backend.ValidTests"
   only:
     - master
+
+full pair type test job:
+	stage: extension-test
+	script:
+		- make test TESTCLASS="FullPairSemanticTests"
+		- make test TESTCLASS="FullPairTypeTests"
+	only:
+		- master
