@@ -36,7 +36,6 @@ invalid semantics test job:
 valid frontend test job:
     stage: frontend-test
     script:
-        - make test TESTCLASS="frontend.TypeSemanticsTests"
         - make test TESTCLASS="frontend.ValidTests"
     only:
         - master
