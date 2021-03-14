@@ -1,34 +1,34 @@
 package frontend.abstractsyntaxtree.pairs;
 
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.expressions.PairLiterAST;
 import frontend.symboltable.Identifier;
+import frontend.symboltable.NullID;
+import frontend.symboltable.TypeID;
 
 
 public class PairTypeAST extends Node {
 
-  private final Node fst;
-  private final Node snd;
+  private final TypeID fst;
+  private final TypeID snd;
 
-  public PairTypeAST(Identifier identifier, Node fst, Node snd) {
+  public PairTypeAST(Identifier identifier, TypeID fst, TypeID snd) {
     super(identifier);
     // Assigns its children to a NullID if its types are not specified
-    this.fst = fst == null ? new PairLiterAST() : fst;
-    this.snd = snd == null ? new PairLiterAST() : snd;
+    this.fst = fst == null ? new NullID() : fst;
+    this.snd = snd == null ? new NullID() : snd;
   }
 
-  public Node getFst() {
+  public TypeID getFst() {
     return fst;
   }
 
-  public Node getSnd() {
+  public TypeID getSnd() {
     return snd;
   }
 
   @Override
   public void check() {
-    fst.check();
-    snd.check();
+
   }
 
   @Override

@@ -50,7 +50,7 @@ public class PairElemAST extends Node {
     return identName;
   }
 
-  public boolean getFirst() {
+  public boolean isFirst() {
     return first;
   }
 

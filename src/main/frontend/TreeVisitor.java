@@ -325,7 +325,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     String varName = ctx.IDENT().getText();
     AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
 
-    VarDecAST varDec = new VarDecAST(currSymTab, typeAST, varName, assignRHS,
+    VarDecAST varDec = new VarDecAST(currSymTab, typeAST.getIdentifier().getType(), varName, assignRHS,
         ctx);
     varDec.check();
 
@@ -654,8 +654,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     TypeID pairID = new PairID(fst.getIdentifier().getType(),
         snd.getIdentifier().getType());
 
-    PairTypeAST pairTypeAST = new PairTypeAST(pairID, fst, snd);
-    pairTypeAST.check();
+    PairTypeAST pairTypeAST = new PairTypeAST(pairID, fst.getIdentifier().getType(), snd.getIdentifier().getType());
 
     return pairTypeAST;
   }
