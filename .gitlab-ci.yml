@@ -55,3 +55,38 @@ full pair type test job:
 		- make test TESTCLASS="FullPairTypeTests"
 	only:
 		- master
+		
+bit wise test job:
+	stage: extension-test
+	script:
+		- make test TESTCLASS="BitWiseTests"
+	only:
+		- master
+		
+loop extension test job:
+	stage: extension-test
+	script:
+		- make test TESTCLASS="LoopExtensionTests"
+	only:
+		- master
+
+class extension test job:
+	stage: extension-test
+	script:
+		- make test TESTCLASS="ClassTests"
+	only:
+		- master
+		
+int literal extension test job:
+	stage: extension-test
+	script:
+		- make test TESTCLASS="IntLiteralExtensionTests"
+	only:
+		- master
+		
+valid backend extension test job:
+	stage: extension-test
+	script:
+		- make test TESTCLASS="ValidExtensionTests"
+	only:
+		- master

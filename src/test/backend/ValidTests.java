@@ -10,7 +10,6 @@ import org.junit.Test;
 public class ValidTests {
 
   String baseDir = "src/test/examples/valid/";
-  String customDir = "src/test/examples/custom/valid/";
 
   @Ignore
   @Test
@@ -100,27 +99,5 @@ public class ValidTests {
   public void validWhileTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
         baseDir + "while/");
-  }
-
-  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
-  @Test
-  public void validExtensionBitwiseTest() throws IOException {
-    executablesFromOurCompilerMatchesReferenceCompiler(
-        customDir + "bitwise/");
-  }
-
-  // Made test cases for extension: Binary, Octal and Hexadecimal literals
-  @Test
-  public void validExtensionIntegerLiteralTest() throws IOException {
-    executablesFromOurCompilerMatchesReferenceCompiler(
-        customDir + "integerLiterals/");
-  }
-
-  // Made test cases for extension: Additional Loop Control Statements
-
-  @Test
-  public void validExtensionForLoopTest() throws IOException {
-    executablesFromOurCompilerMatchesReferenceCompiler(
-        customDir + "forLoop/");
   }
 }

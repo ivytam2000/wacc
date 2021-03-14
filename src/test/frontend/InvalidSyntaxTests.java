@@ -9,7 +9,6 @@ import static frontend.TestUtilities.exitsWith;
 public class InvalidSyntaxTests {
 
   String baseDir = "src/test/examples/invalid/syntaxErr/";
-  String customDir = "src/test/examples/custom/invalid/syntaxErr/";
 
   @Test
   public void invalidSyntaxArrayTest() throws IOException {
@@ -59,16 +58,5 @@ public class InvalidSyntaxTests {
   @Test
   public void invalidSyntaxWhileTest() throws IOException {
     exitsWith(baseDir + "while/", 100);
-  }
-
-  @Test
-  public void invalidSyntaxClassTest() throws IOException {
-    exitsWith(customDir + "class/", 100);
-  }
-
-  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
-  @Test
-  public void invalidSyntaxExtensionBitwiseTest() throws IOException {
-    exitsWith(customDir + "bitwise/", 100);
   }
 }

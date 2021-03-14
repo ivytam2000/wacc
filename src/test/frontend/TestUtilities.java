@@ -23,6 +23,13 @@ import static org.junit.Assert.fail;
 
 public class TestUtilities {
 
+  public static String EXT_SEMANTIC_ERR_DIR =
+      "src/test/examples/custom/invalid/semanticErr/";
+  public static String EXT_SYNTAX_ERR_DIR =
+      "src/test/examples/custom/invalid/syntaxErr/";
+  public static String EXT_VALID_DIR =
+      "src/test/examples/custom/valid/";
+
   public static FrontEndAnalyser buildFrontEndAnalyser(String sourceFilePath)
       throws IOException {
     CharStream source = CharStreams

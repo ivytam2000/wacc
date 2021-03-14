@@ -10,7 +10,6 @@ import static frontend.TestUtilities.exitsWith;
 public class ValidTests {
 
   String baseDir = "src/test/examples/valid/";
-  String customDir = "src/test/examples/custom/valid/";
 
   @Test
   public void validAdvancedTests() throws IOException {
@@ -85,28 +84,5 @@ public class ValidTests {
   @Test
   public void validWhileTest() throws IOException {
     exitsWith(baseDir + "while/", 0);
-  }
-
-  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
-  @Test
-  public void validExtensionBitwiseTest() throws IOException {
-    exitsWith(customDir + "bitwise/", 0);
-  }
-
-  // Made test cases for extension: Binary, Octal and Hexadecimal literals
-  @Test
-  public void validExtensionIntegerLiteralsTest() throws IOException {
-    exitsWith(customDir + "integerLiterals/", 0);
-  }
-
-  // Made test cases for extension: Additional Loop Control Statements
-  @Test
-  public void validExtensionForLoopTest() throws IOException {
-    exitsWith(customDir + "forLoop/", 0);
-  }
-
-  @Test
-  public void validClassTests() throws IOException {
-    exitsWith(customDir + "class/", 0);
   }
 }

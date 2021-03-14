@@ -18,6 +18,9 @@ import java.util.List;
 
 public class TestUtilities {
 
+  public static String EXT_VALID_DIR =
+      "src/test/examples/custom/valid/";
+
   /**
    * Gets text file path of .wacc file
    */
