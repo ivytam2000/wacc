@@ -171,11 +171,11 @@ public class CallClassFunctionAST extends AssignRHSAST {
         .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + funcName));
 
 //    instructions.add(new SUB(false, false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
-    // Destroy stack
-    if (accOffset > 0) {
-      instructions.add(
-          new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset)));
-    }
+    // Destroy stack - STACK ALWAYS HAS TO BE DESTROYED AS IT WILL ALWAYS
+    // CONTAIN THE INSTANCE'S ADDRESS
+    instructions.add(
+          new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset + 4)));
+
     // Reset temporary offset
     symtab.resetFuncOffset();
     // Move result
