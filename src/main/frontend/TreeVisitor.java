@@ -123,7 +123,9 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     String varName = ctx.IDENT().getText();
     Visibility visibility = ctx.VISIBILITY().getText().equals("public")
         ? Visibility.PUBLIC : Visibility.PRIVATE;
-    return new ClassAttributeAST(identifier, currSymTab, visibility,
+
+    ClassAttributeID classAttributeID = new ClassAttributeID((TypeID) identifier, varName);
+    return new ClassAttributeAST(classAttributeID, currSymTab, visibility,
         varName, ctx);
   }
 

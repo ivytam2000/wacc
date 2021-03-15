@@ -7,6 +7,7 @@ import backend.instructions.Instr;
 import backend.instructions.LDR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
+import frontend.symboltable.ClassAttributeID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.UnknownID;
@@ -48,7 +49,14 @@ public class IdentExprAST extends Node {
   @Override
   public void toAssembly() {
     // Load from (SP + offset) into target register
-    int offset = currsymtab.getStackOffset(getName());
+    Identifier identifier = currsymtab.lookupAll(getName());
+    int offset;
+
+    if (identifier instanceof ClassAttributeID) {
+      offset = currsymtab.getStackOffset("object_addr");
+    } else {
+      offset = currsymtab.getStackOffset(getName());
+    }
     Instr loadVar = new LDR(identifier.getType().getBytes(), Condition.NO_CON,
         Instr.getTargetReg(), AddrMode.buildAddrWithOffset(Instr.SP, offset));
     addToCurLabel(loadVar);

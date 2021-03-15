@@ -8,6 +8,7 @@ import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Condition;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
 import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
@@ -136,8 +137,12 @@ public class CallClassFunctionAST extends AssignRHSAST {
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
 
+    int varNameOffset = symtab.getStackOffset(varName);
+//    instructions.add(new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
+
     int accOffset = 0;
     String transferReg = Instr.getTargetReg();
+
     // Allocate in reverse so that first argument directly on top of LR
     for (int i = args.getArguments().size() - 1; i >= 0; i--) {
       Node argNode = args.getArguments().get(i);
@@ -158,13 +163,14 @@ public class CallClassFunctionAST extends AssignRHSAST {
           AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
     }
 
-    int varNameOffset = symtab.getStackOffset(varName);
-    instructions.add(new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
+    addToCurLabel(new LDR(transferReg, AddrMode.buildAddrWithOffset(Instr.SP, varNameOffset)));
+    addToCurLabel(new STR(transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -(4))));
+
     // Function call
     instructions
         .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + funcName));
 
-    instructions.add(new SUB(false, false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
+//    instructions.add(new SUB(false, false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
     // Destroy stack
     if (accOffset > 0) {
       instructions.add(
