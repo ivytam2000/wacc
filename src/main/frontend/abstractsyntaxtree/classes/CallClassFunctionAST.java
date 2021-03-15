@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.classes;
 
+import static backend.instructions.Instr.SP;
 import static backend.instructions.Instr.addToCurLabel;
 
 import antlr.WaccParser.CallClassFuncContext;
@@ -162,8 +163,10 @@ public class CallClassFunctionAST extends AssignRHSAST {
           Condition.NO_CON, transferReg,
           AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
     }
-
-    addToCurLabel(new LDR(transferReg, AddrMode.buildAddrWithOffset(Instr.SP, varNameOffset)));
+    //addToCurLabel(new LDR(transferReg, AddrMode.buildAddrWithOffset(Instr.SP
+    //    , varNameOffset)));
+    addToCurLabel(new ADD(false, transferReg, Instr.SP,
+        AddrMode.buildImm(varNameOffset)));
     addToCurLabel(new STR(transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -(4))));
 
     // Function call
