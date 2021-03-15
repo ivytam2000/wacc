@@ -11,6 +11,7 @@ import backend.instructions.Instr;
 import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
+import backend.instructions.SUB;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
@@ -156,10 +157,14 @@ public class CallClassFunctionAST extends AssignRHSAST {
           Condition.NO_CON, transferReg,
           AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
     }
+
+    int varNameOffset = symtab.getStackOffset(varName);
+    instructions.add(new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
     // Function call
     instructions
         .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + funcName));
 
+    instructions.add(new SUB(false, false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
     // Destroy stack
     if (accOffset > 0) {
       instructions.add(

@@ -28,7 +28,7 @@ options {
 program: BEGIN (classes)* (func)* stat END EOF ;
 
 // Classes
-classes: CLASS IDENT IS attributeList? constructor (classFunc)* END ;
+classes: CLASS IDENT IS attributeList? (classFunc)* END ;
 
 // Class Attribute
 attribute: VISIBILITY type IDENT;
@@ -37,7 +37,7 @@ attribute: VISIBILITY type IDENT;
 attributeList: attribute (SEMI_COLON attribute)* ;
 
 // Class Constructors
-constructor: IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES END ;
+//constructor: IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES END ;
 
 // Class Functions
 classFunc: VISIBILITY func ;

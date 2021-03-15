@@ -76,17 +76,20 @@ public class FuncAST extends Node {
   @Override
   public void toAssembly() {
     String labelName;
+    int offset;
+    SymbolTable funcSymTab = ((FuncID) identifier).getSymtab();
+
     if (globalScope.isTopLevel()) {
       labelName = Label.FUNC_HEADER + funcName;
+      offset = WORD_SIZE + funcSymTab.getSize();
     } else {
       labelName = Label.CLASS_FUNC_HEADER + funcName;
+      offset = funcSymTab.getSize();
     }
     setCurLabel(labelName);
     addToLabelOrder(labelName);
 
     // Calculate the size of stack frame that needs to be allocated
-    SymbolTable funcSymTab = ((FuncID) identifier).getSymtab();
-    int offset = WORD_SIZE + funcSymTab.getSize();
     boolean skipLR = false;
     for (Node paramAST : params.getParamList()) {
       skipLR = true;

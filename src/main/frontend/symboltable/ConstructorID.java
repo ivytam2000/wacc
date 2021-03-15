@@ -1,34 +1,27 @@
 package frontend.symboltable;
 
+import frontend.abstractsyntaxtree.classes.ClassAttributeListAST;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConstructorID extends Identifier {
-  private final List<TypeID> params;
+  private final ClassAttributeListAST attributes;
   private final SymbolTable symtab;
   private final Identifier identifier;
-  private List<String> paramNames;
 
-  public ConstructorID(Identifier identifier, List<TypeID> params, SymbolTable symtab) {
+  public ConstructorID(Identifier identifier, ClassAttributeListAST attributes, SymbolTable symtab) {
     this.identifier = identifier;
-    this.params = params;
+    this.attributes = attributes;
     this.symtab = symtab;
-    this.paramNames = new ArrayList<>();
   }
-
-  public void addParamName(String name) {
-    paramNames.add(name);
-  }
-
-  public List<String> getParamNames() { return paramNames; }
 
   @Override
   public TypeID getType() {
     return identifier.getType();
   }
 
-  public List<TypeID> getParams() {
-    return params;
+  public ClassAttributeListAST getAttributesList() {
+    return attributes;
   }
 
   public SymbolTable getSymtab() {

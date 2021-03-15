@@ -3,10 +3,6 @@ package frontend.abstractsyntaxtree.classes;
 import static backend.instructions.Instr.addToCurLabel;
 
 import antlr.WaccParser.ClassInstantContext;
-import backend.instructions.AddrMode;
-import backend.instructions.Condition;
-import backend.instructions.Instr;
-import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
@@ -17,7 +13,6 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ClassInstanceAST extends AssignRHSAST {
@@ -63,8 +58,9 @@ public class ClassInstanceAST extends AssignRHSAST {
     Identifier constructID = classSymtab.lookup(className);
 
     if (constructID instanceof ConstructorID) {
-      List<TypeID> expected = ((ConstructorID) constructID).getParams();
+      ClassAttributeListAST attributes = ((ConstructorID) constructID).getAttributesList();
       List<Node> actual = args.getArguments();
+      List<ClassAttributeAST> expected = attributes.getAttributesList();
       int paramSize = expected.size();
       int argsSize = actual.size();
 
@@ -80,7 +76,7 @@ public class ClassInstanceAST extends AssignRHSAST {
             argsSize);
       } else {
         for (int i = 0; i < paramSize; i++) {
-          TypeID currParam = expected.get(i);
+          TypeID currParam = expected.get(i).getIdentifier().getType();
           Node currArg = actual.get(i);
           TypeID argType = currArg.getIdentifier().getType();
           if (!(argType instanceof NullID)) {

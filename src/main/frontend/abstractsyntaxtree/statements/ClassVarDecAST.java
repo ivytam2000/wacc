@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree.statements;
 
+import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
 import antlr.WaccParser.Class_var_decl_statContext;
@@ -10,8 +11,8 @@ import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
+import frontend.abstractsyntaxtree.classes.ClassAttributeAST;
 import frontend.abstractsyntaxtree.classes.ClassInstanceAST;
-import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassID;
 import frontend.symboltable.ConstructorID;
@@ -61,17 +62,15 @@ public class ClassVarDecAST extends Node {
     ClassInstanceAST classInstanceAST = (ClassInstanceAST) assignRHS;
     SymbolTable classScope = classID.getSymtab();
     ConstructorID constructorID = (ConstructorID) classScope.lookup(className);
-    List<String> params = constructorID.getParamNames();
-    List<Node> args = classInstanceAST.getArgList().getArguments();
+    List<ClassAttributeAST> attributesList = constructorID.getAttributesList().getAttributesList();
 
-    assert(params.size() == args.size());
-
-    for (int i = 0; i < args.size(); i++) {
-      Node arg = args.get(i);
-      String paramName = params.get(i);
-      symtab.add(varName + "." + paramName, arg.getIdentifier());
+    // we checked the class instance before this check to ensure that the args and attributes
+    // are consistent
+    for (int i = 0; i < attributesList.size(); i++) {
+      Identifier arg = attributesList.get(i).getIdentifier();
+      String paramName = attributesList.get(i).getName();
+      symtab.add(varName + "." + paramName, arg);
     }
-
 
     // Check if var is already declared unless it is a function name
     if (variable != null && !(variable instanceof FuncID)) {
@@ -89,8 +88,6 @@ public class ClassVarDecAST extends Node {
 
   @Override
   public void toAssembly() {
-    List<Instr> instrs = new ArrayList<>();
-
     // We know its going to be class ID
     ClassID classType = (ClassID) identifier.getType();
 
@@ -105,14 +102,14 @@ public class ClassVarDecAST extends Node {
     ClassID classID = (ClassID) classInstanceAST.getIdentifier();
     SymbolTable classScope = classID.getSymtab();
     ConstructorID constructorID = (ConstructorID) classScope.lookup(className);
-    List<String> params = constructorID.getParamNames();
+    List<ClassAttributeAST> params = constructorID.getAttributesList().getAttributesList();
     List<Node> args = classInstanceAST.getArgList().getArguments();
 
     assert(params.size() == args.size());
 
     for (int i = 0; i < args.size(); i++) {
       Node arg = args.get(i);
-      String paramName = params.get(i);
+      String paramName = params.get(i).getName();
       arg.toAssembly();
       int argOffset = arg.getIdentifier().getType().getBytes();
       symtab.addOffset(varName + "." + paramName, offset);
@@ -120,14 +117,10 @@ public class ClassVarDecAST extends Node {
       // Stores the value in the offset stack address
       STR strInstr = new STR(argOffset, Condition.NO_CON,
           Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset));
-      offset -= argOffset;
-      instrs.add(strInstr);
+      offset += argOffset;
+      addToCurLabel(strInstr);
     }
 
-    addToCurLabel(instrs);
-
-    // adds the variable onto the offset
-    symtab.addOffset(varName, identifier.getType().getBytes());
   }
 
 }

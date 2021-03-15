@@ -23,6 +23,8 @@ public class ClassAttributeListAST extends Node {
         .reduce(0, Integer::sum);
   }
 
+  public List<ClassAttributeAST> getAttributesList() { return classAttrASTs; }
+
   @Override
   public void check() {
     // calls check on child to see if the variable is defined

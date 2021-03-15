@@ -71,14 +71,22 @@ public class Utils {
 
     int stackSize = 0;
     // If returning from function, need to destroy parent stacks
-    if (symtab.getFuncContext()) {
-      SymbolTable temp = symtab;
-      while (!temp.isTopLevel()) {
-        stackSize += temp.getSize();
-        temp = temp.getParent();
-      }
-    } else {
+    if (symtab.isTopLevel()) {
       stackSize = symtab.getSize();
+    } else {
+      if (symtab.getParent().getClassContext()) {
+        stackSize = symtab.getSize();
+      } else {
+        if (symtab.getFuncContext()) {
+          SymbolTable temp = symtab;
+          while (!temp.isTopLevel()) {
+            stackSize += temp.getSize();
+            temp = temp.getParent();
+          }
+        } else {
+          stackSize = symtab.getSize();
+        }
+      }
     }
 
     // Destroy stack (limited to 10 bits at a time)
