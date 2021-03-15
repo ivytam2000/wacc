@@ -1,10 +1,7 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.IdentExprContext;
-import backend.instructions.AddrMode;
-import backend.instructions.Condition;
-import backend.instructions.Instr;
-import backend.instructions.LDR;
+import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassAttributeID;
@@ -54,11 +51,29 @@ public class IdentExprAST extends Node {
 
     if (identifier instanceof ClassAttributeID) {
       offset = currsymtab.getStackOffset("object_addr");
+      int attributeOffset = currsymtab.getStackOffset(getName()) - 4;
+      // loading the
+      String targetReg = Instr.getTargetReg();
+      // Storing the instance's address into a register
+      addToCurLabel(new LDR(identifier.getType().getBytes(), Condition.NO_CON,
+          targetReg, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+      // Adding the offset of the attribute to the regeister which holds the
+      // instance's address
+      if (attributeOffset > 0) {
+        addToCurLabel(new ADD(false, targetReg, targetReg,
+            AddrMode.buildImm(attributeOffset)));
+      }
+      addToCurLabel(new LDR(targetReg, AddrMode.buildAddrWithOffset(targetReg
+          ,0)));
     } else {
       offset = currsymtab.getStackOffset(getName());
+      Instr loadVar =
+          new LDR(
+              identifier.getType().getBytes(),
+              Condition.NO_CON,
+              Instr.getTargetReg(),
+              AddrMode.buildAddrWithOffset(Instr.SP, offset));
+      addToCurLabel(loadVar);
     }
-    Instr loadVar = new LDR(identifier.getType().getBytes(), Condition.NO_CON,
-        Instr.getTargetReg(), AddrMode.buildAddrWithOffset(Instr.SP, offset));
-    addToCurLabel(loadVar);
   }
 }
