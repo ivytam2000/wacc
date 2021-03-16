@@ -83,7 +83,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
         ctx.attributeList() == null ? new ClassAttributeListAST()
             : visitAttributeList(ctx.attributeList());
 
-    ClassID classID = new ClassID(className, currSymTab, classAttrListAST.getAttributeBytes());
+    ClassID classID = new ClassID(className, currSymTab, classAttrListAST);
 
     ConstructorID constructID = new ConstructorID(classID, classAttrListAST, currSymTab);
 

@@ -2,8 +2,6 @@
 begin
   class H is 
     private int v
-    H(int v) 
-    end
     private int J() is 
       return 0
     end

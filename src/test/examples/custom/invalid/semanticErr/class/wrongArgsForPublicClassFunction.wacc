@@ -3,8 +3,6 @@
 begin
   class H is 
     public int v
-    H(int v) 
-    end
     public int J(int v) is 
       return 0
     end

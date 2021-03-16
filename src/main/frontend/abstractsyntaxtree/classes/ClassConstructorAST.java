@@ -88,12 +88,13 @@ public class ClassConstructorAST extends Node {
 
     // Calculate the size of stack frame that needs to be allocated
     SymbolTable classSymtab = ((ConstructorID) identifier).getSymtab();
-    int offset = WORD_SIZE;
+    int offset = 0;
     boolean skipLR = false;
     for (ClassAttributeAST attributeAST : classAttrListAST.getAttributesList()) {
       skipLR = true;
       String varName = attributeAST.getName();
       classSymtab.addOffset(varName, offset);
+//      classSymtab.incrementSize(attributeAST.getIdentifier().getType().getBytes());
       offset += attributeAST.getIdentifier().getType().getBytes();
     }
 

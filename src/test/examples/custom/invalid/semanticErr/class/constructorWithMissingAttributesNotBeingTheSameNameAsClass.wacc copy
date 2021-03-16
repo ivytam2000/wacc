@@ -3,7 +3,6 @@
 begin
   class H is 
     private int v
-    K() end
   end
   int u = 0
 end

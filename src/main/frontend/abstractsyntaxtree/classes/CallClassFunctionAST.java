@@ -166,7 +166,7 @@ public class CallClassFunctionAST extends AssignRHSAST {
     //addToCurLabel(new LDR(transferReg, AddrMode.buildAddrWithOffset(Instr.SP
     //    , varNameOffset)));
     addToCurLabel(new ADD(false, transferReg, Instr.SP,
-        AddrMode.buildImm(varNameOffset)));
+        AddrMode.buildImm(varNameOffset + accOffset)));
     addToCurLabel(new STR(transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -(4))));
 
     // Function call

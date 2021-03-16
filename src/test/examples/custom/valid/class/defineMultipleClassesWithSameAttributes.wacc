@@ -3,16 +3,12 @@
 begin
   class H is 
     private int v
-    H(int v) 
-    end
     private int J(int v) is 
       return 0
     end
   end
   class K is 
     private int v
-    K(int v) 
-    end
     private int P(int v) is 
       return 0
     end

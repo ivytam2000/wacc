@@ -3,7 +3,6 @@
 begin
   class H is 
     private int v
-    H(int k) end
   end
-  int u = 0
+  H u = new H(true)
 end
