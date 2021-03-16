@@ -63,7 +63,7 @@ param: type IDENT ;
 
 // Statements
 stat: SKIP_LITER                                            #skip_stat
-| type IDENT ASSIGN assignRHS                               #var_decl_stat
+| (type | VAR) IDENT ASSIGN assignRHS                       #var_decl_stat
 | IDENT IDENT ASSIGN assignRHS                              #class_var_decl_stat
 | assignLHS ASSIGN assignRHS                                #assign_stat
 | READ assignLHS                                            #read_stat
