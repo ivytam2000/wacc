@@ -14,9 +14,12 @@ import java.util.List;
 
 import static backend.instructions.AddrMode.buildAddrWithOffset;
 import static backend.instructions.Condition.NO_CON;
+import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class VarDecAST extends Node {
+
+  private static final int DYNAMIC_BOX_SIZE = 5;
 
   private final SymbolTable symtab;
   private TypeID decType;
@@ -104,6 +107,27 @@ public class VarDecAST extends Node {
     // Add the offset to the symbol table's hashmap of variables' offsets
     symtab.addOffset(varName, offset);
     assignRHS.toAssembly();
+
+    // Malloc dynamic variable "box", set tag and store variable
+    if (symtab.lookup(varName) instanceof VarID) {
+
+      // Malloc dynamic variable "box"
+      instrs.add(new LDR(Instr.R0, AddrMode.buildImm(DYNAMIC_BOX_SIZE)));
+      instrs.add(new BRANCH(true, NO_CON, Label.MALLOC));
+      instrs.add(new MOV(NO_CON, Instr.R5, AddrMode.buildReg(Instr.R0)));
+
+      // Data stored in first 4 bytes
+      TypeID rhsType = assignRHS.getIdentifier().getType();
+      instrs.add(new STR(rhsType.getBytes(), NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R5)));
+
+      // Store type number at (malloc-ed address + 4)
+      instrs.add(new LDR(Instr.R4, AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
+      instrs.add(new STR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.R5, WORD_SIZE)));
+
+      // Move actual address to r4
+      instrs.add(new MOV(NO_CON, Instr.R4, AddrMode.buildReg(Instr.R5)));
+
+    }
 
     // Stores the value in the offset stack address
     STR strInstr = new STR(decType.getBytes(), NO_CON, Instr.R4,

@@ -8,12 +8,17 @@ import frontend.abstractsyntaxtree.statements.SequenceAST;
 import frontend.abstractsyntaxtree.statements.WhileAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
+import frontend.symboltable.BoolID;
+import frontend.symboltable.CharID;
 import frontend.symboltable.EmptyID;
 import frontend.symboltable.ExitID;
+import frontend.symboltable.IntID;
 import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.OptionalPairID;
+import frontend.symboltable.StringID;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.VarID;
 import java.util.List;
 
 public class Utils {
@@ -52,6 +57,10 @@ public class Utils {
       return false;
     }
 
+    // Dynamic variables
+    if (t1.getType() instanceof VarID) {
+      return true;
+    }
     // Check base types
     return t1.getType() == t2.getType();
   }
@@ -167,5 +176,20 @@ public class Utils {
 
     // UNREACHABLE (Parser makes sure that there is always return/exit)
     return null;
+  }
+
+  // Assigns number depending on type (For dynamic variables)
+  public static int getTypeNumber(TypeID type) {
+    int typeNumber = 0;
+    if (type instanceof IntID) {
+      typeNumber = 1;
+    } else if (type instanceof BoolID) {
+      typeNumber = 2;
+    } else if (type instanceof CharID) {
+      typeNumber = 3;
+    } else if (type instanceof StringID) {
+      typeNumber = 4;
+    }
+    return typeNumber;
   }
 }
