@@ -89,6 +89,19 @@ public class SymbolTable {
 
   public Set<String> getAllIdent() { return dictionary.keySet(); }
 
+  public void replaceType(String name, TypeID type) {
+    SymbolTable temp = this;
+    Identifier node;
+    while (temp != null) {
+      node = temp.lookup(name);
+      if (node != null) {
+        temp.add(name, type);
+        return;
+      }
+      temp = temp.parent;
+    }
+  }
+
   public void incrementSize(int val) {
     size += val;
   }

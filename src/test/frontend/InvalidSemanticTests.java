@@ -9,7 +9,6 @@ import static frontend.TestUtilities.exitsWith;
 public class InvalidSemanticTests {
 
   String baseDir = "src/test/examples/invalid/semanticErr/";
-  String customDir = "src/test/examples/custom/invalid/semanticErr/";
 
   @Test
   public void invalidSemanticExitTests() throws IOException {
@@ -70,22 +69,5 @@ public class InvalidSemanticTests {
   @Test
   public void invalidSemanticWhileTests() throws IOException {
     exitsWith(baseDir + "while/", 200);
-  }
-
-  // Made test cases for extension: Bit-wise Operators '&', '|' and '~'
-  @Test
-  public void invalidSemanticExtensionBitwiseTests() throws IOException {
-    exitsWith(customDir + "bitwise/", 200);
-  }
-
-  // Made test cases for extension: Additional Loop Control Statements
-  @Test
-  public void invalidSemanticExtensionForLoopTests() throws IOException {
-    exitsWith(customDir + "forLoop/", 200);
-  }
-
-  @Test
-  public void invalidSemanticClassTests() throws IOException {
-    exitsWith(customDir + "class/", 200);
   }
 }
