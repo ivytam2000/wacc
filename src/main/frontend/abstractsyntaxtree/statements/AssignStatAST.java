@@ -7,6 +7,7 @@ import backend.instructions.AddrMode;
 import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
+import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
@@ -18,6 +19,7 @@ import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.pairs.PairElemAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AssignStatAST extends Node {
@@ -121,10 +123,8 @@ public class AssignStatAST extends Node {
     if (fst instanceof PairID && snd instanceof PairID) {
       if (((PairID) fst).getFstType() instanceof NullID && ((PairID) fst)
           .getSndType() instanceof NullID) {
-        if (((PairID) snd).getFstType() instanceof NullID && ((PairID) snd)
-            .getSndType() instanceof NullID) {
-          return true;
-        }
+        return ((PairID) snd).getFstType() instanceof NullID && ((PairID) snd)
+            .getSndType() instanceof NullID;
       }
     }
     return false;
@@ -139,8 +139,10 @@ public class AssignStatAST extends Node {
   @Override
   public void toAssembly() {
     // if assigning a class instance to another
-    if (rhs.getIdentifier() instanceof ClassID && lhs.getIdentifier() instanceof ClassID) {
-      ClassAttributeListAST lhsClassAttr = ((ClassID) lhs.getIdentifier()).getClassAttributes();
+    if (rhs.getIdentifier() instanceof ClassID && lhs
+        .getIdentifier() instanceof ClassID) {
+      ClassAttributeListAST lhsClassAttr = ((ClassID) lhs.getIdentifier())
+          .getClassAttributes();
       List<ClassAttributeAST> lhsAttrs = lhsClassAttr.getAttributesList();
       String rhsInstanceName = getRHSIdentName();
       String lhsInstanceName = lhs.getIdentName();
@@ -148,7 +150,7 @@ public class AssignStatAST extends Node {
       int classStackOffset = symtab.getStackOffset(rhsInstanceName);
       symtab.addOffset(lhsInstanceName, classStackOffset);
 
-      for (ClassAttributeAST classAttr: lhsAttrs) {
+      for (ClassAttributeAST classAttr : lhsAttrs) {
         String rhsVarName = rhsInstanceName + "." + classAttr.getName();
         String lhsVarName = lhsInstanceName + "." + classAttr.getName();
 
@@ -162,23 +164,26 @@ public class AssignStatAST extends Node {
     // Evaluate the rhs to be assigned
     rhs.toAssembly();
 
-    int bytes = lhs.getIdentifier().getType().getBytes();
+    int bytes = rhs.getIdentifier().getType().getBytes();
     if (lhs.getAssignNode() instanceof ArrayElemAST ||
         lhs.getAssignNode() instanceof PairElemAST) {
       String sndReg = Instr.incDepth();
       // Evaluate lhs to get actual address to store result
       lhs.toAssembly();
       String fstReg = Instr.decDepth();
-      Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, fstReg, AddrMode.buildAddr(sndReg)));
+      Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, fstReg,
+          AddrMode.buildAddr(sndReg)));
     } else {
       int offset = symtab.getStackOffset(lhs.getIdentName());
 
       if (lhs.getIdentifier() instanceof ClassAttributeID) {
         if (symtab.isTopLevel()) {
-          Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+          Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4,
+              AddrMode.buildAddrWithOffset(Instr.SP, offset)));
         } else {
           if (!symtab.getParent().getClassContext()) {
-            Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+            Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4,
+                AddrMode.buildAddrWithOffset(Instr.SP, offset)));
           } else {
             String reg = Instr.incDepth();
             int instanceOffset = symtab.getStackOffset("object_addr");
@@ -191,7 +196,31 @@ public class AssignStatAST extends Node {
         }
       } else {
         // Regular variable
-        Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+        Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4,
+            AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+
+        // Dynamic variable
+        Identifier lhsType = symtab.lookup(lhs.getIdentName());
+        if (lhsType instanceof VarID) {
+          // Update symbol table about type so far
+          TypeID rhsType = rhs.getIdentifier().getType();
+          ((VarID) lhsType).setTypeSoFar(rhsType);
+
+          List<Instr> instrs = new ArrayList<>();
+
+          // Get addr into R4
+          instrs.add(new ADD(false, Instr.R4, Instr.SP,
+              AddrMode.buildImm(offset)));
+          // Get type number and update (byte) at offset +4 of variable address
+          List<TypeID> types = new ArrayList<>();
+          types.add(rhsType);
+          instrs.add(new MOV(Condition.NO_CON, Instr.R5,
+              AddrMode.buildImm(Utils.getTypeNumber(types))));
+          instrs.add(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5,
+              AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+
+          Instr.addToCurLabel(instrs);
+        }
       }
     }
   }

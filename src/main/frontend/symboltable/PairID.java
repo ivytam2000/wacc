@@ -47,11 +47,6 @@ public class PairID extends OptionalPairID {
     return this;
   }
 
-  @Override
-  public int getBytes() {
-    return 4;
-  }
-
   /**
    * Returns the detailed type name of the pair if its child types are
    * well-defined. Otherwise, if it is a generic pair, simply returns "pair".

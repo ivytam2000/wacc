@@ -37,11 +37,13 @@ public class ReadAST extends Node {
     int line = ctx.getStart().getLine();
     int pos = ctx.getStart().getCharPositionInLine();
 
+    // Don't allow reading into dynamic variable as it messes with size
     if (!(lhsType instanceof IntID) && !(lhsType instanceof CharID)) {
       SemanticErrorCollector.addIncompatibleType(
           "int or char", lhsType.getType().getTypeName(), ctx.getText(),
           line, pos);
     }
+
   }
 
   @Override

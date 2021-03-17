@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.abstractsyntaxtree.statements.BeginStatAST;
 import frontend.abstractsyntaxtree.statements.ExitAST;
 import frontend.abstractsyntaxtree.statements.IfAST;
@@ -8,12 +9,17 @@ import frontend.abstractsyntaxtree.statements.SequenceAST;
 import frontend.abstractsyntaxtree.statements.WhileAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
+import frontend.symboltable.BoolID;
+import frontend.symboltable.CharID;
 import frontend.symboltable.EmptyID;
 import frontend.symboltable.ExitID;
+import frontend.symboltable.IntID;
 import frontend.symboltable.NullID;
 import frontend.symboltable.PairID;
 import frontend.symboltable.OptionalPairID;
+import frontend.symboltable.StringID;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.VarID;
 import java.util.List;
 
 public class Utils {
@@ -52,6 +58,10 @@ public class Utils {
       return false;
     }
 
+    // Dynamic variables
+    if (t1.getType() instanceof VarID) {
+      return true;
+    }
     // Check base types
     return t1.getType() == t2.getType();
   }
@@ -167,5 +177,34 @@ public class Utils {
 
     // UNREACHABLE (Parser makes sure that there is always return/exit)
     return null;
+  }
+
+  // Assigns number depending on type (For dynamic variables)
+  public static int getTypeNumber(List<TypeID> ts) {
+    int typeNumber = 0;
+    for (TypeID t : ts) {
+      if (t instanceof IntID) {
+        typeNumber += 1;
+      } else if (t instanceof BoolID) {
+        typeNumber += 1 << 1;
+      } else if (t instanceof CharID) {
+        typeNumber += 1 << 2;
+      } else if (t instanceof StringID) {
+        typeNumber += 1 << 3;
+      }
+    }
+    return typeNumber;
+  }
+
+  public static void getAndSetTypeNumber(Node node, List<TypeID> types) {
+    if (node instanceof IdentExprAST) {
+      ((IdentExprAST) node).setDynamicTypeNeeded(types);
+    }
+  }
+
+  public static void setAllTypes(Node node) {
+    if (node instanceof IdentExprAST) {
+      ((IdentExprAST) node).setAllTypes();
+    }
   }
 }

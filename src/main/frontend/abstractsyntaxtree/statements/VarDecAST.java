@@ -12,11 +12,9 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.instructions.AddrMode.buildAddrWithOffset;
-import static backend.instructions.Condition.NO_CON;
-import static backend.instructions.Instr.addToCurLabel;
-
 public class VarDecAST extends Node {
+
+  private static final int DYNAMIC_BOX_SIZE = 5;
 
   private final SymbolTable symtab;
   private TypeID decType;
@@ -42,7 +40,7 @@ public class VarDecAST extends Node {
 
   @Override
   public void check() {
-    symtab.incrementSize(decType.getBytes());
+    symtab.incrementSize(decType instanceof VarID ? DYNAMIC_BOX_SIZE : decType.getBytes());
 
     // if function is not defined or class is not defined
     if (assignRHS.getIdentifier() == null) {
@@ -99,17 +97,36 @@ public class VarDecAST extends Node {
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     // Generate the offset of the variable
-    int offset = symtab.getSmallestOffset() - decType.getBytes();
+    int offset = symtab.getSmallestOffset() -
+        (decType instanceof VarID ? DYNAMIC_BOX_SIZE : decType.getBytes());
 
     // Add the offset to the symbol table's hashmap of variables' offsets
     symtab.addOffset(varName, offset);
     assignRHS.toAssembly();
 
     // Stores the value in the offset stack address
-    STR strInstr = new STR(decType.getBytes(), NO_CON, Instr.R4,
-        buildAddrWithOffset(Instr.SP, offset));
+    TypeID rhsType = assignRHS.getIdentifier().getType();
+    STR strInstr = new STR(rhsType.getBytes(), Condition.NO_CON, Instr.R4,
+        AddrMode.buildAddrWithOffset(Instr.SP, offset));
     instrs.add(strInstr);
-    addToCurLabel(instrs);
+
+    // If dynamic variable, set type number in "box" (5th byte)
+    Identifier type = symtab.lookup(varName);
+    if (type instanceof VarID) {
+      ((VarID) type).setTypeSoFar(rhsType);
+
+      // Get addr of variable
+      instrs.add(new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(offset)));
+      // Load the type number
+      List<TypeID> types = new ArrayList<>();
+      types.add(rhsType);
+      instrs.add(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(Utils.getTypeNumber(types))));
+      // Store (byte) into "box"
+      instrs.add(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5,
+          AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+    }
+
+    Instr.addToCurLabel(instrs);
   }
 
   public TypeID getDecType() {

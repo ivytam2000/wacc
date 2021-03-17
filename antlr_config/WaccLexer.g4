@@ -37,6 +37,9 @@ FOR: 'for' ;
 IN: 'in' ;
 UNTIL: 'until' ;
 
+// Dynamic variable
+VAR: 'var' ;
+
 // Base types
 INT: 'int' ;
 BOOL: 'bool' ;

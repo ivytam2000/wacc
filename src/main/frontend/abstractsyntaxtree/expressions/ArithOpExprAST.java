@@ -17,11 +17,13 @@ import backend.instructions.MUL;
 import backend.instructions.ORR;
 import backend.instructions.SUB;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +55,7 @@ public class ArithOpExprAST extends Node {
 
     // Both eL and eR must be of type int to do arithmetic
 
-    if (!(eLType instanceof IntID || eLType instanceof UnknownID)) {
+    if (!(eLType instanceof IntID || eLType instanceof UnknownID || eLType instanceof VarID)) {
       SemanticErrorCollector
           .addIncompatibleType("int (For " + op + ")", eLType.getTypeName(),
               ctx.children.get(fstStatPosition).getText(),
@@ -61,13 +63,19 @@ public class ArithOpExprAST extends Node {
               ctx.getStart().getCharPositionInLine());
     }
 
-    if (!(eRType instanceof IntID || eRType instanceof UnknownID)) {
+    if (!(eRType instanceof IntID || eRType instanceof UnknownID || eRType instanceof VarID)) {
       SemanticErrorCollector
           .addIncompatibleType("int (For " + op + ")", eRType.getTypeName(),
               ctx.children.get(sndStatPosition).getText(),
               ctx.getStart().getLine(),
               ctx.getStop().getCharPositionInLine());
     }
+
+    // For dynamic type
+    List<TypeID> types = new ArrayList<>();
+    types.add(getIdentifier().getType());
+    Utils.getAndSetTypeNumber(eL, types);
+    Utils.getAndSetTypeNumber(eR, types);
   }
 
   @Override
@@ -96,9 +104,11 @@ public class ArithOpExprAST extends Node {
       case "&":
         instrs.add(new AND(fstReg, AddrMode.buildReg(sndReg)));
         break;
+
       case "|":
         instrs.add(new ORR(false, fstReg, AddrMode.buildReg(sndReg)));
         break;
+
       case "+":
         // Do addition and branch if overflow
         instrs.add(new ADD(true, targetReg, fstReg, AddrMode.buildReg(sndReg)));
