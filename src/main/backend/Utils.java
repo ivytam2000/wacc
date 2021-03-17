@@ -359,11 +359,12 @@ public class Utils {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
 
-    instrs.add(new CMP(Instr.R0, AddrMode.buildReg(Instr.R1)));
-    instrs.add(new LDR(4, Condition.NE, Instr.R0, AddrMode
+    instrs.add(new AND(Instr.R0, AddrMode.buildReg(Instr.R1)));
+    instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
+    instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
         .buildStringVal(BackEndGenerator.addToDataSegment(INCOMPATIBLE_DYN_VAR_MSG))));
     BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
-    instrs.add(new BRANCH(true, Condition.NE, Label.P_THROW_RUNTIME_ERROR));
+    instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
 
     instrs.add(new POP(Instr.PC));
 
