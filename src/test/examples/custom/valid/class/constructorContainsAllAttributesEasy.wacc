@@ -1,8 +1,0 @@
-# Constructor must contain all attributes
-
-begin
-  class H is 
-    private int v
-  end
-  int u = 0
-end

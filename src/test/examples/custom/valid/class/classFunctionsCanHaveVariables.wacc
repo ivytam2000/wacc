@@ -1,4 +1,4 @@
-# Simple Class instantiation
+# Class Functions can have variables
 
 
 begin
@@ -12,7 +12,8 @@ begin
       return tyres
     end
     public int setNumber() is
-      tyres = tyres * 5 ;
+      int offset = 5 ;
+      tyres = tyres * offset ;
       return tyres
     end
   end

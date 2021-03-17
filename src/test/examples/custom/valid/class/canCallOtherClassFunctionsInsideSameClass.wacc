@@ -1,14 +1,16 @@
 # Class functions can be called inside other class functions
+# Expected output:
+# 8
 
 begin
   class H is 
     public int v
-    private int J(int v) is 
-      return 0
+    private int J(int i) is 
+      return i
     end
     public int f() is 
-       int k = call J(2) ;
-       v = 3 ;
+       int k = call J(5) ;
+       v = k+3 ;
        return v
     end
   end

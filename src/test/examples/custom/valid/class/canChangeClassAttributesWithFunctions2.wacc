@@ -11,8 +11,7 @@ begin
       return tyres
     end
     public int setNumber() is
-      int offset = 5 ;
-      tyres = tyres * offset ;
+      tyres = tyres * 5 ;
       return tyres
     end
   end

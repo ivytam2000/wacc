@@ -17,6 +17,7 @@ begin
   end
   Vehicle bus = new Vehicle(7, 6) ;
   Vehicle car = new Vehicle(6, 4) ;
+  println bus.tyres;
   bus.tyres = 4 ;
   println bus.tyres 
 end
