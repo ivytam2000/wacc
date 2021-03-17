@@ -1,8 +1,6 @@
 package frontend.abstractsyntaxtree.classes;
 
 import antlr.WaccParser.ClassesContext;
-import backend.instructions.Instr;
-import backend.instructions.Label;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;

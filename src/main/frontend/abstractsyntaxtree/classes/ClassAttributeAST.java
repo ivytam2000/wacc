@@ -31,8 +31,7 @@ public class ClassAttributeAST extends Node {
   public void check() {
     // checks if the variable is defined in the symbol table, if not, it gets added in
     Identifier v = symtab.lookup(varName);
-//    symtab.addOffset(varName, symtab.getSmallestOffset());
-//    symtab.incrementSize(identifier.getType().getBytes());
+
     if (v != null) {
       SemanticErrorCollector.addSymbolAlreadyDefined(
           varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());

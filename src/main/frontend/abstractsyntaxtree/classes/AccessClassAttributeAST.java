@@ -12,6 +12,7 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.UnknownID;
 
 public class AccessClassAttributeAST extends AssignLHSAST {
 
@@ -23,6 +24,7 @@ public class AccessClassAttributeAST extends AssignLHSAST {
   public AccessClassAttributeAST(String varName, String attributeName,
       SymbolTable symtab, ClassAttrContext ctx) {
     super(symtab, varName);
+    identifier = symtab.lookup(varName + "." + attributeName);
     this.attributeName = attributeName;
     this.varName = varName;
     this.symtab = symtab;
@@ -44,6 +46,7 @@ public class AccessClassAttributeAST extends AssignLHSAST {
     if (identifier == null) {
       SemanticErrorCollector.addVariableUndefined(
           varName, line, position);
+      setIdentifier(new UnknownID());
       return;
     }
 

@@ -13,6 +13,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.UnknownID;
 import java.util.List;
 
 public class ClassInstanceAST extends AssignRHSAST {
@@ -41,6 +42,7 @@ public class ClassInstanceAST extends AssignRHSAST {
     if (identifier == null) {
       SemanticErrorCollector.addClassNotDefined(className,
           line, ctx.getStart().getCharPositionInLine());
+      setIdentifier(new UnknownID());
       return;
     }
 

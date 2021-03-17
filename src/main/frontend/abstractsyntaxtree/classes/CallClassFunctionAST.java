@@ -24,6 +24,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.UnknownID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class CallClassFunctionAST extends AssignRHSAST {
     if (identifier == null) {
       SemanticErrorCollector.addVariableUndefined(
           varName, line, position);
+      setIdentifier(new UnknownID());
       return;
     }
 
