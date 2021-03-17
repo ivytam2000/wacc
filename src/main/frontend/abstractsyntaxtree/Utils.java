@@ -201,4 +201,10 @@ public class Utils {
       ((IdentExprAST) node).setDynamicTypeNeeded(types);
     }
   }
+
+  public static void setAllTypes(Node node) {
+    if (node instanceof IdentExprAST) {
+      ((IdentExprAST) node).setAllTypes();
+    }
+  }
 }
