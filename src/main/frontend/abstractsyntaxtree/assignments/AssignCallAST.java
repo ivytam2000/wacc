@@ -10,6 +10,7 @@ import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
@@ -73,7 +74,7 @@ public class AssignCallAST extends AssignRHSAST {
             if (!(argType instanceof NullID)) {
 
               // If argument and param types don't match
-              if (currParam.getClass() != argType.getClass()) {
+              if (!Utils.typeCompat(argType, currParam)) {
                 SemanticErrorCollector.addFuncInconsistentArgTypeError(
                     line,
                     ctx.argList().expr(i).getStart().getCharPositionInLine(),
@@ -100,10 +101,12 @@ public class AssignCallAST extends AssignRHSAST {
     int accOffset = 0;
     String transferReg = Instr.getTargetReg();
     // Allocate in reverse so that first argument directly on top of LR
+    List<TypeID> params = ((FuncID) getIdentifier()).getParams();
     for (int i = args.getArguments().size() - 1; i >= 0; i--) {
       Node argNode = args.getArguments().get(i);
 
       // Puts the next argument into the transfer register
+      Utils.getAndSetTypeNumber(argNode, params.get(i));
       argNode.toAssembly();
 
       // Record total offset to destroy stack after
