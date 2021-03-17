@@ -9,10 +9,15 @@ import frontend.symboltable.BoolID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import frontend.symboltable.VarID;
+import java.util.ArrayList;
+import java.util.List;
 
 import static backend.instructions.Instr.*;
+import static frontend.abstractsyntaxtree.Utils.getAndSetTypeNumber;
 
 public class WhileAST extends Node {
+
   private final Node expr;
   private final Node stat;
   private final ExprContext exprCtx;
@@ -33,17 +38,20 @@ public class WhileAST extends Node {
 
   @Override
   public void check() {
-    if (expr.getIdentifier() != null) {
-      TypeID exprType = expr.getIdentifier().getType();
-      if (!(exprType instanceof UnknownID || exprType instanceof BoolID)) {
-        SemanticErrorCollector.addIncompatibleType(
-            "bool",
-            exprType.getTypeName(),
-            exprCtx.getText(),
-            exprCtx.getStart().getLine(),
-            exprCtx.getStart().getCharPositionInLine());
-      }
+    TypeID exprType = expr.getIdentifier().getType();
+    if (!(exprType instanceof UnknownID || exprType instanceof BoolID
+        || exprType instanceof VarID)) {
+      SemanticErrorCollector.addIncompatibleType(
+          "bool",
+          exprType.getTypeName(),
+          exprCtx.getText(),
+          exprCtx.getStart().getLine(),
+          exprCtx.getStart().getCharPositionInLine());
     }
+
+    List<TypeID> types = new ArrayList<>();
+    types.add((TypeID) symtab.lookupAll("bool"));
+    getAndSetTypeNumber(expr, types);
   }
 
   @Override

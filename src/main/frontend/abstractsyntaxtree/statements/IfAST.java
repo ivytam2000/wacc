@@ -3,10 +3,14 @@ package frontend.abstractsyntaxtree.statements;
 import antlr.WaccParser.ExprContext;
 import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.BoolID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.VarID;
+import java.util.ArrayList;
+import java.util.List;
 
 import static backend.Utils.getEndRoutine;
 import static backend.Utils.getStartRoutine;
@@ -45,7 +49,7 @@ public class IfAST extends Node {
   @Override
   public void check() {
     TypeID exprType = expr.getIdentifier().getType();
-    if (!(exprType instanceof BoolID)) {
+    if (!(exprType instanceof BoolID || exprType instanceof VarID)) {
       SemanticErrorCollector.addIncompatibleType(
           "bool",
           expr.getIdentifier().getType().getTypeName(),
@@ -53,6 +57,10 @@ public class IfAST extends Node {
           exprCtx.getStart().getLine(),
           exprCtx.getStart().getCharPositionInLine());
     }
+
+    List<TypeID> types = new ArrayList<>();
+    types.add((TypeID) thenScope.lookupAll("bool"));
+    Utils.getAndSetTypeNumber(expr, types);
   }
 
   @Override
