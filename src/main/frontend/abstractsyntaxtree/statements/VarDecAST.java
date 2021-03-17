@@ -56,6 +56,11 @@ public class VarDecAST extends Node {
 
     Identifier variable = symtab.lookup(varName);
 
+    if (decType instanceof VarID && (rhsType instanceof OptionalPairID ||
+        rhsType instanceof ArrayID || rhsType instanceof ClassID)) {
+      SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
+    }
+
     // VarDec of nested pairs
     if (decType instanceof PairID && rhsType instanceof PairID) {
       PairID pairDecType = (PairID) decType;
@@ -106,6 +111,13 @@ public class VarDecAST extends Node {
 
   @Override
   public void toAssembly() {
+    if (decType instanceof VarID) {
+      if (rhsType instanceof VarID) {
+        rhsType = ((VarID) rhsType).getTypeSoFar();
+      }
+      ((VarID) decType).setTypeSoFar(rhsType);
+    }
+
     List<Instr> instrs = new ArrayList<>();
     // Generate the offset of the variable
     int offset = symtab.getSmallestOffset() -
@@ -121,7 +133,7 @@ public class VarDecAST extends Node {
     instrs.add(strInstr);
 
     // If dynamic variable, set type number in "box" (5th byte)
-    if (symtab.lookup(varName) instanceof VarID) {
+    if (decType instanceof VarID) {
       // Get addr of variable
       instrs.add(new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(offset)));
       // Load the type number

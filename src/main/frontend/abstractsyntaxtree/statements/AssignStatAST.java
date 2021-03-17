@@ -59,6 +59,11 @@ public class AssignStatAST extends Node {
     int lhsLine = lhsCtx.getStart().getLine();
     int lhsPos = lhsCtx.getStart().getCharPositionInLine();
 
+    if (var instanceof VarID && (rhsType instanceof OptionalPairID ||
+        rhsType instanceof ArrayID || rhsType instanceof ClassID)) {
+      SemanticErrorCollector.addIncompatibleWithDynamicVariables(lhsLine, lhsPos);
+    }
+
     if (var == null) { // Undefined variable
       SemanticErrorCollector.addVariableUndefined(varName, lhsLine, lhsPos);
     } else {
@@ -149,6 +154,15 @@ public class AssignStatAST extends Node {
 
   @Override
   public void toAssembly() {
+    TypeID lhsType = lhs.getIdentifier().getType();
+
+    if (lhsType instanceof VarID) {
+      if (rhsType instanceof VarID) {
+        rhsType = ((VarID) rhsType).getTypeSoFar();
+      }
+      ((VarID) lhsType).setTypeSoFar(rhsType);
+    }
+
     // if assigning a class instance to another
     if (rhs.getIdentifier() instanceof ClassID && lhs
         .getIdentifier() instanceof ClassID) {

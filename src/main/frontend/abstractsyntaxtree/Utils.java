@@ -187,7 +187,7 @@ public class Utils {
       if (t instanceof IntID) {
         typeNumber += 1;
       } else if (t instanceof BoolID) {
-        typeNumber += 1 << 1;
+        typeNumber += (1 << 1);
       } else if (t instanceof CharID) {
         typeNumber += 1 << 2;
       } else if (t instanceof StringID) {
@@ -208,10 +208,6 @@ public class Utils {
       return 1 << 2;
     } else if (type instanceof StringID) {
       return 1 << 3;
-    } else if (type instanceof PairID || type instanceof NullID) {
-      return 1 << 4;
-    } else if (type instanceof ArrayID) {
-      return 1 << 5;
     }
     // SHOULD NOT REACH THIS POINT
     assert (false);

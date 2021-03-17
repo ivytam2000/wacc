@@ -272,6 +272,13 @@ public class SemanticErrorCollector {
     SemanticErrorCollector.addError(errorMsg);
   }
 
+  public static void addIncompatibleWithDynamicVariables(int line, int pos) {
+    String errorMsg = String.format(
+        "line %d:%d -- Cannot declare/assign classes, pairs and arrays to dynamic variables",
+        line, pos);
+    SemanticErrorCollector.addError(errorMsg);
+  }
+
   private static void addError(String s) {
     errors.add(s);
   }
