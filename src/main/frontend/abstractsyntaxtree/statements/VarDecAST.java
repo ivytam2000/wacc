@@ -12,11 +12,6 @@ import frontend.symboltable.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.instructions.AddrMode.buildAddrWithOffset;
-import static backend.instructions.Condition.NO_CON;
-import static backend.instructions.Instr.WORD_SIZE;
-import static backend.instructions.Instr.addToCurLabel;
-
 public class VarDecAST extends Node {
 
   private static final int DYNAMIC_BOX_SIZE = 5;
@@ -45,7 +40,7 @@ public class VarDecAST extends Node {
 
   @Override
   public void check() {
-    symtab.incrementSize(decType.getBytes());
+    symtab.incrementSize(decType instanceof VarID ? DYNAMIC_BOX_SIZE : decType.getBytes());
 
     // if function is not defined or class is not defined
     if (assignRHS.getIdentifier() == null) {
@@ -102,38 +97,31 @@ public class VarDecAST extends Node {
   public void toAssembly() {
     List<Instr> instrs = new ArrayList<>();
     // Generate the offset of the variable
-    int offset = symtab.getSmallestOffset() - decType.getBytes();
+    int offset = symtab.getSmallestOffset() -
+        (decType instanceof VarID ? DYNAMIC_BOX_SIZE : decType.getBytes());
 
     // Add the offset to the symbol table's hashmap of variables' offsets
     symtab.addOffset(varName, offset);
     assignRHS.toAssembly();
 
-    // Malloc dynamic variable "box", set tag and store variable
+    // Stores the value in the offset stack address
+    TypeID rhsType = assignRHS.getIdentifier().getType();
+    STR strInstr = new STR(rhsType.getBytes(), Condition.NO_CON, Instr.R4,
+        AddrMode.buildAddrWithOffset(Instr.SP, offset));
+    instrs.add(strInstr);
+
+    // If dynamic variable, set type number in "box" (5th byte)
     if (symtab.lookup(varName) instanceof VarID) {
-
-      // Malloc dynamic variable "box"
-      instrs.add(new LDR(Instr.R0, AddrMode.buildImm(DYNAMIC_BOX_SIZE)));
-      instrs.add(new BRANCH(true, NO_CON, Label.MALLOC));
-      instrs.add(new MOV(NO_CON, Instr.R5, AddrMode.buildReg(Instr.R0)));
-
-      // Data stored in first 4 bytes
-      TypeID rhsType = assignRHS.getIdentifier().getType();
-      instrs.add(new STR(rhsType.getBytes(), NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R5)));
-
-      // Store type number at (malloc-ed address + 4)
-      instrs.add(new LDR(Instr.R4, AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
-      instrs.add(new STR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.R5, WORD_SIZE)));
-
-      // Move actual address to r4
-      instrs.add(new MOV(NO_CON, Instr.R4, AddrMode.buildReg(Instr.R5)));
-
+      // Get addr of variable
+      instrs.add(new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(offset)));
+      // Load the type number
+      instrs.add(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
+      // Store (byte) into "box"
+      instrs.add(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5,
+          AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
     }
 
-    // Stores the value in the offset stack address
-    STR strInstr = new STR(decType.getBytes(), NO_CON, Instr.R4,
-        buildAddrWithOffset(Instr.SP, offset));
-    instrs.add(strInstr);
-    addToCurLabel(instrs);
+    Instr.addToCurLabel(instrs);
   }
 
   public TypeID getDecType() {

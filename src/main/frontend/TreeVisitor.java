@@ -321,16 +321,17 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public VarDecAST visitVar_decl_stat(Var_decl_statContext ctx) {
+    AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
+
     TypeID decType;
     if (ctx.VAR() != null) {
-      decType = new VarID();
+      decType = new VarID(assignRHS.getIdentifier().getType().getBytes());
     } else {
       Node typeAST = visit(ctx.type());
       decType = typeAST.getIdentifier().getType();
     }
 
     String varName = ctx.IDENT().getText();
-    AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
     VarDecAST varDec = new VarDecAST(currSymTab, decType, varName, assignRHS,
         ctx);
     varDec.check();

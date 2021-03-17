@@ -2,9 +2,11 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.AssignRHSContext;
 import antlr.WaccParser.AssignLHSContext;
+import backend.instructions.ADD;
 import backend.instructions.AddrMode;
 import backend.instructions.Condition;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
@@ -14,6 +16,8 @@ import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.pairs.PairElemAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AssignStatAST extends Node {
 
@@ -132,18 +136,37 @@ public class AssignStatAST extends Node {
     // Evaluate the rhs to be assigned
     rhs.toAssembly();
 
-    int bytes = lhs.getIdentifier().getType().getBytes();
+    int bytes = rhs.getIdentifier().getType().getBytes();
     if (lhs.getAssignNode() instanceof ArrayElemAST ||
         lhs.getAssignNode() instanceof PairElemAST) {
       String sndReg = Instr.incDepth();
       // Evaluate lhs to get actual address to store result
       lhs.toAssembly();
       String fstReg = Instr.decDepth();
-      Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, fstReg, AddrMode.buildAddr(sndReg)));
+      Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, fstReg,
+          AddrMode.buildAddr(sndReg)));
     } else {
       // Regular variable
       int offset = symtab.getStackOffset(lhs.getIdentName());
-      Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+      Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4,
+          AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+
+      // Dynamic variable
+      if (symtab.lookup(lhs.getIdentName()) instanceof VarID) {
+        List<Instr> instrs = new ArrayList<>();
+
+        // Get addr into R4
+        instrs.add(new ADD(false, Instr.R4, Instr.SP,
+            AddrMode.buildImm(offset)));
+        // Get type number and update (byte) at offset +4 of variable address
+        TypeID rhsType = rhs.getIdentifier().getType();
+        instrs.add(new LDR(Instr.R5,
+            AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
+        instrs.add(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5,
+            AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+
+        Instr.addToCurLabel(instrs);
+      }
     }
   }
 }
