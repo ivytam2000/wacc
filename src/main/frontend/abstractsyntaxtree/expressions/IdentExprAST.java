@@ -37,8 +37,8 @@ public class IdentExprAST extends Node {
     return ctx.getText();
   }
 
-  public void setDynamicTypeNeeded(TypeID type) {
-    dynamicTypeNeeded = Utils.getTypeNumber(type);
+  public void setDynamicTypeNeeded(List<TypeID> types) {
+    dynamicTypeNeeded = Utils.getTypeNumber(types);
   }
 
   @Override
