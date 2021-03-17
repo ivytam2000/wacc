@@ -170,8 +170,6 @@ public class CallClassFunctionAST extends AssignRHSAST {
           Condition.NO_CON, transferReg,
           AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
     }
-    //addToCurLabel(new LDR(transferReg, AddrMode.buildAddrWithOffset(Instr.SP
-    //    , varNameOffset)));
     addToCurLabel(new ADD(false, transferReg, Instr.SP,
         AddrMode.buildImm(varNameOffset + accOffset)));
     addToCurLabel(new STR(transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -(4))));
@@ -180,7 +178,6 @@ public class CallClassFunctionAST extends AssignRHSAST {
     instructions
         .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + funcName));
 
-    //    instructions.add(new SUB(false, false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
     // Destroy stack - STACK ALWAYS HAS TO BE DESTROYED AS IT WILL ALWAYS
     // CONTAIN THE INSTANCE'S ADDRESS
     instructions.add(

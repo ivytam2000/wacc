@@ -146,40 +146,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return classAttrListAST;
   }
 
-  // TODO remove function
-//  @Override
-//  public ClassConstructorAST visitConstructor(ConstructorContext ctx) {
-//    // In the form of: H(int v, int y) end where the params are the attributes defined above constructor
-//    // Makes constructor for the class
-//
-//    // add new symbol table
-//    SymbolTable classSymtab = currSymTab;
-//    currSymTab = new SymbolTable(classSymtab);
-//
-//    // Initialises empty ParamListAST if no params
-//    ParamListAST params =
-//        ctx.paramList() == null ? new ParamListAST()
-//            : visitParamList(ctx.paramList());
-//
-//    String className = ctx.IDENT().getText();
-//
-//    Identifier classID = new ClassID(className, currSymTab, params.getParamBytes());
-//
-//    ConstructorID constructID = new ConstructorID(classID, params.convertToParamIDs(),
-//        currSymTab);
-//
-//    ClassConstructorAST constructAST =
-//        new ClassConstructorAST(constructID, classSymtab, className, params, ctx);
-//
-//    // checks if constructor contains all the attributes defined
-//    constructAST.check();
-//
-//    // restore symbol table
-//    currSymTab = classSymtab;
-//
-//    return constructAST;
-//  }
-
   @Override
   public ClassFuncAST visitClassFunc(ClassFuncContext ctx) {
     FuncContext classFuncContexts = ctx.func();
