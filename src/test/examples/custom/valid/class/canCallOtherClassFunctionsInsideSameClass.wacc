@@ -9,8 +9,9 @@ begin
       return i
     end
     public int f() is 
+       int y = 3;
        int k = call J(5) ;
-       v = k+3 ;
+       v = k+y ;
        return v
     end
   end
