@@ -9,8 +9,10 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.VarID;
 
 import static backend.instructions.Instr.*;
+import static frontend.abstractsyntaxtree.Utils.getAndSetTypeNumber;
 
 public class ForAST extends Node {
 
@@ -33,17 +35,23 @@ public class ForAST extends Node {
 
   @Override
   public void check() {
+    TypeID refToInt = (TypeID) currSymtab.lookupAll("int");
+
     // Only allow ints
     TypeID startType = startExpr.getIdentifier().getType();
     TypeID endType = endExpr.getIdentifier().getType();
-    if (!(endType instanceof IntID)) {
+
+    if (!(endType instanceof IntID || endType instanceof VarID)) {
       SemanticErrorCollector.addIncompatibleType(
           "int",
           endType.getTypeName(),
           ctx.expr(1).getText(),
           ctx.expr(1).getStart().getLine(),
           ctx.expr(1).getStart().getCharPositionInLine());
-    } else if (!(startType instanceof IntID)) {
+    }
+    getAndSetTypeNumber(endExpr, refToInt);
+
+    if (!(startType instanceof IntID || startType instanceof VarID)) {
       SemanticErrorCollector.addIncompatibleType(
           "int",
           startType.getTypeName(),
@@ -51,6 +59,7 @@ public class ForAST extends Node {
           ctx.expr(0).getStart().getLine(),
           ctx.expr(0).getStart().getCharPositionInLine());
     }
+    getAndSetTypeNumber(startExpr, refToInt);
 
     currSymtab.getParent().incrementSize(startType.getBytes());
   }

@@ -1,11 +1,15 @@
 package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.ExprContext;
+import backend.BackEndGenerator;
+import backend.instructions.ADD;
 import backend.instructions.AND;
 import backend.instructions.AddrMode;
+import backend.instructions.BRANCH;
 import backend.instructions.CMP;
 import backend.instructions.Condition;
 import backend.instructions.Instr;
+import backend.instructions.LDR;
 import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.ORR;
@@ -72,8 +76,8 @@ public class BinOpExprAST extends Node {
       if (expectedExprTypes == Utils.INT_CHAR) { // Defined for int and char
         errorL = !(eLType instanceof IntID || eLType instanceof CharID
             || eLType instanceof UnknownID || eLType instanceof VarID);
-        errorR = !(eRType instanceof IntID || eRType instanceof CharID
-            || eRType instanceof UnknownID || eLType instanceof VarID);
+        errorR = !(eRType == eLType || eRType instanceof UnknownID ||
+            eRType instanceof VarID);
         expectedTypes = "int or char";
         types.add((TypeID) symtab.lookupAll("int"));
         types.add((TypeID) symtab.lookupAll("char"));
@@ -81,7 +85,7 @@ public class BinOpExprAST extends Node {
         errorL = !(eLType instanceof BoolID || eLType instanceof UnknownID
             || eLType instanceof VarID);
         errorR = !(eRType instanceof BoolID || eRType instanceof UnknownID
-            || eLType instanceof VarID);
+            || eRType instanceof VarID);
         expectedTypes = "bool";
         types.add((TypeID) symtab.lookupAll("bool"));
       }
@@ -121,6 +125,48 @@ public class BinOpExprAST extends Node {
     Instr.decDepth();
 
     List<Instr> instrs = new ArrayList<>();
+
+    TypeID eLType = eL.getIdentifier().getType();
+    TypeID eRType = eR.getIdentifier().getType();
+    boolean eLIsVar = eLType instanceof VarID;
+    boolean eRIsVar = eRType instanceof VarID;
+
+    if (eLIsVar || eRIsVar) {
+      if (eLIsVar) {
+        assert (eL instanceof IdentExprAST);
+        int offset = symtab.getStackOffset(((IdentExprAST) eL).getName());
+
+        // Get addr into R0
+        instrs.add(
+            new ADD(false, Instr.R0, Instr.SP, AddrMode.buildImm(offset)));
+        // Load typeNumber (byte) from "box" into R0
+        instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0,
+            AddrMode.buildAddrWithOffset(Instr.R0, Instr.WORD_SIZE)));
+      } else {
+        instrs.add(new MOV(Condition.NO_CON, Instr.R0,
+            AddrMode.buildImm(Utils.getTypeNumber(eLType))));
+      }
+
+      if (eRIsVar) {
+        assert (eR instanceof IdentExprAST);
+        int offset = symtab.getStackOffset(((IdentExprAST) eR).getName());
+
+        // Get addr into R1
+        instrs.add(
+            new ADD(false, Instr.R1, Instr.SP, AddrMode.buildImm(offset)));
+        // Load typeNumber (byte) from "box" into R1
+        instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R1,
+            AddrMode.buildAddrWithOffset(Instr.R1, Instr.WORD_SIZE)));
+      } else {
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1,
+            AddrMode.buildImm(Utils.getTypeNumber(eRType))));
+      }
+
+      // Jump to dynamic type check
+      BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
+      instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+    }
+
     // AND and ORR have different bodies, we deal with them first
     if (op.equals("&&")) {
       instrs.add(new AND(fstReg, AddrMode.buildReg(sndReg)));
@@ -170,8 +216,6 @@ public class BinOpExprAST extends Node {
       default:
         assert (false); // UNREACHABLE
     }
-
-    // TODO: How to make sure that eL and eR are the same type for dynamic var? How would we design the assembly?
 
     // Set result at target register depending on condition
     instrs.add(new MOV(c1, fstReg, AddrMode.buildImm(TRUE_VAL)));
