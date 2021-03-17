@@ -4,10 +4,12 @@ import antlr.WaccParser.Exit_statContext;
 import antlr.WaccParser.ExprContext;
 import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ExitID;
 import frontend.symboltable.IntID;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,11 +19,13 @@ public class ExitAST extends Node {
 
   Exit_statContext ctx;
   private final Node expr;
+  private final TypeID refToInt;
 
-  public ExitAST(Node expr, Exit_statContext ctx) {
+  public ExitAST(Node expr, Exit_statContext ctx, TypeID refToInt) {
     super(new ExitID());
     this.ctx = ctx;
     this.expr = expr;
+    this.refToInt = refToInt;
   }
 
   public Node getExpr() {
@@ -32,7 +36,7 @@ public class ExitAST extends Node {
   public void check() {
     TypeID exprType = expr.getIdentifier().getType();
     ExprContext exprCtx = ctx.expr();
-    if (!(exprType instanceof IntID)) {
+    if (!(exprType instanceof IntID || exprType instanceof VarID)) {
       int line = exprCtx.getStart().getLine();
       int pos = exprCtx.getStart().getCharPositionInLine();
       SemanticErrorCollector.addIncompatibleType(
@@ -43,6 +47,9 @@ public class ExitAST extends Node {
   @Override
   public void toAssembly() {
     // Evaluate the expression
+    List<TypeID> types = new ArrayList<>();
+    types.add(refToInt);
+    Utils.getAndSetTypeNumber(expr, types);
     expr.toAssembly();
 
     List<Instr> instrs = new ArrayList<>();

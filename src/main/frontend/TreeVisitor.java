@@ -298,7 +298,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public ExitAST visitExit_stat(Exit_statContext ctx) {
     Node expr = visit(ctx.expr());
 
-    ExitAST exitAST = new ExitAST(expr, ctx);
+    ExitAST exitAST = new ExitAST(expr, ctx,
+        (TypeID) currSymTab.lookupAll("int"));
     exitAST.check();
 
     return exitAST;
