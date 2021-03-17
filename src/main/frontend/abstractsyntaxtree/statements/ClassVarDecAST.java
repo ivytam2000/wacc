@@ -47,7 +47,9 @@ public class ClassVarDecAST extends Node {
     if (identifier == null || !(identifier instanceof ClassID)) {
       SemanticErrorCollector.addClassNotDefined(
           className, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
-      setIdentifier(new UnknownID());
+      if (identifier == null) {
+        setIdentifier(new UnknownID());
+      }
       return;
     }
 

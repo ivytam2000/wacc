@@ -24,7 +24,6 @@ public class AccessClassAttributeAST extends AssignLHSAST {
   public AccessClassAttributeAST(String varName, String attributeName,
       SymbolTable symtab, ClassAttrContext ctx) {
     super(symtab, varName);
-    identifier = symtab.lookup(varName + "." + attributeName);
     this.attributeName = attributeName;
     this.varName = varName;
     this.symtab = symtab;
