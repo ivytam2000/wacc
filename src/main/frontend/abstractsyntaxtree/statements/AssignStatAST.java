@@ -152,7 +152,12 @@ public class AssignStatAST extends Node {
           AddrMode.buildAddrWithOffset(Instr.SP, offset)));
 
       // Dynamic variable
-      if (symtab.lookup(lhs.getIdentName()) instanceof VarID) {
+      TypeID lhsType = (TypeID) symtab.lookup(lhs.getIdentName());
+      if (lhsType instanceof VarID) {
+        // Update symbol table about type so far
+        TypeID rhsType = rhs.getIdentifier().getType();
+        ((VarID) lhsType).setTypeSoFar(rhsType);
+
         List<Instr> instrs = new ArrayList<>();
 
         // Get addr into R4
@@ -160,7 +165,7 @@ public class AssignStatAST extends Node {
             AddrMode.buildImm(offset)));
         // Get type number and update (byte) at offset +4 of variable address
         List<TypeID> types = new ArrayList<>();
-        types.add(rhs.getIdentifier().getType());
+        types.add(rhsType);
         instrs.add(new MOV(Condition.NO_CON, Instr.R5,
             AddrMode.buildImm(Utils.getTypeNumber(types))));
         instrs.add(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5,

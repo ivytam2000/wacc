@@ -7,10 +7,13 @@ import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
+import frontend.symboltable.TypeID;
+import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
 import static backend.instructions.Instr.addToCurLabel;
+import static frontend.abstractsyntaxtree.Utils.setAllTypes;
 
 public class PrintAST extends Node {
 
@@ -31,6 +34,7 @@ public class PrintAST extends Node {
   @Override
   public void toAssembly() {
     // Evaluate the expression
+    setAllTypes(expr);
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
 
@@ -39,7 +43,11 @@ public class PrintAST extends Node {
     instrs.add(movInstr);
 
     // Branch to print label according to its type
-    BRANCH brInstr = Utils.getPrintBranch(expr.getIdentifier().getType());
+    TypeID type = expr.getIdentifier().getType();
+    if (type instanceof VarID) {
+      type = ((VarID) type).getTypeSoFar();
+    }
+    BRANCH brInstr = Utils.getPrintBranch(type);
     instrs.add(brInstr);
 
     addToCurLabel(instrs);

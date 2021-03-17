@@ -3,11 +3,14 @@ package frontend.abstractsyntaxtree.statements;
 import backend.BackEndGenerator;
 import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
+import frontend.symboltable.TypeID;
+import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
 import static backend.Utils.getPrintBranch;
 import static backend.instructions.Instr.addToCurLabel;
+import static frontend.abstractsyntaxtree.Utils.setAllTypes;
 
 public class PrintlnAST extends Node {
 
@@ -29,6 +32,7 @@ public class PrintlnAST extends Node {
   @Override
   public void toAssembly(){
     // Evaluate the expression
+    setAllTypes(expr);
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
 
@@ -37,7 +41,12 @@ public class PrintlnAST extends Node {
     instrs.add(movInstr);
 
     // Branch to appropriate print label according to its type
-    instrs.add(getPrintBranch(expr.getIdentifier().getType()));
+    // Branch to print label according to its type
+    TypeID type = expr.getIdentifier().getType();
+    if (type instanceof VarID) {
+      type = ((VarID) type).getTypeSoFar();
+    }
+    instrs.add(getPrintBranch(type));
 
     // Branch to p_print_ln label
     BackEndGenerator.addToPreDefFuncs(Label.P_PRINT_LN);

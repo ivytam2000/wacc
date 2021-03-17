@@ -111,7 +111,10 @@ public class VarDecAST extends Node {
     instrs.add(strInstr);
 
     // If dynamic variable, set type number in "box" (5th byte)
-    if (symtab.lookup(varName) instanceof VarID) {
+    TypeID type = (TypeID) symtab.lookup(varName);
+    if (type instanceof VarID) {
+      ((VarID) type).setTypeSoFar(rhsType);
+
       // Get addr of variable
       instrs.add(new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(offset)));
       // Load the type number
