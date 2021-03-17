@@ -47,9 +47,7 @@ public class ExitAST extends Node {
   @Override
   public void toAssembly() {
     // Evaluate the expression
-    List<TypeID> types = new ArrayList<>();
-    types.add(refToInt);
-    Utils.getAndSetTypeNumber(expr, types);
+    Utils.getAndSetTypeNumber(expr, refToInt);
     expr.toAssembly();
 
     List<Instr> instrs = new ArrayList<>();

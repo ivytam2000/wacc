@@ -212,10 +212,8 @@ public class AssignStatAST extends Node {
           instrs.add(new ADD(false, Instr.R4, Instr.SP,
               AddrMode.buildImm(offset)));
           // Get type number and update (byte) at offset +4 of variable address
-          List<TypeID> types = new ArrayList<>();
-          types.add(rhsType);
           instrs.add(new MOV(Condition.NO_CON, Instr.R5,
-              AddrMode.buildImm(Utils.getTypeNumber(types))));
+              AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
           instrs.add(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5,
               AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
 

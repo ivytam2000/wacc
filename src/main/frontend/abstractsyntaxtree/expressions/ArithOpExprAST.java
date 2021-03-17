@@ -72,10 +72,9 @@ public class ArithOpExprAST extends Node {
     }
 
     // For dynamic type
-    List<TypeID> types = new ArrayList<>();
-    types.add(getIdentifier().getType());
-    Utils.getAndSetTypeNumber(eL, types);
-    Utils.getAndSetTypeNumber(eR, types);
+    TypeID refToInt = getIdentifier().getType();
+    Utils.getAndSetTypeNumber(eL, refToInt);
+    Utils.getAndSetTypeNumber(eR, refToInt);
   }
 
   @Override

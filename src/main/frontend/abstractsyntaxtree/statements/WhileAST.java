@@ -49,9 +49,7 @@ public class WhileAST extends Node {
           exprCtx.getStart().getCharPositionInLine());
     }
 
-    List<TypeID> types = new ArrayList<>();
-    types.add((TypeID) symtab.lookupAll("bool"));
-    getAndSetTypeNumber(expr, types);
+    getAndSetTypeNumber(expr, (TypeID) symtab.lookupAll("bool"));
   }
 
   @Override

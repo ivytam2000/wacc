@@ -58,9 +58,7 @@ public class IfAST extends Node {
           exprCtx.getStart().getCharPositionInLine());
     }
 
-    List<TypeID> types = new ArrayList<>();
-    types.add((TypeID) thenScope.lookupAll("bool"));
-    Utils.getAndSetTypeNumber(expr, types);
+    Utils.getAndSetTypeNumber(expr, (TypeID) thenScope.lookupAll("bool"));
   }
 
   @Override
