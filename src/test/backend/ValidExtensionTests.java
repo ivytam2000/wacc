@@ -27,4 +27,12 @@ public class ValidExtensionTests {
     executablesFromOurCompilerMatchesReferenceCompiler(
         TestUtilities.EXT_VALID_DIR + "forLoop/");
   }
+
+  // Made test cases for extension: Classes
+
+  @Test
+  public void validExtensionClassesTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        TestUtilities.EXT_VALID_DIR + "class/");
+  }
 }

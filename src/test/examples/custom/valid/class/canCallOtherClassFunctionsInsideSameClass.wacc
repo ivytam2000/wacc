@@ -16,5 +16,6 @@ begin
     return 0
   end
   H v = new H(2) ; 
-  int k = call v.f() 
+  int k = call v.f() ; 
+  println k
 end

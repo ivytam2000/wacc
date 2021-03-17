@@ -8,5 +8,6 @@ begin
     end
   end
   H p = new H(2);
-  int x = p.v
+  int x = p.v;
+  println x
 end

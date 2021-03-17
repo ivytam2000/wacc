@@ -8,5 +8,7 @@ begin
     end
   end
   H p = new H(2);
-  p.v = 3
+  println p.v;
+  p.v = 3;
+  println p.v
 end

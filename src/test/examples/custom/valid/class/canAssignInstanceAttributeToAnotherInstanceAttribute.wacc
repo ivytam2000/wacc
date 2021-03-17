@@ -2,9 +2,9 @@
 
 begin
   class Vehicle is
-    private int name ;
+    private string name ;
     public int tyres 
-    public int getName() is 
+    public string getName() is 
       return name
     end
     public int getNumber() is
@@ -15,8 +15,9 @@ begin
       return tyres
     end
   end
-  Vehicle bus = new Vehicle(7, 6) ;
-  Vehicle car = new Vehicle(6, 4) ;
+  Vehicle bus = new Vehicle("bus", 6) ;
+  Vehicle car = new Vehicle("car", 4) ;
+  println bus.tyres;
   bus.tyres = car.tyres ;
   println bus.tyres 
 end
