@@ -37,6 +37,8 @@ public class Utils {
       = "ArrayIndexOutOfBoundsError: index too large\\n\\0";
   private static final String NULL_MSG
       = "NullReferenceError: dereference a null reference\\n\\0";
+  private static final String INCOMPATIBLE_DYN_VAR_MSG
+      = "DynamicTypeError: dynamic variable has incompatible type\\n\\0";
 
   // Generates start routine instructions
   public static List<Instr> getStartRoutine(SymbolTable symtab,
@@ -359,5 +361,21 @@ public class Utils {
     instrs.add(new POP(Instr.PC));
 
     pdf.put(Label.P_PRINT_REFERENCE, instrs);
+  }
+
+  private static void p_dynamic_type_check(Map<String, List<Instr>> pdf) {
+    List<Instr> instrs = new ArrayList<>();
+    instrs.add(new PUSH(Instr.LR));
+
+    instrs.add(new AND(Instr.R0, AddrMode.buildReg(Instr.R1)));
+    instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
+    instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
+        .buildStringVal(BackEndGenerator.addToDataSegment(INCOMPATIBLE_DYN_VAR_MSG))));
+    BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
+    instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
+
+    instrs.add(new POP(Instr.PC));
+
+    pdf.put(Label.P_DYNAMIC_TYPE_CHECK, instrs);
   }
 }

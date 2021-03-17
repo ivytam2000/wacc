@@ -26,6 +26,10 @@ public class LDR extends Instr {
   private String getLdr() {
     String ldr = "LDR";
     switch (bytes) {
+      // Byte
+      case -1:
+        ldr += "B";
+        break;
       // Signed byte
       case 1:
         ldr += "SB";

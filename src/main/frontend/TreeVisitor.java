@@ -308,7 +308,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
   public ExitAST visitExit_stat(Exit_statContext ctx) {
     Node expr = visit(ctx.expr());
 
-    ExitAST exitAST = new ExitAST(expr, ctx);
+    ExitAST exitAST = new ExitAST(expr, ctx,
+        (TypeID) currSymTab.lookupAll("int"));
     exitAST.check();
 
     return exitAST;
@@ -331,11 +332,18 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
   @Override
   public VarDecAST visitVar_decl_stat(Var_decl_statContext ctx) {
-    Node typeAST = visit(ctx.type());
-    String varName = ctx.IDENT().getText();
     AssignRHSAST assignRHS = (AssignRHSAST) visit(ctx.assignRHS());
 
-    VarDecAST varDec = new VarDecAST(currSymTab, typeAST.getIdentifier().getType(), varName, assignRHS,
+    TypeID decType;
+    if (ctx.VAR() != null) {
+      decType = new VarID(assignRHS.getIdentifier().getType().getBytes());
+    } else {
+      Node typeAST = visit(ctx.type());
+      decType = typeAST.getIdentifier().getType();
+    }
+
+    String varName = ctx.IDENT().getText();
+    VarDecAST varDec = new VarDecAST(currSymTab, decType, varName, assignRHS,
         ctx);
     varDec.check();
 
