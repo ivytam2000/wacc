@@ -190,7 +190,8 @@ public class AssignStatAST extends Node {
             Instr.addToCurLabel(new LDR(reg,
                 AddrMode.buildAddrWithOffset(Instr.SP, instanceOffset)));
             Instr.addToCurLabel(new ADD(false, reg, reg, AddrMode.buildImm(offset)));
-            Instr.addToCurLabel(new STR(Instr.R4, AddrMode.buildAddr(reg)));
+            Instr.addToCurLabel(new STR(lhs.getIdentifier().getType().getBytes(), Condition.NO_CON, Instr.R4, AddrMode.buildAddr(reg)));
+
             Instr.decDepth();
           }
         }

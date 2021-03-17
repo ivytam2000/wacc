@@ -52,7 +52,17 @@ public class VarDecAST extends Node {
     int line = rhsCtx.getStart().getLine();
     int pos = rhsCtx.getStart().getCharPositionInLine();
 
-    Identifier variable = symtab.lookup(varName);
+    Identifier variable;
+    if (symtab.isTopLevel()) {
+      variable = symtab.lookup(varName);
+    } else {
+      if (symtab.getParent().getClassContext()) {
+        variable = symtab.lookupAll(varName);
+      } else {
+        variable = symtab.lookup(varName);
+      }
+    }
+
 
     // VarDec of nested pairs
     if (decType instanceof PairID && rhsType instanceof PairID) {
