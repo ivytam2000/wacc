@@ -10,8 +10,6 @@ import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
 import frontend.symboltable.VarID;
-import java.util.ArrayList;
-import java.util.List;
 
 import static backend.instructions.Instr.*;
 import static frontend.abstractsyntaxtree.Utils.getAndSetTypeNumber;

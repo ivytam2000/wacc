@@ -9,8 +9,6 @@ import frontend.symboltable.BoolID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.VarID;
-import java.util.ArrayList;
-import java.util.List;
 
 import static backend.Utils.getEndRoutine;
 import static backend.Utils.getStartRoutine;
