@@ -25,17 +25,13 @@ public class SymbolTable {
     this.parent = parent;
   }
 
-  /**
-   * Defines a top-level symbol table, pre-loaded with default types.
-   */
+  /** Defines a top-level symbol table, pre-loaded with default types. */
   public SymbolTable() {
     this(null);
     loadTopLevelSymbolTable(this);
   }
 
-  /**
-   * Loads a top-level symbol table for the global scope.
-   */
+  /** Loads a top-level symbol table for the global scope. */
   private void loadTopLevelSymbolTable(SymbolTable symbolTable) {
     symbolTable.add(new IntID());
     symbolTable.add(new BoolID());
@@ -44,9 +40,7 @@ public class SymbolTable {
     symbolTable.add(new NullID());
   }
 
-  /**
-   * Checks if this symbol table is a top-level one, i.e. of global scope.
-   */
+  /** Checks if this symbol table is a top-level one, i.e. of global scope. */
   public boolean isTopLevel() {
     return parent == null;
   }
@@ -60,17 +54,12 @@ public class SymbolTable {
     dictionary.put(name, identifier);
   }
 
-  /**
-   * Finds identifiers within this symbol table only.
-   */
+  /** Finds identifiers within this symbol table only. */
   public Identifier lookup(String name) {
     return dictionary.get(name);
   }
 
-  /**
-   * Finds identifiers in this symbol table and any of its parent symbol
-   * tables.
-   */
+  /** Finds identifiers in this symbol table and any of its parent symbol tables. */
   public Identifier lookupAll(String name) {
     SymbolTable temp = this;
     Identifier node;
@@ -87,7 +76,9 @@ public class SymbolTable {
     return null;
   }
 
-  public Set<String> getAllIdent() { return dictionary.keySet(); }
+  public Set<String> getAllIdent() {
+    return dictionary.keySet();
+  }
 
   public void replaceType(String name, TypeID type) {
     SymbolTable temp = this;
@@ -106,36 +97,50 @@ public class SymbolTable {
     size += val;
   }
 
-  public void incrementFuncOffset(int val) { tempFuncOffset += val; }
+  public void incrementFuncOffset(int val) {
+    tempFuncOffset += val;
+  }
 
-  public void resetFuncOffset() {tempFuncOffset = 0;}
+  public void resetFuncOffset() {
+    tempFuncOffset = 0;
+  }
 
-  public void setFuncContext() {funcContext = true; }
+  public void setFuncContext() {
+    funcContext = true;
+  }
 
-  public void setClassContext() {classContext = true; }
+  public void setClassContext() {
+    classContext = true;
+  }
 
-  public void setSkipLR() {skipLR = true;}
+  public void setSkipLR() {
+    skipLR = true;
+  }
 
   public boolean getFuncContext() {
     return funcContext;
   }
 
-  public boolean getClassContext() { return classContext; }
+  public boolean getClassContext() {
+    return classContext;
+  }
 
   public int getStackOffset(String var) {
     SymbolTable temp = this;
     int innerOffset = 0;
-
+    Identifier typeID = lookupAll(var);
     while (!temp.varOffsets.containsKey(var)) {
-      innerOffset += temp.size;
+      if (!(typeID instanceof ClassAttributeID)) {
+        innerOffset += temp.size;
+      }
       temp = temp.parent;
     }
 
     return innerOffset + tempFuncOffset + temp.varOffsets.get(var);
   }
 
-  public void addOffset(String var, int offset){
-    varOffsets.put(var,offset);
+  public void addOffset(String var, int offset) {
+    varOffsets.put(var, offset);
   }
 
   public int getSmallestOffset() {
@@ -151,7 +156,7 @@ public class SymbolTable {
     }
   }
 
-  public SymbolTable getParent(){
+  public SymbolTable getParent() {
     return parent;
   }
 }

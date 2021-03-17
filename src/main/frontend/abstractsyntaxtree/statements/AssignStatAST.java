@@ -181,7 +181,9 @@ public class AssignStatAST extends Node {
             Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
           } else {
             String reg = Instr.incDepth();
-            Instr.addToCurLabel(new LDR(reg, AddrMode.buildAddrWithOffset(Instr.SP, 4)));
+            int instanceOffset = symtab.getStackOffset("object_addr");
+            Instr.addToCurLabel(new LDR(reg,
+                AddrMode.buildAddrWithOffset(Instr.SP, instanceOffset)));
             Instr.addToCurLabel(new ADD(false, reg, reg, AddrMode.buildImm(offset)));
             Instr.addToCurLabel(new STR(Instr.R4, AddrMode.buildAddr(reg)));
             Instr.decDepth();
