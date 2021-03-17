@@ -171,6 +171,8 @@ public class BinOpExprAST extends Node {
         assert (false); // UNREACHABLE
     }
 
+    // TODO: How to make sure that eL and eR are the same type for dynamic var? How would we design the assembly?
+
     // Set result at target register depending on condition
     instrs.add(new MOV(c1, fstReg, AddrMode.buildImm(TRUE_VAL)));
     instrs.add(new MOV(c2, fstReg, AddrMode.buildImm(FALSE_VAL)));
