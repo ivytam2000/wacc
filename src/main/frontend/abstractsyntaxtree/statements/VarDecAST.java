@@ -88,6 +88,7 @@ public class VarDecAST extends Node {
           pos);
     }
 
+    // No need type check if RHS is a dynamic variable
     symtab.add(varName, decType);
     setIdentifier(decType);
   }
@@ -106,6 +107,10 @@ public class VarDecAST extends Node {
 
     // Stores the value in the offset stack address
     TypeID rhsType = assignRHS.getIdentifier().getType();
+    if (rhsType instanceof VarID) {
+      rhsType = ((VarID) rhsType).getTypeSoFar();
+    }
+
     STR strInstr = new STR(rhsType.getBytes(), Condition.NO_CON, Instr.R4,
         AddrMode.buildAddrWithOffset(Instr.SP, offset));
     instrs.add(strInstr);

@@ -9,6 +9,7 @@ import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
@@ -94,6 +95,9 @@ public class AssignRHSAST extends Node {
     } else {
       // if not newPair
       for (Node expr : children) {
+        if (expr instanceof IdentExprAST) {
+          ((IdentExprAST) expr).isNotLoading();
+        }
         expr.toAssembly();
       }
     }

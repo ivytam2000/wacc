@@ -19,6 +19,7 @@ public class IdentExprAST extends Node {
 
   private final SymbolTable currsymtab;
   private final IdentExprContext ctx;
+  private boolean isLoading;
   // For dynamic variables
   private int dynamicTypeNeeded;
   private boolean allTypesSupported;
@@ -27,6 +28,11 @@ public class IdentExprAST extends Node {
     super();
     this.currsymtab = currsymtab;
     this.ctx = ctx;
+    this.isLoading = true;
+  }
+
+  public void isNotLoading() {
+    this.isLoading = false;
   }
 
   public String getName() {
@@ -89,28 +95,24 @@ public class IdentExprAST extends Node {
       instrs.add(loadVar);
 
       if (identifier instanceof VarID) {
-        if (dynamicTypeNeeded < 0) {
-          System.err.println("DYNAMIC TYPE NEEDED, BUT NOT SPECIFIED");
-        } else {
-          if (!allTypesSupported) {
-            // TODO: Can we just freely use R0 and R1? Need to save?
+        if (isLoading && !allTypesSupported) {
+          // TODO: Can we just freely use R0 and R1? Need to save?
 
-            // Get addr into R0
-            instrs.add(
-                new ADD(false, Instr.R0, Instr.SP, AddrMode.buildImm(offset)));
-            // Load typeNumber (byte) from "box" into R0
-            instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0,
-                AddrMode.buildAddrWithOffset(Instr.R0, Instr.WORD_SIZE)));
-            // Load actual typeNumber needed
-            instrs.add(new MOV(Condition.NO_CON, Instr.R1,
-                AddrMode.buildImm(dynamicTypeNeeded)));
-            // Jump to dynamic type check
-            BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
-            instrs.add(
-                new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
-
-          }
+          // Get addr into R0
+          instrs.add(
+              new ADD(false, Instr.R0, Instr.SP, AddrMode.buildImm(offset)));
+          // Load typeNumber (byte) from "box" into R0
+          instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0,
+              AddrMode.buildAddrWithOffset(Instr.R0, Instr.WORD_SIZE)));
+          // Load actual typeNumber needed
+          instrs.add(new MOV(Condition.NO_CON, Instr.R1,
+              AddrMode.buildImm(dynamicTypeNeeded)));
+          // Jump to dynamic type check
+          BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
+          instrs.add(
+              new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
         }
+
       }
 
       Instr.addToCurLabel(instrs);
