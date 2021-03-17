@@ -37,6 +37,11 @@ public class Utils {
     assert (t1 != null);
     assert (t2 != null);
 
+    // Dynamic variables
+    if (t1.getType() instanceof VarID) {
+      return true;
+    }
+
     // For function return type comparison
     if (t1 instanceof NullID) {
       return t2 instanceof OptionalPairID;
@@ -58,10 +63,6 @@ public class Utils {
       return false;
     }
 
-    // Dynamic variables
-    if (t1.getType() instanceof VarID) {
-      return true;
-    }
     // Check base types
     return t1.getType() == t2.getType();
   }
@@ -207,8 +208,13 @@ public class Utils {
       return 1 << 2;
     } else if (type instanceof StringID) {
       return 1 << 3;
+    } else if (type instanceof PairID || type instanceof NullID) {
+      return 1 << 4;
+    } else if (type instanceof ArrayID) {
+      return 1 << 5;
     }
     // SHOULD NOT REACH THIS POINT
+    assert (false);
     return typeNumber;
   }
 

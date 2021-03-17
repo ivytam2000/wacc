@@ -30,6 +30,8 @@ public class AssignStatAST extends Node {
   private final AssignRHSContext rhsCtx;
   private final AssignLHSContext lhsCtx;
 
+  private TypeID rhsType;
+
   public AssignStatAST(
       AssignLHSContext lhsCtx,
       AssignRHSContext rhsCtx,
@@ -49,6 +51,8 @@ public class AssignStatAST extends Node {
 
   @Override
   public void check() {
+    rhsType = rhs.getIdentifier().getType();
+
     String varName = lhs.getIdentName();
     Identifier var = symtab.lookupAll(varName);
 
@@ -59,7 +63,6 @@ public class AssignStatAST extends Node {
       SemanticErrorCollector.addVariableUndefined(varName, lhsLine, lhsPos);
     } else {
       TypeID lhsType = lhs.getIdentifier().getType();
-      TypeID rhsType = rhs.getIdentifier().getType();
 
       if (lhsType instanceof PairID && rhsType instanceof PairID) {
         // Within this branch, we know that lhs is definitely a pair
@@ -106,6 +109,14 @@ public class AssignStatAST extends Node {
             prefix + varName,
             lhsLine,
             rhsCtx.getStart().getCharPositionInLine());
+      }
+
+      // Update symbol table about type so far
+      if (lhsType instanceof VarID) {
+        if (rhsType instanceof VarID) {
+          rhsType = ((VarID) rhsType).getTypeSoFar();
+        }
+        ((VarID) lhsType).setTypeSoFar(rhsType);
       }
     }
   }
@@ -200,12 +211,7 @@ public class AssignStatAST extends Node {
             AddrMode.buildAddrWithOffset(Instr.SP, offset)));
 
         // Dynamic variable
-        Identifier lhsType = symtab.lookup(lhs.getIdentName());
-        if (lhsType instanceof VarID) {
-          // Update symbol table about type so far
-          TypeID rhsType = rhs.getIdentifier().getType();
-          ((VarID) lhsType).setTypeSoFar(rhsType);
-
+        if (symtab.lookup(lhs.getIdentName()) instanceof VarID) {
           List<Instr> instrs = new ArrayList<>();
 
           // Get addr into R4

@@ -23,6 +23,8 @@ public class VarDecAST extends Node {
   private final Var_decl_statContext ctx;
   private final AssignRHSContext rhsCtx;
 
+  private TypeID rhsType;
+
   public VarDecAST(
       SymbolTable symtab,
       TypeID decType,
@@ -47,7 +49,7 @@ public class VarDecAST extends Node {
       return;
     }
 
-    TypeID rhsType = assignRHS.getIdentifier().getType();
+    rhsType = assignRHS.getIdentifier().getType();
 
     int line = rhsCtx.getStart().getLine();
     int pos = rhsCtx.getStart().getCharPositionInLine();
@@ -88,6 +90,14 @@ public class VarDecAST extends Node {
           pos);
     }
 
+    // Update symbol table about type so far
+    if (decType instanceof VarID) {
+      if (rhsType instanceof VarID) {
+        rhsType = ((VarID) rhsType).getTypeSoFar();
+      }
+      ((VarID) decType).setTypeSoFar(rhsType);
+    }
+
     // No need type check if RHS is a dynamic variable
     symtab.add(varName, decType);
     setIdentifier(decType);
@@ -106,20 +116,12 @@ public class VarDecAST extends Node {
     assignRHS.toAssembly();
 
     // Stores the value in the offset stack address
-    TypeID rhsType = assignRHS.getIdentifier().getType();
-    if (rhsType instanceof VarID) {
-      rhsType = ((VarID) rhsType).getTypeSoFar();
-    }
-
     STR strInstr = new STR(rhsType.getBytes(), Condition.NO_CON, Instr.R4,
         AddrMode.buildAddrWithOffset(Instr.SP, offset));
     instrs.add(strInstr);
 
     // If dynamic variable, set type number in "box" (5th byte)
-    Identifier type = symtab.lookup(varName);
-    if (type instanceof VarID) {
-      ((VarID) type).setTypeSoFar(rhsType);
-
+    if (symtab.lookup(varName) instanceof VarID) {
       // Get addr of variable
       instrs.add(new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(offset)));
       // Load the type number
