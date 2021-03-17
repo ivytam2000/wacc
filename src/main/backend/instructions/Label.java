@@ -23,6 +23,7 @@ public abstract class Label {
   public static final String P_CHECK_DIVIDE_BY_ZERO = "p_check_divide_by_zero";
   public static final String P_THROW_OVERFLOW_ERROR = "p_throw_overflow_error";
   public static final String P_PRINT_LN = "p_print_ln";
+  public static final String P_DYNAMIC_TYPE_CHECK = "p_dynamic_type_check";
 
   // Library functions
   public static final String PUTCHAR = "putchar";

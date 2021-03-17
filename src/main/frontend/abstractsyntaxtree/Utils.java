@@ -1,5 +1,6 @@
 package frontend.abstractsyntaxtree;
 
+import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.abstractsyntaxtree.statements.BeginStatAST;
 import frontend.abstractsyntaxtree.statements.ExitAST;
 import frontend.abstractsyntaxtree.statements.IfAST;
@@ -191,5 +192,11 @@ public class Utils {
       typeNumber = 4;
     }
     return typeNumber;
+  }
+
+  public static void getAndSetTypeNumber(Node node, TypeID type) {
+    if (node instanceof IdentExprAST) {
+      ((IdentExprAST) node).setDynamicTypeNeeded(type);
+    }
   }
 }
