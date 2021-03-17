@@ -15,8 +15,6 @@ public class ClassID extends TypeID {
     return this;
   }
 
-  @Override public int getBytes() {return 4;}
-
   public void setSymtab(SymbolTable symtab) {
     this.symtab = symtab;
   }

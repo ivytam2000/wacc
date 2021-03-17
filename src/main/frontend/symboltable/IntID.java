@@ -11,5 +11,4 @@ public class IntID extends TypeID {
     return this;
   }
 
-  @Override public int getBytes() {return 4;}
 }
