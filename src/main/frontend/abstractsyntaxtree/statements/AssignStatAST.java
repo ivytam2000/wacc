@@ -7,6 +7,7 @@ import backend.instructions.AddrMode;
 import backend.instructions.Condition;
 import backend.instructions.Instr;
 import backend.instructions.LDR;
+import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
@@ -160,7 +161,7 @@ public class AssignStatAST extends Node {
             AddrMode.buildImm(offset)));
         // Get type number and update (byte) at offset +4 of variable address
         TypeID rhsType = rhs.getIdentifier().getType();
-        instrs.add(new LDR(Instr.R5,
+        instrs.add(new MOV(Condition.NO_CON, Instr.R5,
             AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
         instrs.add(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5,
             AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
