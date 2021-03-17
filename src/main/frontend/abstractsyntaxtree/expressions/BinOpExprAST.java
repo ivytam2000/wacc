@@ -18,6 +18,7 @@ import frontend.symboltable.IntID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import static backend.instructions.Instr.addToCurLabel;
 public class BinOpExprAST extends Node {
 
   private final String op;
+  private final SymbolTable symtab;
   private final int expectedExprTypes;
   private final Node eL;
   private final Node eR;
@@ -37,6 +39,7 @@ public class BinOpExprAST extends Node {
       String op, Node eL, Node eR, ExprContext ctx) {
     super(symtab.lookupAll("bool")); // BinOpExpr always has bool return type
     this.op = op;
+    this.symtab = symtab;
     this.expectedExprTypes = expectedExprTypes;
     this.eL = eL;
     this.eR = eR;
@@ -56,6 +59,8 @@ public class BinOpExprAST extends Node {
             .addTypeMismatch(ctx.getStart().getLine(),
                 ctx.getStart().getCharPositionInLine(), op);
       }
+      Utils.setAllTypes(eL);
+      Utils.setAllTypes(eR);
     } else {
       // Check for left and right expr of binOp separated to pin point error
 
@@ -63,17 +68,25 @@ public class BinOpExprAST extends Node {
       boolean errorR = false;
       String expectedTypes = "";
 
+      List<TypeID> types = new ArrayList<>();
       if (expectedExprTypes == Utils.INT_CHAR) { // Defined for int and char
         errorL = !(eLType instanceof IntID || eLType instanceof CharID
-            || eLType instanceof UnknownID);
+            || eLType instanceof UnknownID || eLType instanceof VarID);
         errorR = !(eRType instanceof IntID || eRType instanceof CharID
-            || eRType instanceof UnknownID);
+            || eRType instanceof UnknownID || eLType instanceof VarID);
         expectedTypes = "int or char";
+        types.add((TypeID) symtab.lookupAll("int"));
+        types.add((TypeID) symtab.lookupAll("char"));
       } else if (expectedExprTypes == Utils.BOOL) { // Defined for bool only
-        errorL = !(eLType instanceof BoolID || eLType instanceof UnknownID);
-        errorR = !(eRType instanceof BoolID || eRType instanceof UnknownID);
+        errorL = !(eLType instanceof BoolID || eLType instanceof UnknownID
+            || eLType instanceof VarID);
+        errorR = !(eRType instanceof BoolID || eRType instanceof UnknownID
+            || eLType instanceof VarID);
         expectedTypes = "bool";
+        types.add((TypeID) symtab.lookupAll("bool"));
       }
+      Utils.getAndSetTypeNumber(eL, types);
+      Utils.getAndSetTypeNumber(eR, types);
 
       if (errorL) {
         SemanticErrorCollector

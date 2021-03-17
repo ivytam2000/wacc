@@ -1,4 +1,4 @@
-package frontend.abstractsyntaxtree.expressions;
+  package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.UnaryOperContext;
 import backend.BackEndGenerator;
@@ -11,6 +11,7 @@ import backend.instructions.Label;
 import backend.instructions.ORR;
 import backend.instructions.SUB;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ArrayID;
 import frontend.symboltable.BoolID;
@@ -20,6 +21,7 @@ import frontend.symboltable.IntID;
 import frontend.symboltable.StringID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class UnOpExprAST extends Node {
 
   private final SymbolTable symbtab;
   private final UnaryOperContext ctx;
+  private List<TypeID> correctExprType;
   private final Node exprAST;
 
   public UnOpExprAST(SymbolTable symbtab, Node exprAST, UnaryOperContext ctx) {
@@ -46,38 +49,45 @@ public class UnOpExprAST extends Node {
     boolean error = false;
 
     if (ctx.NOT() != null) { // NOT defined for bool only
-      if (!(exprType instanceof BoolID)) {
+      if (!(exprType instanceof BoolID || exprType instanceof VarID)) {
         error = true;
       }
+      correctExprType.add((TypeID) symbtab.lookupAll("bool"));
       unOpExprType = symbtab.lookupAll("bool");
 
     } else if (ctx.MINUS() != null) { // MINUS defined for int only
-      if (!(exprType instanceof IntID)) {
+      if (!(exprType instanceof IntID || exprType instanceof VarID)) {
         error = true;
       }
+      correctExprType.add((TypeID) symbtab.lookupAll("int"));
       unOpExprType = symbtab.lookupAll("int");
 
     } else if (ctx.CHR() != null) { // CHR defined for int only
-      if (!(exprType instanceof IntID)) {
+      if (!(exprType instanceof IntID || exprType instanceof VarID)) {
         error = true;
       }
+      correctExprType.add((TypeID) symbtab.lookupAll("int"));
       unOpExprType = symbtab.lookupAll("char");
 
     } else if (ctx.LEN() != null) { // LEN defined for string and array
-      if (!(exprType instanceof StringID || exprType instanceof ArrayID)) {
+      if (!(exprType instanceof StringID || exprType instanceof ArrayID || exprType instanceof VarID)) {
         error = true;
       }
+      correctExprType.add((TypeID) symbtab.lookupAll("string"));
+      // TODO: How to handle array?
       unOpExprType = symbtab.lookupAll("int");
 
     } else if (ctx.ORD() != null) { // ORD defined for char only
-      if (!(exprType instanceof CharID)) {
+      if (!(exprType instanceof CharID || exprType instanceof VarID)) {
         error = true;
       }
+      correctExprType.add((TypeID) symbtab.lookupAll("char"));
       unOpExprType = symbtab.lookupAll("int");
     } else if (ctx.BIT_NOT() != null) { // BIT_NOT defined for int only
-      if (!(exprType instanceof IntID)) {
+      if (!(exprType instanceof IntID || exprType instanceof VarID)) {
         error = true;
       }
+      correctExprType.add((TypeID) symbtab.lookupAll("int"));
       unOpExprType = symbtab.lookupAll("int");
     }
 
@@ -89,6 +99,7 @@ public class UnOpExprAST extends Node {
               ctx.getStart().getCharPositionInLine());
     }
 
+    Utils.getAndSetTypeNumber(exprAST, correctExprType);
     setIdentifier(unOpExprType);
   }
 
