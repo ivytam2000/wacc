@@ -10,11 +10,14 @@ import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.TypeID;
 import java.util.List;
 
+import static backend.instructions.Instr.BYTE_SIZE;
 import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
@@ -23,6 +26,8 @@ public class ArrayLiterAST extends Node {
   private final List<Node> children;
   private final ArrayLiterContext ctx;
   private final SymbolTable symtab;
+
+  private TypeID childrenType;
 
   public ArrayLiterAST(
       SymbolTable symtab, Identifier identifier, List<Node> children,
@@ -36,6 +41,7 @@ public class ArrayLiterAST extends Node {
   @Override
   public void check() {
     if (!children.isEmpty()) {
+      childrenType = children.get(0).getIdentifier().getType();
       String type = children.get(0).getIdentifier().getType().getTypeName();
       int line = ctx.getStart().getLine();
       for (int i = 1; i < children.size(); i++) {
@@ -61,7 +67,7 @@ public class ArrayLiterAST extends Node {
       bytesNeeded = childrenType.getType().getBytes();
     }
 
-    String byteOfArray = Integer.toString(WORD_SIZE + children.size() * bytesNeeded);
+    String byteOfArray = Integer.toString(WORD_SIZE + BYTE_SIZE + children.size() * bytesNeeded);
     addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(byteOfArray)));
 
     // Add malloc branch to allocate memory
@@ -79,13 +85,17 @@ public class ArrayLiterAST extends Node {
       curr_expr.toAssembly();
       String fstReg = Instr.decDepth();
 
-      // storing the offsets of the expressions (skip WORD_SIZE bytes which stores length)
-      int offset = i * bytesNeeded + WORD_SIZE;
+      // storing the offsets of the expressions (skip WORD_SIZE + BYTE_SIZE bytes which stores length and typeNumber)
+      int offset = i * bytesNeeded + WORD_SIZE + BYTE_SIZE;
 
       addToCurLabel(
           new STR(curr_ident.getType().getBytes(), Condition.NO_CON, sndReg,
               AddrMode.buildAddrWithOffset(fstReg, offset)));
     }
+
+    // stores type number
+    addToCurLabel(new LDR(Instr.R5, AddrMode.buildVal(Utils.getTypeNumber(childrenType))));
+    addToCurLabel(new STR(BYTE_SIZE, Condition.NO_CON, Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, WORD_SIZE)));
 
     // stores length of array into registers
     addToCurLabel(new LDR(Instr.R5, AddrMode.buildVal(lengthOfArray)));

@@ -19,6 +19,7 @@ import frontend.symboltable.SymbolTable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.instructions.Instr.BYTE_SIZE;
 import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
@@ -94,8 +95,8 @@ public class ArrayElemAST extends Node {
       instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(target)));
       instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_ARRAY_BOUNDS));
 
-      // Skip over 0th element (size)
-      instrs.add(new ADD(false, target, target, AddrMode.buildImm(WORD_SIZE)));
+      // Skip over first 5 bytes (size and typeNumber)
+      instrs.add(new ADD(false, target, target, AddrMode.buildImm(WORD_SIZE + BYTE_SIZE)));
 
       //Index to correct element position
       if (size > 1) {

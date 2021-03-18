@@ -77,7 +77,7 @@ public class AssignLHSAST extends Node {
         instrs.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_ARRAY_BOUNDS));
 
         // Skip over 0th element is size which is of type int
-        instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildImm(Instr.WORD_SIZE)));
+        instrs.add(new ADD(false, fstReg, fstReg, AddrMode.buildImm(Instr.WORD_SIZE + Instr.BYTE_SIZE)));
 
         // Index to the target element
         int size = assignNode.getIdentifier().getType().getBytes();
