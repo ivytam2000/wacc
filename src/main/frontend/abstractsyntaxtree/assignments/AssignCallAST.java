@@ -100,8 +100,10 @@ public class AssignCallAST extends AssignRHSAST {
     String className = symtab.getClassName();
     if (!(symtab.isTopLevel())) {
       if (symtab.getParent().getClassContext()) {
-        className = symtab.getParent().getClassName();
-        classFunction = true;
+        if (symtab.getParent().lookup("func " + funcName) != null) {
+          className = symtab.getParent().getClassName();
+          classFunction = true;
+        }
       }
     }
 

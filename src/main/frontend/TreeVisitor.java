@@ -50,14 +50,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     List<ClassesContext> classContexts = ctx.classes();
     List<FuncContext> funcContexts = ctx.func();
 
-    // Add all classes to global scope first in order
-    for (ClassesContext cc : classContexts) {
-      cs.add(visitClasses(cc));
-    }
     // Add all functions to global scope first in order to support recursion
     for (FuncContext fc : funcContexts) {
       fs.add(visitFunc(fc));
     }
+
+    // Add all classes to global scope first in order
+    for (ClassesContext cc : classContexts) {
+      cs.add(visitClasses(cc));
+    }
+
     // Iterates through functions and checks its body
     for (int i = 0; i < fs.size(); i++) {
       visitFuncWrapper(funcContexts.get(i), (FuncAST) fs.get(i));
