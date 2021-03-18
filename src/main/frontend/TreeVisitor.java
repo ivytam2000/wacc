@@ -78,6 +78,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     currSymTab.setClassContext();
 
     String className = ctx.IDENT().getText();
+    currSymTab.setClassName(className);
 
     ClassAttributeListAST classAttrListAST =
         ctx.attributeList() == null ? new ClassAttributeListAST()

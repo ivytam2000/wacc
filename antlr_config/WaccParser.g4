@@ -36,8 +36,6 @@ attribute: VISIBILITY type IDENT;
 // Class Attributes
 attributeList: attribute (SEMI_COLON attribute)* ;
 
-// Class Constructors
-//constructor: IDENT OPEN_PARENTHESES paramList? CLOSE_PARENTHESES END ;
 
 // Class Functions
 classFunc: VISIBILITY func ;

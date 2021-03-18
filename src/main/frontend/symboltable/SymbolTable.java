@@ -16,6 +16,7 @@ public class SymbolTable {
   private boolean skipLR = false;
   private final Map<String, Integer> varOffsets = new LinkedHashMap<>();
   private final SymbolTable parent;
+  private String className = "";
 
   public int getSize() {
     return size;
@@ -79,6 +80,10 @@ public class SymbolTable {
   public Set<String> getAllIdent() {
     return dictionary.keySet();
   }
+
+  public String getClassName() { return className; }
+
+  public void setClassName(String className) { this.className = className; }
 
   public void replaceType(String name, TypeID type) {
     SymbolTable temp = this;

@@ -97,14 +97,16 @@ public class AssignCallAST extends AssignRHSAST {
     // TODO: Maybe extract this out into a utils function called
     //  isClassContext or something
     boolean classFunction = false;
+    String className = symtab.getClassName();
     if (!(symtab.isTopLevel())) {
       if (symtab.getParent().getClassContext()) {
+        className = symtab.getParent().getClassName();
         classFunction = true;
       }
     }
 
     if (classFunction) {
-      CallClassFunctionAST.buildClassFunctionInstr(4, symtab, args, funcName);
+      CallClassFunctionAST.buildClassFunctionInstr(4, symtab, args, className, funcName);
     } else {
       List<Instr> instructions = new ArrayList<>();
 

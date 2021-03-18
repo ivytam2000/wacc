@@ -35,11 +35,13 @@ public class CallClassFunctionAST extends AssignRHSAST {
   private final SymbolTable symtab;
   private final CallClassFuncContext ctx;
   private final ArgListAST args;
+  private final Identifier classID;
 
   public CallClassFunctionAST(
       String varName, String funcName, ArgListAST args, SymbolTable symtab, CallClassFuncContext ctx) {
     super(symtab.lookupAll(varName), symtab);
     this.varName = varName;
+    this.classID = symtab.lookupAll(varName);
     this.funcName = funcName;
     this.symtab = symtab;
     this.ctx = ctx;
@@ -139,14 +141,14 @@ public class CallClassFunctionAST extends AssignRHSAST {
   @Override
   public void toAssembly() {
     int varNameOffset = symtab.getStackOffset(varName);
-    buildClassFunctionInstr(varNameOffset, symtab, args, funcName);
+    buildClassFunctionInstr(varNameOffset, symtab, args, classID.getType().getTypeName(), funcName);
 
   }
   // TODO : Should this be in utils or part of this class?
   // Function which builds the instructions when a call to a class's function
   // is made
   public static void buildClassFunctionInstr(int varNameOffset,
-      SymbolTable symtab, ArgListAST args, String funcName){
+      SymbolTable symtab, ArgListAST args, String className, String funcName){
     List<Instr> instructions = new ArrayList<>();
     int accOffset = 0;
     String transferReg = Instr.getTargetReg();
@@ -176,7 +178,7 @@ public class CallClassFunctionAST extends AssignRHSAST {
 
     // Function call
     instructions
-        .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + funcName));
+        .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + className + "_" + funcName));
 
     // Destroy stack - STACK ALWAYS HAS TO BE DESTROYED AS IT WILL ALWAYS
     // CONTAIN THE INSTANCE'S ADDRESS
