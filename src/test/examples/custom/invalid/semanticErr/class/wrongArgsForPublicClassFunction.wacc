@@ -3,7 +3,7 @@
 begin
   class H is 
     public int v
-    public int J(int v) is 
+    public int J(int z) is 
       return 0
     end
     public int f() is 
