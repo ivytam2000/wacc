@@ -181,15 +181,22 @@ public class AssignStatAST extends Node {
     // Evaluate the rhs to be assigned
     rhs.toAssembly();
 
+    Node lhsAssignNode = lhs.getAssignNode();
     int bytes = rhs.getIdentifier().getType().getBytes();
-    if (lhs.getAssignNode() instanceof ArrayElemAST ||
-        lhs.getAssignNode() instanceof PairElemAST) {
+    if (lhsAssignNode instanceof ArrayElemAST ||
+        lhsAssignNode instanceof PairElemAST) {
       String sndReg = Instr.incDepth();
       // Evaluate lhs to get actual address to store result
       lhs.toAssembly();
       String fstReg = Instr.decDepth();
       Instr.addToCurLabel(new STR(bytes, Condition.NO_CON, fstReg,
           AddrMode.buildAddr(sndReg)));
+
+      if (lhsAssignNode instanceof PairElemAST && lhsType instanceof VarID) {
+        Instr.addToCurLabel(new LDR(Instr.R4, AddrMode.buildAddrWithOffset(Instr.SP, symtab.getStackOffset(lhs.getIdentName()))));
+        Instr.addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
+        Instr.addToCurLabel(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, ((PairElemAST) lhsAssignNode).isFirst() ? 8 : 9)));
+      }
     } else {
       int offset = symtab.getStackOffset(lhs.getIdentName());
 

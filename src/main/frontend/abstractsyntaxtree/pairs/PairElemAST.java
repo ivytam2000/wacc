@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static backend.instructions.Instr.BYTE_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class PairElemAST extends Node {
@@ -153,7 +154,7 @@ public class PairElemAST extends Node {
 
       //TODO : REFACTOR
       if (check) {
-        instructions.add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, first ? 8 : 9)));
+        instructions.add(new LDR(-BYTE_SIZE, Condition.NO_CON, Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, first ? 8 : 9)));
         // Load actual typeNumber needed
         instructions.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(dynamicTypeNeeded)));
         BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);

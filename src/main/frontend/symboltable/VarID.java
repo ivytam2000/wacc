@@ -1,5 +1,7 @@
 package frontend.symboltable;
 
+import frontend.abstractsyntaxtree.Utils;
+
 public class VarID extends TypeID {
 
   private int size;
@@ -26,5 +28,6 @@ public class VarID extends TypeID {
 
   public void setTypeSoFar(TypeID typeSoFar) {
     this.typeSoFar = typeSoFar;
+    this.size = Utils.getSizeFromTypeNumber(Utils.getTypeNumber(typeSoFar));
   }
 }
