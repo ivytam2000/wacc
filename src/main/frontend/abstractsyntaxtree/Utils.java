@@ -38,7 +38,7 @@ public class Utils {
     assert (t2 != null);
 
     // Dynamic variables
-    if (t1.getType() instanceof VarID) {
+    if (t1.getType() instanceof VarID || t2.getType() instanceof VarID) {
       return true;
     }
 
@@ -184,15 +184,7 @@ public class Utils {
   private static int getTypeNumber(List<TypeID> ts) {
     int typeNumber = 0;
     for (TypeID t : ts) {
-      if (t instanceof IntID) {
-        typeNumber += 1;
-      } else if (t instanceof BoolID) {
-        typeNumber += (1 << 1);
-      } else if (t instanceof CharID) {
-        typeNumber += 1 << 2;
-      } else if (t instanceof StringID) {
-        typeNumber += 1 << 3;
-      }
+      typeNumber += getTypeNumber(t);
     }
     return typeNumber;
   }
@@ -208,6 +200,12 @@ public class Utils {
       return 1 << 2;
     } else if (type instanceof StringID) {
       return 1 << 3;
+    } else if (type instanceof NullID) {
+      return 1 << 4;
+    } else if (type instanceof PairID) {
+      return 1 << 5;
+    } else if (type instanceof ArrayID) {
+      return 1 << 6;
     }
     // SHOULD NOT REACH THIS POINT
     assert (false);

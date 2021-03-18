@@ -9,12 +9,14 @@ import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 
+import frontend.symboltable.VarID;
 import java.util.List;
 
 import static backend.instructions.Instr.addToCurLabel;
@@ -24,6 +26,8 @@ public class AssignRHSAST extends Node {
   protected final SymbolTable symtab;
   protected List<Node> children;
   private final boolean isNewpair;
+  private boolean lhsIsDynamic;
+  private int dynamicTypeNumber;
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab,
       List<Node> children, boolean isNewpair) {
@@ -31,12 +35,21 @@ public class AssignRHSAST extends Node {
     this.symtab = symtab;
     this.children = children;
     this.isNewpair = isNewpair;
+    this.lhsIsDynamic = false;
   }
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab) {
     super(identifier);
     this.symtab = symtab;
     this.isNewpair = false;
+  }
+
+  public void setLhsIsDynamic() {
+    lhsIsDynamic = true;
+  }
+
+  public void setDynamicTypeNumber(int dynamicTypeNumber) {
+    this.dynamicTypeNumber = dynamicTypeNumber;
   }
 
   @Override
@@ -58,10 +71,11 @@ public class AssignRHSAST extends Node {
       }
 
       // First pair elem
-      children.get(0).toAssembly();
+      Node fstChild = children.get(0);
+      fstChild.toAssembly();
       if (isNewpair) {
         Instr.decDepth();
-        TypeID child_1 = children.get(0).getIdentifier().getType();
+        TypeID child_1 = fstChild.getIdentifier().getType();
         addToCurLabel(new LDR(Instr.R0, AddrMode.buildVal(child_1.getBytes())));
 
         // Malloc cause its a new pair
@@ -70,16 +84,21 @@ public class AssignRHSAST extends Node {
             AddrMode.buildAddr(Instr.R0)));
         addToCurLabel(new STR(Instr.R0, AddrMode.buildAddr(Instr.R4)));
 
+//        addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(
+//            Utils.getTypeNumber(fstChild.getIdentifier().getType()))));
+//        addToCurLabel(new STR(Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, 8)));
+
         Instr.incDepth();
       }
 
       // Second pair elem
       // If children is NOT an array of pairs elem
       if (children.size() == 2) {
-        children.get(1).toAssembly();
+        Node sndChild = children.get(1);
+        sndChild.toAssembly();
         if (isNewpair) {
           Instr.decDepth();
-          TypeID child_2 = children.get(1).getIdentifier().getType();
+          TypeID child_2 = sndChild.getIdentifier().getType();
           addToCurLabel(
               new LDR(Instr.R0, AddrMode.buildVal(child_2.getBytes())));
 
@@ -89,14 +108,21 @@ public class AssignRHSAST extends Node {
               AddrMode.buildAddr(Instr.R0)));
           addToCurLabel(
               new STR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 4)));
+
+//          addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(
+//              Utils.getTypeNumber(sndChild.getIdentifier().getType()))));
+//          addToCurLabel(new STR(Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, 9)));
         }
       }
 
     } else {
       // if not newPair
       for (Node expr : children) {
-        if (expr instanceof IdentExprAST) {
-          ((IdentExprAST) expr).isNotLoading();
+        if (!lhsIsDynamic && expr instanceof IdentExprAST) {
+          if (expr.getIdentifier().getType() instanceof VarID) {
+            ((IdentExprAST) expr).setCheck();
+            ((IdentExprAST) expr).setDynamicTypeNeeded(dynamicTypeNumber);
+          }
         }
         expr.toAssembly();
       }

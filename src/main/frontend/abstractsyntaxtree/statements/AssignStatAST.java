@@ -117,12 +117,12 @@ public class AssignStatAST extends Node {
       }
 
       // Update symbol table about type so far
-      if (lhsType instanceof VarID) {
-        if (rhsType instanceof VarID) {
-          rhsType = ((VarID) rhsType).getTypeSoFar();
-        }
-        ((VarID) lhsType).setTypeSoFar(rhsType);
-      }
+//      if (lhsType instanceof VarID) {
+//        if (rhsType instanceof VarID) {
+//          rhsType = ((VarID) rhsType).getTypeSoFar();
+//        }
+//        ((VarID) lhsType).setTypeSoFar(rhsType);
+//      }
     }
   }
 

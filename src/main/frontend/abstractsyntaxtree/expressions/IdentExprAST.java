@@ -4,12 +4,10 @@ import antlr.WaccParser.IdentExprContext;
 import backend.instructions.*;
 import backend.BackEndGenerator;
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassAttributeID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
-import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
 import frontend.symboltable.VarID;
 import java.util.ArrayList;
@@ -19,7 +17,7 @@ public class IdentExprAST extends Node {
 
   private final SymbolTable currsymtab;
   private final IdentExprContext ctx;
-  private boolean isLoading;
+  private boolean check;
   // For dynamic variables
   private int dynamicTypeNeeded;
   private boolean allTypesSupported;
@@ -28,11 +26,11 @@ public class IdentExprAST extends Node {
     super();
     this.currsymtab = currsymtab;
     this.ctx = ctx;
-    this.isLoading = true;
+    this.check = false;
   }
 
-  public void isNotLoading() {
-    this.isLoading = false;
+  public void setCheck() {
+    this.check = true;
   }
 
   public String getName() {
@@ -95,7 +93,7 @@ public class IdentExprAST extends Node {
       instrs.add(loadVar);
 
       if (identifier instanceof VarID) {
-        if (isLoading && !allTypesSupported) {
+        if (check && !allTypesSupported) {
           // TODO: Can we just freely use R0 and R1? Need to save?
 
           // Get addr into R0

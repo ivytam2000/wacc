@@ -96,12 +96,12 @@ public class VarDecAST extends Node {
     }
 
     // Update symbol table about type so far
-    if (decType instanceof VarID) {
-      if (rhsType instanceof VarID) {
-        rhsType = ((VarID) rhsType).getTypeSoFar();
-      }
-      ((VarID) decType).setTypeSoFar(rhsType);
-    }
+//    if (decType instanceof VarID) {
+//      if (rhsType instanceof VarID) {
+//        rhsType = ((VarID) rhsType).getTypeSoFar();
+//      }
+//      ((VarID) decType).setTypeSoFar(rhsType);
+//    }
 
     // No need type check if RHS is a dynamic variable
     symtab.add(varName, decType);
@@ -112,10 +112,18 @@ public class VarDecAST extends Node {
   @Override
   public void toAssembly() {
     if (decType instanceof VarID) {
+      // informs rhs that lhs is dynamic, hence needs no runtime type checking
+      assignRHS.setLhsIsDynamic();
       if (rhsType instanceof VarID) {
         rhsType = ((VarID) rhsType).getTypeSoFar();
       }
+      // Updates typeSoFar to call print correctly if needed
       ((VarID) decType).setTypeSoFar(rhsType);
+    } else {
+      // If lhs not dynamic but rhs is, we need to check
+      if (rhsType instanceof VarID) {
+        assignRHS.setDynamicTypeNumber(Utils.getTypeNumber(decType));
+      }
     }
 
     List<Instr> instrs = new ArrayList<>();
