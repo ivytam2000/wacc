@@ -10,7 +10,7 @@ begin
         public string driversName;
         public bool isDriving 
         public bool drive() is      # Class methods
-            isDriving = true ; # Class methods can call normal functions
+            isDriving = returnTrue() ; # Class methods can call normal functions
             return isDriving
         end
         public string assignDriver() is
