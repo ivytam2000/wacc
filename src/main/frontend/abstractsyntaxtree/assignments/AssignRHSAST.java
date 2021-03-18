@@ -11,6 +11,7 @@ import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
+import frontend.abstractsyntaxtree.pairs.PairElemAST;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.PairID;
 import frontend.symboltable.SymbolTable;
@@ -84,9 +85,9 @@ public class AssignRHSAST extends Node {
             AddrMode.buildAddr(Instr.R0)));
         addToCurLabel(new STR(Instr.R0, AddrMode.buildAddr(Instr.R4)));
 
-//        addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(
-//            Utils.getTypeNumber(fstChild.getIdentifier().getType()))));
-//        addToCurLabel(new STR(Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, 8)));
+        addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(
+            Utils.getTypeNumber(fstChild.getIdentifier().getType()))));
+        addToCurLabel(new STR(Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, 8)));
 
         Instr.incDepth();
       }
@@ -109,19 +110,27 @@ public class AssignRHSAST extends Node {
           addToCurLabel(
               new STR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 4)));
 
-//          addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(
-//              Utils.getTypeNumber(sndChild.getIdentifier().getType()))));
-//          addToCurLabel(new STR(Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, 9)));
+          addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(
+              Utils.getTypeNumber(sndChild.getIdentifier().getType()))));
+          addToCurLabel(new STR(Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, 9)));
         }
       }
 
     } else {
       // if not newPair
       for (Node expr : children) {
-        if (!lhsIsDynamic && expr instanceof IdentExprAST) {
-          if (expr.getIdentifier().getType() instanceof VarID) {
-            ((IdentExprAST) expr).setCheck();
-            ((IdentExprAST) expr).setDynamicTypeNeeded(dynamicTypeNumber);
+        // TODO : REFACTOR LOL
+        if (!lhsIsDynamic) {
+          if (expr instanceof IdentExprAST) {
+            if (expr.getIdentifier().getType() instanceof VarID) {
+              ((IdentExprAST) expr).setCheck();
+              ((IdentExprAST) expr).setDynamicTypeNeeded(dynamicTypeNumber);
+            }
+          } else if (expr instanceof PairElemAST) {
+            if (expr.getIdentifier().getType() instanceof VarID) {
+              ((PairElemAST) expr).setCheck();
+              ((PairElemAST) expr).setDynamicTypeNeeded(dynamicTypeNumber);
+            }
           }
         }
         expr.toAssembly();

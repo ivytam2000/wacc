@@ -56,11 +56,6 @@ public class VarDecAST extends Node {
 
     Identifier variable = symtab.lookup(varName);
 
-    if (decType instanceof VarID && (rhsType instanceof OptionalPairID ||
-        rhsType instanceof ArrayID || rhsType instanceof ClassID)) {
-      SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
-    }
-
     // VarDec of nested pairs
     if (decType instanceof PairID && rhsType instanceof PairID) {
       PairID pairDecType = (PairID) decType;
@@ -94,14 +89,6 @@ public class VarDecAST extends Node {
           decType.getTypeName(), rhsType.getTypeName(), rhsCtx.getText(), line,
           pos);
     }
-
-    // Update symbol table about type so far
-//    if (decType instanceof VarID) {
-//      if (rhsType instanceof VarID) {
-//        rhsType = ((VarID) rhsType).getTypeSoFar();
-//      }
-//      ((VarID) decType).setTypeSoFar(rhsType);
-//    }
 
     // No need type check if RHS is a dynamic variable
     symtab.add(varName, decType);

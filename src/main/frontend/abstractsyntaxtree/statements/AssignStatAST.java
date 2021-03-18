@@ -59,11 +59,6 @@ public class AssignStatAST extends Node {
     int lhsLine = lhsCtx.getStart().getLine();
     int lhsPos = lhsCtx.getStart().getCharPositionInLine();
 
-    if (var instanceof VarID && (rhsType instanceof OptionalPairID ||
-        rhsType instanceof ArrayID || rhsType instanceof ClassID)) {
-      SemanticErrorCollector.addIncompatibleWithDynamicVariables(lhsLine, lhsPos);
-    }
-
     if (var == null) { // Undefined variable
       SemanticErrorCollector.addVariableUndefined(varName, lhsLine, lhsPos);
     } else {
@@ -115,14 +110,6 @@ public class AssignStatAST extends Node {
             lhsLine,
             rhsCtx.getStart().getCharPositionInLine());
       }
-
-      // Update symbol table about type so far
-//      if (lhsType instanceof VarID) {
-//        if (rhsType instanceof VarID) {
-//          rhsType = ((VarID) rhsType).getTypeSoFar();
-//        }
-//        ((VarID) lhsType).setTypeSoFar(rhsType);
-//      }
     }
   }
 
@@ -157,10 +144,15 @@ public class AssignStatAST extends Node {
     TypeID lhsType = lhs.getIdentifier().getType();
 
     if (lhsType instanceof VarID) {
+      rhs.setLhsIsDynamic();
       if (rhsType instanceof VarID) {
         rhsType = ((VarID) rhsType).getTypeSoFar();
       }
       ((VarID) lhsType).setTypeSoFar(rhsType);
+    } else {
+      if (rhsType instanceof VarID) {
+        rhs.setDynamicTypeNumber(Utils.getTypeNumber(lhsType));
+      }
     }
 
     // if assigning a class instance to another

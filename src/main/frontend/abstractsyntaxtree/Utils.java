@@ -229,4 +229,12 @@ public class Utils {
       ((IdentExprAST) node).setAllTypes();
     }
   }
+
+  public static int getSizeFromTypeNumber(int typeNumber) {
+    // bool or char
+    if (typeNumber == 2 || typeNumber == 4) {
+      return 1;
+    }
+    return 4;
+  }
 }

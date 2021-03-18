@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.pairs;
 
 import antlr.WaccParser.PairElemContext;
 import backend.BackEndGenerator;
+import backend.instructions.ADD;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Condition;
@@ -10,6 +11,7 @@ import backend.instructions.LDR;
 import backend.instructions.Label;
 import backend.instructions.MOV;
 import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.Utils;
 import frontend.abstractsyntaxtree.expressions.ArrayElemAST;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.abstractsyntaxtree.expressions.PairLiterAST;
@@ -31,6 +33,9 @@ public class PairElemAST extends Node {
   private String identName;
   private final PairElemContext ctx;
 
+  private int dynamicTypeNeeded;
+  private boolean check;
+
   public PairElemAST(
       Identifier childIdentifier,
       SymbolTable symtab,
@@ -44,6 +49,7 @@ public class PairElemAST extends Node {
     this.child = child;
     this.identName = ctx.getStart().getText();
     this.ctx = ctx;
+    this.check = false;
   }
 
   public String getName() {
@@ -54,13 +60,18 @@ public class PairElemAST extends Node {
     return first;
   }
 
+  public void setDynamicTypeNeeded(int dynamicTypeNeeded) {
+    this.dynamicTypeNeeded = dynamicTypeNeeded;
+  }
+
 
   @Override
   public void check() {
     // Checking expr has compatible type
     if (child instanceof IdentExprAST) {
       identName = ((IdentExprAST) child).getName();
-      if (!(symtab.lookupAll(identName) instanceof PairID)) {
+      Identifier type = symtab.lookupAll(identName);
+      if (!(type instanceof PairID || type instanceof VarID)) {
         addIncompatibleTypeSemanticError();
       }
 
@@ -82,7 +93,7 @@ public class PairElemAST extends Node {
     }
 
     // Set identifier
-    if (childIdentifier instanceof NullID) {
+    if (childIdentifier instanceof NullID || childIdentifier instanceof VarID) {
       setIdentifier(childIdentifier);
     } else {
       PairID childIDAsPair =
@@ -104,6 +115,10 @@ public class PairElemAST extends Node {
         ctx.getStart().getCharPositionInLine());
   }
 
+  public void setCheck() {
+    this.check = true;
+  }
+
   @Override
   public void toAssembly() {
     List<Instr> instructions = new ArrayList<>();
@@ -117,21 +132,45 @@ public class PairElemAST extends Node {
     BackEndGenerator.addToPreDefFuncs(Label.P_CHECK_NULL_POINTER);
     instructions.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_NULL_POINTER));
 
-    PairID type = (PairID) childIdentifier.getType();
-    TypeID elem_type;
+    TypeID childType = childIdentifier.getType();
+    if (childType instanceof PairID) {
+      PairID type = (PairID) childType;
+      TypeID elem_type;
 
-    if (first) {
-      // if its the first elem of pair
-      elem_type = type.getFstType();
-      instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
-    } else {
-      elem_type = type.getSndType();
-      // snd at offset 4 (i.e. 2nd pointer)
-      instructions.add(new LDR(Instr.R4,
-          AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+      if (first) {
+        // if its the first elem of pair
+        elem_type = type.getFstType();
+        instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
+      } else {
+        elem_type = type.getSndType();
+        // snd at offset 4 (i.e. 2nd pointer)
+        instructions.add(new LDR(Instr.R4,
+            AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+      }
+
+      instructions.add(new LDR(elem_type.getBytes(), Condition.NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R4)));
+    } else { // VarID
+
+      //TODO : REFACTOR
+      if (check) {
+        instructions.add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, first ? 8 : 9)));
+        // Load actual typeNumber needed
+        instructions.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(dynamicTypeNeeded)));
+        BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
+        instructions.add(new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+      }
+
+      if (first) {
+        // if its the first elem of pair
+        instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
+      } else {
+        // snd at offset 4 (i.e. 2nd pointer)
+        instructions.add(new LDR(Instr.R4,
+            AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+      }
+
+      instructions.add(new LDR(Utils.getSizeFromTypeNumber(dynamicTypeNeeded), Condition.NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R4)));
     }
-
-    instructions.add(new LDR(elem_type.getBytes(), Condition.NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R4)));
 
     addToCurLabel(instructions);
   }

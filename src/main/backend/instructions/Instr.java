@@ -10,7 +10,7 @@ public abstract class Instr {
   public static final int TRUE_VAL = 1;
   public static final int BYTE_SIZE = 1;
   public static final int WORD_SIZE = 4;
-  public static final int PAIR_SIZE = 8;
+  public static final int PAIR_SIZE = 10;
   public static final int WORD_BIT_LIMIT = 31;
 
   // Registers
