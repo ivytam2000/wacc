@@ -2,14 +2,12 @@ package frontend.abstractsyntaxtree.expressions;
 
 import antlr.WaccParser.IdentExprContext;
 import backend.instructions.*;
-import backend.BackEndGenerator;
 import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassAttributeID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.UnknownID;
-import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,32 +15,15 @@ public class IdentExprAST extends Node {
 
   private final SymbolTable currsymtab;
   private final IdentExprContext ctx;
-  private boolean check;
-  // For dynamic variables
-  private int dynamicTypeNeeded;
-  private boolean allTypesSupported;
 
   public IdentExprAST(SymbolTable currsymtab, IdentExprContext ctx) {
     super();
     this.currsymtab = currsymtab;
     this.ctx = ctx;
-    this.check = false;
-  }
-
-  public void setCheck() {
-    this.check = true;
   }
 
   public String getName() {
     return ctx.getText();
-  }
-
-  public void setDynamicTypeNeeded(int dynamicTypeNeeded) {
-    this.dynamicTypeNeeded = dynamicTypeNeeded;
-  }
-
-  public void setAllTypes() {
-    allTypesSupported = true;
   }
 
   public int getOffset() { return currsymtab.getStackOffset(getName()); }

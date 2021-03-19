@@ -3,6 +3,7 @@ package backend;
 import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
+import frontend.abstractsyntaxtree.pairs.PairElemAST;
 import frontend.symboltable.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -403,6 +404,57 @@ public class Utils {
         BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
         instrs.add(
             new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+        Instr.addToCurLabel(instrs);
+      }
+    }
+  }
+
+  private static final int PAIR_NUMBER = 32;
+
+  public static void dynamicPairCheck(Node node, int fstType, int sndType) {
+    if (node.getIdentifier() instanceof VarID) {
+      List<Instr> instrs = new ArrayList<>();
+
+      if (node instanceof IdentExprAST || node instanceof PairElemAST) {
+        int stackOffset;
+        if (node instanceof IdentExprAST) {
+          stackOffset = ((IdentExprAST) node).getOffset();
+        } else {
+          stackOffset = ((PairElemAST) node).getOffset();
+        }
+
+        BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
+
+        // Get addr into R0
+        instrs.add(
+            new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(stackOffset)));
+        // Load typeNumber (byte) from "box" into R0
+        instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0,
+            AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+        // Load actual typeNumber needed
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1,
+            AddrMode.buildImm(PAIR_NUMBER)));
+        // Jump to dynamic type check
+        instrs.add(
+            new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+
+        instrs.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
+        // Get fst typeNumber into r0
+        instrs.add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 8)));
+        // Get actual fst Type into R0
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(fstType)));
+        // Jump to dynamic check
+        instrs.add(
+            new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+
+        // Get snd typeNumber into r0
+        instrs.add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 9)));
+        // Get actual snd Type into R0
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(sndType)));
+        // Jump to dynamic check
+        instrs.add(
+            new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+
         Instr.addToCurLabel(instrs);
       }
     }

@@ -20,6 +20,7 @@ import frontend.symboltable.TypeID;
 import frontend.symboltable.VarID;
 import java.util.List;
 
+import static backend.Utils.dynamicPairCheck;
 import static backend.Utils.dynamicTypeCheckIfNeeded;
 import static backend.instructions.Instr.addToCurLabel;
 
@@ -28,8 +29,12 @@ public class AssignRHSAST extends Node {
   protected final SymbolTable symtab;
   protected List<Node> children;
   private final boolean isNewpair;
+  // For dynamic variables
   private boolean lhsIsDynamic;
   private int dynamicTypeNumber;
+  private int fstType;
+  private int sndType;
+
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab,
       List<Node> children, boolean isNewpair) {
@@ -37,7 +42,6 @@ public class AssignRHSAST extends Node {
     this.symtab = symtab;
     this.children = children;
     this.isNewpair = isNewpair;
-    this.lhsIsDynamic = false;
   }
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab) {
@@ -46,12 +50,20 @@ public class AssignRHSAST extends Node {
     this.isNewpair = false;
   }
 
-  public void setLhsIsDynamic() {
-    lhsIsDynamic = true;
-  }
-
   public void setDynamicTypeNumber(int dynamicTypeNumber) {
     this.dynamicTypeNumber = dynamicTypeNumber;
+  }
+
+  public void setFstType(int fstType) {
+    this.fstType = fstType;
+  }
+
+  public void setSndType(int sndType) {
+    this.sndType = sndType;
+  }
+
+  public void setLhsIsDynamic() {
+    this.lhsIsDynamic = true;
   }
 
   @Override
@@ -86,8 +98,9 @@ public class AssignRHSAST extends Node {
             AddrMode.buildAddr(Instr.R0)));
         addToCurLabel(new STR(Instr.R0, AddrMode.buildAddr(Instr.R4)));
 
+        Identifier fstType = fstChild.getIdentifier();
         addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(
-            Utils.getTypeNumber(fstChild.getIdentifier().getType()))));
+            Utils.getTypeNumber(fstType instanceof VarID ? ((VarID) fstType).getTypeSoFar() : fstType.getType()))));
         addToCurLabel(new STR(Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, 8)));
 
         Instr.incDepth();
@@ -111,8 +124,9 @@ public class AssignRHSAST extends Node {
           addToCurLabel(
               new STR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 4)));
 
+          Identifier sndType = sndChild.getIdentifier();
           addToCurLabel(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(
-              Utils.getTypeNumber(sndChild.getIdentifier().getType()))));
+              Utils.getTypeNumber(sndType instanceof VarID ? ((VarID) sndType).getTypeSoFar() : sndType.getType()))));
           addToCurLabel(new STR(Instr.R5, AddrMode.buildAddrWithOffset(Instr.R4, 9)));
         }
       }
@@ -120,22 +134,22 @@ public class AssignRHSAST extends Node {
     } else {
       // if not newPair
       for (Node expr : children) {
-        // TODO : REFACTOR LOL
-        if (!lhsIsDynamic) {
-          if (expr instanceof IdentExprAST) {
-            if (expr.getIdentifier().getType() instanceof VarID) {
-              ((IdentExprAST) expr).setCheck();
-              ((IdentExprAST) expr).setDynamicTypeNeeded(dynamicTypeNumber);
-            }
-          } else if (expr instanceof PairElemAST) {
-            if (expr.getIdentifier().getType() instanceof VarID) {
-              ((PairElemAST) expr).setCheck();
-              ((PairElemAST) expr).setDynamicTypeNeeded(dynamicTypeNumber);
-            }
-          }
+        // LHS static, RHS possibly dynamic (PairElem case)
+        if (!lhsIsDynamic && expr instanceof PairElemAST) {
+          ((PairElemAST) expr).setDynamicTypeNeeded(dynamicTypeNumber);
+          ((PairElemAST) expr).setCheck();
         }
+
         expr.toAssembly();
-        dynamicTypeCheckIfNeeded(expr, dynamicTypeNumber);
+
+        // LHS static type RHS possibly dynamic
+        if (fstType > 0 && sndType > 0) {
+          // Full pair case
+          dynamicPairCheck(expr, fstType, sndType);
+        } else if (!lhsIsDynamic) {
+          // Regular variable case
+          dynamicTypeCheckIfNeeded(expr, dynamicTypeNumber);
+        }
       }
     }
   }

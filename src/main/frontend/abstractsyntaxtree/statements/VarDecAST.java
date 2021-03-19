@@ -22,6 +22,7 @@ public class VarDecAST extends Node {
   private final AssignRHSAST assignRHS;
   private final Var_decl_statContext ctx;
   private final AssignRHSContext rhsCtx;
+  private boolean isDynamic;
 
   private TypeID rhsType;
 
@@ -38,6 +39,13 @@ public class VarDecAST extends Node {
     this.ctx = ctx;
     this.rhsCtx = ctx.assignRHS();
     this.assignRHS = assignRHS;
+    this.isDynamic = false;
+  }
+
+  @Override
+  public void setIdentifier(Identifier identifier) {
+    super.setIdentifier(identifier);
+    this.isDynamic = identifier instanceof VarID;
   }
 
   @Override
@@ -60,9 +68,26 @@ public class VarDecAST extends Node {
     if (decType instanceof PairID && rhsType instanceof PairID) {
       PairID pairDecType = (PairID) decType;
       PairID pairRhsType = (PairID) rhsType;
+      TypeID pairDecFst = pairDecType.getFstType();
+      TypeID pairDecSnd = pairDecType.getSndType();
+
+      // Block against nested dynamic arrays (Breaks code)
+      if (pairDecFst instanceof PairID) {
+        TypeID pairRhsTypeFst = pairRhsType.getFstType();
+        if (pairRhsTypeFst instanceof VarID) {
+          SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
+        }
+      }
+
+      if (pairDecSnd instanceof PairID) {
+        TypeID pairRhsTypeSnd = pairRhsType.getSndType();
+        if (pairRhsTypeSnd instanceof VarID) {
+          SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
+        }
+      }
 
       // Fst is a pair, set type based on RHS if not null
-      if (pairDecType.getFstType() instanceof PairID) {
+      if (pairDecFst instanceof PairID) {
         TypeID pairRhsTypeFst = pairRhsType.getFstType();
         if (!(pairRhsTypeFst instanceof NullID)) {
           pairDecType.setFst(pairRhsTypeFst);
@@ -70,7 +95,7 @@ public class VarDecAST extends Node {
       }
 
       // Snd is a pair, set type based on RHS if not null
-      if (pairDecType.getSndType() instanceof PairID) {
+      if (pairDecSnd instanceof PairID) {
         TypeID pairRhsTypeSnd = pairRhsType.getSndType();
         if (!(pairRhsTypeSnd instanceof NullID)) {
           pairDecType.setSnd(pairRhsTypeSnd);
@@ -98,7 +123,7 @@ public class VarDecAST extends Node {
 
   @Override
   public void toAssembly() {
-    if (decType instanceof VarID) {
+    if (isDynamic) {
       // informs rhs that lhs is dynamic, hence needs no runtime type checking
       assignRHS.setLhsIsDynamic();
       if (rhsType instanceof VarID) {
@@ -107,9 +132,13 @@ public class VarDecAST extends Node {
       // Updates typeSoFar to call print correctly if needed
       ((VarID) decType).setTypeSoFar(rhsType);
     } else {
-      // If lhs not dynamic but rhs is, we need to check
+      // If lhs not dynamic but rhs is, we need to do runtime check
       if (rhsType instanceof VarID) {
         assignRHS.setDynamicTypeNumber(Utils.getTypeNumber(decType));
+        if (decType instanceof PairID) {
+          assignRHS.setFstType(Utils.getTypeNumber(((PairID) decType).getFstType()));
+          assignRHS.setSndType(Utils.getTypeNumber(((PairID) decType).getSndType()));
+        }
       }
     }
 
@@ -128,7 +157,7 @@ public class VarDecAST extends Node {
     instrs.add(strInstr);
 
     // If dynamic variable, set type number in "box" (5th byte)
-    if (decType instanceof VarID) {
+    if (isDynamic) {
       // Get addr of variable
       instrs.add(new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(offset)));
       // Load the type number

@@ -59,6 +59,10 @@ public class AssignStatAST extends Node {
     int lhsLine = lhsCtx.getStart().getLine();
     int lhsPos = lhsCtx.getStart().getCharPositionInLine();
 
+    if (lhs.getAssignNode() instanceof PairElemAST && rhsType instanceof VarID) {
+      SemanticErrorCollector.addIncompatibleWithDynamicVariables(lhsLine, lhsPos);
+    }
+
     if (var == null) { // Undefined variable
       SemanticErrorCollector.addVariableUndefined(varName, lhsLine, lhsPos);
     } else {
@@ -144,14 +148,21 @@ public class AssignStatAST extends Node {
     TypeID lhsType = lhs.getIdentifier().getType();
 
     if (lhsType instanceof VarID) {
+      // informs rhs that lhs is dynamic, hence needs no runtime type checking
       rhs.setLhsIsDynamic();
       if (rhsType instanceof VarID) {
         rhsType = ((VarID) rhsType).getTypeSoFar();
       }
+      // Updates typeSoFar to call print correctly if needed
       ((VarID) lhsType).setTypeSoFar(rhsType);
     } else {
+      // If lhs not dynamic but rhs is, we need to do runtime check
       if (rhsType instanceof VarID) {
         rhs.setDynamicTypeNumber(Utils.getTypeNumber(lhsType));
+        if (lhsType instanceof PairID) {
+          rhs.setFstType(Utils.getTypeNumber(((PairID) lhsType).getFstType()));
+          rhs.setSndType(Utils.getTypeNumber(((PairID) lhsType).getSndType()));
+        }
       }
     }
 

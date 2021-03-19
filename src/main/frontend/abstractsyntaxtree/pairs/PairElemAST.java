@@ -65,6 +65,10 @@ public class PairElemAST extends Node {
     this.dynamicTypeNeeded = dynamicTypeNeeded;
   }
 
+  public int getOffset() {
+    return symtab.getStackOffset(identName);
+  }
+
 
   @Override
   public void check() {
@@ -152,11 +156,12 @@ public class PairElemAST extends Node {
       instructions.add(new LDR(elem_type.getBytes(), Condition.NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R4)));
     } else { // VarID
 
-      //TODO : REFACTOR
       if (check) {
+        // Load typeNumber of var
         instructions.add(new LDR(-BYTE_SIZE, Condition.NO_CON, Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, first ? 8 : 9)));
         // Load actual typeNumber needed
         instructions.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(dynamicTypeNeeded)));
+        // Jump to dynamic type check
         BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
         instructions.add(new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
       }
