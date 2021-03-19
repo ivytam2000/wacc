@@ -274,7 +274,7 @@ public class SemanticErrorCollector {
 
   public static void addIncompatibleWithDynamicVariables(int line, int pos) {
     String errorMsg = String.format(
-        "line %d:%d -- Cannot declare/assign nested pairs with dynamic variables",
+        "line %d:%d -- Cannot declare/assign nested pairs or array elements with dynamic variables",
         line, pos);
     SemanticErrorCollector.addError(errorMsg);
   }

@@ -459,4 +459,43 @@ public class Utils {
       }
     }
   }
+
+  private static final int ARRAY_NUMBER = 64;
+
+  public static void dynamicArrayCheck(Node node, int typeNumber) {
+    if (node.getIdentifier() instanceof VarID) {
+      List<Instr> instrs = new ArrayList<>();
+
+      if (node instanceof IdentExprAST) {
+        BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
+
+        int stackOffset = ((IdentExprAST) node).getOffset();
+
+        // Get addr into R0
+        instrs.add(
+            new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(stackOffset)));
+        // Load typeNumber (byte) from "box" into R0
+        instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0,
+            AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+        // Load actual typeNumber needed
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1,
+            AddrMode.buildImm(ARRAY_NUMBER)));
+        // Jump to dynamic type check
+        instrs.add(
+            new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+
+        // Load address of array
+        instrs.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
+        // Load child element number
+        instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+        // Load type number
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(typeNumber)));
+        // Jump to dtynamic check
+        instrs.add(
+            new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+
+        Instr.addToCurLabel(instrs);
+      }
+    }
+  }
 }

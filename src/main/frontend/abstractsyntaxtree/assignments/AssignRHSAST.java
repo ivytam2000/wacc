@@ -20,6 +20,7 @@ import frontend.symboltable.TypeID;
 import frontend.symboltable.VarID;
 import java.util.List;
 
+import static backend.Utils.dynamicArrayCheck;
 import static backend.Utils.dynamicPairCheck;
 import static backend.Utils.dynamicTypeCheckIfNeeded;
 import static backend.instructions.Instr.addToCurLabel;
@@ -34,6 +35,7 @@ public class AssignRHSAST extends Node {
   private int dynamicTypeNumber;
   private int fstType;
   private int sndType;
+  private int arrayType;
 
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab,
@@ -42,6 +44,7 @@ public class AssignRHSAST extends Node {
     this.symtab = symtab;
     this.children = children;
     this.isNewpair = isNewpair;
+    this.arrayType = 0;
   }
 
   public AssignRHSAST(Identifier identifier, SymbolTable symtab) {
@@ -64,6 +67,10 @@ public class AssignRHSAST extends Node {
 
   public void setLhsIsDynamic() {
     this.lhsIsDynamic = true;
+  }
+
+  public void setArrayType(int arrayType) {
+    this.arrayType = arrayType;
   }
 
   @Override
@@ -146,6 +153,9 @@ public class AssignRHSAST extends Node {
         if (fstType > 0 && sndType > 0) {
           // Full pair case
           dynamicPairCheck(expr, fstType, sndType);
+        } else if (arrayType > 0) {
+          // Array case
+          dynamicArrayCheck(expr, arrayType);
         } else if (!lhsIsDynamic) {
           // Regular variable case
           dynamicTypeCheckIfNeeded(expr, dynamicTypeNumber);

@@ -68,6 +68,11 @@ public class AssignStatAST extends Node {
     } else {
       TypeID lhsType = lhs.getIdentifier().getType();
 
+      // Overwriting an existing array element with dynamic variable
+      if (lhs.getAssignNode() instanceof ArrayElemAST && rhsType instanceof VarID) {
+        SemanticErrorCollector.addIncompatibleWithDynamicVariables(lhsLine, lhsPos);
+      }
+
       if (lhsType instanceof PairID && rhsType instanceof PairID) {
         // Within this branch, we know that lhs is definitely a pair
 

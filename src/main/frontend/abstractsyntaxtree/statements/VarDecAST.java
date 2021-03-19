@@ -103,6 +103,14 @@ public class VarDecAST extends Node {
       }
     }
 
+    if (decType instanceof ArrayID && rhsType instanceof ArrayID) {
+      if (((ArrayID) rhsType).getElemType() instanceof VarID) {
+        SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
+      }
+    }
+
+    // VarDec with dynamic array elements
+
     // Check if var is already declared unless it is a function name
     if (variable != null && !(variable instanceof FuncID)) {
       SemanticErrorCollector.addSymbolAlreadyDefined(varName, line, pos);
@@ -138,6 +146,8 @@ public class VarDecAST extends Node {
         if (decType instanceof PairID) {
           assignRHS.setFstType(Utils.getTypeNumber(((PairID) decType).getFstType()));
           assignRHS.setSndType(Utils.getTypeNumber(((PairID) decType).getSndType()));
+        } else if (decType instanceof ArrayID) {
+          assignRHS.setArrayType(Utils.getTypeNumber(((ArrayID) decType).getElemType()));
         }
       }
     }
