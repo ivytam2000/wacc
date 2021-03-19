@@ -1,5 +1,7 @@
 package backend;
 
+import static backend.instructions.Instr.BYTE_SIZE;
+
 import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.expressions.IdentExprAST;
@@ -226,7 +228,8 @@ public class Utils {
   private static void p_print_int(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs
+        .add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildStringVal(BackEndGenerator.addToDataSegment(INT_MSG))));
     instrs.addAll(printf());
@@ -310,7 +313,8 @@ public class Utils {
   private static void p_read_int(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs
+        .add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildStringVal(BackEndGenerator.addToDataSegment(INT_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
@@ -344,7 +348,8 @@ public class Utils {
   private static void p_read_char(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs
+        .add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildStringVal(BackEndGenerator.addToDataSegment(CHAR_MSG))));
     instrs.add(new ADD(false, Instr.R0, Instr.R0, AddrMode.buildImm(4)));
@@ -357,7 +362,8 @@ public class Utils {
   private static void p_print_reference(Map<String, List<Instr>> pdf) {
     List<Instr> instrs = new ArrayList<>();
     instrs.add(new PUSH(Instr.LR));
-    instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
+    instrs
+        .add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildReg(Instr.R0)));
     instrs.add(new LDR(Instr.R0, AddrMode
         .buildStringVal(BackEndGenerator.addToDataSegment(PTR_MSG))));
     instrs.addAll(printf());
@@ -373,7 +379,8 @@ public class Utils {
     instrs.add(new AND(Instr.R0, AddrMode.buildReg(Instr.R1)));
     instrs.add(new CMP(Instr.R0, AddrMode.buildImm(0)));
     instrs.add(new LDR(4, Condition.EQ, Instr.R0, AddrMode
-        .buildStringVal(BackEndGenerator.addToDataSegment(INCOMPATIBLE_DYN_VAR_MSG))));
+        .buildStringVal(
+            BackEndGenerator.addToDataSegment(INCOMPATIBLE_DYN_VAR_MSG))));
     BackEndGenerator.addToPreDefFuncs(Label.P_THROW_RUNTIME_ERROR);
     instrs.add(new BRANCH(true, Condition.EQ, Label.P_THROW_RUNTIME_ERROR));
 
@@ -385,7 +392,8 @@ public class Utils {
   public static final int ALL_TYPES_SUPPORTED = 127;
 
   public static void dynamicTypeCheckIfNeeded(Node node, int typeNumber) {
-    if (node.getIdentifier() instanceof VarID && typeNumber < ALL_TYPES_SUPPORTED) {
+    if (node.getIdentifier() instanceof VarID
+        && typeNumber < ALL_TYPES_SUPPORTED) {
       List<Instr> instrs = new ArrayList<>();
 
       if (node instanceof IdentExprAST) {
@@ -406,6 +414,32 @@ public class Utils {
             new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
         Instr.addToCurLabel(instrs);
       }
+    }
+  }
+
+  public static void dynamicPairElemCheck(Node node, int typeNumber) {
+    if (node.getIdentifier() instanceof VarID && node instanceof PairElemAST) {
+      List<Instr> instrs = new ArrayList<>();
+
+      BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
+
+      // Get base addr of var into R5
+      instrs.add(new ADD(false, Instr.R5, Instr.SP,
+          AddrMode.buildImm(((PairElemAST) node).getOffset())));
+      instrs.add(new LDR(Instr.R5, AddrMode.buildAddr(Instr.R5)));
+
+      // Load typeNumber of var
+      instrs.add(new LDR(-BYTE_SIZE, Condition.NO_CON, Instr.R0,
+          AddrMode.buildAddrWithOffset(Instr.R5,
+              ((PairElemAST) node).isFirst() ? 8 : 9)));
+      // Load actual typeNumber needed
+      instrs.add(
+          new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(typeNumber)));
+      // Jump to dynamic type check
+      instrs
+          .add(new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+
+      Instr.addToCurLabel(instrs);
     }
   }
 
@@ -440,17 +474,21 @@ public class Utils {
 
         instrs.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
         // Get fst typeNumber into r0
-        instrs.add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 8)));
+        instrs
+            .add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 8)));
         // Get actual fst Type into R0
-        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(fstType)));
+        instrs.add(
+            new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(fstType)));
         // Jump to dynamic check
         instrs.add(
             new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
 
         // Get snd typeNumber into r0
-        instrs.add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 9)));
+        instrs
+            .add(new LDR(Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, 9)));
         // Get actual snd Type into R0
-        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(sndType)));
+        instrs.add(
+            new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(sndType)));
         // Jump to dynamic check
         instrs.add(
             new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
@@ -487,9 +525,11 @@ public class Utils {
         // Load address of array
         instrs.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
         // Load child element number
-        instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
+        instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0,
+            AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
         // Load type number
-        instrs.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(typeNumber)));
+        instrs.add(
+            new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(typeNumber)));
         // Jump to dtynamic check
         instrs.add(
             new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));

@@ -138,45 +138,25 @@ public class PairElemAST extends Node {
     instructions.add(new BRANCH(true, Condition.NO_CON, Label.P_CHECK_NULL_POINTER));
 
     TypeID childType = childIdentifier.getType();
-    if (childType instanceof PairID) {
-      PairID type = (PairID) childType;
-      TypeID elem_type;
+    int bytes;
 
-      if (first) {
-        // if its the first elem of pair
-        elem_type = type.getFstType();
-        instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
-      } else {
-        elem_type = type.getSndType();
-        // snd at offset 4 (i.e. 2nd pointer)
-        instructions.add(new LDR(Instr.R4,
-            AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
-      }
-
-      instructions.add(new LDR(elem_type.getBytes(), Condition.NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R4)));
-    } else { // VarID
-
-      if (check) {
-        // Load typeNumber of var
-        instructions.add(new LDR(-BYTE_SIZE, Condition.NO_CON, Instr.R0, AddrMode.buildAddrWithOffset(Instr.R4, first ? 8 : 9)));
-        // Load actual typeNumber needed
-        instructions.add(new MOV(Condition.NO_CON, Instr.R1, AddrMode.buildImm(dynamicTypeNeeded)));
-        // Jump to dynamic type check
-        BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
-        instructions.add(new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
-      }
-
-      if (first) {
-        // if its the first elem of pair
-        instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
-      } else {
-        // snd at offset 4 (i.e. 2nd pointer)
-        instructions.add(new LDR(Instr.R4,
-            AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
-      }
-
-      instructions.add(new LDR(Utils.getSizeFromTypeNumber(dynamicTypeNeeded), Condition.NO_CON, Instr.R4, AddrMode.buildAddr(Instr.R4)));
+    if (first) {
+      // if its the first elem of pair
+      bytes = childType instanceof PairID ?
+          ((PairID) childType).getFstType().getBytes() :
+          Utils.getSizeFromTypeNumber(((VarID) childType).getTypeSoFar());
+      instructions.add(new LDR(Instr.R4, AddrMode.buildAddr(Instr.R4)));
+    } else {
+      bytes = childType instanceof PairID ?
+          ((PairID) childType).getSndType().getBytes() :
+          Utils.getSizeFromTypeNumber(((VarID) childType).getTypeSoFar());
+      // snd at offset 4 (i.e. 2nd pointer)
+      instructions.add(new LDR(Instr.R4,
+          AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
     }
+
+    instructions.add(new LDR(bytes, Condition.NO_CON, Instr.R4,
+        AddrMode.buildAddr(Instr.R4)));
 
     addToCurLabel(instructions);
   }

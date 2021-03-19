@@ -167,6 +167,8 @@ public class AssignStatAST extends Node {
         if (lhsType instanceof PairID) {
           rhs.setFstType(Utils.getTypeNumber(((PairID) lhsType).getFstType()));
           rhs.setSndType(Utils.getTypeNumber(((PairID) lhsType).getSndType()));
+        } else if (lhsType instanceof ArrayID) {
+          rhs.setArrayType(Utils.getTypeNumber(((ArrayID) lhsType).getElemType()));
         }
       }
     }

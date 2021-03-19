@@ -219,4 +219,13 @@ public class Utils {
     }
     return 4;
   }
+
+  public static int getSizeFromTypeNumber(TypeID type) {
+    int typeNumber = getTypeNumber(type);
+    // bool or char
+    if (typeNumber == 2 || typeNumber == 4) {
+      return 1;
+    }
+    return 4;
+  }
 }

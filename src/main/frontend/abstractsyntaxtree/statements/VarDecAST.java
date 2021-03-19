@@ -75,40 +75,34 @@ public class VarDecAST extends Node {
 
 
     // VarDec of nested pairs
-    if (decType instanceof PairID && rhsType instanceof PairID) {
-      PairID pairDecType = (PairID) decType;
+    if ((decType instanceof VarID || decType instanceof PairID) && rhsType instanceof PairID) {
       PairID pairRhsType = (PairID) rhsType;
-      TypeID pairDecFst = pairDecType.getFstType();
-      TypeID pairDecSnd = pairDecType.getSndType();
+
+      if (pairRhsType.getFstType() instanceof VarID ||
+          pairRhsType.getSndType() instanceof VarID) {
+        SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
+      }
 
       // Block against nested dynamic arrays (Breaks code)
-      if (pairDecFst instanceof PairID) {
-        TypeID pairRhsTypeFst = pairRhsType.getFstType();
-        if (pairRhsTypeFst instanceof VarID) {
-          SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
-        }
-      }
+      if (decType instanceof PairID) {
+        PairID pairDecType = (PairID) decType;
+        TypeID pairDecFst = pairDecType.getFstType();
+        TypeID pairDecSnd = pairDecType.getSndType();
 
-      if (pairDecSnd instanceof PairID) {
-        TypeID pairRhsTypeSnd = pairRhsType.getSndType();
-        if (pairRhsTypeSnd instanceof VarID) {
-          SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
+        // Fst is a pair, set type based on RHS if not null
+        if (pairDecFst instanceof PairID) {
+          TypeID pairRhsTypeFst = pairRhsType.getFstType();
+          if (!(pairRhsTypeFst instanceof NullID)) {
+            pairDecType.setFst(pairRhsTypeFst);
+          }
         }
-      }
 
-      // Fst is a pair, set type based on RHS if not null
-      if (pairDecFst instanceof PairID) {
-        TypeID pairRhsTypeFst = pairRhsType.getFstType();
-        if (!(pairRhsTypeFst instanceof NullID)) {
-          pairDecType.setFst(pairRhsTypeFst);
-        }
-      }
-
-      // Snd is a pair, set type based on RHS if not null
-      if (pairDecSnd instanceof PairID) {
-        TypeID pairRhsTypeSnd = pairRhsType.getSndType();
-        if (!(pairRhsTypeSnd instanceof NullID)) {
-          pairDecType.setSnd(pairRhsTypeSnd);
+        // Snd is a pair, set type based on RHS if not null
+        if (pairDecSnd instanceof PairID) {
+          TypeID pairRhsTypeSnd = pairRhsType.getSndType();
+          if (!(pairRhsTypeSnd instanceof NullID)) {
+            pairDecType.setSnd(pairRhsTypeSnd);
+          }
         }
       }
     }

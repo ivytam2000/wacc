@@ -22,6 +22,7 @@ import java.util.List;
 
 import static backend.Utils.dynamicArrayCheck;
 import static backend.Utils.dynamicPairCheck;
+import static backend.Utils.dynamicPairElemCheck;
 import static backend.Utils.dynamicTypeCheckIfNeeded;
 import static backend.instructions.Instr.addToCurLabel;
 
@@ -141,17 +142,14 @@ public class AssignRHSAST extends Node {
     } else {
       // if not newPair
       for (Node expr : children) {
-        // LHS static, RHS possibly dynamic (PairElem case)
-        if (!lhsIsDynamic && expr instanceof PairElemAST) {
-          ((PairElemAST) expr).setDynamicTypeNeeded(dynamicTypeNumber);
-          ((PairElemAST) expr).setCheck();
-        }
-
         expr.toAssembly();
 
         // LHS static type RHS possibly dynamic
         if (!lhsIsDynamic) {
-          if (fstType > 0 && sndType > 0) {
+          if (expr instanceof PairElemAST) {
+            // PairElem case
+            dynamicPairElemCheck(expr, dynamicTypeNumber);
+          } else if (fstType > 0 && sndType > 0) {
             // Full pair case
             dynamicPairCheck(expr, fstType, sndType);
           } else if (arrayType > 0) {
