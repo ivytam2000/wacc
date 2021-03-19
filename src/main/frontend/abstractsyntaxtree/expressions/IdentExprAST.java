@@ -45,6 +45,8 @@ public class IdentExprAST extends Node {
     allTypesSupported = true;
   }
 
+  public int getOffset() { return currsymtab.getStackOffset(getName()); }
+
   @Override
   public void check() {
     String varName = getName();
@@ -91,27 +93,6 @@ public class IdentExprAST extends Node {
       Instr loadVar = new LDR(identifier.getType().getBytes(), Condition.NO_CON,
           Instr.getTargetReg(), AddrMode.buildAddrWithOffset(Instr.SP, offset));
       instrs.add(loadVar);
-
-      if (identifier instanceof VarID) {
-        if (check && !allTypesSupported) {
-          // TODO: Can we just freely use R0 and R1? Need to save?
-
-          // Get addr into R0
-          instrs.add(
-              new ADD(false, Instr.R0, Instr.SP, AddrMode.buildImm(offset)));
-          // Load typeNumber (byte) from "box" into R0
-          instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0,
-              AddrMode.buildAddrWithOffset(Instr.R0, Instr.WORD_SIZE)));
-          // Load actual typeNumber needed
-          instrs.add(new MOV(Condition.NO_CON, Instr.R1,
-              AddrMode.buildImm(dynamicTypeNeeded)));
-          // Jump to dynamic type check
-          BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
-          instrs.add(
-              new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
-        }
-
-      }
 
       Instr.addToCurLabel(instrs);
     }

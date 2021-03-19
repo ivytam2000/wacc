@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static backend.instructions.Instr.addToCurLabel;
-import static frontend.abstractsyntaxtree.Utils.setAllTypes;
 
 public class PrintAST extends Node {
 
@@ -34,7 +33,6 @@ public class PrintAST extends Node {
   @Override
   public void toAssembly() {
     // Evaluate the expression
-    setAllTypes(expr);
     expr.toAssembly();
     List<Instr> instrs = new ArrayList<>();
 

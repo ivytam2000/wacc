@@ -2,9 +2,9 @@ package frontend.abstractsyntaxtree.statements;
 
 import antlr.WaccParser.Exit_statContext;
 import antlr.WaccParser.ExprContext;
+import backend.Utils;
 import backend.instructions.*;
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.Utils;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ExitID;
 import frontend.symboltable.IntID;
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static backend.instructions.Instr.addToCurLabel;
+import static frontend.abstractsyntaxtree.Utils.getTypeNumber;
 
 public class ExitAST extends Node {
 
@@ -47,8 +48,8 @@ public class ExitAST extends Node {
   @Override
   public void toAssembly() {
     // Evaluate the expression
-    Utils.getAndSetTypeNumber(expr, refToInt);
     expr.toAssembly();
+    Utils.dynamicTypeCheckIfNeeded(expr, getTypeNumber(refToInt));
 
     List<Instr> instrs = new ArrayList<>();
     // Move the expression from R4 to R0

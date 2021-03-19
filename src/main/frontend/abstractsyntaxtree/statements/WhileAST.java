@@ -12,7 +12,7 @@ import frontend.symboltable.UnknownID;
 import frontend.symboltable.VarID;
 
 import static backend.instructions.Instr.*;
-import static frontend.abstractsyntaxtree.Utils.getAndSetTypeNumber;
+import static frontend.abstractsyntaxtree.Utils.getTypeNumber;
 
 public class WhileAST extends Node {
 
@@ -46,8 +46,6 @@ public class WhileAST extends Node {
           exprCtx.getStart().getLine(),
           exprCtx.getStart().getCharPositionInLine());
     }
-
-    getAndSetTypeNumber(expr, (TypeID) symtab.lookupAll("bool"));
   }
 
   @Override
@@ -63,6 +61,9 @@ public class WhileAST extends Node {
 
     setCurLabel(nextStatLabel);
     expr.toAssembly();
+    Utils.dynamicTypeCheckIfNeeded(expr,
+        getTypeNumber((TypeID) symtab.lookupAll("bool")));
+
     // Test if the expression is true if it is we branch the bodyLabel
     addToCurLabel(new CMP(Instr.R4, AddrMode.buildImm(1)));
     addToCurLabel(new BRANCH(false, Condition.EQ, bodyLabel));

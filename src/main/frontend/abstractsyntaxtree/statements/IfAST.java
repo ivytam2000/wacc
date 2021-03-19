@@ -10,6 +10,7 @@ import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.VarID;
 
+import static backend.Utils.dynamicTypeCheckIfNeeded;
 import static backend.Utils.getEndRoutine;
 import static backend.Utils.getStartRoutine;
 import static backend.instructions.Instr.*;
@@ -55,14 +56,14 @@ public class IfAST extends Node {
           exprCtx.getStart().getLine(),
           exprCtx.getStart().getCharPositionInLine());
     }
-
-    Utils.getAndSetTypeNumber(expr, (TypeID) thenScope.lookupAll("bool"));
   }
 
   @Override
   public void toAssembly() {
     // Evaluate the boolean expression
     expr.toAssembly();
+    dynamicTypeCheckIfNeeded(expr,
+        Utils.getTypeNumber((TypeID) thenScope.lookupAll("bool")));
 
     String elseStatLabel = getNextLabel();
     String nextStatLabel = getNextLabel();

@@ -26,6 +26,8 @@ import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.Utils.ALL_TYPES_SUPPORTED;
+import static backend.Utils.dynamicTypeCheckIfNeeded;
 import static backend.instructions.Instr.FALSE_VAL;
 import static backend.instructions.Instr.TRUE_VAL;
 import static backend.instructions.Instr.addToCurLabel;
@@ -38,6 +40,7 @@ public class BinOpExprAST extends Node {
   private final Node eL;
   private final Node eR;
   private final ExprContext ctx;
+  private int typeNumber;
 
   public BinOpExprAST(SymbolTable symtab, int expectedExprTypes,
       String op, Node eL, Node eR, ExprContext ctx) {
@@ -48,6 +51,7 @@ public class BinOpExprAST extends Node {
     this.eL = eL;
     this.eR = eR;
     this.ctx = ctx;
+    this.typeNumber = 0;
   }
 
   @Override
@@ -63,8 +67,7 @@ public class BinOpExprAST extends Node {
             .addTypeMismatch(ctx.getStart().getLine(),
                 ctx.getStart().getCharPositionInLine(), op);
       }
-      Utils.setAllTypes(eL);
-      Utils.setAllTypes(eR);
+      typeNumber = ALL_TYPES_SUPPORTED;
     } else {
       // Check for left and right expr of binOp separated to pin point error
 
@@ -89,8 +92,6 @@ public class BinOpExprAST extends Node {
         expectedTypes = "bool";
         types.add((TypeID) symtab.lookupAll("bool"));
       }
-      Utils.getAndSetTypeNumber(eL, types);
-      Utils.getAndSetTypeNumber(eR, types);
 
       if (errorL) {
         SemanticErrorCollector
@@ -107,6 +108,8 @@ public class BinOpExprAST extends Node {
                 ctx.getStop().getLine(),
                 ctx.getStop().getCharPositionInLine());
       }
+
+      typeNumber = Utils.getTypeNumber(types);
     }
   }
 
@@ -118,10 +121,12 @@ public class BinOpExprAST extends Node {
     // Evaluate eL
     String fstReg = Instr.getTargetReg();
     eL.toAssembly();
+    dynamicTypeCheckIfNeeded(eL, typeNumber);
 
     // Evaluate eR
     String sndReg = Instr.incDepth();
     eR.toAssembly();
+    dynamicTypeCheckIfNeeded(eR, typeNumber);
     Instr.decDepth();
 
     List<Instr> instrs = new ArrayList<>();

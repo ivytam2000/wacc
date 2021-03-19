@@ -1,7 +1,8 @@
 package frontend.abstractsyntaxtree.expressions;
 
-import antlr.WaccParser.ArithOpExpr_1Context;
-import antlr.WaccParser.ArithOpExpr_2Context;
+import static backend.Utils.dynamicTypeCheckIfNeeded;
+import static backend.instructions.Instr.addToCurLabel;
+
 import antlr.WaccParser.ExprContext;
 import backend.BackEndGenerator;
 import backend.instructions.ADD;
@@ -26,8 +27,6 @@ import frontend.symboltable.UnknownID;
 import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
-
-import static backend.instructions.Instr.addToCurLabel;
 
 public class ArithOpExprAST extends Node {
 
@@ -71,23 +70,23 @@ public class ArithOpExprAST extends Node {
               ctx.getStop().getCharPositionInLine());
     }
 
-    // For dynamic type
-    TypeID refToInt = getIdentifier().getType();
-    Utils.getAndSetTypeNumber(eL, refToInt);
-    Utils.getAndSetTypeNumber(eR, refToInt);
   }
 
   @Override
   public void toAssembly() {
     // eL op eR
     // Evaluate eL first, then eR and finally op
+    int intTypeNumber = Utils.getTypeNumber(getIdentifier().getType());
 
     // Evaluate eL
     eL.toAssembly();
+    dynamicTypeCheckIfNeeded(eL, intTypeNumber);
+
 
     // Evaluate eR (Use next register)
     String sndReg = Instr.incDepth();
     eR.toAssembly();
+    dynamicTypeCheckIfNeeded(eR, intTypeNumber);
     String fstReg = Instr.decDepth();
 
 

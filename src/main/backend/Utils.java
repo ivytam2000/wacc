@@ -1,6 +1,8 @@
 package backend;
 
 import backend.instructions.*;
+import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.expressions.IdentExprAST;
 import frontend.symboltable.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -377,5 +379,32 @@ public class Utils {
     instrs.add(new POP(Instr.PC));
 
     pdf.put(Label.P_DYNAMIC_TYPE_CHECK, instrs);
+  }
+
+  public static final int ALL_TYPES_SUPPORTED = 127;
+
+  public static void dynamicTypeCheckIfNeeded(Node node, int typeNumber) {
+    if (node.getIdentifier() instanceof VarID && typeNumber < ALL_TYPES_SUPPORTED) {
+      List<Instr> instrs = new ArrayList<>();
+
+      if (node instanceof IdentExprAST) {
+        int stackOffset = ((IdentExprAST) node).getOffset();
+
+        // Get addr into R0
+        instrs.add(
+            new ADD(false, Instr.R0, Instr.SP, AddrMode.buildImm(stackOffset)));
+        // Load typeNumber (byte) from "box" into R0
+        instrs.add(new LDR(-Instr.BYTE_SIZE, Condition.NO_CON, Instr.R0,
+            AddrMode.buildAddrWithOffset(Instr.R0, Instr.WORD_SIZE)));
+        // Load actual typeNumber needed
+        instrs.add(new MOV(Condition.NO_CON, Instr.R1,
+            AddrMode.buildImm(typeNumber)));
+        // Jump to dynamic type check
+        BackEndGenerator.addToPreDefFuncs(Label.P_DYNAMIC_TYPE_CHECK);
+        instrs.add(
+            new BRANCH(true, Condition.NO_CON, Label.P_DYNAMIC_TYPE_CHECK));
+        Instr.addToCurLabel(instrs);
+      }
+    }
   }
 }

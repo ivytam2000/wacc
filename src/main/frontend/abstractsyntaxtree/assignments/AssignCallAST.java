@@ -21,6 +21,7 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.Utils.dynamicTypeCheckIfNeeded;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class AssignCallAST extends AssignRHSAST {
@@ -106,8 +107,8 @@ public class AssignCallAST extends AssignRHSAST {
       Node argNode = args.getArguments().get(i);
 
       // Puts the next argument into the transfer register
-      Utils.getAndSetTypeNumber(argNode, params.get(i));
       argNode.toAssembly();
+      dynamicTypeCheckIfNeeded(argNode, Utils.getTypeNumber(params.get(i)));
 
       // Record total offset to destroy stack after
       int offset = argNode.getIdentifier().getType().getBytes();

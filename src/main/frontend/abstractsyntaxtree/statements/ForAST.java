@@ -12,7 +12,7 @@ import frontend.symboltable.TypeID;
 import frontend.symboltable.VarID;
 
 import static backend.instructions.Instr.*;
-import static frontend.abstractsyntaxtree.Utils.getAndSetTypeNumber;
+import static frontend.abstractsyntaxtree.Utils.getTypeNumber;
 
 public class ForAST extends Node {
 
@@ -35,8 +35,6 @@ public class ForAST extends Node {
 
   @Override
   public void check() {
-    TypeID refToInt = (TypeID) currSymtab.lookupAll("int");
-
     // Only allow ints
     TypeID startType = startExpr.getIdentifier().getType();
     TypeID endType = endExpr.getIdentifier().getType();
@@ -49,7 +47,6 @@ public class ForAST extends Node {
           ctx.expr(1).getStart().getLine(),
           ctx.expr(1).getStart().getCharPositionInLine());
     }
-    getAndSetTypeNumber(endExpr, refToInt);
 
     if (!(startType instanceof IntID || startType instanceof VarID)) {
       SemanticErrorCollector.addIncompatibleType(
@@ -59,13 +56,14 @@ public class ForAST extends Node {
           ctx.expr(0).getStart().getLine(),
           ctx.expr(0).getStart().getCharPositionInLine());
     }
-    getAndSetTypeNumber(startExpr, refToInt);
 
     currSymtab.getParent().incrementSize(startType.getBytes());
   }
 
   @Override
   public void toAssembly() {
+    int intTypeNumber = getTypeNumber((TypeID) currSymtab.lookupAll("int"));
+
     // **** Variable Declaration ******
     // Generate the offset of the variable
     int offset =
@@ -75,6 +73,7 @@ public class ForAST extends Node {
     // offsets
     currSymtab.getParent().addOffset(varName, offset);
     startExpr.toAssembly();
+    Utils.dynamicTypeCheckIfNeeded(startExpr, intTypeNumber);
     // Stores the value in the offset stack address
     STR strInstr = new STR(Instr.R4,
         AddrMode.buildAddrWithOffset(Instr.SP, offset));
@@ -93,6 +92,7 @@ public class ForAST extends Node {
     addToCurLabel(loadVar);
     String sndReg = Instr.incDepth();
     endExpr.toAssembly();
+    Utils.dynamicTypeCheckIfNeeded(endExpr, intTypeNumber);
     Instr.decDepth();
     addToCurLabel(new CMP(fstReg, AddrMode.buildReg(sndReg)));
     addToCurLabel(new MOV(Condition.LT, fstReg, AddrMode.buildImm(TRUE_VAL)));

@@ -181,7 +181,7 @@ public class Utils {
   }
 
   // Assigns number depending on type (For dynamic variables)
-  private static int getTypeNumber(List<TypeID> ts) {
+  public static int getTypeNumber(List<TypeID> ts) {
     int typeNumber = 0;
     for (TypeID t : ts) {
       typeNumber += getTypeNumber(t);
@@ -210,24 +210,6 @@ public class Utils {
     // SHOULD NOT REACH THIS POINT
     assert (false);
     return typeNumber;
-  }
-
-  public static void getAndSetTypeNumber(Node node, List<TypeID> types) {
-    if (node instanceof IdentExprAST) {
-      ((IdentExprAST) node).setDynamicTypeNeeded(getTypeNumber(types));
-    }
-  }
-
-  public static void getAndSetTypeNumber(Node node, TypeID type) {
-    if (node instanceof IdentExprAST) {
-      ((IdentExprAST) node).setDynamicTypeNeeded(getTypeNumber(type));
-    }
-  }
-
-  public static void setAllTypes(Node node) {
-    if (node instanceof IdentExprAST) {
-      ((IdentExprAST) node).setAllTypes();
-    }
   }
 
   public static int getSizeFromTypeNumber(int typeNumber) {

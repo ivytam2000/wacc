@@ -25,6 +25,7 @@ import frontend.symboltable.VarID;
 import java.util.ArrayList;
 import java.util.List;
 
+import static backend.Utils.dynamicTypeCheckIfNeeded;
 import static backend.instructions.Instr.*;
 
 public class UnOpExprAST extends Node {
@@ -100,7 +101,6 @@ public class UnOpExprAST extends Node {
               ctx.getStart().getCharPositionInLine());
     }
 
-    Utils.getAndSetTypeNumber(exprAST, correctExprType);
     setIdentifier(unOpExprType);
   }
 
@@ -112,6 +112,7 @@ public class UnOpExprAST extends Node {
     // Evaluate exprAST
     String targetReg = Instr.getTargetReg();
     exprAST.toAssembly();
+    dynamicTypeCheckIfNeeded(exprAST, Utils.getTypeNumber(correctExprType));
 
     // Evaluate op
     List<Instr> instrs = new ArrayList<>();

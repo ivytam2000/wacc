@@ -20,6 +20,7 @@ import frontend.symboltable.TypeID;
 import frontend.symboltable.VarID;
 import java.util.List;
 
+import static backend.Utils.dynamicTypeCheckIfNeeded;
 import static backend.instructions.Instr.addToCurLabel;
 
 public class AssignRHSAST extends Node {
@@ -134,6 +135,7 @@ public class AssignRHSAST extends Node {
           }
         }
         expr.toAssembly();
+        dynamicTypeCheckIfNeeded(expr, dynamicTypeNumber);
       }
     }
   }
