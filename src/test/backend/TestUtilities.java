@@ -65,6 +65,43 @@ public class TestUtilities {
   }
 
   /**
+   * Checks for a given folder, if the .wacc files return with a correct exit code
+   */
+  public static void exitCodeFromOurCompilerExitsWithCorrectCode(
+      String folderPath, int code) throws IOException {
+    List<String> names = getTestNames(folderPath);
+    List<String> folderNames = getFolderNames(folderPath);
+
+    for (String folder : folderNames) {
+      executablesFromOurCompilerMatchesReferenceCompiler(
+          folderPath + folder + "/");
+    }
+
+    for (String name : names) {
+      String sourceFilePath = folderPath + name;
+      String textFilePath = getTextFilePath(folderPath, name);
+      try {
+        assertTrue(
+            exitCodeMatches(sourceFilePath, code));
+      } catch (AssertionError e) {
+        StringBuilder errorMsg = new StringBuilder(name)
+            .append(": Exit code isn't " + code + ".\n");
+        fail(errorMsg.toString());
+      } catch (IOException e) {
+        fail(e.toString());
+      }
+    }
+  }
+
+  /**
+   * Returns if the exit codes match
+   */
+  private static boolean exitCodeMatches(String filePath, int code) throws IOException {
+    int actualCode = getOurCompilerExitCode(filePath);
+    return actualCode == code;
+  }
+
+  /**
    * Returns the standard output from a process containing terminal commands.
    */
   static String getOutputFromProcess(ProcessBuilder builder)
@@ -107,6 +144,63 @@ public class TestUtilities {
     String[] splitPaths = filePath.split("/");
     filePath = splitPaths[splitPaths.length - 1];
     return filePath.replace(".wacc", ".s");
+  }
+
+  /**
+   * Compiles and emulates a .wacc file, returning the exit code from the
+   * resulting executable compiled by our compiler.
+   */
+  private static int getOurCompilerExitCode(String filePath) throws IOException {
+    // Get assembly file path
+    String assFilePath = assembleFileWithOurCompiler(filePath);
+    String exeFilePath = assFilePath.replace(".s", ".exe");
+
+    // Get standard output stream from reference emulator
+    ProcessBuilder builder = new ProcessBuilder();
+    String os = System.getProperty("os.name").toLowerCase();
+
+    if (os.contains("mac")) {
+      // Uses ref emulate to send HTTP request to retrieve assembly outputs
+      // If you want to run the pipeline tests, build Docker image from Dockerfile and run the image
+      builder.command("./refEmulate", assFilePath);
+
+      // Gets output from command line
+      String output = getOutputFromProcess(builder);
+      String[] splitOutput = output.split("\n");
+
+      for (String line : splitOutput) {
+        if (line.contains("The exit code is:")) {
+          // retrieve exit code from program
+          String[] exitCodeSplit = line.split(": ");
+          String exitCode = exitCodeSplit[exitCodeSplit.length - 1];
+          exitCode = exitCode.replace(".", "");
+          return Integer.parseInt(exitCode);
+        }
+      }
+    } else {
+      // For Linux and CI/CD, uses Linux GCC and QEMU to retrieve assembly output
+      builder
+          .command("arm-linux-gnueabi-gcc", "-o", exeFilePath,
+              "-mcpu=arm1176jzf-s", "-mtune=arm1176jzf-s", assFilePath);
+      Process process = builder.start();
+      try {
+        process.waitFor();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeFilePath);
+      try {
+        process.waitFor();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+      builder.command("echo", "$?");
+      String exitCodeString = getOutputFromProcess(builder);
+      return Integer.parseInt(exitCodeString);
+    }
+
+    // shouldn't get to this point
+    return 0;
   }
 
   /**
@@ -213,5 +307,10 @@ public class TestUtilities {
       return false;
     }
     return actualHash == expectedHash;
+  }
+
+
+  public static void main(String[] args) throws IOException {
+    System.out.println(exitCodeMatches("test.wacc", 255));
   }
 }
