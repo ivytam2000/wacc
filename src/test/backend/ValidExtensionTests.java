@@ -1,6 +1,7 @@
 package backend;
 
 import static backend.TestUtilities.executablesFromOurCompilerMatchesReferenceCompiler;
+import static backend.TestUtilities.exitCodeFromOurCompilerExitsWithCorrectCode;
 
 import java.io.IOException;
 import org.junit.Test;
@@ -21,7 +22,6 @@ public class ValidExtensionTests {
   }
 
   // Made test cases for extension: Additional Loop Control Statements
-
   @Test
   public void validExtensionForLoopTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
@@ -33,5 +33,12 @@ public class ValidExtensionTests {
   public void validExtensionForClassesTest() throws IOException {
     executablesFromOurCompilerMatchesReferenceCompiler(
         TestUtilities.EXT_VALID_DIR + "class/");
+  }
+
+  // Made test cases for extension: Classes with dynamic variables (var)
+  @Test
+  public void validExtensionForClassesRunTimeErrTest() throws IOException {
+    exitCodeFromOurCompilerExitsWithCorrectCode(
+        TestUtilities.EXT_VALID_DIR + "/runtimeErr/class/", 255);
   }
 }
