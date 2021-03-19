@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 public class TestUtilities {
@@ -189,14 +190,13 @@ public class TestUtilities {
         e.printStackTrace();
       }
       builder.command("qemu-arm", "-L", "/usr/arm-linux-gnueabi/", exeFilePath);
+      Process exec = builder.start();
       try {
-        process.waitFor();
+        exec.waitFor();
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-      builder.command("echo", "$?");
-      String exitCodeString = getOutputFromProcess(builder);
-      return Integer.parseInt(exitCodeString);
+      return exec.exitValue();
     }
 
     // shouldn't get to this point

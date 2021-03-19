@@ -41,4 +41,18 @@ public class ValidExtensionTests {
     exitCodeFromOurCompilerExitsWithCorrectCode(
         TestUtilities.EXT_VALID_DIR + "/runtimeErr/class/", 255);
   }
+
+  @Test
+  public void validExtensionForDynamicVariableTest() throws IOException {
+    exitCodeFromOurCompilerExitsWithCorrectCode(
+        TestUtilities.EXT_VALID_DIR + "/dynamicVariables/", 0);
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        TestUtilities.EXT_VALID_DIR + "/dynamicVariables/");
+  }
+
+  @Test
+  public void validExtensionForDynamicVariableRunTimeErrTest() throws IOException {
+    exitCodeFromOurCompilerExitsWithCorrectCode(
+        TestUtilities.EXT_VALID_DIR + "/runtimeErr/dynamicVariables/", 255);
+  }
 }

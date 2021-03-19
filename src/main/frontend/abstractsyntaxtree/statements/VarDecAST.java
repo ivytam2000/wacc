@@ -50,7 +50,8 @@ public class VarDecAST extends Node {
 
   @Override
   public void check() {
-    symtab.incrementSize(decType instanceof VarID ? DYNAMIC_BOX_SIZE : decType.getBytes());
+    symtab.incrementSize(
+        decType instanceof VarID ? DYNAMIC_BOX_SIZE : decType.getBytes());
 
     // if function is not defined or class is not defined
     if (assignRHS.getIdentifier() == null) {
@@ -73,36 +74,29 @@ public class VarDecAST extends Node {
       }
     }
 
+    // ****** CANNOT DECLARE NESTED DYNAMIC VARIABLE PAIRS ******
 
     // VarDec of nested pairs
-    if ((decType instanceof VarID || decType instanceof PairID) && rhsType instanceof PairID) {
-      PairID pairRhsType = (PairID) rhsType;
+    if (decType instanceof PairID && rhsType instanceof PairID) {
 
-      if (pairRhsType.getFstType() instanceof VarID ||
-          pairRhsType.getSndType() instanceof VarID) {
-        SemanticErrorCollector.addIncompatibleWithDynamicVariables(line, pos);
+      PairID pairRhsType = (PairID) rhsType;
+      PairID pairDecType = (PairID) decType;
+      TypeID pairDecFst = pairDecType.getFstType();
+      TypeID pairDecSnd = pairDecType.getSndType();
+
+      // Fst is a pair, set type based on RHS if not null
+      if (pairDecFst instanceof PairID) {
+        TypeID pairRhsTypeFst = pairRhsType.getFstType();
+        if (!(pairRhsTypeFst instanceof NullID)) {
+          pairDecType.setFst(pairRhsTypeFst);
+        }
       }
 
-      // Block against nested dynamic arrays (Breaks code)
-      if (decType instanceof PairID) {
-        PairID pairDecType = (PairID) decType;
-        TypeID pairDecFst = pairDecType.getFstType();
-        TypeID pairDecSnd = pairDecType.getSndType();
-
-        // Fst is a pair, set type based on RHS if not null
-        if (pairDecFst instanceof PairID) {
-          TypeID pairRhsTypeFst = pairRhsType.getFstType();
-          if (!(pairRhsTypeFst instanceof NullID)) {
-            pairDecType.setFst(pairRhsTypeFst);
-          }
-        }
-
-        // Snd is a pair, set type based on RHS if not null
-        if (pairDecSnd instanceof PairID) {
-          TypeID pairRhsTypeSnd = pairRhsType.getSndType();
-          if (!(pairRhsTypeSnd instanceof NullID)) {
-            pairDecType.setSnd(pairRhsTypeSnd);
-          }
+      // Snd is a pair, set type based on RHS if not null
+      if (pairDecSnd instanceof PairID) {
+        TypeID pairRhsTypeSnd = pairRhsType.getSndType();
+        if (!(pairRhsTypeSnd instanceof NullID)) {
+          pairDecType.setSnd(pairRhsTypeSnd);
         }
       }
     }
@@ -148,10 +142,13 @@ public class VarDecAST extends Node {
       if (rhsType instanceof VarID) {
         assignRHS.setDynamicTypeNumber(Utils.getTypeNumber(decType));
         if (decType instanceof PairID) {
-          assignRHS.setFstType(Utils.getTypeNumber(((PairID) decType).getFstType()));
-          assignRHS.setSndType(Utils.getTypeNumber(((PairID) decType).getSndType()));
+          assignRHS
+              .setFstType(Utils.getTypeNumber(((PairID) decType).getFstType()));
+          assignRHS
+              .setSndType(Utils.getTypeNumber(((PairID) decType).getSndType()));
         } else if (decType instanceof ArrayID) {
-          assignRHS.setArrayType(Utils.getTypeNumber(((ArrayID) decType).getElemType()));
+          assignRHS.setArrayType(
+              Utils.getTypeNumber(((ArrayID) decType).getElemType()));
         }
       }
     }
@@ -175,7 +172,8 @@ public class VarDecAST extends Node {
       // Get addr of variable
       instrs.add(new ADD(false, Instr.R4, Instr.SP, AddrMode.buildImm(offset)));
       // Load the type number
-      instrs.add(new MOV(Condition.NO_CON, Instr.R5, AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
+      instrs.add(new MOV(Condition.NO_CON, Instr.R5,
+          AddrMode.buildImm(Utils.getTypeNumber(rhsType))));
       // Store (byte) into "box"
       instrs.add(new STR(Instr.BYTE_SIZE, Condition.NO_CON, Instr.R5,
           AddrMode.buildAddrWithOffset(Instr.R4, Instr.WORD_SIZE)));
