@@ -1,6 +1,10 @@
 package backend;
 
+import static backend.instructions.Instr.addToCurLabel;
+
 import backend.instructions.*;
+import frontend.abstractsyntaxtree.Node;
+import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.symboltable.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -146,6 +150,56 @@ public class Utils {
     // brInstr should not be null
     return brInstr;
   }
+
+  // Function which builds the instructions when a call to a class's function
+  // is made
+  public static void buildClassFunctionInstr(int varNameOffset,
+      SymbolTable symtab, ArgListAST args, String className, String funcName){
+    List<Instr> instructions = new ArrayList<>();
+    int accOffset = 0;
+    String transferReg = Instr.getTargetReg();
+
+    // Allocate in reverse so that first argument directly on top of LR
+    for (int i = args.getArguments().size() - 1; i >= 0; i--) {
+      Node argNode = args.getArguments().get(i);
+
+      // Puts the next argument into the transfer register
+      argNode.toAssembly();
+
+      // Record total offset to destroy stack after
+      int offset = argNode.getIdentifier().getType().getBytes();
+      accOffset += offset;
+
+      // Temporary offset so that arguments are accessed correctly
+      symtab.incrementFuncOffset(offset);
+
+      // Add to stack
+      Instr.addToCurLabel(new STR(offset,
+          Condition.NO_CON, transferReg,
+          AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
+    }
+    addToCurLabel(new ADD(false, transferReg, Instr.SP,
+        AddrMode.buildImm(varNameOffset + accOffset)));
+    addToCurLabel(new STR(transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -(4))));
+
+    // Function call
+    instructions
+        .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + className + "_" + funcName));
+
+    // Destroy stack - STACK ALWAYS HAS TO BE DESTROYED AS IT WILL ALWAYS
+    // CONTAIN THE INSTANCE'S ADDRESS
+    instructions.add(
+        new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset + 4)));
+
+    // Reset temporary offset
+    symtab.resetFuncOffset();
+    // Move result
+    instructions.add(
+        new MOV(Condition.NO_CON, transferReg, AddrMode.buildReg(Instr.R0)));
+
+    addToCurLabel(instructions);
+  }
+
 
   //****** METHODS FOR PRE DEFINED FUNCTIONS ******
 

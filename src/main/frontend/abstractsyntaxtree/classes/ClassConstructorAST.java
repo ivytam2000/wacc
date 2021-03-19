@@ -6,7 +6,6 @@ import backend.instructions.Label;
 import backend.instructions.POP;
 import backend.instructions.PUSH;
 import frontend.abstractsyntaxtree.Node;
-import frontend.abstractsyntaxtree.functions.ParamAST;
 import frontend.symboltable.ConstructorID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static backend.Utils.getStartRoutine;
-import static backend.instructions.Instr.WORD_SIZE;
 import static backend.instructions.Instr.addToCurLabel;
 import static backend.instructions.Instr.addToLabelOrder;
 import static backend.instructions.Instr.setCurLabel;

@@ -11,6 +11,7 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ConstructorID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.Visibility;
 
 public class ClassFuncAST extends Node {
 

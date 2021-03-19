@@ -77,6 +77,7 @@ public class FuncAST extends Node {
   public void toAssembly() {
     int offset;
     SymbolTable funcSymTab = ((FuncID) identifier).getSymtab();
+    offset = WORD_SIZE + funcSymTab.getSize();
 
     boolean skipLR = false;
     if (globalScope.isTopLevel()) {
@@ -85,12 +86,6 @@ public class FuncAST extends Node {
       addToLabelOrder(labelName);
     } else {
       skipLR = true;
-    }
-
-    offset = WORD_SIZE + funcSymTab.getSize();
-
-
-    if (!globalScope.isTopLevel()) {
       funcSymTab.addOffset("object_addr", offset);
       offset += 4;
     }

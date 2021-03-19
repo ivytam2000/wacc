@@ -2,6 +2,7 @@ package frontend.abstractsyntaxtree.assignments;
 
 import antlr.WaccParser;
 import antlr.WaccParser.Call_assignRHSContext;
+import backend.Utils;
 import backend.instructions.ADD;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
@@ -96,6 +97,8 @@ public class AssignCallAST extends AssignRHSAST {
   public void toAssembly() {
     boolean classFunction = false;
     String className = symtab.getClassName();
+
+    // checks if its a class function call
     if (!(symtab.isTopLevel())) {
       if (symtab.getParent().getClassContext()) {
         if (symtab.getParent().lookup("func " + funcName) != null) {
@@ -106,7 +109,7 @@ public class AssignCallAST extends AssignRHSAST {
     }
 
     if (classFunction) {
-      CallClassFunctionAST.buildClassFunctionInstr(4, symtab, args, className, funcName);
+      Utils.buildClassFunctionInstr(4, symtab, args, className, funcName);
     } else {
       List<Instr> instructions = new ArrayList<>();
 

@@ -1,7 +1,5 @@
 package frontend.symboltable;
 
-import frontend.abstractsyntaxtree.classes.Visibility;
-
 public abstract class Identifier {
 
   // Public by default

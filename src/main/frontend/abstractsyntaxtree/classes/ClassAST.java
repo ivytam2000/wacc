@@ -45,12 +45,6 @@ public class ClassAST extends Node {
 
   @Override
   public void check() {
-    // check if constructor has the same name as class
-    String constructorName = constructorAST.getClassName();
-    if (!className.equals(constructorName)) {
-      SemanticErrorCollector.addConstructorHasDifferentNameAsClass(
-          className, constructorName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
-    }
   }
 
   @Override

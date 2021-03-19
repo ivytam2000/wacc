@@ -14,7 +14,7 @@ import frontend.abstractsyntaxtree.classes.ClassAttributeListAST;
 import frontend.abstractsyntaxtree.classes.ClassConstructorAST;
 import frontend.abstractsyntaxtree.classes.ClassFuncAST;
 import frontend.abstractsyntaxtree.classes.ClassInstanceAST;
-import frontend.abstractsyntaxtree.classes.Visibility;
+import frontend.symboltable.Visibility;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.abstractsyntaxtree.functions.FuncAST;
 import frontend.abstractsyntaxtree.functions.ParamAST;
@@ -50,7 +50,8 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     List<ClassesContext> classContexts = ctx.classes();
     List<FuncContext> funcContexts = ctx.func();
 
-    // Add all functions to global scope first in order to support recursion
+    // Add all functions to global scope first in order to support recursion and
+    // class calling global functions
     for (FuncContext fc : funcContexts) {
       fs.add(visitFunc(fc));
     }

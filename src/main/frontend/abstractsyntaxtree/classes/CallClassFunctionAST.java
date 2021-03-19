@@ -1,19 +1,17 @@
 package frontend.abstractsyntaxtree.classes;
 
-import static backend.instructions.Instr.SP;
 import static backend.instructions.Instr.addToCurLabel;
 
 import antlr.WaccParser.CallClassFuncContext;
+import backend.Utils;
 import backend.instructions.ADD;
 import backend.instructions.AddrMode;
 import backend.instructions.BRANCH;
 import backend.instructions.Condition;
 import backend.instructions.Instr;
-import backend.instructions.LDR;
 import backend.instructions.Label;
 import backend.instructions.MOV;
 import backend.instructions.STR;
-import backend.instructions.SUB;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.assignments.AssignRHSAST;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
@@ -25,6 +23,7 @@ import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
 import frontend.symboltable.UnknownID;
+import frontend.symboltable.Visibility;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +88,7 @@ public class CallClassFunctionAST extends AssignRHSAST {
       return;
     }
 
-    // Class attribute is not private
+    // Class function is not private
     if (functionIdent.getVisibility() == Visibility.PRIVATE) {
       SemanticErrorCollector.addClassFunctionIsPrivate(
           className, funcName, line, position);
@@ -141,57 +140,6 @@ public class CallClassFunctionAST extends AssignRHSAST {
   @Override
   public void toAssembly() {
     int varNameOffset = symtab.getStackOffset(varName);
-    buildClassFunctionInstr(varNameOffset, symtab, args, classID.getType().getTypeName(), funcName);
-
+    Utils.buildClassFunctionInstr(varNameOffset, symtab, args, classID.getType().getTypeName(), funcName);
   }
-  // TODO : Should this be in utils or part of this class?
-  // Function which builds the instructions when a call to a class's function
-  // is made
-  public static void buildClassFunctionInstr(int varNameOffset,
-      SymbolTable symtab, ArgListAST args, String className, String funcName){
-    List<Instr> instructions = new ArrayList<>();
-    int accOffset = 0;
-    String transferReg = Instr.getTargetReg();
-
-    // Allocate in reverse so that first argument directly on top of LR
-    for (int i = args.getArguments().size() - 1; i >= 0; i--) {
-      Node argNode = args.getArguments().get(i);
-
-      // Puts the next argument into the transfer register
-      argNode.toAssembly();
-
-      // Record total offset to destroy stack after
-      int offset = argNode.getIdentifier().getType().getBytes();
-      accOffset += offset;
-
-      // Temporary offset so that arguments are accessed correctly
-      symtab.incrementFuncOffset(offset);
-
-      // Add to stack
-      Instr.addToCurLabel(new STR(offset,
-          Condition.NO_CON, transferReg,
-          AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
-    }
-    addToCurLabel(new ADD(false, transferReg, Instr.SP,
-        AddrMode.buildImm(varNameOffset + accOffset)));
-    addToCurLabel(new STR(transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -(4))));
-
-    // Function call
-    instructions
-        .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + className + "_" + funcName));
-
-    // Destroy stack - STACK ALWAYS HAS TO BE DESTROYED AS IT WILL ALWAYS
-    // CONTAIN THE INSTANCE'S ADDRESS
-    instructions.add(
-        new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset + 4)));
-
-    // Reset temporary offset
-    symtab.resetFuncOffset();
-    // Move result
-    instructions.add(
-        new MOV(Condition.NO_CON, transferReg, AddrMode.buildReg(Instr.R0)));
-
-    addToCurLabel(instructions);
-  }
-
 }

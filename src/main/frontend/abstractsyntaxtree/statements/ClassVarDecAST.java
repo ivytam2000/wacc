@@ -44,6 +44,7 @@ public class ClassVarDecAST extends Node {
 
   @Override
   public void check() {
+    // check if class is defined
     if (identifier == null || !(identifier instanceof ClassID)) {
       SemanticErrorCollector.addClassNotDefined(
           className, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
@@ -61,8 +62,6 @@ public class ClassVarDecAST extends Node {
 
     Identifier variable = symtab.lookup(varName);
 
-    // assignRHS is going to be calling classInstantAST.toAssembly()
-    ClassInstanceAST classInstanceAST = (ClassInstanceAST) assignRHS;
     SymbolTable classScope = classID.getSymtab();
     ConstructorID constructorID = (ConstructorID) classScope.lookup(className);
     List<ClassAttributeAST> attributesList = constructorID.getAttributesList().getAttributesList();
@@ -100,7 +99,7 @@ public class ClassVarDecAST extends Node {
     // Add the offset to the symbol table's hashmap of variables' offsets
     symtab.addOffset(varName, offset);
 
-    // assignRHS is going to be calling classInstantAST.toAssembly()
+    // get arguments of class constructor call
     ClassInstanceAST classInstanceAST = (ClassInstanceAST) assignRHS;
     ClassID classID = (ClassID) classInstanceAST.getIdentifier();
     SymbolTable classScope = classID.getSymtab();

@@ -1,4 +1,4 @@
-package frontend.abstractsyntaxtree.classes;
+package frontend.symboltable;
 
 public enum Visibility {
   PRIVATE,

@@ -5,13 +5,13 @@ import frontend.abstractsyntaxtree.Node;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.Visibility;
 
 public class ClassAttributeAST extends Node {
 
   private final String varName;
   private final SymbolTable symtab;
   private final AttributeContext ctx;
-  private final Visibility visibility;
 
   public ClassAttributeAST(Identifier identifier, SymbolTable symtab,
       Visibility visibility, String varName, AttributeContext ctx) {
@@ -20,7 +20,6 @@ public class ClassAttributeAST extends Node {
     this.symtab = symtab;
     this.varName = varName;
     this.ctx = ctx;
-    this.visibility = visibility;
   }
 
   public String getName() {

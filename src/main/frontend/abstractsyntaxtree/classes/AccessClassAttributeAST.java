@@ -13,6 +13,7 @@ import frontend.symboltable.ClassID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.UnknownID;
+import frontend.symboltable.Visibility;
 
 public class AccessClassAttributeAST extends AssignLHSAST {
 
@@ -81,6 +82,7 @@ public class AccessClassAttributeAST extends AssignLHSAST {
   @Override
   public void toAssembly() {
     // Load from (SP + offset) into target register
+    // gets the offset with respect to the class
     int offset = symtab.getStackOffset(varName + "." + attributeName);
     Instr loadVar = new LDR(identifier.getType().getBytes(), Condition.NO_CON,
         Instr.getTargetReg(), AddrMode.buildAddrWithOffset(Instr.SP, offset));
