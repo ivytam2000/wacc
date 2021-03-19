@@ -79,8 +79,10 @@ public class BinOpExprAST extends Node {
       if (expectedExprTypes == Utils.INT_CHAR) { // Defined for int and char
         errorL = !(eLType instanceof IntID || eLType instanceof CharID
             || eLType instanceof UnknownID || eLType instanceof VarID);
-        errorR = !(eRType == eLType || eRType instanceof UnknownID ||
-            eRType instanceof VarID);
+        if (!(eLType instanceof VarID)) {
+          errorR = !(eRType == eLType || eRType instanceof UnknownID ||
+              eRType instanceof VarID);
+        }
         expectedTypes = "int or char";
         types.add((TypeID) symtab.lookupAll("int"));
         types.add((TypeID) symtab.lookupAll("char"));
