@@ -3,16 +3,13 @@
 begin
   class H is 
     public int v
-    private int J(int v) is 
+    private int J(int k) is 
       return 0
     end
     public int f() is 
        v = 3 ;
        return v
     end
-  end
-  int f() is 
-    return 0
   end
   H v = new H(2) ; 
   int k = call v.f();

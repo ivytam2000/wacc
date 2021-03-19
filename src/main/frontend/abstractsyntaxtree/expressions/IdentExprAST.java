@@ -54,12 +54,10 @@ public class IdentExprAST extends Node {
     if (identifier instanceof ClassAttributeID) {
       offset = currsymtab.getStackOffset("object_addr");
       int attributeOffset = currsymtab.getStackOffset(getName());
-      // loading the
       String targetReg = Instr.getTargetReg();
       // Storing the instance's address into a register
       Instr.addToCurLabel(
-          new LDR(identifier.getType().getBytes(), Condition.NO_CON,
-              targetReg, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
+          new LDR(targetReg, AddrMode.buildAddrWithOffset(Instr.SP, offset)));
       // Adding the offset of the attribute to the regeister which holds the
       // instance's address
       if (attributeOffset > 0) {

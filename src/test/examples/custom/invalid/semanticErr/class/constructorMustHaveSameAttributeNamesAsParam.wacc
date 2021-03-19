@@ -1,8 +1,0 @@
-# Constructor must include the same name for attributes
-
-begin
-  class H is 
-    private int v
-  end
-  H u = new H(true)
-end

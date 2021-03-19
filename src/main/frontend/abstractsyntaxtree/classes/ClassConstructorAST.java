@@ -38,45 +38,6 @@ public class ClassConstructorAST extends Node {
 
   @Override
   public void check() {
-    // need to check if the attributes are all initialised
-    // we know that attributeList gets checked first already
-
-//    // checks that all attributes are defined in the params
-//    Set<String> attributes = classScope.getAllIdent();
-//    Set<String> attributeChecker = new HashSet<>(attributes);
-//
-//    for (ParamAST param: paramList.getParamList()) {
-//      String varName = param.getName();
-//      ((ConstructorID) identifier).addParamName(varName);
-//      Identifier currIdent = classScope.lookup(varName);
-//      if (currIdent == null) {
-//        SemanticErrorCollector.addVariableUndefined(
-//            varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
-//        return;
-//      }
-//
-//      TypeID expected = currIdent.getType();
-//      TypeID actual = param.getIdentifier().getType();
-//
-//      // checks that the types are the same
-//      if (!Utils.typeCompat(expected, actual)) {
-//        SemanticErrorCollector.addIncompatibleTypeInConstructor(expected.getTypeName(), actual.getTypeName(),
-//            className, varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
-//        return;
-//      }
-//      attributeChecker.remove(varName);
-//    }
-//
-//    // doesn't contain the same amount of param as the attributes, throw error
-//    if (attributeChecker.size() != 0) {
-//      for (String attribute: attributes) {
-//        SemanticErrorCollector.addInconsistentNumberOfParamInConstructor(attribute,
-//            classScope.lookup(attribute).getType().getTypeName(), className,
-//            ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
-//      }
-//    }
-
-    // adds the constructor into the scope
     classScope.add(className, identifier);
   }
 
@@ -94,7 +55,6 @@ public class ClassConstructorAST extends Node {
       skipLR = true;
       String varName = attributeAST.getName();
       classSymtab.addOffset(varName, offset);
-//      classSymtab.incrementSize(attributeAST.getIdentifier().getType().getBytes());
       offset += attributeAST.getIdentifier().getType().getBytes();
     }
 

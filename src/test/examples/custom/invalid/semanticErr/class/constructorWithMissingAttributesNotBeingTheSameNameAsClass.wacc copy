@@ -1,8 +1,0 @@
-# Class and constructor must have same names
-
-begin
-  class H is 
-    private int v
-  end
-  int u = 0
-end

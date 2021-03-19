@@ -1,3 +1,4 @@
+# Class functions cannot have the same name
 
 begin
   class H is 

@@ -12,6 +12,7 @@ import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.ClassID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
+import frontend.symboltable.UnknownID;
 
 public class AccessClassAttributeAST extends AssignLHSAST {
 
@@ -44,6 +45,7 @@ public class AccessClassAttributeAST extends AssignLHSAST {
     if (identifier == null) {
       SemanticErrorCollector.addVariableUndefined(
           varName, line, position);
+      setIdentifier(new UnknownID());
       return;
     }
 

@@ -3,16 +3,15 @@
 begin
   class H is 
     private int v
-    private int J(int v) is 
+    private int J(int z) is 
       return 0
     end
   end
   class K is 
     private int v
-    private int J(int v) is 
+    private int J(int z) is 
       return 0
     end
   end
-  K p = new H(2) ;
-  int k = 0 
+  K p = new H(2) 
 end

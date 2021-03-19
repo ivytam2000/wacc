@@ -11,9 +11,6 @@ begin
        return v
     end
   end
-  int f() is 
-    return 0
-  end
   H v = new H(2) ; 
   int k = call v.J(10);
   println k

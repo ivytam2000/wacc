@@ -29,9 +29,9 @@ public class ValidExtensionTests {
   }
 
   // Made test cases for extension: Classes
-//  @Test
-//  public void validExtensionForClassesTest() throws IOException {
-//    executablesFromOurCompilerMatchesReferenceCompiler(
-//        TestUtilities.EXT_VALID_DIR + "class/");
-//  }
+  @Test
+  public void validExtensionForClassesTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        TestUtilities.EXT_VALID_DIR + "class/");
+  }
 }

@@ -50,14 +50,16 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     List<ClassesContext> classContexts = ctx.classes();
     List<FuncContext> funcContexts = ctx.func();
 
-    // Add all classes to global scope first in order
-    for (ClassesContext cc : classContexts) {
-      cs.add(visitClasses(cc));
-    }
     // Add all functions to global scope first in order to support recursion
     for (FuncContext fc : funcContexts) {
       fs.add(visitFunc(fc));
     }
+
+    // Add all classes to global scope first in order
+    for (ClassesContext cc : classContexts) {
+      cs.add(visitClasses(cc));
+    }
+
     // Iterates through functions and checks its body
     for (int i = 0; i < fs.size(); i++) {
       visitFuncWrapper(funcContexts.get(i), (FuncAST) fs.get(i));
@@ -78,6 +80,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     currSymTab.setClassContext();
 
     String className = ctx.IDENT().getText();
+    currSymTab.setClassName(className);
 
     ClassAttributeListAST classAttrListAST =
         ctx.attributeList() == null ? new ClassAttributeListAST()
@@ -145,40 +148,6 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     return classAttrListAST;
   }
-
-  // TODO remove function
-//  @Override
-//  public ClassConstructorAST visitConstructor(ConstructorContext ctx) {
-//    // In the form of: H(int v, int y) end where the params are the attributes defined above constructor
-//    // Makes constructor for the class
-//
-//    // add new symbol table
-//    SymbolTable classSymtab = currSymTab;
-//    currSymTab = new SymbolTable(classSymtab);
-//
-//    // Initialises empty ParamListAST if no params
-//    ParamListAST params =
-//        ctx.paramList() == null ? new ParamListAST()
-//            : visitParamList(ctx.paramList());
-//
-//    String className = ctx.IDENT().getText();
-//
-//    Identifier classID = new ClassID(className, currSymTab, params.getParamBytes());
-//
-//    ConstructorID constructID = new ConstructorID(classID, params.convertToParamIDs(),
-//        currSymTab);
-//
-//    ClassConstructorAST constructAST =
-//        new ClassConstructorAST(constructID, classSymtab, className, params, ctx);
-//
-//    // checks if constructor contains all the attributes defined
-//    constructAST.check();
-//
-//    // restore symbol table
-//    currSymTab = classSymtab;
-//
-//    return constructAST;
-//  }
 
   @Override
   public ClassFuncAST visitClassFunc(ClassFuncContext ctx) {

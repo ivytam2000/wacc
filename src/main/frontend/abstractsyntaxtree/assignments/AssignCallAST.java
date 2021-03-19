@@ -1,5 +1,8 @@
 package frontend.abstractsyntaxtree.assignments;
 
+import static backend.Utils.dynamicTypeCheckIfNeeded;
+import static backend.instructions.Instr.addToCurLabel;
+
 import antlr.WaccParser.Call_assignRHSContext;
 import backend.instructions.ADD;
 import backend.instructions.AddrMode;
@@ -11,6 +14,7 @@ import backend.instructions.MOV;
 import backend.instructions.STR;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.Utils;
+import frontend.abstractsyntaxtree.classes.CallClassFunctionAST;
 import frontend.abstractsyntaxtree.functions.ArgListAST;
 import frontend.errorlistener.SemanticErrorCollector;
 import frontend.symboltable.FuncID;
@@ -21,9 +25,6 @@ import frontend.symboltable.TypeID;
 import java.util.ArrayList;
 import java.util.List;
 
-import static backend.Utils.dynamicTypeCheckIfNeeded;
-import static backend.instructions.Instr.addToCurLabel;
-
 public class AssignCallAST extends AssignRHSAST {
 
   private final String funcName;
@@ -32,8 +33,7 @@ public class AssignCallAST extends AssignRHSAST {
   private final SymbolTable symtab;
 
   public AssignCallAST(
-      String funcName, SymbolTable symtab, ArgListAST args,
-      Call_assignRHSContext ctx) {
+      String funcName, SymbolTable symtab, ArgListAST args, Call_assignRHSContext ctx) {
     super(symtab.lookupAll("func " + funcName), symtab);
     this.funcName = funcName;
     this.args = args;
@@ -57,16 +57,14 @@ public class AssignCallAST extends AssignRHSAST {
         int paramSize = params.size();
         int argsSize = argsAST.size();
 
-        int pos = (argsSize == 0) ? ctx.getStart().getCharPositionInLine():
-            ctx.argList().getStart().getCharPositionInLine();
+        int pos =
+            (argsSize == 0)
+                ? ctx.getStart().getCharPositionInLine()
+                : ctx.argList().getStart().getCharPositionInLine();
         // If given number of arguments are not the same as the number of params
         if (paramSize != argsSize) {
           SemanticErrorCollector.addFuncInconsistentArgsError(
-              line,
-              pos,
-              funcName,
-              paramSize,
-              argsSize);
+              line, pos, funcName, paramSize, argsSize);
         } else {
           for (int i = 0; i < paramSize; i++) {
             TypeID currParam = params.get(i);
@@ -97,46 +95,63 @@ public class AssignCallAST extends AssignRHSAST {
 
   @Override
   public void toAssembly() {
-    List<Instr> instructions = new ArrayList<>();
-
-    int accOffset = 0;
-    String transferReg = Instr.getTargetReg();
-    // Allocate in reverse so that first argument directly on top of LR
-    List<TypeID> params = ((FuncID) getIdentifier()).getParams();
-    for (int i = args.getArguments().size() - 1; i >= 0; i--) {
-      Node argNode = args.getArguments().get(i);
-
-      // Puts the next argument into the transfer register
-      argNode.toAssembly();
-      dynamicTypeCheckIfNeeded(argNode, Utils.getTypeNumber(params.get(i)));
-
-      // Record total offset to destroy stack after
-      int offset = argNode.getIdentifier().getType().getBytes();
-      accOffset += offset;
-
-      // Temporary offset so that arguments are accessed correctly
-      symtab.incrementFuncOffset(offset);
-
-      // Add to stack
-      Instr.addToCurLabel(new STR(offset,
-          Condition.NO_CON, transferReg,
-          AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
+    // TODO: Maybe extract this out into a utils function called
+    //  isClassContext or something
+    boolean classFunction = false;
+    String className = symtab.getClassName();
+    if (!(symtab.isTopLevel())) {
+      if (symtab.getParent().getClassContext()) {
+        if (symtab.getParent().lookup("func " + funcName) != null) {
+          className = symtab.getParent().getClassName();
+          classFunction = true;
+        }
+      }
     }
-    // Function call
-    instructions
-        .add(new BRANCH(true, Condition.NO_CON, Label.FUNC_HEADER + funcName));
 
-    // Destroy stack
-    if (accOffset > 0) {
-      instructions.add(
-          new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset)));
+    if (classFunction) {
+      CallClassFunctionAST.buildClassFunctionInstr(4, symtab, args, className, funcName);
+    } else {
+      List<Instr> instructions = new ArrayList<>();
+
+      int accOffset = 0;
+      String transferReg = Instr.getTargetReg();
+      // Allocate in reverse so that first argument directly on top of LR
+      List<TypeID> params = ((FuncID) getIdentifier()).getParams();
+      for (int i = args.getArguments().size() - 1; i >= 0; i--) {
+        Node argNode = args.getArguments().get(i);
+
+        // Puts the next argument into the transfer register
+        argNode.toAssembly();
+        dynamicTypeCheckIfNeeded(argNode, Utils.getTypeNumber(params.get(i)));
+
+        // Record total offset to destroy stack after
+        int offset = argNode.getIdentifier().getType().getBytes();
+        accOffset += offset;
+
+        // Temporary offset so that arguments are accessed correctly
+        symtab.incrementFuncOffset(offset);
+
+        // Add to stack
+        Instr.addToCurLabel(
+            new STR(
+                offset,
+                Condition.NO_CON,
+                transferReg,
+                AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
+      }
+      // Function call
+      instructions.add(new BRANCH(true, Condition.NO_CON, Label.FUNC_HEADER + funcName));
+
+      // Destroy stack
+      if (accOffset > 0) {
+        instructions.add(new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset)));
+      }
+      // Reset temporary offset
+      symtab.resetFuncOffset();
+      // Move result
+      instructions.add(new MOV(Condition.NO_CON, transferReg, AddrMode.buildReg(Instr.R0)));
+
+      addToCurLabel(instructions);
     }
-    // Reset temporary offset
-    symtab.resetFuncOffset();
-    // Move result
-    instructions.add(
-        new MOV(Condition.NO_CON, transferReg, AddrMode.buildReg(Instr.R0)));
-    
-    addToCurLabel(instructions);
   }
 }

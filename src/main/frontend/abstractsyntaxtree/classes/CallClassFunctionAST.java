@@ -24,6 +24,7 @@ import frontend.symboltable.Identifier;
 import frontend.symboltable.NullID;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.UnknownID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,11 +35,13 @@ public class CallClassFunctionAST extends AssignRHSAST {
   private final SymbolTable symtab;
   private final CallClassFuncContext ctx;
   private final ArgListAST args;
+  private final Identifier classID;
 
   public CallClassFunctionAST(
       String varName, String funcName, ArgListAST args, SymbolTable symtab, CallClassFuncContext ctx) {
     super(symtab.lookupAll(varName), symtab);
     this.varName = varName;
+    this.classID = symtab.lookupAll(varName);
     this.funcName = funcName;
     this.symtab = symtab;
     this.ctx = ctx;
@@ -54,6 +57,7 @@ public class CallClassFunctionAST extends AssignRHSAST {
     if (identifier == null) {
       SemanticErrorCollector.addVariableUndefined(
           varName, line, position);
+      setIdentifier(new UnknownID());
       return;
     }
 
@@ -136,11 +140,16 @@ public class CallClassFunctionAST extends AssignRHSAST {
 
   @Override
   public void toAssembly() {
-    List<Instr> instructions = new ArrayList<>();
-
     int varNameOffset = symtab.getStackOffset(varName);
-//    instructions.add(new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
+    buildClassFunctionInstr(varNameOffset, symtab, args, classID.getType().getTypeName(), funcName);
 
+  }
+  // TODO : Should this be in utils or part of this class?
+  // Function which builds the instructions when a call to a class's function
+  // is made
+  public static void buildClassFunctionInstr(int varNameOffset,
+      SymbolTable symtab, ArgListAST args, String className, String funcName){
+    List<Instr> instructions = new ArrayList<>();
     int accOffset = 0;
     String transferReg = Instr.getTargetReg();
 
@@ -163,21 +172,18 @@ public class CallClassFunctionAST extends AssignRHSAST {
           Condition.NO_CON, transferReg,
           AddrMode.buildAddrWithWriteBack(Instr.SP, -offset)));
     }
-    //addToCurLabel(new LDR(transferReg, AddrMode.buildAddrWithOffset(Instr.SP
-    //    , varNameOffset)));
     addToCurLabel(new ADD(false, transferReg, Instr.SP,
         AddrMode.buildImm(varNameOffset + accOffset)));
     addToCurLabel(new STR(transferReg, AddrMode.buildAddrWithWriteBack(Instr.SP, -(4))));
 
     // Function call
     instructions
-        .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + funcName));
+        .add(new BRANCH(true, Condition.NO_CON, Label.CLASS_FUNC_HEADER + className + "_" + funcName));
 
-//    instructions.add(new SUB(false, false, Instr.SP, Instr.SP, AddrMode.buildImm(varNameOffset)));
     // Destroy stack - STACK ALWAYS HAS TO BE DESTROYED AS IT WILL ALWAYS
     // CONTAIN THE INSTANCE'S ADDRESS
     instructions.add(
-          new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset + 4)));
+        new ADD(false, Instr.SP, Instr.SP, AddrMode.buildImm(accOffset + 4)));
 
     // Reset temporary offset
     symtab.resetFuncOffset();

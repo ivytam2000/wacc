@@ -1,6 +1,10 @@
 package frontend.abstractsyntaxtree.classes;
 
+import static backend.instructions.Instr.addToLabelOrder;
+import static backend.instructions.Instr.setCurLabel;
+
 import antlr.WaccParser.ClassFuncContext;
+import backend.instructions.Label;
 import frontend.abstractsyntaxtree.Node;
 import frontend.abstractsyntaxtree.functions.FuncAST;
 import frontend.errorlistener.SemanticErrorCollector;
@@ -52,6 +56,9 @@ public class ClassFuncAST extends Node {
 
   @Override
   public void toAssembly() {
+    String labelName = Label.CLASS_FUNC_HEADER + className + "_" + funcAST.getFuncName();
+    setCurLabel(labelName);
+    addToLabelOrder(labelName);
     funcAST.toAssembly();
   }
 }

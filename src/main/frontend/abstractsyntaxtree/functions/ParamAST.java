@@ -28,8 +28,18 @@ public class ParamAST extends Node {
 
   @Override
   public void check() {
-    // TODO class function param shouldnt have the same IDENT variable name as the attribute name
-    Identifier v = symtab.lookup(varName);
+    Identifier v;
+
+    if (symtab.isTopLevel()) {
+      v = symtab.lookup(varName);
+    } else {
+      if (symtab.getParent().getClassContext()) {
+        v = symtab.lookupAll(varName);
+      } else {
+        v = symtab.lookup(varName);
+      }
+    }
+
     if (v != null) {
       SemanticErrorCollector.addSymbolAlreadyDefined(
           varName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());

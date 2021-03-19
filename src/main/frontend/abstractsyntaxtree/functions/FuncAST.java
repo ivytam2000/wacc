@@ -75,23 +75,20 @@ public class FuncAST extends Node {
 
   @Override
   public void toAssembly() {
-    String labelName;
     int offset;
     SymbolTable funcSymTab = ((FuncID) identifier).getSymtab();
 
     boolean skipLR = false;
     if (globalScope.isTopLevel()) {
-      labelName = Label.FUNC_HEADER + funcName;
+      String labelName = Label.FUNC_HEADER + funcName;
+      setCurLabel(labelName);
+      addToLabelOrder(labelName);
     } else {
-      labelName = Label.CLASS_FUNC_HEADER + funcName;
       skipLR = true;
     }
 
     offset = WORD_SIZE + funcSymTab.getSize();
 
-
-    setCurLabel(labelName);
-    addToLabelOrder(labelName);
 
     if (!globalScope.isTopLevel()) {
       funcSymTab.addOffset("object_addr", offset);

@@ -150,15 +150,17 @@ public class AssignRHSAST extends Node {
         expr.toAssembly();
 
         // LHS static type RHS possibly dynamic
-        if (fstType > 0 && sndType > 0) {
-          // Full pair case
-          dynamicPairCheck(expr, fstType, sndType);
-        } else if (arrayType > 0) {
-          // Array case
-          dynamicArrayCheck(expr, arrayType);
-        } else if (!lhsIsDynamic) {
-          // Regular variable case
-          dynamicTypeCheckIfNeeded(expr, dynamicTypeNumber);
+        if (!lhsIsDynamic) {
+          if (fstType > 0 && sndType > 0) {
+            // Full pair case
+            dynamicPairCheck(expr, fstType, sndType);
+          } else if (arrayType > 0) {
+            // Array case
+            dynamicArrayCheck(expr, arrayType);
+          } else if (!lhsIsDynamic) {
+            // Regular variable case
+            dynamicTypeCheckIfNeeded(expr, dynamicTypeNumber);
+          }
         }
       }
     }

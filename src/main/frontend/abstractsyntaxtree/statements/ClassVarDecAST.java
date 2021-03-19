@@ -20,6 +20,7 @@ import frontend.symboltable.FuncID;
 import frontend.symboltable.Identifier;
 import frontend.symboltable.SymbolTable;
 import frontend.symboltable.TypeID;
+import frontend.symboltable.UnknownID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,9 @@ public class ClassVarDecAST extends Node {
     if (identifier == null || !(identifier instanceof ClassID)) {
       SemanticErrorCollector.addClassNotDefined(
           className, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+      if (identifier == null) {
+        setIdentifier(new UnknownID());
+      }
       return;
     }
 
@@ -57,7 +61,6 @@ public class ClassVarDecAST extends Node {
 
     Identifier variable = symtab.lookup(varName);
 
-    // TODO REFACTOR!!!
     // assignRHS is going to be calling classInstantAST.toAssembly()
     ClassInstanceAST classInstanceAST = (ClassInstanceAST) assignRHS;
     SymbolTable classScope = classID.getSymtab();
