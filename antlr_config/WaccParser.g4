@@ -72,6 +72,7 @@ stat: SKIP_LITER                                            #skip_stat
 | PRINTLN expr                                              #println_stat
 | IF expr THEN stat ELSE stat FI                            #if_stat
 | WHILE expr DO stat DONE                                   #while_stat
+| DO stat WHILE expr DONE                                   #do_while_stat
 | FOR IDENT IN expr UNTIL expr DO stat DONE                 #for_stat
 | stat SEMI_COLON stat                                      #sequence_stat
 | BEGIN stat END                                            #begin_stat

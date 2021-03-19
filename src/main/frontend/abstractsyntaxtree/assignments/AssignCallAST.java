@@ -94,8 +94,6 @@ public class AssignCallAST extends AssignRHSAST {
 
   @Override
   public void toAssembly() {
-    // TODO: Maybe extract this out into a utils function called
-    //  isClassContext or something
     boolean classFunction = false;
     String className = symtab.getClassName();
     if (!(symtab.isTopLevel())) {

@@ -28,6 +28,12 @@ public class ValidExtensionTests {
         TestUtilities.EXT_VALID_DIR + "forLoop/");
   }
 
+  @Test
+  public void validExtensionDoWhileTest() throws IOException {
+    executablesFromOurCompilerMatchesReferenceCompiler(
+        TestUtilities.EXT_VALID_DIR + "doWhile/");
+  }
+
   // Made test cases for extension: Classes
   @Test
   public void validExtensionForClassesTest() throws IOException {

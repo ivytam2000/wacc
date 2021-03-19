@@ -348,6 +348,21 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
     return whileAST;
   }
 
+  @Override public DoWhileAST visitDo_while_stat(Do_while_statContext ctx) {
+    SymbolTable encScope = currSymTab;
+    Node expr = visit(ctx.expr());
+
+    currSymTab = new SymbolTable(encScope); // New scope
+    Node stat = visit(ctx.stat());
+
+    DoWhileAST doWhileAST = new DoWhileAST(expr, stat, ctx.expr(), currSymTab);
+    doWhileAST.check();
+
+    currSymTab = encScope; // Swap back to parent scope
+
+    return doWhileAST;
+  }
+
   @Override
   public Node visitFor_stat(For_statContext ctx) {
     SymbolTable encScope = currSymTab;
@@ -547,6 +562,7 @@ public class TreeVisitor extends WaccParserBaseVisitor<Node> {
 
     return assignCallAST;
   }
+
 
   @Override
   public Node visitCallClassFunc_assignRHS(CallClassFunc_assignRHSContext ctx) {
